@@ -67,6 +67,14 @@ class _Interactor:
         """
 
         uri = uri if uri is not None else self.host
+
+        # determine domain/path to choose correct cookies
+        bits = uri.replace("http://","").replace("https://","").split("/", maxsplit=1)
+        if len(bits) == 2:
+            domain, path = bits
+        else:
+            domain, path = bits[0], None
+
         headers = {
             "Accept": "application/atom+json,application/json",
             "Accept-Encoding": "gzip, deflate, br",
@@ -76,13 +84,13 @@ class _Interactor:
             "Referer": uri + "/suite/tempo/",
             "X-Appian-Cached-Datatypes": self.datatype_cache.get(),
             "Cookie": "JSESSIONID={}; __appianCsrfToken={}; __appianMultipartCsrfToken={}".format(
-                self.client.cookies.get("JSESSIONID", ""),
-                self.client.cookies.get("__appianCsrfToken", ""),
-                self.client.cookies.get("__appianMultipartCsrfToken", ""),
+                self.client.cookies.get("JSESSIONID", "", domain=domain, path=path),
+                self.client.cookies.get("__appianCsrfToken", "", domain=domain, path=path),
+                self.client.cookies.get("__appianMultipartCsrfToken", "", domain=domain, path=path),
             ),
             "DNT": "1",
-            "X-APPIAN-CSRF-TOKEN": self.client.cookies.get("__appianCsrfToken", ""),
-            "X-APPIAN-MP-CSRF-TOKEN": self.client.cookies.get("__appianMultipartCsrfToken", ""),
+            "X-APPIAN-CSRF-TOKEN": self.client.cookies.get("__appianCsrfToken", "", domain=domain, path=path),
+            "X-APPIAN-MP-CSRF-TOKEN": self.client.cookies.get("__appianMultipartCsrfToken", "", domain=domain, path=path),
             "X-Appian-Ui-State": "stateful",
             "X-Appian-Features": self.client.feature_flag,
             "X-Appian-Features-Extended": self.client.feature_flag_extended,
