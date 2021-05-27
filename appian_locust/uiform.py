@@ -297,7 +297,7 @@ class SailUiForm:
         if not newer_state:
             raise Exception(f"No response returned when trying to update field with label '{label}'")
 
-        return self._reconcile_state(new_state)
+        return self._reconcile_state(newer_state)
 
     @raises_locust_error
     def click(self, label: str, is_test_label: bool = False, locust_request_label: str = "") -> 'SailUiForm':
