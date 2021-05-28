@@ -27,9 +27,9 @@ class _News(_Base):
         self._news: Dict[str, Any] = dict()
         self._errors: int = 0
 
-    def get_all(self, search_string: str = None) -> Dict[str, Any]:
+    def get_all(self, search_string: str = None, locust_request_label: str = None) -> Dict[str, Any]:
         """
-        Retrieves all the available "news" and associated metadata from "Appian-Tempo-News"
+        Retrieves all the available "news" and assgit ociated metadata from "Appian-Tempo-News"
 
         Note: All the retrieved data about news is stored in the private variable self._news
 

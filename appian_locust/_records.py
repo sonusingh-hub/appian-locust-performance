@@ -36,7 +36,7 @@ class _Records(_Base):
         self._records: Dict[str, Any] = dict()
         self._errors: int = 0
 
-    def get_all(self, search_string: str = None) -> Dict[str, Any]:
+    def get_all(self, search_string: str = None, locust_request_label: str = None) -> Dict[str, Any]:
         """
         Retrieves all available "records types" and "records" and associated metadata from "Appian-Tempo-Records"
 

@@ -27,7 +27,7 @@ class _Reports(_Base):
         self._reports: Dict[str, Any] = dict()
         self._errors: int = 0
 
-    def get_all(self, search_string: str = None) -> Dict[str, Any]:
+    def get_all(self, search_string: str = None, locust_request_label: str = None) -> Dict[str, Any]:
         """
         Retrieves all the available "reports" and associated metadata from "Appian-Tempo-Reports"
 

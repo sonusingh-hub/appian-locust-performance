@@ -5,11 +5,12 @@ from typing import Any, List, Optional
 from unittest.mock import MagicMock, patch
 
 from appian_locust import AppianTaskSet, SailUiForm
-from appian_locust.uiform import PROCESS_TASK_LINK_TYPE
 from appian_locust.helper import (ENV, find_component_by_attribute_in_dict,
                                   find_component_by_index_in_dict,
                                   find_component_by_label_and_type_dict)
-from appian_locust.uiform import (ComponentNotFoundException)
+from appian_locust.uiform import (PROCESS_TASK_LINK_TYPE,
+                                  ComponentNotFoundException,
+                                  InvalidComponentException)
 from locust import TaskSet, User
 from requests.exceptions import HTTPError
 
@@ -460,6 +461,30 @@ class TestSailUiForm(unittest.TestCase):
         self.assertEqual('post', last_request['method'])
         self.assertEqual(self.date_task_uri, last_request['path'])
         self.assertEqual('1990-01-05Z', self._unwrap_value(last_request['data']))
+
+    def test_get_dropdown_choices_multiple(self) -> None:
+        resp_json = read_mock_file(file_name='dropdown_test_ui.json')
+        ui_form = SailUiForm(self.task_set.appian.interactor, json.loads(resp_json), '')
+        choices = ui_form.get_dropdown_items("Customer Type")
+        self.assertEqual(["-- Please select a value --",
+                          "Buy Side Asset Manager",
+                          "Corporate Banking",
+                          "Institutional Investor",
+                          "Sell Side ",
+                          "SME Banking"], choices)
+
+    def test_get_dropdown_choices_errors(self) -> None:
+        resp_json = read_mock_file(file_name='dropdown_test_ui.json')
+        ui_form = SailUiForm(self.task_set.appian.interactor, json.loads(resp_json), '')
+        with self.assertRaises(ComponentNotFoundException):
+            ui_form.get_dropdown_items("Dropdown that DNE")
+        with self.assertRaises(InvalidComponentException):
+            ui_form.get_dropdown_items("Domicile")
+
+    def test_empty_get_dropdown_choices(self) -> None:
+        state = {'ui': [{'label': "Empty Dropdown", 'choices': []}]}
+        ui_form = SailUiForm(self.task_set.appian.interactor, state, '')
+        self.assertEqual([], ui_form.get_dropdown_items("Empty Dropdown"))
 
     def test_select_multi_dropdown_success(self) -> None:
         test_form = self._setup_multi_dropdown_form()

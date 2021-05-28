@@ -11,7 +11,7 @@ class _Base():
     Base class for classes ``_Actions``, ``_News``, ``_Records``, ``_Reports``, ``_Tasks``, ``Sites``
     """
 
-    def get_all(self, search_string: str = None) -> Any:
+    def get_all(self, search_string: str = None, locust_request_label: str = "") -> Any:
         """
         Common Get All function prototype that is overwritten by subclasses.
         Created only to conform to Mypy validation.

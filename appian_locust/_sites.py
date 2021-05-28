@@ -127,7 +127,7 @@ class _Sites(_Base):
             breadcrumb = f"Sites.{site_name}.{page_name}.SailUi"
             return SailUiForm(self.interactor, site_page_json_response, form_uri, breadcrumb=breadcrumb)
 
-    def get_all(self, search_string: str = None) -> Dict[str, Any]:
+    def get_all(self, search_string: str = None, locust_request_label: str = None) -> Dict[str, Any]:
         """
         Gets and stores data for all sites, including all of their url stubs
         """

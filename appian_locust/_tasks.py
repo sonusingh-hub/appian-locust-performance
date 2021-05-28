@@ -30,7 +30,7 @@ class _Tasks(_Base):
         self.task_opener = _TaskOpener(self.interactor)
         self._tasks: Dict[str, Any] = dict()
 
-    def get_all(self, search_string: str = None) -> Dict[str, Any]:
+    def get_all(self, search_string: str = None, locust_request_label: str = "Tasks") -> Dict[str, Any]:
         """
         Retrieves all the available "tasks" and associated metadata from "Appian-Tempo-Tasks"
 
@@ -50,7 +50,7 @@ class _Tasks(_Base):
         self._tasks = dict()
 
         while next_uri:
-            response = self.interactor.get_page(uri=next_uri, headers=headers, label="Tasks").json()
+            response = self.interactor.get_page(uri=next_uri, headers=headers, label=locust_request_label).json()
             for current_item in response.get("feed", {}).get("entries", []):
                 # Supporting only the SAIL tasks (id starts with "t-" id.)
                 if "t-" in current_item.get("id", ""):
