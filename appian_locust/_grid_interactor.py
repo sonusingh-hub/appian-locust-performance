@@ -97,7 +97,7 @@ class GridInteractor:
         total_count = int(paging_grid['totalCount'])
         start_index = int(paging_info['startIndex'])
         batch_size = int(paging_info['batchSize'])
-        sort_info = paging_info['sort']
+        sort_info = paging_info.get('sort')
 
         return {
             'total_count': total_count,
@@ -115,19 +115,22 @@ class GridInteractor:
         grid_value = paging_grid.get("value", "")
         if "pagingInfo" not in grid_value:
             # No pagingInfo element between value and paging data
-            return {
+            save_data = {
                 "startIndex": start_index,
                 "batchSize": batch_size,
-                "sort": sort_info,
                 "#t": "PagingInfo"
             }
+            if sort_info:
+                save_data['sort'] = sort_info
         else:
             # Maintain pagingInfo in updated state
-            return {
+            save_data = {
                 "#t": "GridSelection",
                 'pagingInfo': {
                     "startIndex": start_index,
                     "batchSize": batch_size,
-                    "sort": sort_info
                 }
             }
+            if sort_info:
+                save_data['pagingInfo']['sort'] = sort_info
+        return save_data
