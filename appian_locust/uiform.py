@@ -1014,7 +1014,7 @@ class SailUiForm:
 
         Args:
             label(str): Label of the grid
-            index(str): Index of the grid
+            index(int): Index of the grid
 
         Keyword Args:
             locust_request_label(str): Label used to identify the request for locust statistics
@@ -1044,7 +1044,7 @@ class SailUiForm:
 
         Args:
             label(str): Label of the grid
-            index(str): Index of the grid
+            index(int): Index of the grid
 
         Returns (SailUiForm): The latest state of the UiForm
 
@@ -1072,7 +1072,7 @@ class SailUiForm:
 
         Args:
             label(str): Label of the grid
-            index(str): Index of the grid
+            index(int): Index of the grid
 
         Keyword Args:
             locust_request_label(str): Label used to identify the request for locust statistics
@@ -1103,7 +1103,7 @@ class SailUiForm:
 
         Args:
             label(str): Label of the grid
-            index(str): Index of the grid
+            index(int): Index of the grid
 
         Keyword Args:
             locust_request_label(str): Label used to identify the request for locust statistics
@@ -1137,7 +1137,7 @@ class SailUiForm:
 
         Args:
             label(str): Label of the grid
-            index(str): Index of the grid
+            index(int): Index of the grid
             field_name(str): Field to sort on (not necessarily the same as the displayed one)
             ascending(bool): Whether to sort ascending, default is false
 
