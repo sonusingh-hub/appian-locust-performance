@@ -118,13 +118,14 @@ class _Reports(_Base):
 
         report_under_test = self.get_report(report_name, exact_match)
 
-        headers = self.interactor.setup_request_headers()
-        headers["Accept"] = "application/vnd.appian.tv.ui+json"
-
         # navigation request
         tempo_site_url_stub = "D6JMim"
         uri = "/suite/rest/a/sites/latest/{}/page/reports/nav".format(
             tempo_site_url_stub)
+
+        headers = self.interactor.setup_request_headers(uri=uri)
+        headers["Accept"] = "application/vnd.appian.tv.ui+json"
+
         label = "Reports.Nav." + format_label(report_name, "::", 0)
         self.interactor.get_page(uri=uri, headers=headers, label=label)  # report request
         report_url_stub = report_under_test['links'][1]['href'].rsplit('/', 1)[1]

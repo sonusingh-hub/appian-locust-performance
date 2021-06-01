@@ -69,11 +69,10 @@ class _Interactor:
         uri = uri if uri is not None else self.host
 
         # determine domain/path to choose correct cookies
-        bits = uri.replace("http://","").replace("https://","").split("/", maxsplit=1)
-        if len(bits) == 2:
-            domain, path = bits
-        else:
-            domain, path = bits[0], None
+        # using urlparse, which is also used by requests/urllib
+        parsed_url = urllib.parse.urlparse(uri)
+        domain = None if parsed_url.netloc == '' else parsed_url.netloc
+        path = None if parsed_url.path == '' else parsed_url.path
 
         headers = {
             "Accept": "application/atom+json,application/json",
@@ -100,15 +99,15 @@ class _Interactor:
         }
         return headers
 
-    def setup_sail_headers(self) -> dict:
-        headers = self.setup_request_headers()
+    def setup_sail_headers(self, uri: str = None) -> dict:
+        headers = self.setup_request_headers(uri=uri)
         headers.update({'Content-Type': 'application/vnd.appian.tv+json',
                         'Accept': 'application/vnd.appian.tv.ui+json'})
         return headers
 
     # Headers needed for Record View request, which returns a feed object
-    def setup_feed_headers(self) -> dict:
-        headers = self.setup_request_headers()
+    def setup_feed_headers(self, uri: str = None) -> dict:
+        headers = self.setup_request_headers(uri=uri)
         headers["Accept"] = "application/atom+json; inlineSail=true; recordHeader=true"
         headers["Accept"] = headers["Accept"] + ", application/json; inlineSail=true; recordHeader=true"
         return headers
@@ -292,21 +291,22 @@ class _Interactor:
         '''
         Uploads a document to the server, so that it can be used in upload fields
         Args:
-            uri: API URI to be called
             file_path: Path to the file to be uploaded
+            is_encrypted: Boolean, sets header for encrypted files
 
         Returns: Document Id that can be used for upload fields
         ''',
 
+        upload_uri = "/suite/api/tempo/file?validateExtension=false"
         # Override default headers to avoid sending SAIL headers here
-        headers = self.setup_request_headers()
+        headers = self.setup_request_headers(uri=upload_uri)
         if is_encrypted:
             headers['encrypted'] = 'true'
         with open(file_path, 'rb') as f:
             resp_label = "Document.Upload." + os.path.basename(file_path).strip(" .")
             files = {"file": f}
             response = self.post_page(
-                "/suite/api/tempo/file?validateExtension=false",
+                upload_uri,
                 headers=headers,
                 label=resp_label,
                 files=files)

@@ -45,7 +45,7 @@ class _Tasks(_Base):
         """
         next_uri = _Tasks.INITIAL_FEED_URI
 
-        headers = self.interactor.setup_request_headers()
+        headers = self.interactor.setup_request_headers(uri=next_uri)
         headers["Accept"] = "application/atom+json; inlineSail=true; recordHeader=true, application/json;"
         self._tasks = dict()
 
