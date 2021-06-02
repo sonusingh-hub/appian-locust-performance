@@ -34,6 +34,7 @@ class TestSailUiForm(unittest.TestCase):
     design_uri = "/suite/rest/a/applications/latest/app/design"
     report_link_uri = "/suite/rest/a/sites/latest/D6JMim/pages/reports/report/nXLBqg/reportlink"
     date_task_uri = '/suite/rest/a/task/latest/EMlJYSQyFKe2tvm5/form'
+    sites_task_uri = '/suite/rest/a/sites/latest/tst-site/pages/action/action'
     multi_dropdown_uri = "/suite/rest/a/sites/latest/io/page/onboarding-requests/action/34"
     report_name = "Batch Query Report"
     picker_label = '1. Select a Customer'
@@ -512,6 +513,51 @@ class TestSailUiForm(unittest.TestCase):
         self.assertEqual('post', last_request['method'])
         self.assertEqual(self.date_task_uri, last_request['path'])
         self.assertEqual('1990-01-02T01:30:00Z', self._unwrap_value(last_request['data']))
+
+    def _setup_grid_form(self) -> SailUiForm:
+        uri = self.sites_task_uri
+        self.custom_locust.set_response(uri, 200, self.sites_task_report_resp)
+        test_form = SailUiForm(self.task_set.appian.interactor,
+                               json.loads(self.sites_task_report_resp),
+                               uri)
+        return test_form
+
+    def test_select_grid_row_success(self) -> None:
+        test_form = self._setup_grid_form()
+        test_form.select_rows_in_grid([2], "My Tasks")
+
+        last_request = self.custom_locust.get_request_list().pop()
+        self.assertEqual('post', last_request['method'])
+        self.assertEqual(self.sites_task_uri, last_request['path'])
+
+        update = json.loads(last_request['data'])['updates']['#v'][0]['value']
+        self.assertEqual("GridSelection", update['#t'])
+        selected_list = update['selected']
+        self.assertEqual(1, len(selected_list))
+        selected = selected_list[0]
+        self.assertEqual("int", selected['#t'])
+        self.assertEqual(268435892, selected['#v'])
+
+    def test_multi_select_grid_row_success(self) -> None:
+        test_form = self._setup_grid_form()
+        test_form.select_rows_in_grid([0, 2], "My Tasks")
+
+        last_request = self.custom_locust.get_request_list().pop()
+        self.assertEqual('post', last_request['method'])
+        self.assertEqual(self.sites_task_uri, last_request['path'])
+
+        update = json.loads(last_request['data'])['updates']['#v'][0]['value']
+        self.assertEqual("GridSelection", update['#t'])
+        selected_list = update['selected']
+        self.assertEqual(2, len(selected_list))
+
+        first_selected = selected_list[0]
+        self.assertEqual("int", first_selected['#t'])
+        self.assertEqual(536871411, first_selected['#v'])
+
+        second_selected = selected_list[1]
+        self.assertEqual("int", second_selected['#t'])
+        self.assertEqual(268435892, second_selected['#v'])
 
     def test_dispatch_click_task_no_id(self) -> None:
         uri = self.report_link_uri

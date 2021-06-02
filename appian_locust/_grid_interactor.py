@@ -41,6 +41,15 @@ class GridInteractor:
         grid_label = str(grid.get("label")) if grid.get("label") else grid.get('_cId', "")[0:15]
         return grid_label
 
+    def select_rows(self, paging_grid: Dict[str, Any], rows: List[int]) -> Dict[str, Any]:
+        grid_data = self._get_grid_data(paging_grid)
+        identifiers = paging_grid.get("identifiers")
+        if not identifiers:
+            raise Exception(f"No identifiers found in grid.")
+        selected = [identifiers[row] for row in rows]
+        grid_data['selected'] = selected
+        return self._to_save_data(grid_data, paging_grid)
+
     def move_to_last_page(self, paging_grid: Dict[str, Any]) -> Dict[str, Any]:
         grid_data = self._get_grid_data(paging_grid)
         new_start_index = 1 + grid_data['total_count'] - grid_data['batch_size']
@@ -98,8 +107,10 @@ class GridInteractor:
         start_index = int(paging_info['startIndex'])
         batch_size = int(paging_info['batchSize'])
         sort_info = paging_info.get('sort')
+        selected = grid_value.get('selected')
 
         return {
+            'selected': selected,
             'total_count': total_count,
             'start_index': start_index,
             'batch_size': batch_size,
@@ -110,6 +121,7 @@ class GridInteractor:
         start_index = grid_data['start_index']
         batch_size = grid_data['batch_size']
         sort_info = grid_data['sort_info']
+        selected = grid_data.get('selected')
 
         # Support grid component with paging info within value.pagingInfo
         grid_value = paging_grid.get("value", "")
@@ -133,4 +145,6 @@ class GridInteractor:
             }
             if sort_info:
                 save_data['pagingInfo']['sort'] = sort_info
+            if selected:
+                save_data['selected'] = selected
         return save_data

@@ -1007,6 +1007,37 @@ class SailUiForm:
         return self._reconcile_state(new_state, form_url=reeval_url)
 
     @raises_locust_error
+    def select_rows_in_grid(self, rows: List[int], label: str = None, index: int = None, locust_request_label: str = "") -> 'SailUiForm':
+        """
+        Selects rows in a grid
+        Either a label or an index is required, indices are useful if there is no title for the grid
+
+        Args:
+            rows(List[int]): The rows to select
+            label(str): Label of the grid
+            index(int): Index of the grid
+
+        Keyword Args:
+            locust_request_label(str): Label used to identify the request for locust statistics
+
+        Returns (SailUiForm): The latest state of the UiForm
+
+        Examples:
+
+            >>> form.select_rows_in_grid(rows=[1], label='my nice grid')
+        """
+        grid = self.grid_interactor.find_grid_by_label_or_index(self.state, label=label, index=index)
+        grid_label = self.grid_interactor.format_grid_display_label(grid)
+
+        new_grid_save = self.grid_interactor.select_rows(grid, rows)
+        context_label = locust_request_label or f"{self.breadcrumb}.Grid.SelectRows.{grid_label}"
+
+        reeval_url = self._get_update_url_for_reeval(self.state)
+        new_state = self.interactor.update_grid_from_sail_form(reeval_url, grid, new_grid_save,
+                                                               self.context, self.uuid, context_label=context_label)
+        return self._reconcile_state(new_state, form_url=reeval_url)
+
+    @raises_locust_error
     def move_to_end_of_paging_grid(self, label: str = None, index: int = None, locust_request_label: str = "") -> 'SailUiForm':
         """
         Moves to the end of a paging grid, if possible
@@ -1014,7 +1045,7 @@ class SailUiForm:
 
         Args:
             label(str): Label of the grid
-            index(str): Index of the grid
+            index(int): Index of the grid
 
         Keyword Args:
             locust_request_label(str): Label used to identify the request for locust statistics
@@ -1044,7 +1075,7 @@ class SailUiForm:
 
         Args:
             label(str): Label of the grid
-            index(str): Index of the grid
+            index(int): Index of the grid
 
         Returns (SailUiForm): The latest state of the UiForm
 
@@ -1072,7 +1103,7 @@ class SailUiForm:
 
         Args:
             label(str): Label of the grid
-            index(str): Index of the grid
+            index(int): Index of the grid
 
         Keyword Args:
             locust_request_label(str): Label used to identify the request for locust statistics
@@ -1103,7 +1134,7 @@ class SailUiForm:
 
         Args:
             label(str): Label of the grid
-            index(str): Index of the grid
+            index(int): Index of the grid
 
         Keyword Args:
             locust_request_label(str): Label used to identify the request for locust statistics
@@ -1137,7 +1168,7 @@ class SailUiForm:
 
         Args:
             label(str): Label of the grid
-            index(str): Index of the grid
+            index(int): Index of the grid
             field_name(str): Field to sort on (not necessarily the same as the displayed one)
             ascending(bool): Whether to sort ascending, default is false
 
