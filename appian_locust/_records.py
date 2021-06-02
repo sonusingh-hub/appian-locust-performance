@@ -64,7 +64,7 @@ class _Records(_Base):
         uri = "/suite/rest/a/applications/latest/app/records/view/all"
         self._record_types = dict()
 
-        headers = self.interactor.setup_request_headers()
+        headers = self.interactor.setup_request_headers(uri=uri)
         headers['X-Appian-Features-Extended'] = 'e4bc'
         headers["Accept"] = "application/vnd.appian.tv.ui+json"
         response = self.interactor.get_page(uri=uri, headers=headers, label="Records")
@@ -392,7 +392,7 @@ class _Records(_Base):
             uri = f"/suite/rest/a/sites/latest/{tempo_site_url_stub}/pages/records/recordType/{record_type_url_stub}"
 
         label = f"Records.{record_type}"
-        headers = self.interactor.setup_request_headers()
+        headers = self.interactor.setup_request_headers(uri=uri)
         headers["Accept"] = "application/vnd.appian.tv.ui+json"
         response = self.interactor.get_page(uri=uri, headers=headers, label=label)
         json_response = response.json()

@@ -268,6 +268,19 @@ class TestInteractor(unittest.TestCase):
             "", queryparameters={"query": "val"})
         self.assertEqual('{"query": "result"}', output.text)
 
+    def test_domain_specific_headers(self) -> None:
+        self.task_set.appian.interactor.host = "https://somewhere.net/suite"
+
+        # Given a session for somewhere.net/suite and somewhere.net/other_suite
+        self.task_set.appian.interactor.client.cookies.set(name="JSESSIONID", value="other_suite-session", domain="somewhere.net", path="/other_suite")
+        self.task_set.appian.interactor.client.cookies.set(name="JSESSIONID", value="suite-session", domain="somewhere.net", path="/suite")
+
+        suite_header = self.task_set.appian.interactor.setup_request_headers(uri="https://somewhere.net/suite")
+        self.assertTrue("JSESSIONID=suite-session;" in suite_header["Cookie"])
+
+        other_suite_header = self.task_set.appian.interactor.setup_request_headers(uri="https://somewhere.net/other_suite")
+        self.assertTrue("JSESSIONID=other_suite-session;" in other_suite_header["Cookie"])
+
     def test_change_user_to_mobile(self) -> None:
         # Given
         default_header = self.task_set.appian.interactor.setup_request_headers()
