@@ -67,13 +67,6 @@ class _Interactor:
         """
 
         uri = uri if uri is not None else self.host
-
-        # determine domain/path to choose correct cookies
-        # using urlparse, which is also used by requests/urllib
-        parsed_url = urllib.parse.urlparse(uri)
-        domain = None if parsed_url.netloc == '' else parsed_url.netloc
-        path = None if parsed_url.path == '' else parsed_url.path
-
         headers = {
             "Accept": "application/atom+json,application/json",
             "Accept-Encoding": "gzip, deflate, br",
@@ -83,13 +76,13 @@ class _Interactor:
             "Referer": uri + "/suite/tempo/",
             "X-Appian-Cached-Datatypes": self.datatype_cache.get(),
             "Cookie": "JSESSIONID={}; __appianCsrfToken={}; __appianMultipartCsrfToken={}".format(
-                self.client.cookies.get("JSESSIONID", "", domain=domain, path=path),
-                self.client.cookies.get("__appianCsrfToken", "", domain=domain, path=path),
-                self.client.cookies.get("__appianMultipartCsrfToken", "", domain=domain, path=path),
+                self.client.cookies.get("JSESSIONID", ""),
+                self.client.cookies.get("__appianCsrfToken", ""),
+                self.client.cookies.get("__appianMultipartCsrfToken", ""),
             ),
             "DNT": "1",
-            "X-APPIAN-CSRF-TOKEN": self.client.cookies.get("__appianCsrfToken", "", domain=domain, path=path),
-            "X-APPIAN-MP-CSRF-TOKEN": self.client.cookies.get("__appianMultipartCsrfToken", "", domain=domain, path=path),
+            "X-APPIAN-CSRF-TOKEN": self.client.cookies.get("__appianCsrfToken", ""),
+            "X-APPIAN-MP-CSRF-TOKEN": self.client.cookies.get("__appianMultipartCsrfToken", ""),
             "X-Appian-Ui-State": "stateful",
             "X-Appian-Features": self.client.feature_flag,
             "X-Appian-Features-Extended": self.client.feature_flag_extended,
@@ -99,15 +92,15 @@ class _Interactor:
         }
         return headers
 
-    def setup_sail_headers(self, uri: str = None) -> dict:
-        headers = self.setup_request_headers(uri=uri)
+    def setup_sail_headers(self) -> dict:
+        headers = self.setup_request_headers()
         headers.update({'Content-Type': 'application/vnd.appian.tv+json',
                         'Accept': 'application/vnd.appian.tv.ui+json'})
         return headers
 
     # Headers needed for Record View request, which returns a feed object
-    def setup_feed_headers(self, uri: str = None) -> dict:
-        headers = self.setup_request_headers(uri=uri)
+    def setup_feed_headers(self) -> dict:
+        headers = self.setup_request_headers()
         headers["Accept"] = "application/atom+json; inlineSail=true; recordHeader=true"
         headers["Accept"] = headers["Accept"] + ", application/json; inlineSail=true; recordHeader=true"
         return headers
@@ -291,22 +284,21 @@ class _Interactor:
         '''
         Uploads a document to the server, so that it can be used in upload fields
         Args:
+            uri: API URI to be called
             file_path: Path to the file to be uploaded
-            is_encrypted: Boolean, sets header for encrypted files
 
         Returns: Document Id that can be used for upload fields
         ''',
 
-        upload_uri = "/suite/api/tempo/file?validateExtension=false"
         # Override default headers to avoid sending SAIL headers here
-        headers = self.setup_request_headers(uri=upload_uri)
+        headers = self.setup_request_headers()
         if is_encrypted:
             headers['encrypted'] = 'true'
         with open(file_path, 'rb') as f:
             resp_label = "Document.Upload." + os.path.basename(file_path).strip(" .")
             files = {"file": f}
             response = self.post_page(
-                upload_uri,
+                "/suite/api/tempo/file?validateExtension=false",
                 headers=headers,
                 label=resp_label,
                 files=files)

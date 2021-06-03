@@ -1293,9 +1293,9 @@ class SailUiForm:
 
     def go_to_next_record_grid_page(self, locust_request_label: str = "") -> 'SailUiForm':
         context_label = locust_request_label or f"{self.breadcrumb}.NextPage"
-        reeval_url = self._get_update_url_for_reeval(self.state)
-        headers = self.interactor.setup_request_headers(uri=reeval_url)
+        headers = self.interactor.setup_request_headers()
         headers["Accept"] = "application/vnd.appian.tv.ui+json"
+        reeval_url = self._get_update_url_for_reeval(self.state)
         label = 'NEXT'
         if not _is_grid(self.state):
             raise Exception("Not a grid record list")
