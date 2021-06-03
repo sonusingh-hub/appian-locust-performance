@@ -169,13 +169,11 @@ class _News(_Base):
 
     def _visit_internal(self, news_name: str, exact_match: bool = True, search_string: str = None) -> Tuple:
         current_news = self.get_news(news_name, exact_match, search_string)
+        headers = self.interactor.setup_request_headers()
         tempo_site_url_stub = "D6JMim"
 
         # Nav
         nav_uri = "/suite/rest/a/sites/latest/" + tempo_site_url_stub + "/page/news/nav"
-
-        headers = self.interactor.setup_request_headers(uri=nav_uri)
-
         # navigation request before the search
         headers["Accept"] = "application/vnd.appian.tv.ui+json"
         self.interactor.get_page(uri=nav_uri, headers=headers, label="News.Nav")

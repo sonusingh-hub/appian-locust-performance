@@ -65,20 +65,15 @@ class MockClient:
                 """
 
     def __init__(self) -> None:
-        self.dict_cookies = {
-            "JSESSIONID": "a",
-            "__appianCsrfToken": "b",
-            "__appianMultipartCsrfToken": "c"
-        }
-        cookie_jar = requests.cookies.cookiejar_from_dict(self.dict_cookies)
-        self.cookies = cookie_jar
+        self.cookies = {"JSESSIONID": "a", "__appianCsrfToken": "b",
+                        "__appianMultipartCsrfToken": "c"}
         self.enqueue_cookies = {"JSESSIONID": "a"}
         self.request_list: List[Dict[str, Any]] = []
         self.response_dict: dict = {}
         self.default_response = MockResponse()
         self.default_response.status_code = 200
         self.default_response.content = str.encode("")
-        self.default_response.cookies = cookie_jar
+        self.default_response.cookies = requests.cookies.cookiejar_from_dict(self.cookies)
 
         # For feature toggles
         self.set_response("/suite/sites", 200, self.html_snippet)
