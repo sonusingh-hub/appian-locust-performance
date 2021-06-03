@@ -104,7 +104,7 @@ class _Interactor:
         headers["Accept"] = "application/atom+json; inlineSail=true; recordHeader=true"
         headers["Accept"] = headers["Accept"] + ", application/json; inlineSail=true; recordHeader=true"
         return headers
-    
+
     def setup_content_headers(self) -> dict:
         headers = self.setup_request_headers()
         headers["Accept"] = "*/*"
