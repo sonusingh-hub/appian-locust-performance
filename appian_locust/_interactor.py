@@ -105,6 +105,11 @@ class _Interactor:
         headers["Accept"] = headers["Accept"] + ", application/json; inlineSail=true; recordHeader=true"
         return headers
 
+    def setup_content_headers(self) -> dict:
+        headers = self.setup_request_headers()
+        headers["Accept"] = "*/*"
+        return headers
+
     def replace_base_path_if_appropriate(self, uri: str) -> str:
         if hasattr(self.client, "base_path_override") and self.client.base_path_override and \
                 self.client.base_path_override != '/suite':
