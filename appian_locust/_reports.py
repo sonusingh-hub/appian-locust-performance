@@ -6,6 +6,9 @@ from ._locust_error_handler import log_locust_error, test_response_for_error
 from .helper import format_label
 from .uiform import SailUiForm
 
+REPORTS_INTERFACE_PATH = "/suite/rest/a/sites/latest/D6JMim/pages/reports/interface"
+REPORTS_NAV_PATH = "/suite/rest/a/sites/latest/D6JMim/page/reports/nav"
+
 
 class _Reports(_Base):
     def __init__(self, interactor: _Interactor) -> None:
@@ -27,7 +30,25 @@ class _Reports(_Base):
         self._reports: Dict[str, Any] = dict()
         self._errors: int = 0
 
-    def get_all(self, search_string: str = None, locust_request_label: str = None) -> Dict[str, Any]:
+    def get_reports_interface(self, label: str = "Reports.Interface") -> Dict[str, Any]:
+        path = REPORTS_INTERFACE_PATH
+        headers = self.interactor.setup_sail_headers()
+        resp = self.interactor.get_page(
+            self.interactor.host + path, headers=headers, label=label
+        )
+
+        return resp.json()
+
+    def get_reports_nav(self, label: str = "Reports.Nav") -> Dict[str, Any]:
+        path = REPORTS_NAV_PATH
+        headers = self.interactor.setup_sail_headers()
+        resp = self.interactor.get_page(
+            self.interactor.host + path, headers=headers, label=label
+        )
+
+        return resp.json()
+
+    def get_all(self, search_string: str = None, locust_request_label: str = "Reports.Feed") -> Dict[str, Any]:
         """
         Retrieves all the available "reports" and associated metadata from "Appian-Tempo-Reports"
 
@@ -46,7 +67,7 @@ class _Reports(_Base):
         error_key_string = "ERROR::"
         error_key_count = 0
 
-        response = self.interactor.get_page(uri=uri, label="Reports.Feed")
+        response = self.interactor.get_page(uri=uri, label=locust_request_label)
 
         try:
             for current_item in response.json()['feed']['entries']:
