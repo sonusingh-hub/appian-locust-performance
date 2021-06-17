@@ -15,6 +15,9 @@ from .uiform import SailUiForm
 
 log = logger.getLogger(__name__)
 
+RECORDS_INTERFACE_PATH = "/suite/rest/a/sites/latest/D6JMim/pages/records/interface"
+RECORDS_NAV_PATH = "/suite/rest/a/sites/latest/D6JMim/page/records/nav"
+
 
 class _Records(_Base):
     def __init__(self, interactor: _Interactor) -> None:
@@ -35,6 +38,22 @@ class _Records(_Base):
         self._record_types: Dict[str, Any] = dict()
         self._records: Dict[str, Any] = dict()
         self._errors: int = 0
+
+    def get_record_interface(self, locust_request_label: str = "Records.Interface") -> Dict[str, Any]:
+        path = RECORDS_INTERFACE_PATH
+        headers = self.interactor.setup_sail_headers()
+        resp = self.interactor.get_page(
+            self.interactor.host + path, headers=headers, label=locust_request_label
+        )
+        return resp.json()
+
+    def get_records_nav(self, locust_request_label: str = "Records.Nav") -> Dict[str, Any]:
+        path = RECORDS_NAV_PATH
+        headers = self.interactor.setup_sail_headers()
+        resp = self.interactor.get_page(
+            self.interactor.host + path, headers=headers, label=locust_request_label
+        )
+        return resp.json()
 
     def get_all(self, search_string: str = None, locust_request_label: str = None) -> Dict[str, Any]:
         """
@@ -187,7 +206,7 @@ class _Records(_Base):
             raise Exception(f"There is no record type with name {record_type} in the system under test (Exact match = {exact_match})")
         return current_record_type
 
-    def visit_record_instance(self, record_type: str = "", record_name: str = "", view_url_stub: str = "", exact_match: bool = True) -> Tuple[Dict[str, Any], str]:
+    def visit_record_instance(self, record_type: str = "", record_name: str = "", view_url_stub: str = "", exact_match: bool = True, locust_request_label: str = "") -> Tuple[Dict[str, Any], str]:
         """
         This function calls the API for the specific record view/instance to get its response data.
 
@@ -198,6 +217,7 @@ class _Records(_Base):
             record_name (str): Name of the record to be called. If not specified, a random record will be selected.
             view_url_stub (str, optional): page/tab to be visited in the record. If not specified, "summary" dashboard will be selected.
             exact_match (bool, optional): Should record type and record name matched exactly as it is or partial match.
+            locust_request_label(str,optional): Label used to identify the request for locust statistics
 
         Returns (tuple): Responses of Record's Get UI call in a dictionary and the request URI as a string.
 
@@ -239,10 +259,10 @@ class _Records(_Base):
             dashboard_val = current_record.get("dashboard")
             view_url_stub = dashboard_val if dashboard_val else "summary"
 
-        label = f'Records.{record_type}.{record_label}.{view_url_stub}'
+        locust_label = locust_request_label or f'Records.{record_type}.{record_label}.{view_url_stub}'
 
         uri = f"/suite/rest/a/sites/latest/{tempo_site_url_stub}/page/records/record/{opaque_id}/view/{view_url_stub}"
-        resp = self.interactor.get_page(uri=uri, headers=headers, label=label)
+        resp = self.interactor.get_page(uri=uri, headers=headers, label=locust_label)
         return resp.json(), uri
 
     # Alias for the above function to allow backwards compatability

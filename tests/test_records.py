@@ -131,19 +131,19 @@ class TestRecords(unittest.TestCase):
 
     def test_records_visit(self) -> None:
         output_json, output_uri = self.task_set.appian.records.visit_record_instance(
-            "Commits", self.record_instance_name, exact_match=False)
+            "Commits", self.record_instance_name, exact_match=False, locust_request_label='')
         self.assertIsInstance(output_json, dict)
         self.assertTrue("summary" in output_uri)
 
     def test_records_visit_random_success(self) -> None:
         self.custom_locust.set_default_response(200, self.record_summary_view)
-        output_json, output_uri = self.task_set.appian.records.visit_record_instance()
+        output_json, output_uri = self.task_set.appian.records.visit_record_instance(locust_request_label='')
         self.assertIsInstance(output_json, dict)
         self.assertTrue("summary" in output_uri)
 
     def test_records_visit_random_of_selected_record_type_success(self) -> None:
         self.custom_locust.set_default_response(200, self.record_summary_view)
-        output_json, output_uri = self.task_set.appian.records.visit_record_instance(record_type="Commits")
+        output_json, output_uri = self.task_set.appian.records.visit_record_instance(record_type="Commits", locust_request_label='')
         self.assertIsInstance(output_json, dict)
         self.assertTrue("summary" in output_uri)
 
@@ -154,7 +154,7 @@ class TestRecords(unittest.TestCase):
 
     def test_records_visit_with_urlstub(self) -> None:
         output_json, output_uri = self.task_set.appian.records.visit_record_instance(
-            "Commits", self.record_instance_name, "summary", exact_match=False)
+            "Commits", self.record_instance_name, "summary", exact_match=False, locust_request_label='')
         self.assertIsInstance(output_json, dict)
         self.assertTrue("summary" in output_uri)
 
