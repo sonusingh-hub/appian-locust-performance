@@ -1,8 +1,9 @@
 import datetime
+import errno
 import json
 import unittest
 from typing import Any, List, Optional
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, call, patch
 
 from appian_locust import AppianTaskSet, SailUiForm
 from appian_locust.helper import (ENV, find_component_by_attribute_in_dict,
@@ -27,6 +28,7 @@ class TestSailUiForm(unittest.TestCase):
     date_response = read_mock_file("date_task.json")
     multi_dropdown_response = read_mock_file("dropdown_test_ui.json")
     sail_ui_actions_response = read_mock_file("sail_ui_actions_cmf.json")
+    file_upload_initial = read_mock_file("multiple_file_upload_widget.json")
     record_action_launch_form_before_refresh = read_mock_file("record_action_launch_form_before_refresh.json")
     record_action_refresh_response = read_mock_file("record_action_refresh_response.json")
     site_with_record_search_button = read_mock_file("site_with_record_search_button.json")
@@ -302,6 +304,52 @@ class TestSailUiForm(unittest.TestCase):
             }
             sail_form = SailUiForm(self.task_set.appian.interactor, ui, self.process_model_form_uri)
             sail_form.upload_document_to_upload_field(label, file)
+
+    def test_multi_upload_document_invalid_component(self) -> None:
+        with self.assertRaisesRegex(Exception, 'Provided component was not a MultipleFileUploadWidget'):
+            label = 'Form'
+            ui = ui = {
+                'contents': [
+
+                    {
+                        "label": label,
+                        "labelPosition": "ABOVE",
+                        "instructions": "",
+                        "instructionsPosition": "",
+                        "helpTooltip": "Upload an application or a multi-patch package",
+                        "requiredStyle": "",
+                        "skinName": "",
+                        "marginBelow": "",
+                        "accessibilityText": "",
+                        "#t": "FormLayout"
+                    },
+                ]
+            }
+            sail_form = SailUiForm(self.task_set.appian.interactor, ui, self.process_model_form_uri)
+            sail_form.upload_documents_to_multiple_file_upload_field(label, 'fake_file')
+
+    def test_multi_upload_document_invalid_file(self) -> None:
+        with self.assertRaisesRegex(FileNotFoundError, "No such file or directory: "):
+            ui = json.loads(self.file_upload_initial)
+            label = 'File Upload 5'
+            sail_form = SailUiForm(self.task_set.appian.interactor, ui, self.process_model_form_uri)
+            sail_form.upload_documents_to_multiple_file_upload_field(label, ['fake_file'])
+
+    @patch('appian_locust.SailUiForm.upload_documents_to_multiple_file_upload_field')
+    def test_single_to_multi_upload_document(self, mock_upload_documents_to_multiple_file_upload_field: MagicMock) -> None:
+        ui = json.loads(self.file_upload_initial)
+        label = 'File Upload 5'
+        sail_form = SailUiForm(self.task_set.appian.interactor, ui, self.process_model_form_uri)
+        sail_form.upload_document_to_upload_field(label, 'fake_file')
+        mock_upload_documents_to_multiple_file_upload_field.assert_called_once()
+
+    @patch('appian_locust.SailUiForm.upload_document_to_upload_field')
+    def test_multi_to_single_upload_document(self, mock_upload_document_to_upload_field: MagicMock) -> None:
+        ui = json.loads(self.file_upload_initial)
+        label = 'File Upload 4'
+        sail_form = SailUiForm(self.task_set.appian.interactor, ui, self.process_model_form_uri)
+        sail_form.upload_documents_to_multiple_file_upload_field(label, 'fake_file')
+        mock_upload_document_to_upload_field.assert_called_once()
 
     def test_click_related_action_on_record_form(self) -> None:
         self.custom_locust.set_response('/suite/rest/a/record/latest/BE5pSw/ioBHer_bdD8Emw8hMSiA_CnpxaK0CVK61sPetEqM0lI_pHvjAsXVOlJtUo/actions/'

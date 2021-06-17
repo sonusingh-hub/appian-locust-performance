@@ -1,4 +1,4 @@
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Union, Optional
 
 
 def save_builder() -> '_SaveRequestBuilder':
@@ -15,7 +15,7 @@ class _SaveRequestBuilder:
         self._component: Optional[dict] = None
         self._uuid: Optional[str] = None
         self._context: Optional[dict] = None
-        self._value: Optional[dict] = None
+        self._value: Optional[Union[dict, list]] = None
         self._record_url_stub: Optional[str] = None
 
     def component(self, component: Dict[str, Any]) -> '_SaveRequestBuilder':
@@ -30,7 +30,7 @@ class _SaveRequestBuilder:
         self._context = context
         return self
 
-    def value(self, value: dict) -> '_SaveRequestBuilder':
+    def value(self, value: Union[dict, list]) -> '_SaveRequestBuilder':
         self._value = value
         return self
 

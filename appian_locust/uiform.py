@@ -5,7 +5,7 @@ import json
 import os
 import random
 import warnings
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Union, Optional
 from urllib.parse import quote, urlparse
 
 from appian_locust.records_helper import _is_grid
@@ -879,7 +879,7 @@ class SailUiForm:
         return self._reconcile_state(new_state, form_url=reeval_url)
 
     @raises_locust_error
-    def upload_document_to_upload_field(self, label: str, file_path: str, locust_request_label: str = "") -> 'SailUiForm':
+    def upload_document_to_upload_field(self, label: str, file_path: Union[str, List], locust_request_label: str = "") -> 'SailUiForm':
         """
         Uploads a document to a named upload field
         There are two steps to this which can fail, one is the document upload, the other
@@ -911,19 +911,83 @@ class SailUiForm:
 
         # Check again to see if the wrong component
         if component.get('#t') != 'FileUploadWidget':
-            raise Exception(f"Provided component was not a FileUploadWidget, was instead of type '{component.get('#t')}'")
+            if component.get('#t') == "MultipleFileUploadWidget":
+                print("Selected FileUploadWidget is instead MultipleFileUploadWidget, continuing automatically")
+                return self.upload_documents_to_multiple_file_upload_field(label, file_path, locust_request_label)
+            else:
+                raise Exception(f"Provided component was not a FileUploadWidget, was instead of type '{component.get('#t')}'")
+
+        if type(file_path) != str:
+            raise Exception(f"Provided file_path {file_path} was not a string, was instead of type '{type(file_path)}'")
 
         is_encrypted = component.get("isEncrypted", False)
 
-        if not os.path.exists(file_path):
+        if not os.path.exists(str(file_path)):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), file_path)
-        doc_id = self.interactor.upload_document_to_server(file_path, is_encrypted=is_encrypted)
+        doc_id = self.interactor.upload_document_to_server(str(file_path), is_encrypted=is_encrypted)
         locust_label = locust_request_label or f"{self.breadcrumb}.FileUpload.{label}"
         new_state = self.interactor.upload_document_to_field(
             self.form_url, component, self.context, self.uuid, doc_id=doc_id, locust_label=locust_label)
         if not new_state:
             raise Exception(
                 f"No response returned when trying to upload file to field '{label}'")
+        return self._reconcile_state(new_state)
+
+    @raises_locust_error
+    def upload_documents_to_multiple_file_upload_field(self, label: str, file_paths: List[str], locust_request_label: str = "") -> 'SailUiForm':
+        """
+        Uploads multiple documents to a named upload field
+        There are two steps to this which can fail, one is the document uploads, the other
+        is finding the component and applying the update.
+
+        Args:
+            label(str): Label of the upload field
+            file_paths(list): List of document file paths in string form
+
+        Keyword Args:
+            locust_request_label(str): Label used to identify the request for locust statistics
+
+        Returns (SailUiForm): The latest state of the UiForm
+
+        Example:
+
+            >>> form.multi_upload_document_to_upload_field('Upload Files', ["/usr/local/appian/File1.zip", "/usr/local/appian/File2.zip"])
+
+        """
+        component = find_component_by_attribute_in_dict(
+            'label', label, self.state)
+
+        self._validate_component_found(component, label)
+
+        # Ensure that the files to upload are actually in a list (as opposed to a string)
+        # we do have type checking, but it apparently allows for strings as a special case of list
+        if type(file_paths) == str:
+            file_paths = list(file_paths)
+
+        # Inner component can be the upload field
+        if component.get('#t') != 'MultipleFileUploadWidget' and 'contents' in component:
+            component = component['contents']
+
+        # Check again to see if the wrong component
+        if component.get('#t') != 'MultipleFileUploadWidget':
+            if component.get('#t') == "FileUploadWidget":
+                print("Selected MultipleFileUploadWidget is instead FileUploadWidget, continuing automatically")
+                return self.upload_document_to_upload_field(label, file_paths[0], locust_request_label)
+            raise Exception(f"Provided component was not a MultipleFileUploadWidget, was instead of type '{component.get('#t')}'")
+
+        is_encrypted = component.get("isEncrypted", False)
+
+        doc_ids: List[int] = []
+        for file_path in file_paths:
+            if not os.path.exists(file_path):
+                raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), file_path)
+            doc_ids.append(self.interactor.upload_document_to_server(file_path, is_encrypted=is_encrypted))
+        locust_label = locust_request_label or f"{self.breadcrumb}.MultiFileUpload.{label}"
+        new_state = self.interactor.upload_document_to_field(
+            self.form_url, component, self.context, self.uuid, doc_id=doc_ids, locust_label=locust_label)
+        if not new_state:
+            raise Exception(
+                f"No response returned when trying to upload file(s) to field '{label}'")
         return self._reconcile_state(new_state)
 
     @raises_locust_error

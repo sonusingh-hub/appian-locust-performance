@@ -4,7 +4,7 @@ import sys
 import urllib.parse
 from datetime import date, datetime, timedelta
 from re import match, search
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 from locust.clients import HttpSession, ResponseContextManager
 from requests import Response
@@ -819,27 +819,34 @@ class _Interactor:
         return resp.json()
 
     def upload_document_to_field(self, post_url: str, upload_field: Dict[str, Any],
-                                 context: Dict[str, Any], uuid: str, doc_id: int,
+                                 context: Dict[str, Any], uuid: str, doc_id: Union[int, List[int]],
                                  locust_label: str = None, client_mode: str = 'DESIGN') -> Dict[str, Any]:
         '''
-            Calls the post operation to send an update to a upload_field to upload a document.
-            Requires a previously uploaded document id
+            Calls the post operation to send an update to a upload_field to upload a document or list thereof.
+            Requires a previously uploaded document id or ids
 
             Args:
                 post_url: the url (not including the host and domain) to post to
                 upload_field: the JSON representing the desired checkbox
                 context: the Sail context parsed from the json response
                 uuid: the uuid parsed from the json response
-                doc_id: document id for the upload
+                doc_id: document id or list of document ids for the upload
                 context_label: the label to be displayed by locust for this action
                 client_mode: where this is being uploaded to, defaults to DESIGN
 
             Returns: the response of post operation as json
         '''
-        new_value = {
-            "#t": "CollaborationDocument",
-            "id": doc_id
-        }
+        new_value: Union[List[Dict], Dict]
+        if isinstance(doc_id, int):
+            new_value = {
+                "#t": "CollaborationDocument",
+                "id": doc_id
+            }
+        elif isinstance(doc_id, List):
+            new_value = [{"#t": "CollaborationDocument", "id": id} for id in doc_id]
+        else:
+            log_locust_error(Exception(f"Bad document id or list of document ids: {doc_id}"))
+            sys.exit(2)
         payload = save_builder() \
             .component(upload_field) \
             .context(context) \
