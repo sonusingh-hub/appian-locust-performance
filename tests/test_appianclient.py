@@ -1,12 +1,15 @@
-import json
 import os
 import unittest
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 # Testing various imports rerouted
-from appian_locust import AppianClient, AppianTaskSet, helper, appianclient, records_helper, uiform, logger
-from appian_locust.exceptions import BadCredentialsException, MissingCsrfTokenException, MissingConfigurationException
-from appian_locust.appianclient import procedurally_generate_credentials, setup_distributed_creds
+from appian_locust import AppianClient, AppianTaskSet, logger
+from appian_locust.appianclient import (appian_client_without_locust,
+                                        procedurally_generate_credentials,
+                                        setup_distributed_creds)
+from appian_locust.exceptions import (BadCredentialsException,
+                                      MissingConfigurationException,
+                                      MissingCsrfTokenException)
 from locust import Locust, TaskSet
 
 from .mock_client import CustomLocust, MockClient, SampleAppianTaskSequence
@@ -155,6 +158,28 @@ class TestAppianBase(unittest.TestCase):
 
         # Then
         self.assertEqual(200, resp.status_code)
+
+    @patch('locust.clients.HttpSession._send_request_safe_mode')
+    def test_appian_client_without_locust(self, mock_send: Mock) -> None:
+        # Given
+        host = "https://my-fake-host.com"
+        base_path_override = "/abc"
+        resp = Mock()
+        mock_send.return_value = resp
+        resp.history = []
+        resp.content = ""
+
+        # When
+        client = appian_client_without_locust(host, record_mode=True,
+                                              base_path_override=base_path_override)
+
+        # Then constructed and passed through
+        self.assertEqual(client.interactor.host, host)
+        self.assertTrue(client.interactor.record_mode)
+        self.assertEqual(client.interactor.client.base_path_override, base_path_override)
+
+        # Test assembling request works without runtime error
+        client.interactor.client.request('GET', '/some-path')
 
     def test_procedurally_generate_credentials(self) -> None:
         # Given
