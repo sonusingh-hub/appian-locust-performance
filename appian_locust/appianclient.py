@@ -109,6 +109,9 @@ class NoOpEvents():
     def fire(self, *args: str, **kwargs: int) -> None:
         pass
 
+    def context(self, *args: str, **kwargs: int) -> dict:
+        return {}
+
 
 def appian_client_without_locust(host: str, record_mode: bool = False, base_path_override: str = None) -> 'AppianClient':
     """
