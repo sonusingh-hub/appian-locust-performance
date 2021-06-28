@@ -43,6 +43,41 @@ def get_all_records_from_json(json_response: Dict[str, Any]) -> Tuple[Dict[str, 
     return records, error_key_count
 
 
+def get_records_from_json_by_column(json_response: Dict[str, Any], column_index: int) -> Tuple[Dict[str, Any], int]:
+    is_grid = _is_grid(json_response)
+    records = {}
+    error_key_string = "ERROR::"
+    error_key_count = 0
+    if is_grid:
+        all_row_layouts = extract_values(json_response, "#t", "RowLayout")
+        column_headers = all_row_layouts.pop(0)
+        num_columns = len(column_headers)
+        for row in all_row_layouts:
+            record_link_raw = extract_values(row, "#t", "RecordLink")
+            if len(record_link_raw) > 0:
+                if column_index > (num_columns-1):
+                    error_key_count += 1
+                    error_message = f'Column index ({column_index}) is out of bounds. Please provide a column index between 0 and {num_columns-1}.'
+                    log_locust_error(e=Exception(error_message))
+                else:
+                    record_item = record_link_raw[0]
+                    try:
+                        opaque_id = row["contents"][column_index]["links"][0]["_recordRef"]
+                        label = row["contents"][column_index]["links"][0]["label"]
+                        record_item["label"] = label
+                        key = label + "::" + opaque_id
+                        records[key] = record_item
+                    except Exception as e:
+                        error_key_count += 1
+                        records[error_key_string + str(error_key_count)] = {}
+                        log_locust_error(e, error_desc="Corrupt Record Error")
+            else:
+                error_key_count += 1
+                log_locust_error(e=Exception('No record links found.'))
+
+    return records, error_key_count
+
+
 def get_record_summary_view_response(form_json: Dict[str, Any]) -> str:
     """
         This returns the contents of "x-embedded-summary" from Record Instance's Feed response
