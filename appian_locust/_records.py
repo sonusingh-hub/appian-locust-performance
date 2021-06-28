@@ -10,7 +10,7 @@ from ._base import _Base
 from ._interactor import _Interactor
 from .helper import format_label
 from .records_helper import (get_all_records_from_json,
-                             get_record_summary_view_response)
+                             get_record_summary_view_response, get_records_from_json_by_column)
 from .uiform import SailUiForm
 
 log = logger.getLogger(__name__)
@@ -88,7 +88,6 @@ class _Records(_Base):
         headers["Accept"] = "application/vnd.appian.tv.ui+json"
         response = self.interactor.get_page(uri=uri, headers=headers, label="Records")
         json_response = response.json()
-
         if not(self._is_response_good(response.text)):
             raise(Exception("Unexpected response on Get call of All Records"))
 
@@ -99,12 +98,13 @@ class _Records(_Base):
 
         return self._record_types
 
-    def get_all_records_of_record_type(self, record_type: str) -> Dict[str, Any]:
+    def get_all_records_of_record_type(self, record_type: str, column_index: int = None) -> Dict[str, Any]:
         """
         Navigate to the desired record type and load all metadata for the associated list of record views into cache.
 
         Args:
             record_type (str): Name of record type for which we want to enumerate the record instances.
+            column_index (int, optional): Column index to only fetch record links from a specific column, starts at 0.
 
         Returns (dict): List of records and associated metadata
 
@@ -115,7 +115,10 @@ class _Records(_Base):
 
         json_response, _ = self._record_type_list_request(record_type)
 
-        self._records[record_type], self._errors = get_all_records_from_json(json_response)
+        if column_index is not None:
+            self._records[record_type], self._errors = get_records_from_json_by_column(json_response, column_index)
+        else:
+            self._records[record_type], self._errors = get_all_records_from_json(json_response)
 
         return self._records
 

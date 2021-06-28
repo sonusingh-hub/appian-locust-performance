@@ -16,8 +16,9 @@ log = logger.getLogger(__name__)
 
 class TestRecords(unittest.TestCase):
     record_types = read_mock_file("record_types_response.json")
-    # Record Insance List for a specific RecordType
+    # Record Instance List for a specific RecordType
     records = read_mock_file("records_response.json")
+    grid_records = read_mock_file("records_grid_response.json")
     # Record Summary dashboard response for a specific Record Instance
     record_summary_view = read_mock_file("record_summary_view_response.json")
     record_instance_name = "Actions Page"
@@ -41,6 +42,10 @@ class TestRecords(unittest.TestCase):
                                         self.records)
         self.custom_locust.set_response("/suite/rest/a/applications/latest/legacy/tempo/records/type/commit/view/all", 200,
                                         self.records)
+        self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/pages/records/recordType/BE5pSw", 200,
+                                        self.grid_records)
+        self.custom_locust.set_response("/suite/rest/a/applications/latest/legacy/tempo/records/type/BE5pSw/view/all", 200,
+                                        self.grid_records)
         self.custom_locust.set_response(
             "/suite/rest/a/sites/latest/D6JMim/page/records/record/lQB0K7YxC0UQ2Fhx4pmY1F49C_MjItD4hbtRdKDmOo6V3MOBxI47ipGa_bJKZf86CLtvOCp1cfX-sa2O9hp6WTKZpbGo5MxRaaTwMkcYMeDl8kN8Hg/view/summary",
             200,
@@ -79,14 +84,54 @@ class TestRecords(unittest.TestCase):
                                                '"corrupt_recordRef": "lQB0K7YxC0UQ2Fhx4pmY1F49C_MjItD4hbtRdKDmOo6V3MOBxI47ipGa_bJKZf86CLtvOCp1cfX-sa2O9hu7mTKKv82PEWF9q1lBcroZD_VQpwcQDs"')
         self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/pages/records/recordType/commit", 200,
                                         corrupt_records)
-
-        all_records = self.task_set.appian.records.get_all()
-        self.assertTrue("ERROR::1" in str(all_records))
+        self.task_set.appian.records.get_all_record_types()
+        all_commit_records = self.task_set.appian.records.get_all_records_of_record_type('Commits')
+        self.assertTrue("ERROR::1" in str(all_commit_records))
         self.assertTrue(self.task_set.appian.records._errors == 1)
 
     def test_records_get_all_mobile(self) -> None:
         all_records = self.task_set.appian.records.get_all_mobile()
         self.assertIsInstance(all_records, dict)
+
+    def test_records_get_by_type(self) -> None:
+        # Given
+        record_type = 'Customer Service Requests'
+        self.task_set.appian.records.get_all_record_types()
+
+        # When
+        all_records = self.task_set.appian.records.get_all_records_of_record_type(record_type)
+
+        # Then
+        self.assertIsInstance(all_records, dict)
+
+    def test_records_get_by_type_and_column(self) -> None:
+        # Given
+        record_type = 'Customer Service Requests'
+        self.task_set.appian.records.get_all_record_types()
+
+        # When
+        all_customer_service_request_records = self.task_set.appian.records.get_all_records_of_record_type(record_type, 0)
+        all_customer_service_request_records_dict = all_customer_service_request_records['Customer Service Requests']
+        first_row_key = 'I49K-V46X::lIBHer_bdD8Emw8hLPETeiApJ24AA5ZJilzpBmewf--PdHDSUx022ZVdk6bhtcs5w_3twr_z1drDBwn8DKfhPp90o_A4GrZbDSh09DYkh5Mfq48'
+        last_row_key = '6L5P-GCEE::lIBHer_bdD8Emw8hLPETeiApJ24AA5ZJilzpBmewf--PdHDSUx022ZVdk6bhtcs5w_3twr_z1drDBwn_zmfhFySF7_Fv1bKeyNOM2BWVFmfhruJ'
+        wrong_column_key = 'Alcubierre Taxi Service::lIBHer_bdD8Emw8hLLETeiApBrxq-qoA49oyo6ZbfRANWNchnXIC8_QQLHMvQo3q8_3W_uY-NIUjTsvBQ19h-2W6cjGnZIXyKpKm91T6bH_IGdY'
+        # Then
+        self.assertIsInstance(all_customer_service_request_records, dict)
+        # asserting first and last row of correct column
+        self.assertTrue(
+            first_row_key in all_customer_service_request_records_dict)
+        self.assertTrue(
+            last_row_key in all_customer_service_request_records_dict)
+        # asserting list of entries to ensure no extra ones are returned
+        self.assertEqual(len(all_customer_service_request_records_dict.keys()), 25)
+        # asserting that a record link that does not belong to the given column is not returned
+        self.assertFalse(wrong_column_key in all_customer_service_request_records_dict)
+
+    def test_records_get_by_type_and_column_index_out_of_bounds(self) -> None:
+        record_type = 'Customer Service Requests'
+        self.task_set.appian.records.get_all_record_types()
+        with self.assertRaises(Exception) as e:
+            self.task_set.appian.records.get_all_records_of_record_type(record_type, 1000)
 
     def test_records_get_by_type_mobile(self) -> None:
         # Given
@@ -167,9 +212,10 @@ class TestRecords(unittest.TestCase):
     def test_record_type_visit_random_success(self) -> None:
         self.custom_locust.set_default_response(200, self.records)
         output_json, output_uri = self.task_set.appian.records.visit_record_type()
+        print(output_uri)
         self.assertIsInstance(output_json, dict)
         self.assertEqual(output_json.get("#t"), "UiConfig")
-        self.assertTrue("commit" in output_uri)
+        self.assertTrue("commit"in output_uri or "BE5pSw" in output_uri)
 
     def test_record_type_visit_failure(self) -> None:
         with self.assertRaises(Exception) as e:
@@ -250,7 +296,7 @@ class TestRecords(unittest.TestCase):
         self.task_set.appian.records._record_types = dict()
         self.task_set.appian.records._records = dict()
         record_type, record_name = self.task_set.appian.records._get_random_record_instance()
-        self.assertEqual(record_type, "Commits")
+        self.assertTrue(record_type == 'Commits' or record_type == 'Customer Service Requests')
         self.assertIn(record_name, list(self.task_set.appian.records._records[record_type].keys()))
 
     def test_get_random_record_get_all(self) -> None:
