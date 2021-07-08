@@ -17,9 +17,8 @@ from ._locust_error_handler import raises_locust_error
 from ._task_opener import _TaskOpener
 from ._ui_reconciler import UiReconciler
 from .exceptions import ComponentNotFoundException, InvalidComponentException, ChoiceNotFoundException
-from .helper import (extract_all_by_label, find_component_by_attribute_in_dict,
-                     find_component_by_index_in_dict,
-                     find_component_by_label_and_type_dict)
+from .helper import (extract_all_by_label, find_component_by_attribute_and_index_in_dict, find_component_by_attribute_in_dict,
+                     find_component_by_index_in_dict, find_component_by_label_and_type_dict)
 from .records_helper import (get_record_header_response,
                              get_record_summary_view_response,
                              get_url_stub_from_record_list_url_path)
@@ -101,21 +100,63 @@ class SailUiForm:
     def __str__(self) -> str:
         return f"self_state={json.dumps(self.state,indent=4)}"
 
-    # TODO: Handle components on a page with the same label
+    @raises_locust_error
+    def fill_field_by_attribute_and_index(self, attribute: str, attribute_value: str, fill_value: str, index: int = 0, locust_request_label: str = "") -> 'SailUiForm':
+        """
+        Selects a Field by "attribute" and its value provided "attribute_value" and an index if more than one Field is found
+        and fills it with text "fill_value"
+
+        Args:
+            attribute(str): Name of the field to fill
+            attribute_value(str): Value for the attribute passed in to this function
+            fill_value(str): Value to fill in the field
+
+        Keyword Args:
+            index(int): Index of the field to fill if more than one match the attribute and attribute_value criteria (default: 0)
+            locust_request_label(str): Label used to identify the request for locust statistics
+
+        Returns (SailUiForm): The latest state of the UiForm
+
+        Examples:
+
+            >>> form.fill_field_by_attribute_and_index("label", "Write a comment", "Hello, Testing")
+            # selects the Component with the "label" attribute having "Write a comment" value
+            # and fills it with "Hello, Testing"
+
+            >>> form.fill_field_by_attribute_and_index("label", "Write a comment", "Hello, Testing", 1)
+            # selects the second Component with the "label" attribute having "Write a comment" value
+            # and fills it wht "Hello, Testing"
+
+        """
+        component = find_component_by_attribute_and_index_in_dict(attribute, attribute_value, index, self.state)
+        self._validate_component_found(component, attribute_value)
+
+        if component.get("#t", "") not in COMPONENTS_THAT_CAN_BE_FILLED:
+            raise Exception(f"The Component with '{attribute}' = '{attribute_value}' is not a component that can be filled")
+
+        reeval_url = self._get_update_url_for_reeval(self.state)
+        locust_label = locust_request_label or f"{self.breadcrumb}.FillTextFieldByAttribute.{attribute}"
+        new_state = self.interactor.fill_textfield(
+            reeval_url, component, fill_value, self.context, self.uuid, label=locust_label)
+        if not new_state:
+            raise Exception(f"No response returned when trying to update the field with '{attribute}' = '{attribute_value}' at index '{index}'")
+
+        return self._reconcile_state(new_state, form_url=reeval_url)
 
     @raises_locust_error
-    def fill_text_field(self, label: str, value: str, is_test_label: bool = False, locust_request_label: str = "") -> 'SailUiForm':
+    def fill_text_field(self, label: str, value: str, is_test_label: bool = False, locust_request_label: str = "", index: int = 0) -> 'SailUiForm':
         """
         Fills a field on the form, if there is one present with the following label (case sensitive)
         Otherwise throws a NotFoundException
 
         Args:
             label(str): Label of the field to fill out
-            value(str): Value to update the label to
-            is_test_label(bool): If you are filling a text field via a test label instead of a label, set this boolean to true
+            value(str): Value to fill the field with
 
         Keyword Args:
+            is_test_label(bool): If you are filling a text field via a test label instead of a label, set this boolean to true
             locust_request_label(str): Label used to identify the request for locust statistics
+            index(int): Index of the field to fill if more than one match the label criteria (default: 0)
 
         Returns (SailUiForm): The latest state of the UiForm
 
@@ -124,19 +165,8 @@ class SailUiForm:
             >>> form.fill_text_field('Title','My New Novel')
 
         """
-        attribute_to_find = 'testLabel' if is_test_label else 'label'
-        component = find_component_by_attribute_in_dict(
-            attribute_to_find, label, self.state)
-        self._validate_component_found(component, label)
-
-        reeval_url = self._get_update_url_for_reeval(self.state)
-        locust_label = locust_request_label or f"{self.breadcrumb}.FillTextField.{label}"
-        new_state = self.interactor.fill_textfield(
-            reeval_url, component, value, self.context, self.uuid, label=locust_label)
-        if not new_state:
-            raise Exception(f"No response returned when trying to update field with label '{label}'")
-
-        return self._reconcile_state(new_state, form_url=reeval_url)
+        attribute_to_find = 'testlabel' if is_test_label else 'label'
+        return self.fill_field_by_attribute_and_index(attribute_to_find, label, value, index, locust_request_label)
 
     @raises_locust_error
     def fill_field_by_index(self, type_of_component: str, index: int, text_to_fill: str, locust_request_label: str = "") -> 'SailUiForm':
@@ -144,7 +174,7 @@ class SailUiForm:
         Selects a Field by its index and fills it with a text value
 
         Args:
-            type_of_component(str): Name of the componen to fill
+            type_of_component(str): Name of the component to fill
             index(int): Index of the field on the page (is it the first one found, or second etc.)
             value(int): Value to fill in the field of type 'type_of_component'
 
@@ -174,15 +204,15 @@ class SailUiForm:
         return self._reconcile_state(new_state, form_url=reeval_url)
 
     @raises_locust_error
-    def fill_field_by_any_attribute(self, attribute: str, value_for_attribute: str, text_to_fill: str, locust_request_label: str = "") -> 'SailUiForm':
+    def fill_field_by_any_attribute(self, attribute: str, value_for_attribute: str, text_to_fill: str, locust_request_label: str = "", index: int = 0) -> 'SailUiForm':
         """
         Selects a Field by "attribute" and its value provided "value_for_attribute"
         and fills it with text "text_to_fill"
 
         Args:
-            attribute(str): Name of the componen to fill
+            attribute(str): Name of the component to fill
             value_for_attribute(int): Value for the attribute passed in to this function
-            text_to_fill(int): Value to fill in the field of type 'type_of_component'
+            text_to_fill(int): Value to fill the field with
 
         Keyword Args:
             locust_request_label(str): Label used to identify the request for locust statistics
@@ -196,29 +226,7 @@ class SailUiForm:
             # and fills it with "Hello, Testing"
 
         """
-        component = find_component_by_attribute_in_dict(attribute, value_for_attribute, self.state)
-        if component is None:
-            raise Exception(f"No such component found with attribute: '{attribute}' and its value: '{value_for_attribute}''")
-
-        if component.get("#t", "") not in COMPONENTS_THAT_CAN_BE_FILLED:
-            raise Exception(
-                f'''
-                    The Component found with attribute: '{attribute}' and its value: '{value_for_attribute}'
-                    is not a component that can be filled")
-                ''')
-
-        reeval_url = self._get_update_url_for_reeval(self.state)
-        locust_label = locust_request_label or f"{self.breadcrumb}.FillTextFieldByAttribute.{attribute}"
-        new_state = self.interactor.fill_textfield(
-            reeval_url, component, text_to_fill, self.context, self.uuid, label=locust_label)
-        if not new_state:
-            raise Exception(
-                f'''
-                    No response returned when trying to fill: '{text_to_fill}' in the component found with attribute: '{attribute}'
-                    and its value: '{value_for_attribute}' on the current page")
-                ''')
-
-        return self._reconcile_state(new_state, form_url=reeval_url)
+        return self.fill_field_by_attribute_and_index(attribute, value_for_attribute, text_to_fill, index, locust_request_label)
 
     # Aliases for fill_text_field() function
     fill_paragraph_field = fill_text_field

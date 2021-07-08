@@ -142,6 +142,59 @@ class TestSailUiForm(unittest.TestCase):
         with self.assertRaisesRegex(Exception, "Cannot click a tab with label: 'DoesNotExistLabel' inside the TabButtonGroup component"):
             deployments_sail_form.get_latest_form().click_tab_by_label("DoesNotExistLabel", "deployment-secondary-tabs")
 
+    def test_fill_text_field(self) -> None:
+        report_body = read_mock_file("text_fields_same_label.json")
+        self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
+        sail_form = self.task_set.appian.reports.visit_and_get_form(report_name=self.report_name, exact_match=False)
+
+        label = 'Text'
+        value = 'Filling out the form...'
+        sail_form.fill_text_field(label, value)
+
+    def test_fill_text_field_by_index(self) -> None:
+        report_body = read_mock_file("text_fields_same_label.json")
+        self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
+        sail_form = self.task_set.appian.reports.visit_and_get_form(report_name=self.report_name, exact_match=False)
+
+        label = 'Text'
+        value = 'Filling out the form...'
+        index = 1
+        sail_form.fill_text_field(label, value, index=index)
+
+    def test_fill_text_field_no_fields(self) -> None:
+        report_body = read_mock_file("text_fields_same_label.json")
+        self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
+        sail_form = self.task_set.appian.reports.visit_and_get_form(self.report_name, exact_match=False)
+
+        label = 'Non-existant label'
+        value = 'Filling out the form...'
+        with self.assertRaises(ComponentNotFoundException) as context:
+            sail_form.fill_text_field(label, value)
+        self.assertEqual(
+            context.exception.args[0], f"No components with label 'Non-existant label' found on page")
+
+    def test_fill_text_field_out_of_bounds_index(self) -> None:
+        report_body = read_mock_file("text_fields_same_label.json")
+        self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
+        sail_form = self.task_set.appian.reports.visit_and_get_form(self.report_name, exact_match=False)
+
+        label = 'Text'
+        value = 'Filling out the form...'
+        index = 2
+        with self.assertRaisesRegex(Exception, "Index: '2' out of range"):
+            sail_form.fill_text_field(label, value, index=index)
+
+    def test_fill_text_field_negative_index(self) -> None:
+        report_body = read_mock_file("text_fields_same_label.json")
+        self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
+        sail_form = self.task_set.appian.reports.visit_and_get_form(self.report_name, exact_match=False)
+
+        label = 'Text'
+        value = 'Filling out the form...'
+        index = -1
+        with self.assertRaisesRegex(Exception, "Index: '-1' out of range"):
+            sail_form.fill_text_field(label, value, index=index)
+
     def test_fill_picker_field_interaction(self) -> None:
         sail_ui_actions_cmf = json.loads(self.sail_ui_actions_response)
         picker_widget_suggestions = read_mock_file("picker_widget_suggestions.json")

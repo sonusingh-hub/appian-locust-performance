@@ -2,6 +2,7 @@ import functools
 import random
 import re
 from typing import Any, Callable, Dict, Generator, List, Union
+from .exceptions import ComponentNotFoundException
 
 import gevent  # type: ignore
 from locust.env import Environment
@@ -60,7 +61,7 @@ def extract_values(obj: Dict[str, Any], key: str, val: Any) -> List[Dict[str, An
         list of matched key-value pairs
 
     """
-    return [elem for elem in extract(obj, key, val)]
+    return list(extract(obj, key, val))
 
 
 def extract_item_by_label(obj: Union[dict, list], label: str) -> Generator:
@@ -237,6 +238,36 @@ def _find_component_by_type_and_index(type_name: str, index: int, component: Any
                 else:
                     count = result
     return count
+
+
+def find_component_by_attribute_and_index_in_dict(attribute: str, value: str, index: int, component_tree: Dict[str, Any]) -> Any:
+    """
+    Find a UI component by the given attribute (label for example) in a dictionary
+    It returns the index'th match in a depth first search of the json tree
+    It returns the dictionary that contains the given attribute with the given value
+    or throws an error when none is found
+
+    Args:
+        attribute: an attribute to search ('label' for example)
+        value: the value of the attribute ('Submit' for example)
+        index: the index of the component to find if multiple components are found with the same 'value' for 'attribute' (0 for example)
+        component_tree: the json response.
+
+    Returns:
+        The json object of the component
+
+    Example:
+        >>> find_component_by_attribute_and_index_in_dict('label', 'Submit', 1, self.json_response)
+
+        will search the json response to find the second component that has 'Submit' as the label
+
+    """
+    components_with_attribute = extract_values(component_tree, attribute, value)
+    if not components_with_attribute:
+        raise ComponentNotFoundException(f"No components with {attribute} '{value}' found on page")
+    if 0 <= index < len(components_with_attribute):
+        return components_with_attribute[index]
+    raise Exception(f"Index: '{index}' out of range")
 
 
 def repeat(num_times: int = 2, wait_time: float = 0.0) -> Callable:
