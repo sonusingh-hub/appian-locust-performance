@@ -132,7 +132,7 @@ class _Tasks(_Base):
 
         Args:
             task_name (str): Name of the task to search for
-            exact_match (bool, optional): Whether or not a full match is returned. Defaults to True.
+            exact_match (bool, optional): Whether or not a full match is returned. Defaults to True. 
 
         Returns:
             SailUiForm: SAIL form for the task

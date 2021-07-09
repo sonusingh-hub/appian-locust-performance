@@ -29,6 +29,7 @@ class _TaskOpener:
             task_id (str): task identifier
             headers (Dict[str, Any], optional): Headers to send. Defaults to {}.
             task_title (str, optional): Task title used to describe the interaction. Defaults to "".
+            locust_request_label (str, optional): label to be used within locust
 
         Returns:
             Dict[str, Any]: Response from accepting
@@ -58,6 +59,7 @@ class _TaskOpener:
             task_title (str): Title to identify the task
             task_id (str): Id used to navigate to the task
             extra_headers (Dict[str, Any], optional): Extra headers, used for sites requests. Defaults to None.
+            locust_request_label (str, optional): label to be used within locust
 
         Returns:
             Dict[str, Any]: State returned by visiting the task
@@ -74,7 +76,7 @@ class _TaskOpener:
         if not resp["isAutoAcceptable"]:
 
             # First do a suite/rest/a/task/latest/{}/status call to get the button component
-            unaccepted_task_form = self.accept_a_task("assigned", task_id, task_title=task_title, headers=headers)  # , locust_request_label=f'{label}.Accept')
+            unaccepted_task_form = self.accept_a_task("assigned", task_id, task_title=task_title, headers=headers)
             accept_button = find_component_by_attribute_in_dict(
                 "label",
                 "Accept",
@@ -96,5 +98,5 @@ class _TaskOpener:
             )
         else:
             # The task does not need to be accepted in this case
-            accepted_task_form = self.accept_a_task("accepted", task_id, task_title=task_title, headers=headers)  # , locust_request_label=f'{label}.Status')
+            accepted_task_form = self.accept_a_task("accepted", task_id, task_title=task_title, headers=headers)
         return accepted_task_form
