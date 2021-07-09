@@ -21,7 +21,7 @@ class _TaskOpener:
 
         self._tasks: Dict[str, Any] = dict()
 
-    def accept_a_task(self, payload: str, task_id: str, headers: Dict[str, Any] = None, task_title: str = "") -> Dict[str, Any]:
+    def accept_a_task(self, payload: str, task_id: str, headers: Dict[str, Any] = None, task_title: str = "", locust_request_label: str = None) -> Dict[str, Any]:
         """Accept a task if necessary
 
         Args:
@@ -46,12 +46,12 @@ class _TaskOpener:
         # For reference, see: https://jira.host.net/browse/AN-58600
         headers["X-HTTP-Method-Override"] = "PUT"
 
-        label = f'Tasks.{task_title}.Accept'
+        label = locust_request_label or f'Tasks.{task_title}.Status'
         resp = self.interactor.post_page(uri=uri, payload=payload, headers=headers,
                                          label=label)
         return resp.json()
 
-    def visit_by_task_id(self, task_title: str, task_id: str, extra_headers: Dict[str, Any] = None) -> Dict[str, Any]:
+    def visit_by_task_id(self, task_title: str, task_id: str, extra_headers: Dict[str, Any] = None, locust_request_label: str = None) -> Dict[str, Any]:
         """Vist a task page and the corresponding json using the task_id
 
         Args:
@@ -67,14 +67,14 @@ class _TaskOpener:
         headers = self.interactor.setup_request_headers(uri)
         if extra_headers:
             headers.update(extra_headers)
-        label = f'Tasks.{task_title}'
+        label = locust_request_label or f'Tasks.{task_title}.Attributes'
         resp = self.interactor.get_page(uri=uri, label=label, headers=headers).json()
 
         # If isAutoAcceptable == false, accept the task first then get the form UI
         if not resp["isAutoAcceptable"]:
 
             # First do a suite/rest/a/task/latest/{}/status call to get the button component
-            unaccepted_task_form = self.accept_a_task("assigned", task_id, task_title=task_title, headers=headers)
+            unaccepted_task_form = self.accept_a_task("assigned", task_id, task_title=task_title, headers=headers)  # , locust_request_label=f'{label}.Accept')
             accept_button = find_component_by_attribute_in_dict(
                 "label",
                 "Accept",
@@ -86,7 +86,7 @@ class _TaskOpener:
             context = unaccepted_task_form["context"]
             uri = "/suite/rest/a/task/latest/{}/form".format(task_id)
 
-            label = f'Tasks.{task_title}.Accept'
+            label = f'Tasks.Click.{task_title}.Accept'
             accepted_task_form = self.interactor.click_component(
                 post_url=uri,
                 component=accept_button,
@@ -96,5 +96,5 @@ class _TaskOpener:
             )
         else:
             # The task does not need to be accepted in this case
-            accepted_task_form = self.accept_a_task("accepted", task_id, task_title=task_title, headers=headers)
+            accepted_task_form = self.accept_a_task("accepted", task_id, task_title=task_title, headers=headers)  # , locust_request_label=f'{label}.Status')
         return accepted_task_form

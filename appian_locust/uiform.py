@@ -702,8 +702,7 @@ class SailUiForm:
             raise ChoiceNotFoundException(f"Choice {choice_label} not found for component {label}, valid choices were {choices}")
 
         index = choices.index(choice_label) + 1  # Appian is _sigh_ one indexed
-
-        locust_label = locust_request_label or f'{self.breadcrumb}.SelectDropdownWithLabel.{choice_label}'
+        locust_label = locust_request_label or f'{self.breadcrumb}.SelectDropdownWithLabel.{label}'
         reeval_url = self._get_update_url_for_reeval(self.state)
 
         # Opting to use this field, rather than self.form_url, because 'sail-application-url' is the same between web and mobile
