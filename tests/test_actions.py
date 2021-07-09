@@ -140,7 +140,7 @@ class TestActions(unittest.TestCase):
         with self.assertRaises(ComponentNotFoundException) as context:
             sail_form.fill_text_field(label, value)
         self.assertEqual(
-            context.exception.args[0], f"Could not find the component with label '{label}' in the provided form")
+            context.exception.args[0], f"No components with label 'missingText' found on page")
 
         button_label = 'press me'
         with self.assertRaises(ComponentNotFoundException) as context:
@@ -161,7 +161,7 @@ class TestActions(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             sail_form.fill_text_field(label, value)
         self.assertEqual(
-            context.exception.args[0], f"No response returned when trying to update field with label '{label}'")
+            context.exception.args[0], f"No response returned when trying to update the field with 'label' = 'Title' at index '0'")
 
         button_label = 'Submit'
         with self.assertRaises(Exception) as context:
