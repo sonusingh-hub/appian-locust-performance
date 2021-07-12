@@ -88,7 +88,7 @@ class _TaskOpener:
             context = unaccepted_task_form["context"]
             uri = "/suite/rest/a/task/latest/{}/form".format(task_id)
 
-            label = f'Tasks.Click.{task_title}.Accept'
+            label = f'Tasks.{task_title}.Accept.Click'
             accepted_task_form = self.interactor.click_component(
                 post_url=uri,
                 component=accept_button,

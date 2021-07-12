@@ -133,6 +133,7 @@ class _Tasks(_Base):
         Args:
             task_name (str): Name of the task to search for
             exact_match (bool, optional): Whether or not a full match is returned. Defaults to True.
+            locust_request_label (str, optional): label to be used within locust
 
         Returns:
             SailUiForm: SAIL form for the task
