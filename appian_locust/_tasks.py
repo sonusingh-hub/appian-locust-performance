@@ -126,13 +126,14 @@ class _Tasks(_Base):
 
         return self.task_opener.visit_by_task_id(task_title, clean_id)
 
-    def visit_and_get_form(self, task_name: str, exact_match: bool = True) -> SailUiForm:
+    def visit_and_get_form(self, task_name: str, exact_match: bool = True, locust_request_label: str = None) -> SailUiForm:
         """
         Gets the SailUiForm given a task name
 
         Args:
             task_name (str): Name of the task to search for
             exact_match (bool, optional): Whether or not a full match is returned. Defaults to True.
+            locust_request_label (str, optional): label to be used within locust
 
         Returns:
             SailUiForm: SAIL form for the task
@@ -142,7 +143,10 @@ class _Tasks(_Base):
         children = initial_task_resp.get("content", {}).get("children", [])
         task_title = children[0]
 
-        form_json = self.task_opener.visit_by_task_id(task_title, clean_id)
-        breadcrumb = f"Tasks.{task_title}"
+        if not locust_request_label:
+            breadcrumb = f"Tasks.{task_title}"
+        else:
+            breadcrumb = locust_request_label
+        form_json = self.task_opener.visit_by_task_id(breadcrumb, clean_id)
         form_uri = "/suite/rest/a/task/latest/{}/form".format(clean_id)
         return SailUiForm(self.interactor, form_json, form_uri, breadcrumb=breadcrumb)

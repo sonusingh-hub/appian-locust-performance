@@ -21,7 +21,7 @@ class _TaskOpener:
 
         self._tasks: Dict[str, Any] = dict()
 
-    def accept_a_task(self, payload: str, task_id: str, headers: Dict[str, Any] = None, task_title: str = "") -> Dict[str, Any]:
+    def accept_a_task(self, payload: str, task_id: str, headers: Dict[str, Any] = None, task_title: str = "", locust_request_label: str = None) -> Dict[str, Any]:
         """Accept a task if necessary
 
         Args:
@@ -29,6 +29,7 @@ class _TaskOpener:
             task_id (str): task identifier
             headers (Dict[str, Any], optional): Headers to send. Defaults to {}.
             task_title (str, optional): Task title used to describe the interaction. Defaults to "".
+            locust_request_label (str, optional): label to be used within locust
 
         Returns:
             Dict[str, Any]: Response from accepting
@@ -46,18 +47,19 @@ class _TaskOpener:
         # For reference, see: https://jira.host.net/browse/AN-58600
         headers["X-HTTP-Method-Override"] = "PUT"
 
-        label = f'Tasks.{task_title}.Accept'
+        label = locust_request_label or f'Tasks.{task_title}.Status'
         resp = self.interactor.post_page(uri=uri, payload=payload, headers=headers,
                                          label=label)
         return resp.json()
 
-    def visit_by_task_id(self, task_title: str, task_id: str, extra_headers: Dict[str, Any] = None) -> Dict[str, Any]:
+    def visit_by_task_id(self, task_title: str, task_id: str, extra_headers: Dict[str, Any] = None, locust_request_label: str = None) -> Dict[str, Any]:
         """Vist a task page and the corresponding json using the task_id
 
         Args:
             task_title (str): Title to identify the task
             task_id (str): Id used to navigate to the task
             extra_headers (Dict[str, Any], optional): Extra headers, used for sites requests. Defaults to None.
+            locust_request_label (str, optional): label to be used within locust
 
         Returns:
             Dict[str, Any]: State returned by visiting the task
@@ -67,7 +69,7 @@ class _TaskOpener:
         headers = self.interactor.setup_request_headers(uri)
         if extra_headers:
             headers.update(extra_headers)
-        label = f'Tasks.{task_title}'
+        label = locust_request_label or f'Tasks.{task_title}.Attributes'
         resp = self.interactor.get_page(uri=uri, label=label, headers=headers).json()
 
         # If isAutoAcceptable == false, accept the task first then get the form UI
@@ -86,7 +88,7 @@ class _TaskOpener:
             context = unaccepted_task_form["context"]
             uri = "/suite/rest/a/task/latest/{}/form".format(task_id)
 
-            label = f'Tasks.{task_title}.Accept'
+            label = f'Tasks.{task_title}.Accept.Click'
             accepted_task_form = self.interactor.click_component(
                 post_url=uri,
                 component=accept_button,
