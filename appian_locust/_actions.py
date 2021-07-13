@@ -144,7 +144,7 @@ class _Actions(_Base):
         )
         return resp.json()
 
-    def visit_and_get_form(self, action_name: str, exact_match: bool = False) -> SailUiForm:
+    def visit_and_get_form(self, action_name: str, exact_match: bool = False, locust_request_label: str = "") -> SailUiForm:
         """
         Gets the action by name and returns the corresponding SailUiForm to interact with
 
@@ -153,13 +153,14 @@ class _Actions(_Base):
         Args:
             action_name (str): Name of the action
             exact_match (bool): Should action name match exactly or to be partial match. Default : True
+            locust_request_label (str, optional): label to be used within locust
 
         Returns: SailUiForm
         """
         initial_action_resp: dict = self.get_action(action_name, exact_match)
         form_url = urlparse(initial_action_resp[KEY_FORM_HREF]).path
         action_key = format_label(action_name, "::", 0)
-        label = f'Actions.GetUi.{action_key}'
+        label = locust_request_label or f'Actions.GetUi.{action_key}'
         form_json: dict = self.visit(action_name, exact_match, label=label)
 
         # Check to see if we're in an activity chained form, and if so, make post call
@@ -168,7 +169,7 @@ class _Actions(_Base):
             resp.raise_for_status()
             form_json = resp.json()
 
-        breadcrumb = f'Actions.SailUi.{action_key}'
+        breadcrumb = locust_request_label or f'Actions.SailUi.{action_key}'
         return SailUiForm(self.interactor, form_json, form_url, breadcrumb=breadcrumb)
 
     def start_action(self, action_name: str, skip_design_call: bool = False, exact_match: bool = False) -> Response:
