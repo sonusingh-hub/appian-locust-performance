@@ -126,7 +126,7 @@ class _Tasks(_Base):
 
         return self.task_opener.visit_by_task_id(task_title, clean_id)
 
-    def visit_and_get_form(self, task_name: str, exact_match: bool = True, locust_request_label: str = None) -> SailUiForm:
+    def visit_and_get_form(self, task_name: str, exact_match: bool = True, locust_request_label: str = "") -> SailUiForm:
         """
         Gets the SailUiForm given a task name
 
