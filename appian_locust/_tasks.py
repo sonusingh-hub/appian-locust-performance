@@ -148,6 +148,5 @@ class _Tasks(_Base):
         else:
             breadcrumb = locust_request_label
         form_json = self.task_opener.visit_by_task_id(breadcrumb, clean_id)
-        print('this got picked up')
         form_uri = "/suite/rest/a/task/latest/{}/form".format(clean_id)
         return SailUiForm(self.interactor, form_json, form_uri, breadcrumb=breadcrumb)
