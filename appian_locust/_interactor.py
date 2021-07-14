@@ -1,8 +1,9 @@
 import json
 import os
 import sys
+import time
 import urllib.parse
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
 from re import match, search
 from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
@@ -158,7 +159,7 @@ class _Interactor:
                 self.write_response_to_lib_folder(label, resp)
             return resp
 
-    def login(self, auth: list = None) -> Tuple[HttpSession, Response]:
+    def login(self, auth: list = None, retry: bool = True, check_login: bool = True) -> Tuple[HttpSession, Response]:
         if auth is not None:
             self.auth = auth
         """
@@ -193,17 +194,23 @@ class _Interactor:
         }
         login_url = uri + "auth?appian_environment=tempo"
         log.info(f"Logging in at {self.replace_base_path_if_appropriate(login_url)}")
+        log.info(f"Logging in with user {payload['un']}")
         # Post Auth
         resp = self.post_page(
             login_url,
             payload=urllib.parse.urlencode(payload),
             headers=headers,
             label="Login.SubmitAuth",
-            check_login=False)
+            check_login=check_login)
         if not resp or not resp.ok:
             raise BadCredentialsException()
         elif "__appianMultipartCsrfToken" not in self.client.cookies:
-            raise MissingCsrfTokenException(self.client.cookies)
+            if retry:
+                log.info("__appianMultipartCsrfToken not found, retrying login")
+                time.sleep(1)
+                return self.login(auth, retry=False)
+            else:
+                raise MissingCsrfTokenException(self.client.cookies)
         return self.client, resp
 
     def check_login(self, resp: ResponseContextManager) -> None:

@@ -256,8 +256,8 @@ class AppianClient:
         """
         return self._sites
 
-    def login(self, auth: list = None) -> Tuple[HttpSession, Response]:
-        return self.interactor.login(auth)
+    def login(self, auth: list = None, check_login: bool = True) -> Tuple[HttpSession, Response]:
+        return self.interactor.login(auth, check_login=check_login)
 
     def logout(self) -> None:
         """
