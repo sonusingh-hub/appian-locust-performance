@@ -55,7 +55,7 @@ class _Records(_Base):
         )
         return resp.json()
 
-    def get_all(self, search_string: str = None, locust_request_label: str = None) -> Dict[str, Any]:
+    def get_all(self, search_string: str = None, locust_request_label: str = "") -> Dict[str, Any]:
         """
         Retrieves all available "records types" and "records" and associated metadata from "Appian-Tempo-Records"
 
@@ -64,7 +64,7 @@ class _Records(_Base):
 
         Returns (dict): List of records and associated metadata
         """
-        self.get_all_record_types()
+        self.get_all_record_types(locust_request_label=locust_request_label)
         for record_type in self._record_types:
             try:
                 self.get_all_records_of_record_type(record_type)
@@ -74,7 +74,7 @@ class _Records(_Base):
 
         return self._records
 
-    def get_all_record_types(self) -> Dict[str, Any]:
+    def get_all_record_types(self, locust_request_label: str = "") -> Dict[str, Any]:
         """
         Navigate to Tempo Records Tab and load all metadata for associated list of record types into cache.
 
@@ -86,7 +86,8 @@ class _Records(_Base):
         headers = self.interactor.setup_request_headers()
         headers['X-Appian-Features-Extended'] = 'e4bc'
         headers["Accept"] = "application/vnd.appian.tv.ui+json"
-        response = self.interactor.get_page(uri=uri, headers=headers, label="Records")
+        breadcrumb = locust_request_label or "Records"
+        response = self.interactor.get_page(uri=uri, headers=headers, label=breadcrumb)
         json_response = response.json()
         if not(self._is_response_good(response.text)):
             raise(Exception("Unexpected response on Get call of All Records"))
