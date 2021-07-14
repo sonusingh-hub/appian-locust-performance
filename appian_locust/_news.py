@@ -48,7 +48,7 @@ class _News(_Base):
             label = "News.Search." + search_string
         else:
             uri = "/suite/api/feed/tempo?t=e,x,b&m=menu-news&st=o"
-            label = "News.Feed"
+            label = locust_request_label or "News.Feed"
 
         self._news = dict()
         error_key_string = "ERROR::"
