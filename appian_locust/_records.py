@@ -86,7 +86,8 @@ class _Records(_Base):
         headers = self.interactor.setup_request_headers()
         headers['X-Appian-Features-Extended'] = 'e4bc'
         headers["Accept"] = "application/vnd.appian.tv.ui+json"
-        response = self.interactor.get_page(uri=uri, headers=headers, label=locust_request_label or "Records")
+        breadcrumb = locust_request_label or "Records"
+        response = self.interactor.get_page(uri=uri, headers=headers, label=breadcrumb)
         json_response = response.json()
         if not(self._is_response_good(response.text)):
             raise(Exception("Unexpected response on Get call of All Records"))
