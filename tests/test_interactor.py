@@ -1,14 +1,13 @@
 import json
 import os
 import unittest
-from unittest.mock import Mock
 
-from appian_locust import AppianClient, AppianTaskSet
+from appian_locust import AppianTaskSet
 from appian_locust.helper import find_component_by_attribute_in_dict, find_component_by_index_in_dict
 from appian_locust import logger
 from locust import Locust, TaskSet
 
-from .mock_client import CustomLocust, SampleAppianTaskSequence
+from .mock_client import CustomLocust
 from .mock_reader import read_mock_file
 
 log = logger.getLogger(__name__)
@@ -315,3 +314,25 @@ class TestInteractor(unittest.TestCase):
         self.custom_locust.set_response("", 200, "{}")
         output = self.task_set.appian.interactor.click_record_search_button("", component, {}, "my_uuid", "")
         self.assertEqual(output, dict())
+
+    def test_login_retry(self) -> None:
+        # Given
+        init_cookies = {'JSESSIONID': 'abc', '__appianCsrfToken': '123'}
+        cookies_no_mcsrf = {'JSESSIONID': 'abc123',
+                            '__appianCsrfToken': 'different cookie'}
+        cookies_mcsrf = {'JSESSIONID': 'abc123',
+                         '__appianCsrfToken': 'different cookie',
+                         '__appianMultipartCsrfToken': 'these cookies'}
+
+        self.custom_locust.set_response("/suite/", 200,
+                                        '<html>A huge html blob</html>', cookies=init_cookies)
+        self.custom_locust.set_response("/suite/auth?appian_environment=tempo", 200,
+                                        '<html>A huge html blob</html>', cookies=cookies_no_mcsrf)
+        self.custom_locust.set_response("/suite/auth?appian_environment=tempo", 200,
+                                        '<html>A huge html blob</html>', cookies=cookies_mcsrf)
+
+        # When
+        self.task_set.appian.login(["", ""])
+
+        # Then
+        self.assertIn('__appianMultipartCsrfToken', self.task_set.appian.client.cookies.keys())

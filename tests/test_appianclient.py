@@ -106,7 +106,7 @@ class TestAppianBase(unittest.TestCase):
                                         'The username/password entered is invalid')
 
         with self.assertRaisesRegex(BadCredentialsException, "Could not log in"):
-            self.task_set.appian.login(["", ""])
+            self.task_set.appian.login(["", ""], check_login=False)
 
     def test_login_bad_auth_bad_cookies(self) -> None:
         # Given
