@@ -308,7 +308,7 @@ class SailUiForm:
         return self._reconcile_state(newer_state)
 
     @raises_locust_error
-    def click(self, label: str, is_test_label: bool = False, locust_request_label: str = "") -> 'SailUiForm':
+    def click(self, label: str, is_test_label: bool = False, locust_request_label: str = "", index: int = 0) -> 'SailUiForm':
         """
         Clicks on a component on the form, if there is one present with the following label (case sensitive)
         Otherwise throws a NotFoundException
@@ -323,6 +323,7 @@ class SailUiForm:
 
         Keyword Args:
             locust_request_label(str): Label used to identify the request for locust statistics
+            index(int): Index of the component to click if more than one match the label criteria (default: 0)
 
         Returns (SailUiForm): The latest state of the UiForm
 
@@ -333,10 +334,10 @@ class SailUiForm:
 
         """
         locust_label = locust_request_label or f"{self.breadcrumb}.Click.{label}"
-        return self._click(label, is_test_label=is_test_label, locust_request_label=locust_label)
+        return self._click(label, is_test_label=is_test_label, locust_request_label=locust_label, index=index)
 
     @raises_locust_error
-    def click_button(self, label: str, is_test_label: bool = False, locust_request_label: str = "") -> 'SailUiForm':
+    def click_button(self, label: str, is_test_label: bool = False, locust_request_label: str = "", index: int = 0) -> 'SailUiForm':
         """
         Clicks on a component on the form, if there is one present with the following label (case sensitive)
         Otherwise throws a NotFoundException
@@ -349,6 +350,7 @@ class SailUiForm:
 
         Keyword Args:
             locust_request_label(str): Label used to identify the request for locust statistics
+            index(int): Index of the component to click if more than one match the label criteria (default: 0)
 
         Returns (SailUiForm): The latest state of the UiForm
 
@@ -359,10 +361,10 @@ class SailUiForm:
 
         """
         locust_label = locust_request_label or f"{self.breadcrumb}.ClickButton.{label}"
-        return self._click(label, is_test_label=is_test_label, locust_request_label=locust_label)
+        return self._click(label, is_test_label=is_test_label, locust_request_label=locust_label, index=index)
 
     @raises_locust_error
-    def click_link(self, label: str, is_test_label: bool = False, locust_request_label: str = "") -> 'SailUiForm':
+    def click_link(self, label: str, is_test_label: bool = False, locust_request_label: str = "", index: int = 0) -> 'SailUiForm':
         """
         Clicks on a component on the form, if there is one present with the following label (case sensitive)
         Otherwise throws a NotFoundException
@@ -375,6 +377,7 @@ class SailUiForm:
 
         Keyword Args:
             locust_request_label(str): Label used to identify the request for locust statistics
+            index(int): Index of the component to click if more than one match the label criteria (default: 0)
 
         Returns (SailUiForm): The latest state of the UiForm
 
@@ -384,15 +387,15 @@ class SailUiForm:
 
         """
         locust_label = locust_request_label or f"{self.breadcrumb}.ClickLink.{label}"
-        return self._click(label, is_test_label=is_test_label, locust_request_label=locust_label)
+        return self._click(label, is_test_label=is_test_label, locust_request_label=locust_label, index=index)
 
-    def _click(self, label: str, is_test_label: bool = False, locust_request_label: str = "") -> 'SailUiForm':
+    def _click(self, label: str, is_test_label: bool = False, locust_request_label: str = "", index: int = 0) -> 'SailUiForm':
         """
         Internal function wrapped by various click methods
         """
         attribute_to_find = 'testLabel' if is_test_label else 'label'
 
-        component = find_component_by_attribute_in_dict(attribute_to_find, label, self.state)
+        component = find_component_by_attribute_and_index_in_dict(attribute_to_find, label, index, self.state)
 
         self._validate_component_found(component, label)
 
