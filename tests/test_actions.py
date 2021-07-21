@@ -146,7 +146,7 @@ class TestActions(unittest.TestCase):
         with self.assertRaises(ComponentNotFoundException) as context:
             sail_form.click(button_label)
         self.assertEqual(
-            context.exception.args[0], f"Could not find the component with label '{button_label}' in the provided form")
+            context.exception.args[0], f"No components with label '{button_label}' found on page")
 
     def test_actions_form_example_bad_response(self) -> None:
         self.setup_action_response_with_ui()
