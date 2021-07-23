@@ -180,19 +180,19 @@ class TestSailUiForm(unittest.TestCase):
 
         label = 'Text'
         value = 'Filling out the form...'
-        index = 2
-        with self.assertRaisesRegex(Exception, "Index: '2' out of range"):
+        index = 3
+        with self.assertRaisesRegex(Exception, "Index: '3' out of range"):
             sail_form.fill_text_field(label, value, index=index)
 
-    def test_fill_text_field_negative_index(self) -> None:
+    def test_fill_text_field_zero_index(self) -> None:
         report_body = read_mock_file("text_fields_same_label.json")
         self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
         sail_form = self.task_set.appian.reports.visit_and_get_form(self.report_name, exact_match=False)
 
         label = 'Text'
         value = 'Filling out the form...'
-        index = -1
-        with self.assertRaisesRegex(Exception, "Index: '-1' out of range"):
+        index = 0
+        with self.assertRaisesRegex(Exception, "Index: '0' out of range"):
             sail_form.fill_text_field(label, value, index=index)
 
     def test_fill_picker_field_interaction(self) -> None:

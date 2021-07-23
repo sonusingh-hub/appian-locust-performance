@@ -250,7 +250,7 @@ def find_component_by_attribute_and_index_in_dict(attribute: str, value: str, in
     Args:
         attribute: an attribute to search ('label' for example)
         value: the value of the attribute ('Submit' for example)
-        index: the index of the component to find if multiple components are found with the same 'value' for 'attribute' (0 for example)
+        index: the index of the component to find if multiple components are found with the same 'value' for 'attribute' (1 for example)
         component_tree: the json response.
 
     Returns:
@@ -259,14 +259,14 @@ def find_component_by_attribute_and_index_in_dict(attribute: str, value: str, in
     Example:
         >>> find_component_by_attribute_and_index_in_dict('label', 'Submit', 1, self.json_response)
 
-        will search the json response to find the second component that has 'Submit' as the label
+        will search the json response to find the first component that has 'Submit' as the label
 
     """
     components_with_attribute = extract_values(component_tree, attribute, value)
     if not components_with_attribute:
         raise ComponentNotFoundException(f"No components with {attribute} '{value}' found on page")
-    if 0 <= index < len(components_with_attribute):
-        return components_with_attribute[index]
+    if 0 < index <= len(components_with_attribute):
+        return components_with_attribute[index - 1]
     raise Exception(f"Index: '{index}' out of range")
 
 
