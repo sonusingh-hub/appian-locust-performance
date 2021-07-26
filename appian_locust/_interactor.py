@@ -767,9 +767,13 @@ class _Interactor:
         tabs_list = tab_group_component["tabs"]
         tab_index = 0
         for index, tab in enumerate(tabs_list):
-            if isinstance(tab, dict) and find_component_by_attribute_in_dict("label", tab_label, tab) is not None:
+            try:
+                find_component_by_attribute_in_dict("label", tab_label, tab)
                 tab_index = index + 1
                 break
+            except ComponentNotFoundException:
+                # These are expected when searching through the tabs to find the one containing the label with value tab_label
+                pass
 
         if tab_index:
             new_value = {

@@ -138,7 +138,7 @@ def find_component_by_attribute_in_dict(attribute: str, value: str, component_tr
     Find a UI component by the given attribute (label for example) in a dictionary
     It only returns the first match in a depth first search of the json tree
     It returns the dictionary that contains the given attribute with the given value
-    or returns None when not found
+    or throws an error when none is found
 
     Args:
         attribute: an attribute to search ('label' for example)
@@ -154,8 +154,7 @@ def find_component_by_attribute_in_dict(attribute: str, value: str, component_tr
         will search the json response to find a component that has 'Submit' as the label
 
     """
-    for val in extract(component_tree, attribute, value):
-        return val
+    return find_component_by_type_and_attribute_and_index_in_dict(component_tree, attribute=attribute, value=value)
 
 
 def find_component_by_label_and_type_dict(attribute: str, value: str, type: str, component_tree: Dict[str, Any]) -> Any:
@@ -164,7 +163,7 @@ def find_component_by_label_and_type_dict(attribute: str, value: str, type: str,
     (`#t` should match the type value passed in)
     It only returns the first match in a depth first search of the json tree.
     It returns the dictionary that contains the given attribute with the given label and type
-    or returns None when not found.
+    or throws an error when none is found
 
     Args:
         label: label of the component to search
@@ -173,15 +172,13 @@ def find_component_by_label_and_type_dict(attribute: str, value: str, type: str,
         component_tree: the json response.
 
     Returns:
-        the json object of the component or None if none is found
+        The json object of the component
 
     Example:
         >>> find_component_by_label_and_type_dict('label', 'MyLabel', 'StartProcessLink', self.json_response)
 
     """
-    for val in extract(component_tree, attribute, value):
-        if (('#t' in val) and (val['#t'] == type)):
-            return val
+    return find_component_by_type_and_attribute_and_index_in_dict(component_tree, type=type, attribute=attribute, value=value)
 
 
 def find_component_by_index_in_dict(component_type: str, index: int, component_tree: Dict[str, Any]) -> Any:
@@ -189,7 +186,7 @@ def find_component_by_index_in_dict(component_type: str, index: int, component_t
     Find a UI component by the index of a given type of component ("RadioButtonField" for example) in a dictionary
     Performs a depth first search and counts quantity of the component, so the 1st is the first one
     It returns the dictionary that contains the given attribute with the requested index
-    or returns the total number of components with that attribute when the index could not be matched
+    or throws an error when none is found
 
     Args:
         component_type: type of the component(#t in the JSON response, 'RadioButtonField' for example)
@@ -197,7 +194,7 @@ def find_component_by_index_in_dict(component_type: str, index: int, component_t
         component_tree: the json response
 
     Returns:
-        the json object of the component or the count of matching attributes if no match found
+        The json object of the component
 
     Example:
         >>> find_component_by_index_in_dict('RadioButtonField', 1, self.json_response)
@@ -205,39 +202,72 @@ def find_component_by_index_in_dict(component_type: str, index: int, component_t
         will search the json response to find the first component that has 'RadioButtonField' as the type
 
     """
-    if (not isinstance(index, int)) or index <= 0:
-        raise Exception(
-            f"Invalid index: '{index}'.  Please enter a positive number")
-
-    result = _find_component_by_type_and_index(component_type, index, component_tree, 0)
-
-    if isinstance(result, int):
-        if result == 0:
-            raise Exception(f"No components of type '{component_type}' found on page")
-        else:
-            raise Exception(f"Bad index: only '{result}' components of type '{component_type}' found on page, " +
-                            f"requested '{index}'")
-
-    return result
+    return find_component_by_type_and_attribute_and_index_in_dict(component_tree, type=component_type, index=index)
 
 
-def _find_component_by_type_and_index(type_name: str, index: int, component: Any, count: int) -> Any:
-    is_dict = isinstance(component, dict)
-    if is_dict:
-        if '#t' in component and component.get('#t') == type_name:
-            count += 1
-            if count == index:
-                return component
-    if is_dict or isinstance(component, list):
-        component_items = component.values() if is_dict else component
-        for inner_component in component_items:
-            if isinstance(inner_component, (dict, list)):
-                result = _find_component_by_type_and_index(type_name, index, inner_component, count)
-                if isinstance(result, dict):
-                    return result
-                else:
-                    count = result
-    return count
+def find_component_by_type_and_attribute_and_index_in_dict(component_tree: Dict[str, Any], type: str = '', attribute: str = '', value: str = '', index: int = 1) -> Dict[str, Any]:
+    """
+    Find a UI component by the given type and/or attribute with 'value' in a dictionary
+    Returns the index'th match in a depth first search of the json tree
+    Returns the dictionary that contains the given attribute with the given value
+    or throws an error when none is found
+    Note: Both type and attribute matching are optional, which will cause this
+    function to return the index'th component in the tree
+
+    Args:
+        component_tree: the json response
+
+    Keyword Args:
+        type(str): the component type to match against (default: '')
+        attribute(str): an attribute to search (default: '')
+        value(str): the value of the attribute (default: '')
+        index(int): the index of the component to find if multiple components match the above criteria, 1-indexed (default: 1)
+
+    Returns:
+        The json object of the component
+
+    Example:
+        >>> find_component_by_attribute_and_index_in_dict('label', 'Submit', 1, self.json_response)
+
+        will search the json response to find the first component that has 'Submit' as the label
+
+    """
+    if index == 0:
+        raise Exception(f"Invalid index: '{index}'. Please enter a positive number. Indexing is 1-based to match SAIL indexing convention")
+    if index < 0:
+        raise Exception(f"Invalid index: '{index}'. Please enter a positive number")
+
+    type_check_passed_once = False
+    attribute_check_passed_once = False
+    originial_index = index
+    trees_to_search = [component_tree]
+
+    while trees_to_search:
+        tree = trees_to_search.pop(0)
+
+        if not isinstance(tree, (dict, list)):
+            continue
+
+        if isinstance(tree, list):
+            trees_to_search = tree + trees_to_search
+            continue
+
+        type_check = not type or tree.get('#t', '') == type
+        type_check_passed_once = type_check_passed_once if type_check_passed_once else type_check
+        attribute_check = not attribute or tree.get(attribute, '') == value
+        attribute_check_passed_once = attribute_check_passed_once if attribute_check_passed_once else attribute_check
+        if type_check and attribute_check:
+            if index == 1:
+                return tree
+            index -= 1
+
+        trees_to_search = list(tree.values()) + trees_to_search
+
+    if not type_check_passed_once:
+        raise ComponentNotFoundException(f"No components with type '{type}' found on page")
+    if not attribute_check_passed_once:
+        raise ComponentNotFoundException(f"No components with {attribute} '{value}' found on page")
+    raise Exception(f"Index: '{originial_index}' out of range")
 
 
 def find_component_by_attribute_and_index_in_dict(attribute: str, value: str, index: int, component_tree: Dict[str, Any]) -> Any:
@@ -262,12 +292,7 @@ def find_component_by_attribute_and_index_in_dict(attribute: str, value: str, in
         will search the json response to find the first component that has 'Submit' as the label
 
     """
-    components_with_attribute = extract_values(component_tree, attribute, value)
-    if not components_with_attribute:
-        raise ComponentNotFoundException(f"No components with {attribute} '{value}' found on page")
-    if 0 < index <= len(components_with_attribute):
-        return components_with_attribute[index - 1]
-    raise Exception(f"Index: '{index}' out of range")
+    return find_component_by_type_and_attribute_and_index_in_dict(component_tree, attribute=attribute, value=value, index=index)
 
 
 def repeat(num_times: int = 2, wait_time: float = 0.0) -> Callable:

@@ -19,7 +19,7 @@ class TestGridInteractor(unittest.TestCase):
 
     def test_find_grid_by_label_missing(self) -> None:
         form_label = 'Topest Sales Reps by Total Sales'
-        with self.assertRaisesRegex(Exception, f"Grid with label '{form_label}'"):
+        with self.assertRaisesRegex(Exception, f"No components with label '{form_label}' found on page"):
             grid = self.grid_interactor.find_grid_by_label(form_label, self.grid_form)
 
     def test_find_grid_by_index(self) -> None:

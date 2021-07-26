@@ -18,7 +18,7 @@ from ._task_opener import _TaskOpener
 from ._ui_reconciler import UiReconciler
 from .exceptions import ComponentNotFoundException, InvalidComponentException, ChoiceNotFoundException
 from .helper import (extract_all_by_label, find_component_by_attribute_and_index_in_dict, find_component_by_attribute_in_dict,
-                     find_component_by_index_in_dict, find_component_by_label_and_type_dict)
+                     find_component_by_index_in_dict, find_component_by_label_and_type_dict, find_component_by_type_and_attribute_and_index_in_dict)
 from .records_helper import (get_record_header_response,
                              get_record_summary_view_response,
                              get_url_stub_from_record_list_url_path)
@@ -452,6 +452,30 @@ class SailUiForm:
         return self._reconcile_state(new_state, form_url=reeval_url)
 
     @raises_locust_error
+    def click_record_link_by_attribute_and_index(self, attribute: str = "", attribute_value: str = "", index: int = 1, locust_request_label: str = "") -> 'SailUiForm':
+        """
+        Click the index'th record link on the form if there is one present with an attribute matching attribute_value
+        If no attribute is provided, the index'th record link is selected from all record links in the form
+        Otherwise throws a ComponentNotFoundException
+
+        Keyword Args:
+            attribute(str): Attribute to check for 'attribute_value' (default: "")
+            attribute_value(str): Attribute value of record link to click (default: "")
+            index(int): Index of record link to click (default: 1)
+            locust_request_label(str): Label used to identify the request for locust statistics
+
+        Returns (SailUiForm): The record form (feed) for the linked record.
+
+        """
+        component_type = 'RecordLink'
+        component = find_component_by_type_and_attribute_and_index_in_dict(self.state, component_type, attribute, attribute_value, index)
+        locust_label = locust_request_label or f"{self.breadcrumb}.ClickRecordLink"
+        reeval_url = self._get_update_url_for_reeval(self.state)
+        new_state = self.interactor.click_record_link(reeval_url, component, self.context, self.uuid,
+                                                      locust_label=locust_label)
+        return self._reconcile_state(new_state, form_url=reeval_url)
+
+    @raises_locust_error
     def click_record_link(self, label: str, is_test_label: bool = False, locust_request_label: str = "") -> 'SailUiForm':
         """
         Click a record link on the form if there is one present with the following label (case sensitive)
@@ -468,14 +492,24 @@ class SailUiForm:
 
         """
         attribute_to_find = 'testLabel' if is_test_label else 'label'
-        component = find_component_by_attribute_in_dict(attribute_to_find, label, self.state)
-        self._validate_component_found(component, label)
+        return self.click_record_link_by_attribute_and_index(attribute=attribute_to_find, attribute_value=label, locust_request_label=locust_request_label)
 
-        reeval_url = self._get_update_url_for_reeval(self.state)
-        locust_label = locust_request_label or f"{self.breadcrumb}.ClickRecordLink.{label}"
-        new_state = self.interactor.click_record_link(reeval_url, component, self.context, self.uuid,
-                                                      locust_label=locust_label)
-        return self._reconcile_state(new_state, form_url=reeval_url)
+    @raises_locust_error
+    def click_record_link_by_index(self, index: int, locust_request_label: str = "") -> 'SailUiForm':
+        """
+        Click the index'th record link on the form
+        Otherwise throws a ComponentNotFoundException
+
+        Args:
+            index(int): Index of the record link to click (1-based)
+
+        Keyword Args:
+            locust_request_label(str): Label used to identify the request for locust statistics
+
+        Returns (SailUiForm): The record form (feed) for the linked record.
+
+        """
+        return self.click_record_link_by_attribute_and_index(index=index, locust_request_label=locust_request_label)
 
     @raises_locust_error
     def click_start_process_link(self, label: str, site_name: str, page_name: str, is_mobile: bool = False, locust_request_label: str = "") -> 'SailUiForm':
