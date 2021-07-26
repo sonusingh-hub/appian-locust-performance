@@ -1,5 +1,4 @@
 import datetime
-import errno
 import json
 import unittest
 from typing import Any, List, Optional
@@ -89,8 +88,9 @@ class TestSailUiForm(unittest.TestCase):
         self.custom_locust.set_response(self.report_link_uri,
                                         200, report_form)
         sail_form = self.task_set.appian.reports.visit_and_get_form(self.report_name, False)
-        with self.assertRaisesRegex(Exception, "Grid with label 'dummy_label'"):
+        with self.assertRaises(ComponentNotFoundException) as context:
             sail_form.move_to_beginning_of_paging_grid(label='dummy_label')
+        self.assertEqual(context.exception.args[0], "No components with label 'dummy_label' found on page")
         with self.assertRaisesRegex(Exception, "Index 5 out of range"):
             sail_form.move_to_left_in_paging_grid(index=5)
         with self.assertRaisesRegex(Exception, "Cannot sort, field 'Abc' not found"):
@@ -180,8 +180,19 @@ class TestSailUiForm(unittest.TestCase):
 
         label = 'Text'
         value = 'Filling out the form...'
-        index = 2
-        with self.assertRaisesRegex(Exception, "Index: '2' out of range"):
+        index = 3
+        with self.assertRaisesRegex(Exception, "Index: '3' out of range"):
+            sail_form.fill_text_field(label, value, index=index)
+
+    def test_fill_text_field_zero_index(self) -> None:
+        report_body = read_mock_file("text_fields_same_label.json")
+        self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
+        sail_form = self.task_set.appian.reports.visit_and_get_form(self.report_name, exact_match=False)
+
+        label = 'Text'
+        value = 'Filling out the form...'
+        index = 0
+        with self.assertRaisesRegex(Exception, "Invalid index: '0'. Please enter a positive number. Indexing is 1-based to match SAIL indexing convention"):
             sail_form.fill_text_field(label, value, index=index)
 
     def test_fill_text_field_negative_index(self) -> None:
@@ -192,7 +203,7 @@ class TestSailUiForm(unittest.TestCase):
         label = 'Text'
         value = 'Filling out the form...'
         index = -1
-        with self.assertRaisesRegex(Exception, "Index: '-1' out of range"):
+        with self.assertRaisesRegex(Exception, "Invalid index: '-1'. Please enter a positive number"):
             sail_form.fill_text_field(label, value, index=index)
 
     def test_fill_picker_field_interaction(self) -> None:
@@ -250,8 +261,9 @@ class TestSailUiForm(unittest.TestCase):
 
         label = self.picker_label
         value = 'You will not find me'
-        with self.assertRaisesRegex(Exception, "No suggestions returned"):
+        with self.assertRaises(ComponentNotFoundException) as context:
             sail_form.fill_picker_field(label, value)
+        self.assertEqual(context.exception.args[0], "No components with type 'PickerWidget' found on page")
 
     def test_fill_picker_field_no_response(self) -> None:
         sail_ui_actions_cmf = json.loads(self.sail_ui_actions_response)
@@ -547,8 +559,9 @@ class TestSailUiForm(unittest.TestCase):
 
     def test_fill_datefield_not_found(self) -> None:
         test_form = self._setup_date_form()
-        with self.assertRaisesRegex(Exception, "Could not find the component with label 'Datey' of type 'DatePickerField'"):
+        with self.assertRaises(ComponentNotFoundException) as context:
             test_form.fill_date_field('Datey', datetime.date.today())
+        self.assertEqual(context.exception.args[0], "No components with label 'Datey' found on page")
 
     def test_fill_datefield_bad_input(self) -> None:
         test_form = self._setup_date_form()
@@ -603,8 +616,9 @@ class TestSailUiForm(unittest.TestCase):
 
     def test_fill_datetimefield_not_found(self) -> None:
         test_form = self._setup_date_form()
-        with self.assertRaisesRegex(Exception, "Could not find the component with label 'Dt' of type 'DateTimePickerField'"):
+        with self.assertRaises(ComponentNotFoundException) as context:
             test_form.fill_datetime_field('Dt', datetime.datetime.now())
+        self.assertEqual(context.exception.args[0], "No components with label 'Dt' found on page")
 
     def test_fill_datetimefield_success(self) -> None:
         test_form = self._setup_date_form()
@@ -723,6 +737,75 @@ class TestSailUiForm(unittest.TestCase):
         sail_form = SailUiForm(self.task_set.appian.interactor, sail_ui_site_with_record_search_button, "http://localhost.com")
 
         sail_form.click_record_search_button_by_index()
+
+    @patch('appian_locust._interactor._Interactor.click_record_link')
+    def test_click_record_link(self, mock_click_rl: MagicMock) -> None:
+        report_body = read_mock_file("nested_dynamic_link_response.json")
+        self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
+        sail_form = self.task_set.appian.reports.visit_and_get_form(self.report_name, exact_match=False)
+
+        sail_form.click_record_link('')
+
+        args, _ = mock_click_rl.call_args_list[0]
+
+        self.assertEqual(args[1]['recordIdentifier'], '74')
+
+    @patch('appian_locust._interactor._Interactor.click_record_link')
+    def test_click_record_link_by_index(self, mock_click_rl: MagicMock) -> None:
+        report_body = read_mock_file("nested_dynamic_link_response.json")
+        self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
+        sail_form = self.task_set.appian.reports.visit_and_get_form(self.report_name, exact_match=False)
+
+        sail_form.click_record_link_by_index(index=2)
+
+        args, _ = mock_click_rl.call_args_list[0]
+
+        self.assertEqual(args[1]['recordIdentifier'], '22')
+
+    @patch('appian_locust._interactor._Interactor.click_record_link')
+    def test_click_record_link_by_attribute_and_index(self, mock_click_rl: MagicMock) -> None:
+        report_body = read_mock_file("nested_dynamic_link_response.json")
+        self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
+        sail_form = self.task_set.appian.reports.visit_and_get_form(self.report_name, exact_match=False)
+
+        sail_form.click_record_link_by_attribute_and_index(attribute='pageUrlStub', attribute_value='reports', index=3)
+
+        args, _ = mock_click_rl.call_args_list[0]
+
+        self.assertEqual(args[1]['recordIdentifier'], '112')
+
+    def test_click_record_link_missing_attribute(self) -> None:
+        report_body = read_mock_file("nested_dynamic_link_response.json")
+        self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
+        sail_form = self.task_set.appian.reports.visit_and_get_form(self.report_name, exact_match=False)
+
+        with self.assertRaises(ComponentNotFoundException) as context:
+            sail_form.click_record_link_by_attribute_and_index(attribute='Nonexistant', attribute_value='attribute')
+        self.assertEqual(context.exception.args[0], "No components with Nonexistant 'attribute' found on page")
+
+    def test_click_record_link_out_of_bounds_index(self) -> None:
+        report_body = read_mock_file("nested_dynamic_link_response.json")
+        self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
+        sail_form = self.task_set.appian.reports.visit_and_get_form(self.report_name, exact_match=False)
+
+        with self.assertRaisesRegex(Exception, "Index: '100' out of range"):
+            sail_form.click_record_link_by_attribute_and_index(index=100)
+
+    def test_click_record_link_zero_index(self) -> None:
+        report_body = read_mock_file("nested_dynamic_link_response.json")
+        self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
+        sail_form = self.task_set.appian.reports.visit_and_get_form(self.report_name, exact_match=False)
+
+        with self.assertRaisesRegex(Exception, "Invalid index: '0'. Please enter a positive number. Indexing is 1-based to match SAIL indexing convention"):
+            sail_form.click_record_link_by_index(index=0)
+
+    def test_click_record_link_negative_index(self) -> None:
+        report_body = read_mock_file("nested_dynamic_link_response.json")
+        self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
+        sail_form = self.task_set.appian.reports.visit_and_get_form(self.report_name, exact_match=False)
+
+        with self.assertRaisesRegex(Exception, "Invalid index: '-1'. Please enter a positive number"):
+            sail_form.click_record_link_by_index(index=-1)
 
 
 if __name__ == '__main__':

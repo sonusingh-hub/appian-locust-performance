@@ -18,7 +18,7 @@ from ._task_opener import _TaskOpener
 from ._ui_reconciler import UiReconciler
 from .exceptions import ComponentNotFoundException, InvalidComponentException, ChoiceNotFoundException
 from .helper import (extract_all_by_label, find_component_by_attribute_and_index_in_dict, find_component_by_attribute_in_dict,
-                     find_component_by_index_in_dict, find_component_by_label_and_type_dict)
+                     find_component_by_index_in_dict, find_component_by_label_and_type_dict, find_component_by_type_and_attribute_and_index_in_dict)
 from .records_helper import (get_record_header_response,
                              get_record_summary_view_response,
                              get_url_stub_from_record_list_url_path)
@@ -101,7 +101,7 @@ class SailUiForm:
         return f"self_state={json.dumps(self.state,indent=4)}"
 
     @raises_locust_error
-    def fill_field_by_attribute_and_index(self, attribute: str, attribute_value: str, fill_value: str, index: int = 0, locust_request_label: str = "") -> 'SailUiForm':
+    def fill_field_by_attribute_and_index(self, attribute: str, attribute_value: str, fill_value: str, index: int = 1, locust_request_label: str = "") -> 'SailUiForm':
         """
         Selects a Field by "attribute" and its value provided "attribute_value" and an index if more than one Field is found
         and fills it with text "fill_value"
@@ -112,7 +112,7 @@ class SailUiForm:
             fill_value(str): Value to fill in the field
 
         Keyword Args:
-            index(int): Index of the field to fill if more than one match the attribute and attribute_value criteria (default: 0)
+            index(int): Index of the field to fill if more than one match the attribute and attribute_value criteria (default: 1)
             locust_request_label(str): Label used to identify the request for locust statistics
 
         Returns (SailUiForm): The latest state of the UiForm
@@ -120,12 +120,12 @@ class SailUiForm:
         Examples:
 
             >>> form.fill_field_by_attribute_and_index("label", "Write a comment", "Hello, Testing")
-            # selects the Component with the "label" attribute having "Write a comment" value
+            # selects the first Component with the "label" attribute having "Write a comment" value
             # and fills it with "Hello, Testing"
 
-            >>> form.fill_field_by_attribute_and_index("label", "Write a comment", "Hello, Testing", 1)
+            >>> form.fill_field_by_attribute_and_index("label", "Write a comment", "Hello, Testing", 2)
             # selects the second Component with the "label" attribute having "Write a comment" value
-            # and fills it wht "Hello, Testing"
+            # and fills it with "Hello, Testing"
 
         """
         component = find_component_by_attribute_and_index_in_dict(attribute, attribute_value, index, self.state)
@@ -144,7 +144,7 @@ class SailUiForm:
         return self._reconcile_state(new_state, form_url=reeval_url)
 
     @raises_locust_error
-    def fill_text_field(self, label: str, value: str, is_test_label: bool = False, locust_request_label: str = "", index: int = 0) -> 'SailUiForm':
+    def fill_text_field(self, label: str, value: str, is_test_label: bool = False, locust_request_label: str = "", index: int = 1) -> 'SailUiForm':
         """
         Fills a field on the form, if there is one present with the following label (case sensitive)
         Otherwise throws a NotFoundException
@@ -156,7 +156,7 @@ class SailUiForm:
         Keyword Args:
             is_test_label(bool): If you are filling a text field via a test label instead of a label, set this boolean to true
             locust_request_label(str): Label used to identify the request for locust statistics
-            index(int): Index of the field to fill if more than one match the label criteria (default: 0)
+            index(int): Index of the field to fill if more than one match the label criteria (default: 1)
 
         Returns (SailUiForm): The latest state of the UiForm
 
@@ -204,18 +204,19 @@ class SailUiForm:
         return self._reconcile_state(new_state, form_url=reeval_url)
 
     @raises_locust_error
-    def fill_field_by_any_attribute(self, attribute: str, value_for_attribute: str, text_to_fill: str, locust_request_label: str = "", index: int = 0) -> 'SailUiForm':
+    def fill_field_by_any_attribute(self, attribute: str, value_for_attribute: str, text_to_fill: str, locust_request_label: str = "", index: int = 1) -> 'SailUiForm':
         """
         Selects a Field by "attribute" and its value provided "value_for_attribute"
         and fills it with text "text_to_fill"
 
         Args:
             attribute(str): Name of the component to fill
-            value_for_attribute(int): Value for the attribute passed in to this function
-            text_to_fill(int): Value to fill the field with
+            value_for_attribute(str): Value for the attribute passed in to this function
+            text_to_fill(str): Value to fill the field with
 
         Keyword Args:
             locust_request_label(str): Label used to identify the request for locust statistics
+            index(int): Index of the field to fill if more than one match the label criteria (default: 1)
 
         Returns (SailUiForm): The latest state of the UiForm
 
@@ -308,7 +309,7 @@ class SailUiForm:
         return self._reconcile_state(newer_state)
 
     @raises_locust_error
-    def click(self, label: str, is_test_label: bool = False, locust_request_label: str = "", index: int = 0) -> 'SailUiForm':
+    def click(self, label: str, is_test_label: bool = False, locust_request_label: str = "", index: int = 1) -> 'SailUiForm':
         """
         Clicks on a component on the form, if there is one present with the following label (case sensitive)
         Otherwise throws a NotFoundException
@@ -323,7 +324,7 @@ class SailUiForm:
 
         Keyword Args:
             locust_request_label(str): Label used to identify the request for locust statistics
-            index(int): Index of the component to click if more than one match the label criteria (default: 0)
+            index(int): Index of the component to click if more than one match the label criteria (default: 1)
 
         Returns (SailUiForm): The latest state of the UiForm
 
@@ -337,7 +338,7 @@ class SailUiForm:
         return self._click(label, is_test_label=is_test_label, locust_request_label=locust_label, index=index)
 
     @raises_locust_error
-    def click_button(self, label: str, is_test_label: bool = False, locust_request_label: str = "", index: int = 0) -> 'SailUiForm':
+    def click_button(self, label: str, is_test_label: bool = False, locust_request_label: str = "", index: int = 1) -> 'SailUiForm':
         """
         Clicks on a component on the form, if there is one present with the following label (case sensitive)
         Otherwise throws a NotFoundException
@@ -350,7 +351,7 @@ class SailUiForm:
 
         Keyword Args:
             locust_request_label(str): Label used to identify the request for locust statistics
-            index(int): Index of the component to click if more than one match the label criteria (default: 0)
+            index(int): Index of the component to click if more than one match the label criteria (default: 1)
 
         Returns (SailUiForm): The latest state of the UiForm
 
@@ -364,7 +365,7 @@ class SailUiForm:
         return self._click(label, is_test_label=is_test_label, locust_request_label=locust_label, index=index)
 
     @raises_locust_error
-    def click_link(self, label: str, is_test_label: bool = False, locust_request_label: str = "", index: int = 0) -> 'SailUiForm':
+    def click_link(self, label: str, is_test_label: bool = False, locust_request_label: str = "", index: int = 1) -> 'SailUiForm':
         """
         Clicks on a component on the form, if there is one present with the following label (case sensitive)
         Otherwise throws a NotFoundException
@@ -377,7 +378,7 @@ class SailUiForm:
 
         Keyword Args:
             locust_request_label(str): Label used to identify the request for locust statistics
-            index(int): Index of the component to click if more than one match the label criteria (default: 0)
+            index(int): Index of the component to click if more than one match the label criteria (default: 1)
 
         Returns (SailUiForm): The latest state of the UiForm
 
@@ -389,7 +390,7 @@ class SailUiForm:
         locust_label = locust_request_label or f"{self.breadcrumb}.ClickLink.{label}"
         return self._click(label, is_test_label=is_test_label, locust_request_label=locust_label, index=index)
 
-    def _click(self, label: str, is_test_label: bool = False, locust_request_label: str = "", index: int = 0) -> 'SailUiForm':
+    def _click(self, label: str, is_test_label: bool = False, locust_request_label: str = "", index: int = 1) -> 'SailUiForm':
         """
         Internal function wrapped by various click methods
         """
@@ -451,6 +452,30 @@ class SailUiForm:
         return self._reconcile_state(new_state, form_url=reeval_url)
 
     @raises_locust_error
+    def click_record_link_by_attribute_and_index(self, attribute: str = "", attribute_value: str = "", index: int = 1, locust_request_label: str = "") -> 'SailUiForm':
+        """
+        Click the index'th record link on the form if there is one present with an attribute matching attribute_value
+        If no attribute is provided, the index'th record link is selected from all record links in the form
+        Otherwise throws a ComponentNotFoundException
+
+        Keyword Args:
+            attribute(str): Attribute to check for 'attribute_value' (default: "")
+            attribute_value(str): Attribute value of record link to click (default: "")
+            index(int): Index of record link to click (default: 1)
+            locust_request_label(str): Label used to identify the request for locust statistics
+
+        Returns (SailUiForm): The record form (feed) for the linked record.
+
+        """
+        component_type = 'RecordLink'
+        component = find_component_by_type_and_attribute_and_index_in_dict(self.state, component_type, attribute, attribute_value, index)
+        locust_label = locust_request_label or f"{self.breadcrumb}.ClickRecordLink"
+        reeval_url = self._get_update_url_for_reeval(self.state)
+        new_state = self.interactor.click_record_link(reeval_url, component, self.context, self.uuid,
+                                                      locust_label=locust_label)
+        return self._reconcile_state(new_state, form_url=reeval_url)
+
+    @raises_locust_error
     def click_record_link(self, label: str, is_test_label: bool = False, locust_request_label: str = "") -> 'SailUiForm':
         """
         Click a record link on the form if there is one present with the following label (case sensitive)
@@ -467,14 +492,24 @@ class SailUiForm:
 
         """
         attribute_to_find = 'testLabel' if is_test_label else 'label'
-        component = find_component_by_attribute_in_dict(attribute_to_find, label, self.state)
-        self._validate_component_found(component, label)
+        return self.click_record_link_by_attribute_and_index(attribute=attribute_to_find, attribute_value=label, locust_request_label=locust_request_label)
 
-        reeval_url = self._get_update_url_for_reeval(self.state)
-        locust_label = locust_request_label or f"{self.breadcrumb}.ClickRecordLink.{label}"
-        new_state = self.interactor.click_record_link(reeval_url, component, self.context, self.uuid,
-                                                      locust_label=locust_label)
-        return self._reconcile_state(new_state, form_url=reeval_url)
+    @raises_locust_error
+    def click_record_link_by_index(self, index: int, locust_request_label: str = "") -> 'SailUiForm':
+        """
+        Click the index'th record link on the form
+        Otherwise throws a ComponentNotFoundException
+
+        Args:
+            index(int): Index of the record link to click (1-based)
+
+        Keyword Args:
+            locust_request_label(str): Label used to identify the request for locust statistics
+
+        Returns (SailUiForm): The record form (feed) for the linked record.
+
+        """
+        return self.click_record_link_by_attribute_and_index(index=index, locust_request_label=locust_request_label)
 
     @raises_locust_error
     def click_start_process_link(self, label: str, site_name: str, page_name: str, is_mobile: bool = False, locust_request_label: str = "") -> 'SailUiForm':

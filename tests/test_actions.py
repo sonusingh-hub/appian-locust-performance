@@ -161,7 +161,7 @@ class TestActions(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             sail_form.fill_text_field(label, value)
         self.assertEqual(
-            context.exception.args[0], f"No response returned when trying to update the field with 'label' = 'Title' at index '0'")
+            context.exception.args[0], f"No response returned when trying to update the field with 'label' = 'Title' at index '1'")
 
         button_label = 'Submit'
         with self.assertRaises(Exception) as context:
@@ -179,7 +179,7 @@ class TestActions(unittest.TestCase):
         with self.assertRaises(ComponentNotFoundException) as context:
             sail_form.select_dropdown_item(dropdown_label, 'some choice')
         self.assertEqual(
-            context.exception.args[0], f"Could not find the component with label '{dropdown_label}' in the provided form")
+            context.exception.args[0], f"No components with label '{dropdown_label}' found on page")
 
         dropdown_label = "Name"
         with self.assertRaises(InvalidComponentException):
@@ -240,7 +240,7 @@ class TestActions(unittest.TestCase):
         with self.assertRaises(ComponentNotFoundException) as context:
             sail_form.select_multi_dropdown_item(dropdown_label, ["Asia"])
         self.assertEqual(
-            context.exception.args[0], f"Could not find the component with label '{dropdown_label}' in the provided form")
+            context.exception.args[0], f"No components with label '{dropdown_label}' found on page")
 
         dropdown_label = "Regions"
         sail_form.select_multi_dropdown_item(dropdown_label, ["Asia"])
@@ -280,12 +280,12 @@ class TestActions(unittest.TestCase):
         with self.assertRaises(ComponentNotFoundException) as context:
             sail_form.select_radio_button_by_test_label(button_label, 1)
         self.assertEqual(
-            context.exception.args[0], f"Could not find the component with label '{button_label}' in the provided form")
+            context.exception.args[0], f"No components with testLabel '{button_label}' found on page")
 
         with self.assertRaises(ComponentNotFoundException) as context:
             sail_form.select_radio_button_by_label(button_label, 1)
         self.assertEqual(
-            context.exception.args[0], f"Could not find the component with label '{button_label}' in the provided form")
+            context.exception.args[0], f"No components with label '{button_label}' found on page")
 
     @patch('appian_locust.uiform.find_component_by_index_in_dict')
     @patch('appian_locust.uiform._Interactor.select_radio_button')
@@ -312,21 +312,21 @@ class TestActions(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             sail_form.select_radio_button_by_index(index_too_low, 1)
         self.assertEqual(
-            context.exception.args[0], f"Invalid index: '{index_too_low}'.  Please enter a positive number")
+            context.exception.args[0], f"Invalid index: '{index_too_low}'. Please enter a positive number")
 
         index_too_high = 4
         with self.assertRaises(Exception) as context:
             sail_form.select_radio_button_by_index(index_too_high, 1)
         self.assertEqual(
             context.exception.args[0],
-            f"Bad index: only '3' components of type 'RadioButtonField' found on page, requested '{index_too_high}'"
+            f"Index: '{index_too_high}' out of range"
         )
 
         index_invalid = "bad index"
         with self.assertRaises(Exception) as context:
             sail_form.select_radio_button_by_index(index_invalid, 1)
         self.assertEqual(
-            context.exception.args[0], f"Invalid index: '{index_invalid}'.  Please enter a positive number")
+            context.exception.args[0], f"'<' not supported between instances of 'str' and 'int'")
 
 
 if __name__ == '__main__':
