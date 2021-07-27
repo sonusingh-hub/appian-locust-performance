@@ -398,7 +398,9 @@ class _Interactor:
             record_link_url = get_url[:url_prefix_index].replace("/pages/",
                                                                  "/page/") + "/record/" + record_link_url_suffix
         # Support record view links from a record within a site
-        elif "record" in get_url:
+        # Also supports record links on a task form (ex: /suite/rest/a/task/latest/JaUHEhaQ1jI7OMif0L/form)
+        # Most urls will get caught here
+        elif "record" in get_url or "task" in get_url:
             site_name = component.get('siteUrlStub', "")
             page_name = component.get('pageUrlStub', "")
             record_link_url = f"/suite/rest/a/sites/latest/{site_name}/page/{page_name}/record/{record_link_url_suffix}"
