@@ -434,6 +434,28 @@ class TestSailUiForm(unittest.TestCase):
         text_component = find_component_by_attribute_in_dict('label', 'Action Type', record_instance_related_action_form.state)
         self.assertEqual(text_component.get("#t"), "TextField")
 
+    def test_click_related_action_link_on_summary_dashboard(self) -> None:
+        related_action_dialog_response = read_mock_file("related_action_in_a_dialog_response.json")
+        record_instance_with_related_action_link_response = read_mock_file("record_summary_with_related_action_response.json")
+
+        # Mocking the response for related action
+        self.custom_locust.set_response('/suite/rest/a/record/latest/lMBIWonPMarTw_zHV5oHY7Qv6e46NZWjhAVMg-o7QVtt-3W0zJoYQxILKZhEkSJs0tCAhEektXxP2N01AkR32ISfkpTKGeoz4L6tNR8PBwsRRWEtw/'
+                                        'actionDialog/iwBIWonPMarTw_zHTsSC5HBmvtUFIZ8Nar8xAVLL-EvREVFV-D4OAWQ4z8a2Q',
+                                        200, related_action_dialog_response)
+
+        sail_form = SailUiForm(self.task_set.appian.interactor,
+                               json.loads(record_instance_with_related_action_link_response),
+                               'suite/rest/a/sites/latest/connected-servicing/page/servicing-requests/record/'
+                               'lMBIWonPMarTw_zHV9tHY7Qv243EjNNOfm68ODkwcOZV5QkPIy_jUPbUMBdKMU5co2siOSdlQZiECCP4MTqB25k7gOVE83gI-zLH97k_QuvUtK0sQ/view/summary'
+                               )
+        record_summary_view_form = sail_form.get_record_view_form()
+        # perform a related action that opens in a dialog (which is a on the summary dashboard itself)
+        record_instance_related_action_form = record_summary_view_form.click_related_action("Document Reconciliation")
+
+        # Assert fields on the related action form
+        dropdown_component = find_component_by_attribute_in_dict('label', 'Document Type', record_instance_related_action_form.state)
+        self.assertEqual(dropdown_component.get("#t"), "DropdownField")
+
     @patch('appian_locust._interactor._Interactor.get_page')
     def test_filter_records_using_searchbox(self, mock_get_page: MagicMock) -> None:
         uri = 'suite/rest/a/sites/latest/D6JMim/pages/records/recordType/commit'
