@@ -643,25 +643,33 @@ class SailUiForm:
 
         Examples:
             How to use click_related_action():
+
             Use records function - visit_record_instance_and_get_feed_form() to get Record Instance SailUiForm, then get the header response
             and finally click on the related action by label.
 
             >>> feed_form = records.visit_record_instance_and_get_feed_form()
 
-            >>> header_form = feed_form.get_record_header_form()
+            We need to get header response or view response  depending on if the related action is under the related actions dashboard
+            or it is a related action link on the summary view UI (which opens in a dialog).
+
+            >>> header_form = feed_form.get_record_header_form() or feed_form.get_record_view_form()
 
             >>> header_form.click_related_action('Request upgrade')
 
         """
         component = find_component_by_attribute_in_dict('label', label, self.state)
         self._validate_component_found(component, label)
+
         # Support scenario where related action label is found within outer "ButtonWidget" rather than directly in "RelatedActionLink" component
         if "source" not in component:
             component = component.get("link", "")
         component_source = component.get("source", "")
         record_type_stub = component_source.get("recordTypeStub", "")
-        opaque_record_id = component_source.get("opaqueRecordId", "")
         opaque_related_action_id = component_source.get("opaqueRelatedActionId", "")
+        open_action_in_a_dialog = component.get("openActionsIn", "")
+
+        opaque_identifier_key = "opaqueRecordRef" if open_action_in_a_dialog == "DIALOG" else "opaqueRecordId"
+        opaque_record_id = component_source.get(opaque_identifier_key, "")
 
         if not record_type_stub or not opaque_record_id or not opaque_related_action_id:
             raise Exception(f'''
@@ -670,7 +678,7 @@ class SailUiForm:
         locust_label = locust_request_label or f"{self.breadcrumb}.ClickRelatedActionLink.{label}"
 
         new_state = self.interactor.click_related_action(component, record_type_stub, opaque_record_id,
-                                                         opaque_related_action_id, locust_label)
+                                                         opaque_related_action_id, locust_label, open_action_in_a_dialog == "DIALOG")
         # get the re-eval URI from links object of the response (new_state)
         reeval_url = self._get_update_url_for_reeval(new_state)
         return self._reconcile_state(new_state, form_url=reeval_url)

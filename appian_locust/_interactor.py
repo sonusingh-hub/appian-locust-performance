@@ -452,28 +452,49 @@ class _Interactor:
         return resp.json()
 
     def click_related_action(self, component: Dict[str, Any], record_type_stub: str, opaque_record_id: str,
-                             opaque_related_action_id: str, locust_request_label: str = "") -> Dict[str, Any]:
+                             opaque_related_action_id: str, locust_request_label: str = "", open_in_a_dialog: bool = False) -> Dict[str, Any]:
         '''
         Use this function to interact with related action links, which start a process and return the
         start form.
+        This can handle both relation actions and related action links that open in a dialog.
+
         Args:
             component: the JSON representing the Related Action Link
             record_type_stub: record type stub for the record
             opaque_record_id: opaque id for the record
             opaque_related_action_id: opaque id for the related action
             locust_request_label: label to be used within locust
+            open_in_a_dialog: Does this link open in a dialog
 
         Returns: the start form for the related action
         '''
-        # Mobile url not implemented
-        # Web url:
-        related_action_link_url = f"/suite/rest/a/record/latest/{record_type_stub}/{opaque_record_id}/actions/{opaque_related_action_id}"
 
-        headers = self.setup_sail_headers()
         locust_label = locust_request_label or "Clicking RelatedActionLink: " + component["label"]
-        resp = self.post_page(
-            self.host + related_action_link_url, payload={}, headers=headers, label=locust_label
-        )
+        headers = self.setup_request_headers()
+
+        if open_in_a_dialog:
+            # This link opens a dialog on the browser
+            headers["Accept"] = "application/vnd.appian.tv.ui+json"
+            related_action_link_url = f"/suite/rest/a/record/latest/{opaque_record_id}/actionDialog/{opaque_related_action_id}"
+            resp = self.get_page(
+                self.host + related_action_link_url, headers=headers, label=locust_label
+            )
+        else:
+            # Mobile url not implemented
+            # Web url:
+            related_action_link_url = f"/suite/rest/a/record/latest/{record_type_stub}/{opaque_record_id}/actions/{opaque_related_action_id}"
+            headers = self.setup_sail_headers()
+            resp = self.get_page(
+                self.host + related_action_link_url, headers=headers, label=locust_label
+            )
+            json_response = resp.json()
+            if json_response.get("empty") == "true" and json_response.get("ui") is None:
+                # This means we need to make the POST call to get the UI for the form.
+                resp = self.post_page(
+                    self.host + related_action_link_url, payload={}, headers=headers, label=locust_label
+                )
+            else:
+                return json_response
         return resp.json()
 
     # COMPONENT RELATED METHODS
