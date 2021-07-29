@@ -649,8 +649,8 @@ class SailUiForm:
 
             >>> feed_form = records.visit_record_instance_and_get_feed_form()
 
-            We need to get header response or view response  depending on if the related action is under the related actions dashboard
-            or it is a related action link on the summary view UI (which opens in a dialog).
+            We need to get the header response or view response  depending on if the related action is under the related actions dashboard
+            or if it is a related action link on the summary view UI (which opens in a dialog).
 
             >>> header_form = feed_form.get_record_header_form() or feed_form.get_record_view_form()
 
@@ -666,9 +666,10 @@ class SailUiForm:
         component_source = component.get("source", "")
         record_type_stub = component_source.get("recordTypeStub", "")
         opaque_related_action_id = component_source.get("opaqueRelatedActionId", "")
-        open_action_in_a_dialog = component.get("openActionsIn", "")
+        open_actions_in = component.get("openActionsIn", "")
+        open_action_in_a_dialog = open_actions_in == "DIALOG"
 
-        opaque_identifier_key = "opaqueRecordRef" if open_action_in_a_dialog == "DIALOG" else "opaqueRecordId"
+        opaque_identifier_key = "opaqueRecordRef" if open_action_in_a_dialog else "opaqueRecordId"
         opaque_record_id = component_source.get(opaque_identifier_key, "")
 
         if not record_type_stub or not opaque_record_id or not opaque_related_action_id:
@@ -677,8 +678,9 @@ class SailUiForm:
                             ''')
         locust_label = locust_request_label or f"{self.breadcrumb}.ClickRelatedActionLink.{label}"
 
-        new_state = self.interactor.click_related_action(component, record_type_stub, opaque_record_id,
-                                                         opaque_related_action_id, locust_label, open_action_in_a_dialog == "DIALOG")
+        new_state = self.interactor.click_related_action(component, record_type_stub=record_type_stub, opaque_record_id=opaque_record_id,
+                                                         opaque_related_action_id=opaque_related_action_id,
+                                                         locust_request_label=locust_label, open_in_a_dialog=open_action_in_a_dialog)
         # get the re-eval URI from links object of the response (new_state)
         reeval_url = self._get_update_url_for_reeval(new_state)
         return self._reconcile_state(new_state, form_url=reeval_url)
