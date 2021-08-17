@@ -10,6 +10,7 @@ from locust import Locust, TaskSet
 from requests.exceptions import HTTPError
 from tests.mock_client import CustomLocust
 from tests.mock_reader import read_mock_file
+from appian_locust._records import RECORDS_INTERFACE_PATH, RECORDS_NAV_PATH
 
 log = logger.getLogger(__name__)
 
@@ -22,6 +23,8 @@ class TestRecords(unittest.TestCase):
     # Record Summary dashboard response for a specific Record Instance
     record_summary_view = read_mock_file("record_summary_view_response.json")
     record_instance_name = "Actions Page"
+    records_interface = read_mock_file("records_interface.json")
+    records_nav = read_mock_file("records_nav.json")
 
     def setUp(self) -> None:
         self.custom_locust = CustomLocust(Locust())
@@ -50,6 +53,8 @@ class TestRecords(unittest.TestCase):
             "/suite/rest/a/sites/latest/D6JMim/page/records/record/lQB0K7YxC0UQ2Fhx4pmY1F49C_MjItD4hbtRdKDmOo6V3MOBxI47ipGa_bJKZf86CLtvOCp1cfX-sa2O9hp6WTKZpbGo5MxRaaTwMkcYMeDl8kN8Hg/view/summary",
             200,
             self.record_summary_view)
+        self.custom_locust.set_response(RECORDS_INTERFACE_PATH, 200, self.records_interface)
+        self.custom_locust.set_response(RECORDS_NAV_PATH, 200, self.records_nav)
 
     def tearDown(self) -> None:
         self.task_set.on_stop()

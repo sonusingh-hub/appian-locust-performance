@@ -14,6 +14,7 @@ from locust import Locust, TaskSet
 
 from .mock_client import CustomLocust, MockClient, SampleAppianTaskSequence
 from .mock_reader import read_mock_file
+from appian_locust._actions import ACTIONS_INTERFACE_PATH, ACTIONS_NAV_PATH, ACTIONS_FEED_PATH
 
 log = logger.getLogger(__name__)
 
@@ -25,6 +26,9 @@ class TestAppianBase(unittest.TestCase):
     form_content_2 = read_mock_file("sites_record_nav.json")
     form_content_3 = read_mock_file("sites_record_recordType_resp.json")
     nested_dynamic_link_json = read_mock_file("nested_dynamic_link_response.json")
+    actions_interface = read_mock_file("actions_interface.json")
+    actions_nav = read_mock_file("actions_nav.json")
+    actions_feed = read_mock_file("actions_feed.json")
 
     def setUp(self) -> None:
         self.custom_locust = CustomLocust(Locust())
@@ -37,6 +41,9 @@ class TestAppianBase(unittest.TestCase):
         self.task_set.host = ""
 
         self.task_set.on_start()
+        self.custom_locust.set_response(ACTIONS_INTERFACE_PATH, 200, self.actions_interface)
+        self.custom_locust.set_response(ACTIONS_NAV_PATH, 200, self.actions_nav)
+        self.custom_locust.set_response(ACTIONS_FEED_PATH, 200, self.actions_feed)
 
     def tearDown(self) -> None:
         if '__appianMultipartCsrfToken' in self.task_set.appian.client.cookies:
@@ -150,6 +157,9 @@ class TestAppianBase(unittest.TestCase):
         host = "https://my-fake-host.com"
         inner_client.set_response(
             f"{host}/suite/api/tempo/open-a-case/available-actions?ids=%5B%5D", 200, actions)
+        inner_client.set_response(host + ACTIONS_INTERFACE_PATH, 200, self.actions_interface)
+        inner_client.set_response(host + ACTIONS_NAV_PATH, 200, self.actions_nav)
+        inner_client.set_response(host + ACTIONS_FEED_PATH, 200, self.actions_feed)
         appian_client = AppianClient(inner_client, "https://my-fake-host.com")
 
         # When
