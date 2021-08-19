@@ -31,21 +31,15 @@ class _Reports(_Base):
         self._errors: int = 0
 
     def get_reports_interface(self, locust_request_label: str = "Reports.Interface") -> Dict[str, Any]:
-        path = REPORTS_INTERFACE_PATH
+        uri = self.interactor.host + REPORTS_INTERFACE_PATH
         headers = self.interactor.setup_sail_headers()
-        resp = self.interactor.get_page(
-            self.interactor.host + path, headers=headers, label=locust_request_label
-        )
-
+        resp = self.interactor.get_page(uri, headers, locust_request_label)
         return resp.json()
 
     def get_reports_nav(self, locust_request_label: str = "Reports.Nav") -> Dict[str, Any]:
-        path = REPORTS_NAV_PATH
+        uri = self.interactor.host + REPORTS_NAV_PATH
         headers = self.interactor.setup_sail_headers()
-        resp = self.interactor.get_page(
-            self.interactor.host + path, headers=headers, label=locust_request_label
-        )
-
+        resp = self.interactor.get_page(uri, headers, locust_request_label)
         return resp.json()
 
     def get_all(self, search_string: str = None, locust_request_label: str = "Reports.Feed") -> Dict[str, Any]:
@@ -61,6 +55,12 @@ class _Reports(_Base):
             >>> self.appian.reports.get_all()
 
         """
+        try:
+            self.get_reports_interface(locust_request_label=locust_request_label)
+            self.get_reports_nav(locust_request_label=locust_request_label)
+        except Exception as e:
+            log_locust_error(e, error_desc="Response Error", raise_error=False)
+
         uri = "/suite/rest/a/uicontainer/latest/reports"
 
         self._reports = dict()

@@ -1,6 +1,6 @@
 from locust import TaskSet, Locust
 from .mock_client import CustomLocust
-from .mock_reader import read_mock_file
+from .mock_reader import read_mock_file, read_mock_file_as_dict
 from appian_locust import AppianTaskSet, SailUiForm
 from appian_locust.uiform import (ComponentNotFoundException,
                                   ChoiceNotFoundException, InvalidComponentException)
@@ -9,11 +9,15 @@ import os
 import unittest
 from unittest.mock import patch, MagicMock
 from typing import Optional
+from appian_locust._actions import ACTIONS_INTERFACE_PATH, ACTIONS_NAV_PATH, ACTIONS_FEED_PATH
 
 
 class TestActions(unittest.TestCase):
 
     actions = read_mock_file("actions_response.json")
+    actions_interface = read_mock_file("actions_interface.json")
+    actions_nav = read_mock_file("actions_nav.json")
+    actions_feed = read_mock_file("actions_feed.json")
 
     action_under_test = "Create a Case::koBOPgHGLIgHRQzrdseY6-wW_trk0FY-87TIog3LDZ9dbSn9dYtlSaOQlWaz7PcZgV5FWdIgYk8QRlv1ARbE4czZL_8fj4ckCLzqA"
 
@@ -32,6 +36,9 @@ class TestActions(unittest.TestCase):
 
         self.custom_locust.set_response(
             "/suite/api/tempo/open-a-case/available-actions?ids=%5B%5D", 200, self.actions)
+        self.custom_locust.set_response(ACTIONS_INTERFACE_PATH, 200, self.actions_interface)
+        self.custom_locust.set_response(ACTIONS_NAV_PATH, 200, self.actions_nav)
+        self.custom_locust.set_response(ACTIONS_FEED_PATH, 200, self.actions_feed)
 
     def tearDown(self) -> None:
         self.task_set.on_stop()

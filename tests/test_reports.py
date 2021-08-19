@@ -3,10 +3,13 @@ from .mock_client import CustomLocust
 from .mock_reader import read_mock_file
 from appian_locust import AppianTaskSet, SailUiForm
 import unittest
+from appian_locust._reports import REPORTS_INTERFACE_PATH, REPORTS_NAV_PATH
 
 
 class TestReports(unittest.TestCase):
     reports = read_mock_file("reports_response.json")
+    reports_interface = read_mock_file("reports_interface.json")
+    reports_nav = read_mock_file("reports_nav.json")
 
     def setUp(self) -> None:
         self.custom_locust = CustomLocust(Locust())
@@ -21,6 +24,8 @@ class TestReports(unittest.TestCase):
         self.task_set.on_start()
 
         self.custom_locust.set_response("/suite/rest/a/uicontainer/latest/reports", 200, self.reports)
+        self.custom_locust.set_response(REPORTS_INTERFACE_PATH, 200, self.reports_interface)
+        self.custom_locust.set_response(REPORTS_NAV_PATH, 200, self.reports_nav)
 
     def tearDown(self) -> None:
         self.task_set.on_stop()

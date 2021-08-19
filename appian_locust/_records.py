@@ -12,6 +12,7 @@ from .helper import format_label
 from .records_helper import (get_all_records_from_json,
                              get_record_summary_view_response, get_records_from_json_by_column)
 from .uiform import SailUiForm
+from ._locust_error_handler import log_locust_error
 
 log = logger.getLogger(__name__)
 
@@ -39,20 +40,16 @@ class _Records(_Base):
         self._records: Dict[str, Any] = dict()
         self._errors: int = 0
 
-    def get_record_interface(self, locust_request_label: str = "Records.Interface") -> Dict[str, Any]:
-        path = RECORDS_INTERFACE_PATH
+    def get_records_interface(self, locust_request_label: str = "Records.Interface") -> Dict[str, Any]:
+        uri = self.interactor.host + RECORDS_INTERFACE_PATH
         headers = self.interactor.setup_sail_headers()
-        resp = self.interactor.get_page(
-            self.interactor.host + path, headers=headers, label=locust_request_label
-        )
+        resp = self.interactor.get_page(uri, headers, locust_request_label)
         return resp.json()
 
     def get_records_nav(self, locust_request_label: str = "Records.Nav") -> Dict[str, Any]:
-        path = RECORDS_NAV_PATH
+        uri = self.interactor.host + RECORDS_NAV_PATH
         headers = self.interactor.setup_sail_headers()
-        resp = self.interactor.get_page(
-            self.interactor.host + path, headers=headers, label=locust_request_label
-        )
+        resp = self.interactor.get_page(uri, headers, locust_request_label)
         return resp.json()
 
     def get_all(self, search_string: str = None, locust_request_label: str = "") -> Dict[str, Any]:
@@ -64,6 +61,12 @@ class _Records(_Base):
 
         Returns (dict): List of records and associated metadata
         """
+        try:
+            self.get_records_interface(locust_request_label=locust_request_label)
+            self.get_records_nav(locust_request_label=locust_request_label)
+        except Exception as e:
+            log_locust_error(e, error_desc="Response Error", raise_error=False)
+
         self.get_all_record_types(locust_request_label=locust_request_label)
         for record_type in self._record_types:
             try:

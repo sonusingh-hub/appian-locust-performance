@@ -13,6 +13,9 @@ from .uiform import SailUiForm
 log = logger.getLogger(__name__)
 
 KEY_FORM_HREF = "formHref"
+ACTIONS_INTERFACE_PATH = "/suite/rest/a/sites/latest/D6JMim/pages/actions/interface"
+ACTIONS_NAV_PATH = "/suite/rest/a/sites/latest/D6JMim/page/actions/nav"
+ACTIONS_FEED_PATH = "/suite/api/feed/tempo?m=menu-actions&c=0"
 
 
 class _Actions(_Base):
@@ -34,7 +37,25 @@ class _Actions(_Base):
         self._actions: Dict[str, Any] = dict()
         self._errors: int = 0
 
-    def get_all(self, search_string: str = None, locust_request_label: str = None) -> Dict[str, Any]:
+    def get_actions_interface(self, locust_request_label: str = "Actions.Interface") -> Dict[str, Any]:
+        uri = self.interactor.host + ACTIONS_INTERFACE_PATH
+        headers = self.interactor.setup_sail_headers()
+        resp = self.interactor.get_page(uri, headers, locust_request_label)
+        return resp.json()
+
+    def get_actions_nav(self, locust_request_label: str = "Actions.Nav") -> Dict[str, Any]:
+        uri = self.interactor.host + ACTIONS_NAV_PATH
+        headers = self.interactor.setup_sail_headers()
+        resp = self.interactor.get_page(uri, headers, locust_request_label)
+        return resp.json()
+
+    def get_actions_feed(self, locust_request_label: str = "Actions.Feed") -> Dict[str, Any]:
+        uri = self.interactor.host + ACTIONS_FEED_PATH
+        headers = self.interactor.setup_feed_headers()
+        resp = self.interactor.get_page(uri, headers, locust_request_label)
+        return resp.json()
+
+    def get_all(self, search_string: str = None, locust_request_label: str = "") -> Dict[str, Any]:
         """
         Retrieves all the available "actions" and associated metadata from "Appian-Tempo-Actions"
 
@@ -47,6 +68,13 @@ class _Actions(_Base):
             >>> self.appian.action.get_all()
 
         """
+
+        try:
+            self.get_actions_interface(locust_request_label=locust_request_label)
+            self.get_actions_nav(locust_request_label=locust_request_label)
+            self.get_actions_feed(locust_request_label=locust_request_label)
+        except Exception as e:
+            log_locust_error(e, error_desc="Response Error", raise_error=False)
 
         path = "/suite/api/tempo/open-a-case/available-actions?ids=%5B%5D"
 
