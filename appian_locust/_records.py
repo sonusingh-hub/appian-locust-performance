@@ -40,19 +40,19 @@ class _Records(_Base):
         self._records: Dict[str, Any] = dict()
         self._errors: int = 0
 
-    def get_records_interface(self, locust_request_label: str = "Records.Interface") -> Dict[str, Any]:
+    def get_records_interface(self, locust_request_label: str = "Records") -> Dict[str, Any]:
         uri = self.interactor.host + RECORDS_INTERFACE_PATH
         headers = self.interactor.setup_sail_headers()
-        resp = self.interactor.get_page(uri, headers, locust_request_label)
+        resp = self.interactor.get_page(uri, headers, f'{locust_request_label}.Interface')
         return resp.json()
 
-    def get_records_nav(self, locust_request_label: str = "Records.Nav") -> Dict[str, Any]:
+    def get_records_nav(self, locust_request_label: str = "Records") -> Dict[str, Any]:
         uri = self.interactor.host + RECORDS_NAV_PATH
         headers = self.interactor.setup_sail_headers()
-        resp = self.interactor.get_page(uri, headers, locust_request_label)
+        resp = self.interactor.get_page(uri, headers, f'{locust_request_label}.Nav')
         return resp.json()
 
-    def get_all(self, search_string: str = None, locust_request_label: str = "") -> Dict[str, Any]:
+    def get_all(self, search_string: str = None, locust_request_label: str = "Records") -> Dict[str, Any]:
         """
         Retrieves all available "records types" and "records" and associated metadata from "Appian-Tempo-Records"
 
@@ -77,7 +77,7 @@ class _Records(_Base):
 
         return self._records
 
-    def get_all_record_types(self, locust_request_label: str = "") -> Dict[str, Any]:
+    def get_all_record_types(self, locust_request_label: str = "Records") -> Dict[str, Any]:
         """
         Navigate to Tempo Records Tab and load all metadata for associated list of record types into cache.
 
@@ -89,8 +89,7 @@ class _Records(_Base):
         headers = self.interactor.setup_request_headers()
         headers['X-Appian-Features-Extended'] = 'e4bc'
         headers["Accept"] = "application/vnd.appian.tv.ui+json"
-        breadcrumb = locust_request_label or "Records"
-        response = self.interactor.get_page(uri=uri, headers=headers, label=breadcrumb)
+        response = self.interactor.get_page(uri=uri, headers=headers, label=locust_request_label)
         json_response = response.json()
         if not(self._is_response_good(response.text)):
             raise(Exception("Unexpected response on Get call of All Records"))

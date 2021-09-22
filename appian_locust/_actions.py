@@ -37,16 +37,16 @@ class _Actions(_Base):
         self._actions: Dict[str, Any] = dict()
         self._errors: int = 0
 
-    def get_actions_interface(self, locust_request_label: str = "Actions.Interface") -> Dict[str, Any]:
+    def get_actions_interface(self, locust_request_label: str = "Actions") -> Dict[str, Any]:
         uri = self.interactor.host + ACTIONS_INTERFACE_PATH
         headers = self.interactor.setup_sail_headers()
-        resp = self.interactor.get_page(uri, headers, locust_request_label)
+        resp = self.interactor.get_page(uri, headers, f'{locust_request_label}.Interface')
         return resp.json()
 
-    def get_actions_nav(self, locust_request_label: str = "Actions.Nav") -> Dict[str, Any]:
+    def get_actions_nav(self, locust_request_label: str = "Actions") -> Dict[str, Any]:
         uri = self.interactor.host + ACTIONS_NAV_PATH
         headers = self.interactor.setup_sail_headers()
-        resp = self.interactor.get_page(uri, headers, locust_request_label)
+        resp = self.interactor.get_page(uri, headers, f'{locust_request_label}.Nav')
         return resp.json()
 
     def get_actions_feed(self, locust_request_label: str = "Actions.Feed") -> Dict[str, Any]:
@@ -55,7 +55,7 @@ class _Actions(_Base):
         resp = self.interactor.get_page(uri, headers, locust_request_label)
         return resp.json()
 
-    def get_all(self, search_string: str = None, locust_request_label: str = "") -> Dict[str, Any]:
+    def get_all(self, search_string: str = None, locust_request_label: str = "Actions") -> Dict[str, Any]:
         """
         Retrieves all the available "actions" and associated metadata from "Appian-Tempo-Actions"
 

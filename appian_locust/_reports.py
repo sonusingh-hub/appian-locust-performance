@@ -30,16 +30,16 @@ class _Reports(_Base):
         self._reports: Dict[str, Any] = dict()
         self._errors: int = 0
 
-    def get_reports_interface(self, locust_request_label: str = "Reports.Interface") -> Dict[str, Any]:
+    def get_reports_interface(self, locust_request_label: str = "Reports") -> Dict[str, Any]:
         uri = self.interactor.host + REPORTS_INTERFACE_PATH
         headers = self.interactor.setup_sail_headers()
-        resp = self.interactor.get_page(uri, headers, locust_request_label)
+        resp = self.interactor.get_page(uri, headers, f'{locust_request_label}.Interface')
         return resp.json()
 
-    def get_reports_nav(self, locust_request_label: str = "Reports.Nav") -> Dict[str, Any]:
+    def get_reports_nav(self, locust_request_label: str = "Reports") -> Dict[str, Any]:
         uri = self.interactor.host + REPORTS_NAV_PATH
         headers = self.interactor.setup_sail_headers()
-        resp = self.interactor.get_page(uri, headers, locust_request_label)
+        resp = self.interactor.get_page(uri, headers, f'{locust_request_label}.Nav')
         return resp.json()
 
     def get_all(self, search_string: str = None, locust_request_label: str = "Reports.Feed") -> Dict[str, Any]:
