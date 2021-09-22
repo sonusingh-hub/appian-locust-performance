@@ -6,6 +6,9 @@ from locust.clients import HttpSession
 from ._feature_flag import FeatureFlag
 from ._interactor import _Interactor
 from ._locust_error_handler import test_response_for_error
+from .logger import getLogger
+
+log = getLogger(__name__)
 
 
 def get_client_feature_toggles(interactor: _Interactor, session: HttpSession) -> Tuple[str, str]:
@@ -17,6 +20,7 @@ def get_client_feature_toggles(interactor: _Interactor, session: HttpSession) ->
     """
     script_uri = _get_javascript_uri(interactor)
     if not script_uri:
+        # TODO: Consider doing a graceful fallback here
         raise Exception(f"Could not find script uri to retrieve client feature toggles at {script_uri}")
     else:
         flag_str = _get_javascript_and_find_feature_flag(session,
@@ -36,11 +40,15 @@ def _get_javascript_uri(interactor: _Interactor, headers: Dict[str, Any] = None)
         uri=news_uri, headers=headers, label="Login.Feature_Toggles.GetSites"
     )
     tempo_text = response.text
-    script_regex = interactor.replace_base_path_if_appropriate(r'<script src="(\/suite\/tempo\/ui\/sail-client\/sites-.*?.js)')
-    uri_match = re.search(script_regex, tempo_text)
-    if uri_match:
-        script_uri = uri_match.groups()[0]
-        return script_uri
+    relative_regex = r'<script src="(\/suite\/tempo\/ui\/sail-client\/sites-.*?.js)'
+    cloud_regex = r'<script src="(https://web-assets.appiancloud.com/.*\/tempo\/ui\/sail-client\/sites-.*?.js)'
+    for regex in [relative_regex, cloud_regex]:
+        script_regex = interactor.replace_base_path_if_appropriate(regex)
+        uri_match = re.search(script_regex, tempo_text)
+        if uri_match:
+            script_uri = uri_match.groups()[0]
+            return script_uri
+        log.info(f"Could not find feature toggle uri using regex {relative_regex}")
     return None
 
 
