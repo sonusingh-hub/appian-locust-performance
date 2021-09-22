@@ -1,28 +1,35 @@
 import unittest
-import appian_locust._feature_toggle_helper as feature_toggle_helper
-from locust import Locust, TaskSet
-from .mock_client import CustomLocust
-from .mock_reader import read_mock_file
-from appian_locust import AppianTaskSet, AppianClient
-from appian_locust._feature_flag import FeatureFlag
 from typing import List
+
+import appian_locust._feature_toggle_helper as feature_toggle_helper
+from appian_locust import AppianTaskSet
+from appian_locust._feature_flag import FeatureFlag
+from locust import Locust, TaskSet
+
+from .mock_client import CustomLocust
 
 
 class FeatureToggleHelperTest(unittest.TestCase):
 
-    html_snippet = """
-                </script><script src="/suite/tempo/ui/sail-client/sites-05d032ca6319b11b6fc9.cache.js?\
-                    appian_environment=sites">
-                </script><script src="/suite/tempo/ui/sail-client/omnibox-05d032ca6319b11b6fc9.cache.js?\
-                    appian_environment=sites" defer="true">
-                </script></body></html>
-                """
+    relative_uri = '/suite/tempo/ui/sail-client/sites-05d032ca6319b11b6fc9.cache.js'
+    html_snippet = (
+        f'</script><script src="{relative_uri}?appian_environment=sites">\n'
+        f'</script><script src="/suite/tempo/ui/sail-client/omnibox-05d032ca6319b11b6fc9.cache.js?appian_environment=sites" defer="true">\n'
+        f'</script></body></html>'
+    )
     js_snippet = """
                 ADERS=exports.LEGACY_FEATURE_FLAGS=exports.DEFAULT_FEATURE_FLAGS=undefined;
                 var RAW_DEFAULT_FEATURE_FLAGS={};var RAW_LEGACY_FEATURE_FLAGS=RAW_DEFAULT_FEATURE_FLAGS&2147483647;
                 var DEFAULT_FEATURE_FLAGS=exports.DEFAULT_FEATURE_FLAGS=RAW_DEFAULT_FEATURE_FLAGS.toString(16);
                 var LEGACY_FEATURE_FLAGS=exports.LEGACY_FEATURE_FLAGS=RAW_LEGACY_FEATURE_FLAGS.toString(16);var
                 """
+    web_asset_url = 'https://web-assets.appiancloud.com/casdbasdf/tempo/ui/sail-client/sites-6bd221b7ad2f1d9b84e8.cache.js'
+    cloud_html_snippet = (
+        f'<script async="" src="https://web-assets.appiancloud.com/bacdasdfASDAS/tempo/ui/sail-client/embeddedBootstrap.nocache.js?appian_environment=sites"'
+        f'id="appianEmbedded" internal="true" data-bannerposition="hidden" data-primary-host="https://site.com/suite"></script>'
+        f'<script src="{web_asset_url}?appian_environment=sites"></script>'
+        f'</script></body></html>'
+    )
 
     def setUp(self) -> None:
         self.custom_locust = CustomLocust(Locust())
@@ -59,8 +66,17 @@ class FeatureToggleHelperTest(unittest.TestCase):
         uri = feature_toggle_helper._get_javascript_uri(self.task_set.appian.interactor, {})
 
         # Then
-        self.assertEqual(
-            uri, "/suite/tempo/ui/sail-client/sites-05d032ca6319b11b6fc9.cache.js")
+        self.assertEqual(uri, self.relative_uri)
+
+    def test_get_javascript_uri_present_cloud_assets(self) -> None:
+        # Given
+        self.custom_locust.set_response("/suite/sites", 200, self.cloud_html_snippet)
+
+        # When
+        uri = feature_toggle_helper._get_javascript_uri(self.task_set.appian.interactor, {})
+
+        # Then
+        self.assertEqual(uri, self.web_asset_url)
 
     def test_get_javascript_and_find_feature_flag_missing_value(self) -> None:
         # Given
@@ -152,7 +168,7 @@ class FeatureToggleHelperTest(unittest.TestCase):
     def test_end_to_end_get_feature_flags(self) -> None:
         # Given a snippet of the sites page and js snippet
         self.custom_locust.set_response("/suite/sites", 200, self.html_snippet)
-        self.custom_locust.set_response("/suite/tempo/ui/sail-client/sites-05d032ca6319b11b6fc9.cache.js",
+        self.custom_locust.set_response(self.relative_uri,
                                         200, self.js_snippet.format("5802956083228348"))
 
         # When
@@ -179,7 +195,7 @@ class FeatureToggleHelperTest(unittest.TestCase):
     def test_end_to_end_get_feature_flags_fail_no_feature_toggles_found(self) -> None:
         # Given a missing feature toggle
         self.custom_locust.set_response("/suite/sites", 200, self.html_snippet)
-        self.custom_locust.set_response("/suite/tempo/ui/sail-client/sites-05d032ca6319b11b6fc9.cache.js",
+        self.custom_locust.set_response(self.relative_uri,
                                         200, 'missin')
 
         # When and Then
