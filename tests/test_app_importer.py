@@ -44,6 +44,7 @@ class TestAppImport(unittest.TestCase):
             self.custom_locust.enqueue_response(200, read_mock_file("design_soap_app_upload_response.json"))
             self.custom_locust.enqueue_response(200, read_mock_file("design_upload_to_file_upload_field_doc_resp.json"))
             self.custom_locust.enqueue_response(200, read_mock_file("design_click_import_button_resp_final.json"))
+            self.custom_locust.enqueue_response(200, read_mock_file("design_landing_page.json"))
 
         self.task_set.appian.app_importer.import_app(path_to_file)
 
@@ -62,6 +63,7 @@ class TestAppImport(unittest.TestCase):
             self.custom_locust.enqueue_response(200, read_mock_file("design_upload_to_file_upload_field_doc_resp.json"))
             self.custom_locust.enqueue_response(200, read_mock_file("design_inspection_results_resp.json"))
             self.custom_locust.enqueue_response(200, read_mock_file("design_click_import_button_resp_final.json"))
+            self.custom_locust.enqueue_response(200, read_mock_file("design_landing_page.json"))
 
         self.task_set.appian.app_importer.import_app(app_file_path=path_to_file, inspect_and_import=True)
 
@@ -84,6 +86,7 @@ class TestAppImport(unittest.TestCase):
             self.custom_locust.enqueue_response(200, read_mock_file("design_constant_props_upload_response.json"))
             self.custom_locust.enqueue_response(200, read_mock_file("design_upload_to_file_upload_field_doc_resp.json"))
             self.custom_locust.enqueue_response(200, read_mock_file("design_click_import_button_resp_final.json"))
+            self.custom_locust.enqueue_response(200, read_mock_file("design_landing_page.json"))
 
         self.task_set.appian.app_importer.import_app(path_to_app, customization_file_path=path_to_cust_file)
 
@@ -105,6 +108,7 @@ class TestAppImport(unittest.TestCase):
             self.custom_locust.enqueue_response(200, read_mock_file("design_constant_props_upload_response.json"))
             self.custom_locust.enqueue_response(200, read_mock_file("design_upload_to_file_upload_field_doc_resp.json"))
             self.custom_locust.enqueue_response(200, read_mock_file("design_click_import_failed_validation.json"))
+            self.custom_locust.enqueue_response(200, read_mock_file("design_landing_page.json"))
 
         with self.assertRaises(Exception) as e:
             self.task_set.appian.app_importer.import_app(path_to_app, customization_file_path=path_to_cust_file)

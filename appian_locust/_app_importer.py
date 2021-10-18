@@ -3,7 +3,7 @@ from typing import Any, Dict, Optional
 from . import logger
 from ._interactor import _Interactor
 from ._locust_error_handler import raises_locust_error
-from .helper import extract_all_by_label, find_component_by_attribute_in_dict
+from .helper import extract_all_by_label
 from .uiform import SailUiForm
 
 log = logger.getLogger(__name__)
@@ -17,7 +17,7 @@ class AppImporter:
         self.interactor = interactor
 
     @raises_locust_error
-    def import_app(self, app_file_path: str, customization_file_path: str = None, inspect_and_import: bool = False) -> Optional[Dict[str, Any]]:
+    def import_app(self, app_file_path: str, customization_file_path: str = None, inspect_and_import: bool = False) -> None:
         """
         Imports an application via the design environment
 
@@ -25,7 +25,7 @@ class AppImporter:
             app_file_path (str): path to the application on the local system
             customization_file_path (str): path to the customization file
             inspect_and_import(bool) : if True => first inspect and then import else simply import
-        Returns: Latest state of the form as a dictionary
+        Returns: None
         """
         # Navigate to Design
         headers = self.interactor.setup_sail_headers()
@@ -54,10 +54,8 @@ class AppImporter:
             log.info("Simply importing the package")
             modal_form = modal_form.click_button("Import")
 
-        import_result = find_component_by_attribute_in_dict("testLabel", "importResultsText", modal_form.state)
-        if import_result:
-            log.info(f"Import of {app_file_path} was successful")
-        else:
-            validations: list = extract_all_by_label(modal_form.state, "validations")
+        validations: list = extract_all_by_label(modal_form.state, "validations")
+        if validations and any(validations):
             raise Exception(f"Import failed, validation were {validations}")
-        return modal_form.state
+
+        modal_form.click_button("Close")
