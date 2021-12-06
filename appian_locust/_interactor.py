@@ -336,13 +336,18 @@ class _Interactor:
         file_ending = ".json"
         if not os.path.exists(RECORD_PATH):
             os.mkdir(RECORD_PATH)
-        proposed_file_name = os.path.join(RECORD_PATH, file_name + file_ending)
-        # Cover files with the same name case
-        while os.path.exists(proposed_file_name):
-            length_of_file_type = len(file_ending)
-            proposed_file_name = proposed_file_name[:-length_of_file_type] + " (1)" + file_ending
-        with open(proposed_file_name, 'w') as f:
-            f.write(response.text)
+        proposed_request_file_name = os.path.join(RECORD_PATH, file_name + "_REQUEST" + file_ending).replace(' ', '_')
+        proposed_response_file_name = os.path.join(RECORD_PATH, file_name + "_RESPONSE" + file_ending).replace(' ', '_')
+        if response.request.body:
+            body = response.request.body
+            if isinstance(body, bytes):
+                with open(proposed_request_file_name, 'wb') as req_bytes_file:
+                    req_bytes_file.write(body)
+            elif isinstance(body, str):
+                with open(proposed_request_file_name, 'w') as req_str_file:
+                    req_str_file.write(body)
+        with open(proposed_response_file_name, 'w') as resp_text_file:
+            resp_text_file.write(response.text)
         if 'X-Trace-Id' in response.headers:
             log.info(cleaned_label + ' | X-Trace-Id: ' + response.headers['X-Trace-Id'])
 
