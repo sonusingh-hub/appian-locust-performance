@@ -401,8 +401,10 @@ class SailUiForm:
         self._validate_component_found(component, label)
 
         locust_label = locust_request_label or f"{self.breadcrumb}.Click.{label}"
-        reeval_url = self._get_update_url_for_reeval(self.state)
         new_state = self._dispatch_click(component=component, locust_label=locust_label)
+
+        # get the re-eval URI from links object of the response (new_state)
+        reeval_url = self._get_update_url_for_reeval(new_state)
 
         if not new_state:
             raise Exception(f"No response returned when trying to click button with label '{label}'")
@@ -1604,6 +1606,9 @@ class SailUiForm:
         interactions on the form.
         """
 
+        # If state is None (usually for tests) we return empty string for re-eval url
+        if not state:
+            return ""
         # get the re-eval URI from links object of the response (new_state)
         list_of_links = state["links"]
         reeval_url = self.form_url

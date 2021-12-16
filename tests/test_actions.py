@@ -106,8 +106,10 @@ class TestActions(unittest.TestCase):
     def test_actions_form_example_success(self) -> None:
         # output of get_page of a form (SAIL)
         self.setup_action_response_with_ui()
-        self.custom_locust.set_response(
-            '/suite/rest/a/model/latest/228/form', 200, '{"context":"12345","ui": {"#t": "UiComponentsDelta", "modifiedComponents":[]}}')
+        self.custom_locust.set_response('/suite/rest/a/model/latest/228/form',
+                                        200,
+                                        '{"context": "12345","links": [{"href": "https://instance.host.net/suite/form","rel": "update","title": "Update", \
+                                        "type": "application/vnd.appian.tv.ui+json; c=2; t=START_FORM","method": "POST"}], "ui": {"#t": "UiComponentsDelta","modifiedComponents": []}}')
         sail_form: SailUiForm = self.task_set.appian.actions.visit_and_get_form(
             "Create a Case", False)
 
@@ -126,7 +128,10 @@ class TestActions(unittest.TestCase):
         self.custom_locust.set_response(action['formHref'], 200, '{"mobileEnabled": "false", "empty": "true", "formType": "START_FORM"}')
         self.custom_locust.set_response(action['initiateActionHref'], 200, resp_json)
         self.custom_locust.set_response(
-            '/suite/rest/a/model/latest/228/form', 200, '{"context":"12345","ui": {"#t": "UiComponentsDelta", "modifiedComponents":[]}}')
+            '/suite/rest/a/model/latest/228/form',
+            200,
+            '{"context": "12345","links": [{"href": "https://instance.host.net/suite/form","rel": "update","title": "Update", \
+            "type": "application/vnd.appian.tv.ui+json; c=2; t=START_FORM","method": "POST"}], "ui": {"#t": "UiComponentsDelta","modifiedComponents": []}}')
         sail_form: SailUiForm = self.task_set.appian.actions.visit_and_get_form("Create a Case")
 
         label = 'Title'
