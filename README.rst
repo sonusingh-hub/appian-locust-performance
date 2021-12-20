@@ -83,6 +83,10 @@ Troubleshooting
 
   * check that `auth` specifies a valid username and password combination for the site you're testing on in `example_config.json <https://gitlab.com/appian-oss/appian-locust/-/blob/master/examples/example_config.json>`_.
 
+* **"General request and response debugging"**
+
+  * Add ``self.appian.interactor.record_mode = True`` to your ``AppianTaskSet`` subclass.  Files will be placed in ``/record_responses`` where the runner is executed.
+
 .. quick_start-inclusion-end-do-not-remove
 
 .. contrib-inclusion-begin-do-not-remove

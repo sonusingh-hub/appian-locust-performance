@@ -336,13 +336,18 @@ class _Interactor:
         file_ending = ".json"
         if not os.path.exists(RECORD_PATH):
             os.mkdir(RECORD_PATH)
-        proposed_file_name = os.path.join(RECORD_PATH, file_name + file_ending)
-        # Cover files with the same name case
-        while os.path.exists(proposed_file_name):
-            length_of_file_type = len(file_ending)
-            proposed_file_name = proposed_file_name[:-length_of_file_type] + " (1)" + file_ending
-        with open(proposed_file_name, 'w') as f:
-            f.write(response.text)
+        proposed_request_file_name = os.path.join(RECORD_PATH, file_name + "_REQUEST" + file_ending).replace(' ', '_')
+        proposed_response_file_name = os.path.join(RECORD_PATH, file_name + "_RESPONSE" + file_ending).replace(' ', '_')
+        if response.request.body:
+            body = response.request.body
+            if isinstance(body, bytes):
+                with open(proposed_request_file_name, 'wb') as req_bytes_file:
+                    req_bytes_file.write(body)
+            elif isinstance(body, str):
+                with open(proposed_request_file_name, 'w') as req_str_file:
+                    req_str_file.write(body)
+        with open(proposed_response_file_name, 'w') as resp_text_file:
+            resp_text_file.write(response.text)
         if 'X-Trace-Id' in response.headers:
             log.info(cleaned_label + ' | X-Trace-Id: ' + response.headers['X-Trace-Id'])
 
@@ -852,6 +857,35 @@ class _Interactor:
         )
         return resp.json()
 
+    def _make_file_metadata(self, id: int) -> dict:
+        """Produces a file metadata object to use for multifile upload fields
+
+        Args:
+            id (int): Document id of the object
+
+        Returns:
+            dict: Dictionary of the multifile upload data
+        """
+        # Spoof some values, as they are needed in the request but don't ultimately matter
+        dummy_data = {
+            "clientUuid": "0",
+            "loadedBytes": 0,
+            "fileSizeBytes": 0,
+            "extension": "none",
+            "name": "no name"
+        }
+        return {
+            "clientUuid": dummy_data["clientUuid"],
+            "loadedBytes": dummy_data["loadedBytes"],
+            "name": dummy_data["name"],
+            "fileSizeBytes": dummy_data["fileSizeBytes"],
+            "documentId": {
+                "#t": "CollaborationDocument",
+                "id": id
+            },
+            "extension": dummy_data["extension"]
+        }
+
     def upload_document_to_field(self, post_url: str, upload_field: Dict[str, Any],
                                  context: Dict[str, Any], uuid: str, doc_id: Union[int, List[int]],
                                  locust_label: str = None, client_mode: str = 'DESIGN') -> Dict[str, Any]:
@@ -870,17 +904,21 @@ class _Interactor:
 
             Returns: the response of post operation as json
         '''
-        new_value: Union[List[Dict], Dict]
+        new_value: Dict
+        # This codepath will only be taken by components older than a certain version
+        # all new code will fall into the list path
         if isinstance(doc_id, int):
             new_value = {
                 "#t": "CollaborationDocument",
                 "id": doc_id
             }
         elif isinstance(doc_id, List):
-            new_value = [{"#t": "CollaborationDocument", "id": id} for id in doc_id]
+            new_value = {
+                "#t": "FileMetadata?list",
+                "#v": [self._make_file_metadata(id) for id in doc_id]
+            }
         else:
             log_locust_error(Exception(f"Bad document id or list of document ids: {doc_id}"))
-            sys.exit(2)
         payload = save_builder() \
             .component(upload_field) \
             .context(context) \
@@ -890,7 +928,7 @@ class _Interactor:
 
         locust_label = locust_label or "Uploading Document to " + \
             upload_field.get("label", upload_field.get("testLabel", "Generic FileUpload"))
-        # Override the default headers here
+
         headers = self.setup_sail_headers()
         headers['X-Client-Mode'] = client_mode
         resp = self.post_page(
