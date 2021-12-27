@@ -970,7 +970,7 @@ class SailUiForm:
         if component.get('#t') != 'FileUploadWidget':
             if component.get('#t') == "MultipleFileUploadWidget":
                 print("Selected FileUploadWidget is instead MultipleFileUploadWidget, continuing automatically")
-                return self.upload_documents_to_multiple_file_upload_field(label, file_path, locust_request_label)
+                return self.upload_documents_to_multiple_file_upload_field(label, [file_path], locust_request_label)
             else:
                 raise Exception(f"Provided component was not a FileUploadWidget, was instead of type '{component.get('#t')}'")
 
@@ -1015,11 +1015,6 @@ class SailUiForm:
             'label', label, self.state)
 
         self._validate_component_found(component, label)
-
-        # Ensure that the files to upload are actually in a list (as opposed to a string)
-        # we do have type checking, but it apparently allows for strings as a special case of list
-        if type(file_paths) == str:
-            file_paths = list(file_paths)
 
         # Inner component can be the upload field
         if component.get('#t') != 'MultipleFileUploadWidget' and 'contents' in component:
