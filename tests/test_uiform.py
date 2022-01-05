@@ -412,6 +412,23 @@ class TestSailUiForm(unittest.TestCase):
         sail_form = SailUiForm(self.task_set.appian.interactor, ui, self.process_model_form_uri)
         sail_form.upload_document_to_upload_field(label, 'fake_file')
         mock_upload_documents_to_multiple_file_upload_field.assert_called_once()
+        args, kwargs = mock_upload_documents_to_multiple_file_upload_field.call_args_list[0]
+        self.assertEqual(args[1], ['fake_file'])
+
+    @patch('os.path.exists', return_value=True)
+    @patch('appian_locust.uiform._Interactor.upload_document_to_field')
+    @patch('appian_locust.uiform._Interactor.upload_document_to_server')
+    def test_single_to_multi_upload_document_to_server(self, mock_upload_document_to_server: MagicMock,
+                                                       mock_upload_document_to_field: MagicMock,
+                                                       mock_os_path_exists: MagicMock) -> None:
+        ui = json.loads(self.file_upload_initial)
+        label = 'File Upload 5'
+        sail_form = SailUiForm(self.task_set.appian.interactor, ui, self.process_model_form_uri)
+
+        sail_form.upload_document_to_upload_field(label, 'fake_file')
+
+        mock_upload_document_to_server.assert_called_once_with('fake_file', is_encrypted=False)
+        mock_upload_document_to_field.assert_called_once()
 
     @patch('appian_locust.SailUiForm.upload_document_to_upload_field')
     def test_multi_to_single_upload_document(self, mock_upload_document_to_upload_field: MagicMock) -> None:
