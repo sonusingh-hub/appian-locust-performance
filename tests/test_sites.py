@@ -66,7 +66,8 @@ class TestSites(unittest.TestCase):
     def test_sites_link_type(self) -> None:
         for type_pair in [('InternalActionLink', 'action'),
                           ('InternalReportLink', 'report'),
-                          ('SiteRecordTypeLink', 'recordType')]:
+                          ('SiteRecordTypeLink', 'recordType'),
+                          ('SiteInterfaceLink', 'interface')]:
             original_link_type = type_pair[0]
             expected_link_type = type_pair[1]
             link_full = f"{{http://www.host.net/ae/types/2009}}{original_link_type}"

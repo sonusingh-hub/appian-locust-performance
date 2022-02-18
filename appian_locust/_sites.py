@@ -69,7 +69,7 @@ class _Sites(_Base):
 
     def navigate_to_tab_and_record_if_applicable(self, site_name: str, page_name: str) -> Response:
         """
-        Navigates to a site page, either a record, action or report.
+        Navigates to a site page, either a record, interface, action or report.
         If a record, then clicks on a random record on the first page
 
         Args:
@@ -240,6 +240,8 @@ class _Sites(_Base):
             return PageType.REPORT
         elif "SiteRecordTypeLink" in link_type:
             return PageType.RECORD
+        elif "SiteInterfaceLink" in link_type:
+            return PageType.INTERFACE
         else:
             raise Exception(f"Invalid Link Type: {link_type}")
 
@@ -258,6 +260,7 @@ class PageType(enum.Enum):
     ACTION: str = "action"
     REPORT: str = "report"
     RECORD: str = "recordType"
+    INTERFACE: str = "interface"
 
 
 class SiteNotFoundException(Exception):
