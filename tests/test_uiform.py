@@ -94,9 +94,8 @@ class TestSailUiForm(unittest.TestCase):
         self.custom_locust.set_response(self.report_link_uri,
                                         200, report_form)
         sail_form = self.task_set.appian.reports.visit_and_get_form(self.report_name, False)
-        with self.assertRaises(ComponentNotFoundException) as context:
+        with self.assertRaisesRegex(Exception, "Grid with label 'dummy_label' not found in form") as context:
             sail_form.move_to_beginning_of_paging_grid(label='dummy_label')
-        self.assertEqual(context.exception.args[0], "No components with label 'dummy_label' found on page")
         with self.assertRaisesRegex(Exception, "Index 5 out of range"):
             sail_form.move_to_left_in_paging_grid(index=5)
         with self.assertRaisesRegex(Exception, "Cannot sort, field 'Abc' not found"):
