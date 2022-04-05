@@ -1376,6 +1376,25 @@ class SailUiForm:
         return self._reconcile_state(new_state, form_url=reeval_url)
 
     @raises_locust_error
+    def select_nav_card_by_index(self, nav_group_label: str, index: int, is_test_label: bool = False, locust_request_label: str = "") -> 'SailUiForm':
+        """
+        Selects an element of a navigation card group by its index
+
+        Args:
+            nav_group_label(str): Label of the navigation card group
+            index(int): Index of the element
+
+        Keyword Args:
+            is_test_label (bool): If this label is a test label
+            locust_request_label(str): Label used to identify the request for locust statistics
+
+        Returns (SailUiForm): The latest state of the UiForm
+        """
+        if is_test_label:
+            return self.select_radio_button_by_test_label(nav_group_label, index, locust_request_label)
+        return self.select_radio_button_by_label(nav_group_label, index, locust_request_label)
+
+    @raises_locust_error
     def select_radio_button_by_index(self, field_index: int, index: int, locust_request_label: str = "") -> 'SailUiForm':
         """
         Selects a radio button by its field index
