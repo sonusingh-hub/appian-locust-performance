@@ -133,7 +133,7 @@ def list_filter(list_var: List[str], filter_string: str, exact_match: bool = Fal
     return return_list
 
 
-def find_component_by_attribute_in_dict(attribute: str, value: str, component_tree: Dict[str, Any]) -> Any:
+def find_component_by_attribute_in_dict(attribute: str, value: str, component_tree: Dict[str, Any], raise_error: bool = True) -> Any:
     """
     Find a UI component by the given attribute (label for example) in a dictionary
     It only returns the first match in a depth first search of the json tree
@@ -144,6 +144,7 @@ def find_component_by_attribute_in_dict(attribute: str, value: str, component_tr
         attribute: an attribute to search ('label' for example)
         value: the value of the attribute ('Submit' for example)
         component_tree: the json response.
+        raise_error: If set to False, will return None instead of raising an error. (Default: True)
 
     Returns:
         the json object of the component or None if none is found
@@ -154,10 +155,10 @@ def find_component_by_attribute_in_dict(attribute: str, value: str, component_tr
         will search the json response to find a component that has 'Submit' as the label
 
     """
-    return find_component_by_type_and_attribute_and_index_in_dict(component_tree, attribute=attribute, value=value)
+    return find_component_by_type_and_attribute_and_index_in_dict(component_tree, attribute=attribute, value=value, raise_error=raise_error)
 
 
-def find_component_by_label_and_type_dict(attribute: str, value: str, type: str, component_tree: Dict[str, Any]) -> Any:
+def find_component_by_label_and_type_dict(attribute: str, value: str, type: str, component_tree: Dict[str, Any], raise_error: bool = True) -> Any:
     """
     Find a UI component by the given attribute (like label) in a dictionary, and the type of the component as well.
     (`#t` should match the type value passed in)
@@ -170,6 +171,7 @@ def find_component_by_label_and_type_dict(attribute: str, value: str, type: str,
         value: the value of the label
         type: Type of the component (TextField, StartProcessLink etc.)
         component_tree: the json response.
+        raise_error: If set to False, will return None instead of raising an error. (Default: True)
 
     Returns:
         The json object of the component
@@ -178,7 +180,7 @@ def find_component_by_label_and_type_dict(attribute: str, value: str, type: str,
         >>> find_component_by_label_and_type_dict('label', 'MyLabel', 'StartProcessLink', self.json_response)
 
     """
-    return find_component_by_type_and_attribute_and_index_in_dict(component_tree, type=type, attribute=attribute, value=value)
+    return find_component_by_type_and_attribute_and_index_in_dict(component_tree, type=type, attribute=attribute, value=value, raise_error=raise_error)
 
 
 def find_component_by_index_in_dict(component_type: str, index: int, component_tree: Dict[str, Any]) -> Any:
@@ -205,7 +207,8 @@ def find_component_by_index_in_dict(component_type: str, index: int, component_t
     return find_component_by_type_and_attribute_and_index_in_dict(component_tree, type=component_type, index=index)
 
 
-def find_component_by_type_and_attribute_and_index_in_dict(component_tree: Dict[str, Any], type: str = '', attribute: str = '', value: str = '', index: int = 1) -> Dict[str, Any]:
+def find_component_by_type_and_attribute_and_index_in_dict(
+        component_tree: Dict[str, Any], type: str = '', attribute: str = '', value: str = '', index: int = 1, raise_error: bool = True) -> Any:
     """
     Find a UI component by the given type and/or attribute with 'value' in a dictionary
     Returns the index'th match in a depth first search of the json tree
@@ -222,9 +225,10 @@ def find_component_by_type_and_attribute_and_index_in_dict(component_tree: Dict[
         attribute(str): an attribute to search (default: '')
         value(str): the value of the attribute (default: '')
         index(int): the index of the component to find if multiple components match the above criteria, 1-indexed (default: 1)
+        raise_error(bool): if this is set to false, it will return None instead of raising an error.
 
     Returns:
-        The json object of the component
+        The json object of the component or None if 'raise_error' is set to false.
 
     Example:
         >>> find_component_by_attribute_and_index_in_dict('label', 'Submit', 1, self.json_response)
@@ -263,6 +267,8 @@ def find_component_by_type_and_attribute_and_index_in_dict(component_tree: Dict[
 
         trees_to_search = list(tree.values()) + trees_to_search
 
+    if not raise_error:
+        return None
     if not type_check_passed_once:
         raise ComponentNotFoundException(f"No components with type '{type}' found on page")
     if not attribute_check_passed_once:
