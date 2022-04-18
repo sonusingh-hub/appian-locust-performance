@@ -1,3 +1,4 @@
+from http import server
 import os
 import urllib.parse
 import uuid
@@ -132,7 +133,7 @@ def appian_client_without_locust(host: str, record_mode: bool = False, base_path
 
 
 class AppianClient:
-    def __init__(self, session: HttpSession, host: str, base_path_override: str = None) -> None:
+    def __init__(self, session: HttpSession, host: str, base_path_override: str = None, portals_mode: bool = False) -> None:
         """
         Appian client class contains all the required functions to interact with Tempo.
 
@@ -145,8 +146,9 @@ class AppianClient:
 
         """
         self.client = session
+        self.portals_mode = portals_mode
         self.host = _trim_trailing_slash(host)
-        self._interactor = _Interactor(self.client, self.host)
+        self._interactor = _Interactor(self.client, self.host, portals_mode=portals_mode)
 
         self._actions = _Actions(self.interactor)
         self._admin = Admin(self.interactor)
@@ -274,7 +276,7 @@ class AppianClient:
 
     def get_client_feature_toggles(self) -> None:
         try:
-            self.client.feature_flag, self.client.feature_flag_extended = (
+            self.client.feature_flag, self.client.feature_flag_extended = ("7ffceebc", "1bff7f49dc1fffceebc") if self.portals_mode else (
                 get_client_feature_toggles(self.interactor, self.client)
             )
         except Exception as e:
@@ -296,19 +298,23 @@ class AppianTaskSet(TaskSet):
         # A set of datatypes cached. Used to populate "X-Appian-Cached-Datatypes" header field
         self.cached_datatype: set = set()
 
-    def on_start(self) -> None:
+    def on_start(self, portals_mode: bool = False) -> None:
         """
         Overloaded function of Locust's default on_start.
 
         It will create object self.appian and logs in to Appian
+
+        Args:
+            portals_mode (bool): set to True if connecting to portals site
         """
+        self.portals_mode = portals_mode
         self.workerId = str(uuid.uuid4())
         base_path_override = self.parent.base_path_override \
             if hasattr(self.parent, "base_path_override") else ""
-        self._appian = AppianClient(self.client, self.host, base_path_override=base_path_override)
-
-        self.auth = self.determine_auth()
-        self.appian.login(self.auth)
+        self._appian = AppianClient(self.client, self.host, base_path_override=base_path_override, portals_mode=portals_mode)
+        if not portals_mode:
+            self.auth = self.determine_auth()
+            self.appian.login(self.auth)
 
         self.appian.get_client_feature_toggles()
 
@@ -356,12 +362,13 @@ class AppianTaskSet(TaskSet):
 
         It logs out the client from Appian.
         """
-        self.appian.logout()
+        if not self.portals_mode:
+            self.appian.logout()
 
     @property
     def appian(self) -> AppianClient:
         """
-        Not a very useful name, but a wrapper around the generated AppianClient
+        A wrapper around the generated AppianClient
         """
         return self._appian
 

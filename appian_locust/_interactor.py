@@ -26,7 +26,7 @@ RECORD_PATH = "recorded_responses"
 
 
 class _Interactor:
-    def __init__(self, session: HttpSession, host: str) -> None:
+    def __init__(self, session: HttpSession, host: str, portals_mode: bool = False) -> None:
         """
         Class that represents interactions with the UI and Appian system
         If you want to record all requests made, you can set the record_mode attribute
@@ -37,12 +37,14 @@ class _Interactor:
         Args:
             session: Locust session/client object
             host (str): Host URL inherited from subclass to conform with Mypy standards
+            portals_mode (bool): Set to true if attempting to connect to a portals site
         """
         self.client = session
         self.host = host
         self.record_mode = True if hasattr(self.client, "record_mode") else False
         self.datatype_cache = DataTypeCache()
         self.user_agent = ""
+        self.portals_mode = portals_mode
         # Set to default as desktop request.
         self.set_user_agent_to_desktop()
 
@@ -89,8 +91,11 @@ class _Interactor:
             "X-Appian-Features-Extended": self.client.feature_flag_extended,
             "x-libraries-suppress-www-authenticate": "true",
             # this should probably go...
-            "X-Atom-Content-Type": "application/html"
+            "X-Atom-Content-Type": "application/html",
         }
+        if self.portals_mode:
+            headers["X-client-mode"] = "SERVERLESS"
+
         return headers
 
     def setup_sail_headers(self) -> dict:
@@ -136,7 +141,7 @@ class _Interactor:
             headers = self.setup_sail_headers()
 
         uri = self.replace_base_path_if_appropriate(uri)
-        username = get_username(self.auth)
+        username = "No-auth User" if self.portals_mode else get_username(self.auth)
         if files:  # When a file is specified, don't send any data in the 'data' field
             post_payload = None
         elif isinstance(payload, dict):
@@ -245,18 +250,21 @@ class _Interactor:
         Returns: Json response of GET operation
         """
         if headers is None:
-            headers = self.setup_request_headers(uri)
-
+            if self.portals_mode:
+                headers = self.setup_sail_headers()
+            else:
+                headers = self.setup_request_headers(uri)
         kwargs: Dict[str, Any] = {'name': label, 'catch_response': True}
 
-        username = get_username(self.auth)
         uri = self.replace_base_path_if_appropriate(uri)
         if headers is not None:
             kwargs['headers'] = headers
         with self.client.get(uri, **kwargs) as resp:  # type: ResponseContextManager
-            if check_login:
+            if check_login and not self.portals_mode:
                 self.check_login(resp)
-            test_response_for_error(resp, uri, raise_error=check_login, username=username)
+            if not self.portals_mode:
+                username = get_username(self.auth)
+                test_response_for_error(resp, uri, raise_error=check_login, username=username)
             if self.record_mode:
                 self.write_response_to_lib_folder(label, resp)
             return resp
