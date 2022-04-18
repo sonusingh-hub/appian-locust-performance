@@ -245,7 +245,6 @@ def find_component_by_type_and_attribute_and_index_in_dict(
     attribute_check_passed_once = False
     originial_index = index
     trees_to_search = [component_tree]
-
     while trees_to_search:
         tree = trees_to_search.pop(0)
 

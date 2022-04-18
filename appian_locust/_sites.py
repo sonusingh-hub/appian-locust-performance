@@ -251,7 +251,7 @@ class _Sites(_Base):
         return headers
 
     def _setup_headers_with_sail_json(self) -> dict:
-        headers = self.interactor.setup_request_headers()
+        headers = self.interactor.setup_sail_headers()
         headers["Accept"] = "application/vnd.appian.tv.ui+json"
         return headers
 
