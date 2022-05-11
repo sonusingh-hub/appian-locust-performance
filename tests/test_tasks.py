@@ -54,6 +54,32 @@ class TestTask(unittest.TestCase):
         # TODO: These keys are bad, as are the record/ report keys, consider just using the names/ IDs
         self.assertEqual(all_task['t-2109072_34 Task_Assign SR#0G56-W7N3 to Case Worker']['id'], 't-2109072')
 
+    def test_task_get_task_pages_all(self) -> None:
+        self.custom_locust.enqueue_response(200, self.task_feed_with_next)
+        self.custom_locust.enqueue_response(200, self.task_feed_resp)
+        all_task = self.task_set.appian.tasks.get_task_pages()
+
+        self.assertEqual(len(all_task.keys()), 21)
+        # TODO: These keys are bad, as are the record/ report keys, consider just using the names/ IDs
+        self.assertEqual(all_task['t-2109072_34 Task_Assign SR#0G56-W7N3 to Case Worker']['id'], 't-2109072')
+
+    def test_task_get_task_pages_twice(self) -> None:
+        # TODO: This doesn't really test the paging algorithm.
+        self.custom_locust.enqueue_response(200, self.task_feed_with_next)
+        self.custom_locust.enqueue_response(200, self.task_feed_resp)
+        all_task_1 = self.task_set.appian.tasks.get_task_pages(pages_requested=1)
+
+        self.custom_locust.enqueue_response(200, self.task_feed_with_next)
+        self.custom_locust.enqueue_response(200, self.task_feed_resp)
+        all_task_2 = self.task_set.appian.tasks.get_task_pages(
+            next_uri=self.task_set.appian.tasks.get_next_task_page_uri(), pages_requested=1)
+
+        all_task = {**all_task_1, **all_task_2}
+        self.assertEqual(len(all_task.keys()), 21)  # There should still be 21 since we used the same input twice.
+
+        # TODO: These keys are bad, as are the record/ report keys, consider just using the names/ IDs
+        self.assertEqual(all_task['t-2109072_34 Task_Assign SR#0G56-W7N3 to Case Worker']['id'], 't-2109072')
+
     def test_task_get(self) -> None:
         task = self.task_set.appian.tasks.get_task(
             "t-1", False)

@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Union
 
 from . import logger
 from ._base import _Base
@@ -29,6 +29,7 @@ class _Tasks(_Base):
         self.interactor = interactor
         self.task_opener = _TaskOpener(self.interactor)
         self._tasks: Dict[str, Any] = dict()
+        self._next_uri: Union[str, None] = _Tasks.INITIAL_FEED_URI
 
     def get_all(self, search_string: str = None, locust_request_label: str = "Tasks") -> Dict[str, Any]:
         """
@@ -43,13 +44,48 @@ class _Tasks(_Base):
             >>> self.appian.task.get_all()
 
         """
-        next_uri = _Tasks.INITIAL_FEED_URI
+        # Call the get_task_pages method passing it the given parameters and using defaults for the next_uri
+        # and the page_count arguments.
+        return self.get_task_pages(locust_request_label=locust_request_label)
+
+    def get_task_pages(self, locust_request_label: str = "Tasks",
+                       next_uri: Union[str, None] = INITIAL_FEED_URI, pages_requested: int = -1) -> Dict[str, Any]:
+        """
+        Retrieves all the available "tasks" and associated metadata from "Appian-Tempo-Tasks"
+
+        If the next_uri argument is specified then the calls to fetch tasks will begin at that
+        URI.  If omitted the fetching starts at the first page of Tasks.  This can be useful
+        for fetching a subset of pages one call at a time.  To control the number of pages fetched
+        use the page_count argument.  The default of -1 means fetch all pages (starting from the
+        given URI.
+
+        Note: If the page_count is used and is less than the total number of pages available then
+        the URI of the _next_ page in the sequence will be stored in self._next_uri and can be
+        fetched with self.get_next_task_page_uri()
+
+        Note: All the retrieved data about tasks is stored in the private variable self._tasks
+
+        Returns (dict): List of tasks and associated metadata
+
+        Examples:
+
+        Start at the first page and get all content from that point forward:
+
+            >>> self.appian.task.get_task_pages()
+
+        Start at the next page (from the previous call to get_task_pages) and fetch the next three pages of Tasks:
+
+            >>> self.appian.task.get_task_pages(next_uri=self.get_next_task_page_uri(), pages_requested=3)
+
+        """
 
         headers = self.interactor.setup_request_headers()
         headers["Accept"] = "application/atom+json; inlineSail=true; recordHeader=true, application/json;"
         self._tasks = dict()
 
-        while next_uri:
+        pages_remaining = pages_requested
+
+        while next_uri and ((pages_remaining > 0) or (pages_requested == -1)):
             response = self.interactor.get_page(uri=next_uri, headers=headers, label=locust_request_label).json()
             for current_item in response.get("feed", {}).get("entries", []):
                 # Supporting only the SAIL tasks (id starts with "t-" id.)
@@ -64,9 +100,26 @@ class _Tasks(_Base):
             if len(partially_parsed_resp) > 0 and partially_parsed_resp[-1].get("rel", []) == "next":
                 next_uri_with_hostname = partially_parsed_resp[-1]["href"]
                 next_uri = next_uri_with_hostname[len(self.interactor.host):]
+                pages_remaining = pages_remaining - 1
             else:
-                next_uri = ""
+                next_uri = None
+        self._next_uri = next_uri
         return self._tasks
+
+    def get_next_task_page_uri(self, get_default: bool = True) -> Union[str, None]:
+        """
+        Retrieves the next URI in the sequence of Task pages being fetched using self.get_task_pages().
+
+        If the previous call to self.get_task_pages() reached the end of the available pages then this method
+        will return either a value of None or the default initial page URI depending on the get_default argument.
+
+        Returns (str): The URI for the next page of Tasks (or the first page if the previous page fetches
+                reached the end).
+
+        """
+        if (not self._next_uri) and get_default:
+            self._next_uri = _Tasks.INITIAL_FEED_URI
+        return self._next_uri
 
     def get_task(self, task_name: str, exact_match: bool = True) -> Dict[str, Any]:
         """
