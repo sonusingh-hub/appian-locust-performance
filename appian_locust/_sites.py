@@ -70,7 +70,10 @@ class _Sites(_Base):
     def navigate_to_tab_and_record_if_applicable(self, site_name: str, page_name: str) -> Response:
         """
         Navigates to a site page, either a record, interface, action or report.
-        If a record, then clicks on a random record on the first page
+        If a record, then clicks on a random record on the first page.
+
+        Note: Any record available in the record list as a recordLink will be hit using this function.  There is no
+        guarantee that this record will be of any specific type and may not point to a record view.
 
         Args:
             site_name: Site Url stub
