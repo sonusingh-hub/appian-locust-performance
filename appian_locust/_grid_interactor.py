@@ -26,14 +26,14 @@ class GridInteractor:
         return grid
 
     def find_grid_by_label(self, label: str, form: Dict[str, Any]) -> Dict[str, Any]:
-        grid = find_component_by_label_and_type_dict('label', label, 'FieldLayout', form, raise_error=False)
+        grid = find_component_by_label_and_type_dict('testLabel', f"PagingGrid-{label}", 'PagingGridLayout', form, raise_error=False)
         # Try the non-record powered grid field
         if not grid:
             grid = find_component_by_label_and_type_dict('label', label, 'GridField', form, raise_error=False)
         if not grid:
             raise Exception(f"Grid with label '{label}' not found in form")
         grid_type = grid['#t']
-        if grid_type not in ("GridField", "FieldLayout"):
+        if grid_type not in ("GridField", "PagingGridLayout"):
             raise Exception(f"Element found was not a Grid, was instead a {grid_type}")
         return grid
 
@@ -44,7 +44,7 @@ class GridInteractor:
         if not grids:
             grids = extract_values(form, '#t', "PagingGridLayout")
         if not grids:
-            raise Exception("No paging grids found in form")
+            raise Exception("No grids found in form")
         if len(grids) < index:
             raise Exception(f"Index {index} out of range, only found {len(grids)} grid(s) in form")
         return grids[index]

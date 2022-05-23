@@ -14,10 +14,12 @@ class TestGridInteractor(unittest.TestCase):
         self.grid_forms = deepcopy([self.grid_form_orig, self.grid_record_powered])
 
     def test_find_grid_by_label_success(self) -> None:
-        form_labels = ['Top Sales Reps by Total Sales', 'Employees']
-        for form_label, grid_form in zip(form_labels, self.grid_forms):
+        form_labels_search = ['Top Sales Reps by Total Sales', 'Employees']
+        form_labels_actual = ['Top Sales Reps by Total Sales', 'PagingGrid-Employees']
+        form_label_keys = ['label', 'testLabel']
+        for form_label, form_label_actual, grid_form, form_label_key in zip(form_labels_search, form_labels_actual, self.grid_forms, form_label_keys):
             grid = self.grid_interactor.find_grid_by_label(form_label, grid_form)
-            self.assertEqual(grid['label'], form_label)
+            self.assertEqual(grid[form_label_key], form_label_actual)
 
     def test_find_grid_by_label_missing(self) -> None:
         form_labels = ['Topest Sales Reps by Total Sales', 'Employed']
@@ -37,7 +39,7 @@ class TestGridInteractor(unittest.TestCase):
                 grid = self.grid_interactor.find_grid_by_index(5, grid_form)
 
     def test_find_grid_no_grids_found(self) -> None:
-        with self.assertRaisesRegex(Exception, 'No paging grids found in form'):
+        with self.assertRaisesRegex(Exception, 'No grids found in form'):
             grid = self.grid_interactor.find_grid_by_index(5, {})
 
     def test_find_grid_by_label_different(self) -> None:
