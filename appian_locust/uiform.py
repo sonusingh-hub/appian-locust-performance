@@ -17,8 +17,9 @@ from ._locust_error_handler import raises_locust_error
 from ._task_opener import _TaskOpener
 from ._ui_reconciler import UiReconciler
 from .exceptions import ComponentNotFoundException, InvalidComponentException, ChoiceNotFoundException
-from .helper import (extract_all_by_label, find_component_by_attribute_and_index_in_dict, find_component_by_attribute_in_dict,
-                     find_component_by_index_in_dict, find_component_by_label_and_type_dict, find_component_by_type_and_attribute_and_index_in_dict)
+from .helper import (extract_all_by_label, find_component_by_attribute_and_index_in_dict,
+                     find_component_by_attribute_in_dict, find_component_by_index_in_dict,
+                     find_component_by_label_and_type_dict, find_component_by_type_and_attribute_and_index_in_dict)
 from .records_helper import (get_record_header_response,
                              get_record_summary_view_response,
                              get_url_stub_from_record_list_url_path)
@@ -129,7 +130,6 @@ class SailUiForm:
 
         """
         component = find_component_by_attribute_and_index_in_dict(attribute, attribute_value, index, self.state)
-        self._validate_component_found(component, attribute_value)
 
         if component.get("#t", "") not in COMPONENTS_THAT_CAN_BE_FILLED:
             raise Exception(f"The Component with '{attribute}' = '{attribute_value}' is not a component that can be filled")
@@ -398,8 +398,6 @@ class SailUiForm:
 
         component = find_component_by_attribute_and_index_in_dict(attribute_to_find, label, index, self.state)
 
-        self._validate_component_found(component, label)
-
         locust_label = locust_request_label or f"{self.breadcrumb}.Click.{label}"
         new_state = self._dispatch_click(component=component, locust_label=locust_label)
 
@@ -536,7 +534,6 @@ class SailUiForm:
         """
 
         component = find_component_by_label_and_type_dict('label', label, START_PROCESS_LINK_TYPE, self.state)
-        self._validate_component_found(component, label)
 
         locust_label = locust_request_label or f"{self.breadcrumb}.ClickStartProcessLink.{label}"
         new_state = self._click_start_process_link(site_name, page_name, is_mobile, component, locust_request_label=locust_label)
@@ -660,7 +657,6 @@ class SailUiForm:
 
         """
         component = find_component_by_attribute_in_dict('label', label, self.state)
-        self._validate_component_found(component, label)
 
         # Support scenario where related action label is found within outer "ButtonWidget" rather than directly in "RelatedActionLink" component
         if "source" not in component:
@@ -709,8 +705,6 @@ class SailUiForm:
         component = find_component_by_attribute_in_dict(
             attribute_to_find, label, self.state)
 
-        self._validate_component_found(component, label)
-
         choices: list = component.get('choices')
         if choices is None or not isinstance(choices, list):
             raise InvalidComponentException(f"No choices found for component {label}, is the component a Dropdown?")
@@ -742,8 +736,6 @@ class SailUiForm:
         attribute_to_find = 'testLabel' if is_test_label else 'label'
         component = find_component_by_attribute_in_dict(
             attribute_to_find, label, self.state)
-
-        self._validate_component_found(component, label)
 
         choices: list = component.get('choices')
         if not choices:
@@ -795,8 +787,6 @@ class SailUiForm:
         component = find_component_by_attribute_in_dict(
             attribute_to_find, label, self.state)
 
-        self._validate_component_found(component, label)
-
         choices: list = component.get('choices')
         if not choices:
             raise InvalidComponentException(f"No choices found for component {label}, is the component a Dropdown?")
@@ -834,9 +824,8 @@ class SailUiForm:
 
         Returns (SailUiForm): The latest state of the UiForm
         """
-        component = find_component_by_attribute_in_dict(attribute, value_for_attribute, self.state)
-
-        self._validate_component_found_by_attribute(component, attribute, value_for_attribute)
+        component = find_component_by_attribute_in_dict(attribute, value_for_attribute, self.state,
+                                                        throw_attribute_exception=True)
 
         locust_label = locust_request_label or f'{self.breadcrumb}.CheckCheckboxByAttribute.{attribute}'
         reeval_url = self._get_update_url_for_reeval(self.state)
@@ -924,7 +913,6 @@ class SailUiForm:
         reeval_url = self._get_update_url_for_reeval(self.state)
 
         tab_group_component = find_component_by_attribute_in_dict('testLabel', tab_group_test_label, self.state)
-        self._validate_component_found(tab_group_component, tab_group_test_label)
         new_state = self.interactor.click_selected_tab(
             reeval_url, tab_group_component, tab_label, self.context, self.uuid)
         if not new_state:
@@ -959,8 +947,6 @@ class SailUiForm:
         """
         component = find_component_by_attribute_in_dict(
             'label', label, self.state)
-
-        self._validate_component_found(component, label)
 
         # Inner component can be the upload field
         if component.get('#t') != 'FileUploadWidget' and 'contents' in component:
@@ -1014,8 +1000,6 @@ class SailUiForm:
         component = find_component_by_attribute_in_dict(
             'label', label, self.state)
 
-        self._validate_component_found(component, label)
-
         # Inner component can be the upload field
         if component.get('#t') != 'MultipleFileUploadWidget' and 'contents' in component:
             component = component['contents']
@@ -1066,7 +1050,6 @@ class SailUiForm:
             raise Exception("Input must be of type datetime.date")
         field_type = 'DatePickerField'
         date_field = find_component_by_label_and_type_dict('label', label, field_type, self.state)
-        self._validate_component_found(date_field, label, type=field_type)
 
         locust_label = locust_request_label or f'{self.breadcrumb}.FillDateField'
         reeval_url = self._get_update_url_for_reeval(self.state)
@@ -1108,7 +1091,6 @@ class SailUiForm:
             raise Exception("Input must be of type datetime.datetime")
         field_type = 'DateTimePickerField'
         datetime_field = find_component_by_label_and_type_dict('label', label, field_type, self.state)
-        self._validate_component_found(datetime_field, label, type=field_type)
 
         locust_label = locust_request_label or f'{self.breadcrumb}.FillDateTimeField'
         reeval_url = self._get_update_url_for_reeval(self.state)
@@ -1330,8 +1312,6 @@ class SailUiForm:
         component = find_component_by_attribute_in_dict(
             'testLabel', test_label, self.state)
 
-        self._validate_component_found(component, test_label)
-
         reeval_url = self._get_update_url_for_reeval(self.state)
         context_label = locust_request_label or f"{self.breadcrumb}.RadioButton.SelectByTestLabel.{test_label}"
         new_state = self.interactor.select_radio_button(
@@ -1363,8 +1343,6 @@ class SailUiForm:
         """
         component = find_component_by_attribute_in_dict(
             'label', label, self.state)
-
-        self._validate_component_found(component, label)
 
         reeval_url = self._get_update_url_for_reeval(self.state)
         context_label = locust_request_label or f"{self.breadcrumb}.RadioButton.SelectByLabel.{label}"
@@ -1545,11 +1523,9 @@ class SailUiForm:
 
         record_action_component = find_component_by_attribute_in_dict(
             'label', label, self.state)
-        self._validate_component_found(record_action_component, label)
 
         record_action_trigger_component = find_component_by_attribute_in_dict(
             '_actionName', 'sail:record-action-trigger', self.state)
-        self._validate_component_found(record_action_trigger_component, label)
 
         reeval_url = self._get_update_url_for_reeval(self.state)
         locust_label = locust_request_label or f"{self.breadcrumb}.RefreshAfterRecordAction.{label}"
@@ -1580,7 +1556,6 @@ class SailUiForm:
 
         """
         component = find_component_by_index_in_dict("SearchBoxWidget", index, self.state)
-        self._validate_component_found_by_attribute(component, "searchButtonLabel", "Search")
 
         reeval_url = self._get_update_url_for_reeval(self.state)
         locust_label = locust_request_label or f"{self.breadcrumb}.ClickRecordSearchButtonByIndex.{index}"
@@ -1599,19 +1574,6 @@ class SailUiForm:
         self.uuid = self.state.get(KEY_UUID) or self.uuid
         self.context = self.state.get(KEY_CONTEXT) or self.context
         return self
-
-    def _validate_component_found(self, component: Optional[Dict[str, Any]], label: str, type: Optional[str] = None) -> None:
-        if not component:
-            optional_type_info = f" of type '{type}'" if type else ''
-            msg = f"Could not find the component with label '{label}'{optional_type_info} in the provided form"
-            raise ComponentNotFoundException(msg)
-
-    def _validate_component_found_by_attribute(self, component: Dict[str, Any], attribute: str, value_for_attribute: str) -> None:
-        if not component:
-            raise ComponentNotFoundException(
-                f'''Could not find the component with attribute '{attribute}' and
-                its value: '{value_for_attribute}' in the provided form
-                ''')
 
     def _get_update_url_for_reeval(self, state: Dict[str, Any]) -> str:
         """

@@ -1,10 +1,13 @@
 import json
 import time
 import unittest
+import sys
 from typing import List
 
 from appian_locust.helper import (find_component_by_attribute_in_dict,
                                   find_component_by_label_and_type_dict,
+                                  find_component_by_attribute_and_index_in_dict,
+                                  find_component_by_index_in_dict,
                                   repeat)
 
 from .mock_reader import read_mock_file
@@ -23,6 +26,16 @@ class TestHelper(unittest.TestCase):
         component = find_component_by_attribute_in_dict('label', 'Request Pass', self.form_dict)
         # finds first component by that label
         self.assertEqual(component['#t'], 'RichTextDisplayField')
+
+    def test_find_component_by_attribute_and_index_in_dict(self) -> None:
+        component = find_component_by_attribute_and_index_in_dict('label', 'Request Pass', 1, self.form_dict)
+        self.assertEqual(component['_cId'], 'f9214210c2a2f69865a434c6a773ec71')
+        self.assertEqual(component['#t'], 'RichTextDisplayField')
+
+    def test_find_component_by_index_in_git(self) -> None:
+        component = find_component_by_index_in_dict('FormattedText', 1, self.form_dict)
+        self.assertEqual(component['_cId'], 'b2a256d7e6b636ae3cf17bcb7cf8925e')
+        self.assertEqual(component['#t'], 'FormattedText')
 
     def test_repeat_decorator(self) -> None:
         # Given
