@@ -104,6 +104,13 @@ class TestSailUiForm(unittest.TestCase):
             sail_form.sort_paging_grid(index=0)
         self.assertEqual(4, len(ENV.stats.errors))
 
+    def test_paging_grid_sort_by_label_finds_grid(self) -> None:
+        report_form = read_mock_file("paging_grid_sortable.json")
+        self.custom_locust.set_response(self.report_link_uri, 200, report_form)
+        sail_form = self.task_set.appian.reports.visit_and_get_form(self.report_name, False)
+        self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/pages/reports/report/TNCDrA/reportlink", 200, report_form)
+        sail_form.sort_paging_grid(label=" Dogs", field_name="Name")
+
     def test_datatype_caching(self) -> None:
         body_with_types = read_mock_file("page_resp.json")
         self.custom_locust.set_response(self.report_link_uri,
