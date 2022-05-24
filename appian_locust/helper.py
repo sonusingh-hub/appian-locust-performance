@@ -174,8 +174,6 @@ def find_component_by_attribute_in_dict(attribute: str, value: str, component_tr
     Returns:
         The json object of the component
 
-TODO: Won't actually return None anymore if we move validation inside this method.
-
     Raises:
         ComponentNotFoundException if the component cannot be found.
 
