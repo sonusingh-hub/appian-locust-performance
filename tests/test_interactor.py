@@ -23,6 +23,7 @@ class TestInteractor(unittest.TestCase):
     record_action_launch_form_before_refresh = read_mock_file("record_action_launch_form_before_refresh.json")
     record_action_refresh_response = read_mock_file("record_action_refresh_response.json")
     site_with_record_search_button = read_mock_file("site_with_record_search_button.json")
+    site_with_expression_editor = read_mock_file("site_with_expression_editor.json")
     default_user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36"
     mobile_user_agent = "AppianAndroid/20.2 (Google AOSP on IA Emulator, 9; Build 0-SNAPSHOT; AppianPhone)"
 
@@ -373,3 +374,12 @@ class TestInteractor(unittest.TestCase):
                               'documentId': {'#t': 'CollaborationDocument', 'id': doc_id},
                               'extension': 'none', 'fileSizeBytes': 0},
                              document_update['#v'][i])
+
+    def test_launch_query_editor(self) -> None:
+        component = find_component_by_attribute_in_dict("testLabel", "expression-editor",
+                                                        json.loads(self.site_with_expression_editor))
+
+        self.custom_locust.set_response("", 200, "{}")
+        output = self.task_set.appian.interactor.launch_query_editor(
+            "", component, {}, "", "a!queryRecordType()")
+        self.assertEqual(output, dict())

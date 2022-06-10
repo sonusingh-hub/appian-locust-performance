@@ -1168,6 +1168,74 @@ class _Interactor:
         )
         return resp.json()
 
+    def click_expression_editor_toolbar_button(self, button_action: str, post_url: str, editor_component: Dict[str, Any], context: Dict[str, Any], uuid: str,
+                                               new_value: Dict[str, Any], label: str = None) -> Dict[str, Any]:
+        """
+            Calls the post operation to click on a button in the toolbar for the ExpressionEditorWidget
+
+            Args:
+                button_action: action name for expression editor toolbar
+                post_url: the url (not including the host and domain) to post to
+                editor_component: the JSON code for the expression editor component
+                context: the Sail context parsed from the json response
+                uuid: the uuid parsed from the json response
+                new_value: value for the payload
+                label: the label to be displayed by locust for this action
+
+            Returns: the response of post operation as json
+
+        """
+        payload = save_builder() \
+            .component(editor_component) \
+            .context(context) \
+            .uuid(uuid) \
+            .value(new_value) \
+            .build()
+
+        locust_label = label or f'Click \'{button_action}\' Expression Editor Widget Button'
+
+        resp = self.post_page(
+            self.host + post_url, payload=payload, label=locust_label
+        )
+        return resp.json()
+
+    def launch_query_editor(self, post_url: str, editor_component: Dict[str, Any],
+                            context: Dict[str, Any], uuid: str, expr: str, label: str = None) -> Dict[str, Any]:
+        """
+            Calls the post operation to click on the LaunchVQD button in the toolbar for the ExpressionEditorWidget.
+            This will launch the query editor with the provided expression.
+
+            Args:
+                post_url: the url (not including the host and domain) to post to
+                editor_component: the JSON code for the expression editor component
+                context: the Sail context parsed from the json response
+                uuid: the uuid parsed from the json response
+                expr: expression in the expression editor
+                label: the label to be displayed by locust for this action
+
+            Returns: the response of post operation as json
+
+        """
+        launchVQD_action = "LaunchVQD"
+
+        new_value = {
+            "#t": "Dictionary",
+            "#v": {
+                "actionType": launchVQD_action,
+                "hasMatchingBracketError": False,
+                "launchOrigin": "toolbarButton",
+                "queryFnType": "queryRecordType",
+                "queryFnStartIndex": 0,
+                "queryFnEndIndex": len(expr),
+                "value": {
+                    "#t": "Text",
+                    "#v": expr
+                }
+            }
+        }
+
+        return self.click_expression_editor_toolbar_button(launchVQD_action, post_url, editor_component, context, uuid, new_value)
+
 
 class DataTypeCache(object):
     def __init__(self) -> None:
