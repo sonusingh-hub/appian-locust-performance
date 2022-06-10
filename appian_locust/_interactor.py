@@ -398,14 +398,15 @@ class _Interactor:
         elif match(r'.*\/page\/\w+$', get_url):
             record_link_url = get_url + "/record/" + record_link_url_suffix
         # Support record links on site pages
-        elif "sites" in get_url and "/report" in get_url and "/pages/" in get_url:
+        elif "sites" in get_url and "/pages/" in get_url:
             page_search = search(r'(?<=\/pages\/)\w+', get_url)
             if page_search:
                 page_name = page_search.group()
             else:
                 e = Exception("Unexpected record link URL - couldn't find page name after /pages/")
                 log_locust_error(e, raise_error=True)
-            parse_pattern = page_name + "/report"
+            page_type = get_url.split('/')[-1]
+            parse_pattern = page_name + "/" + page_type
             url_prefix_index = get_url.index(parse_pattern) + len(page_name)
             # record_link_url = get_url[:get_url.index(parse_pattern) + len(page_name)].replace("/pages/",
             record_link_url = get_url[:url_prefix_index].replace("/pages/",
