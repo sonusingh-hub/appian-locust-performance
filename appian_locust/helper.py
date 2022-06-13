@@ -34,18 +34,18 @@ def format_label(label: str, delimiter: str = None, index: int = 0) -> str:
     return label.replace(" ", "_")
 
 
-def extract(obj: Any, key: str, val: Any) -> Generator:
+def extract(obj: Any, key: str, vals: List[Any]) -> Generator:
     """Recursively search for values of key in JSON tree."""
     if isinstance(obj, dict):
         for k, v in obj.items():
             if isinstance(v, (dict, list)):
-                yield from extract(v, key, val)
-            elif k == key and v == val:
+                yield from extract(v, key, vals)
+            elif k == key and v in vals:
                 yield obj
 
     elif isinstance(obj, list):
         for item in obj:
-            yield from extract(item, key, val)
+            yield from extract(item, key, vals)
 
 
 def extract_values(obj: Dict[str, Any], key: str, val: Any) -> List[Dict[str, Any]]:
@@ -55,13 +55,29 @@ def extract_values(obj: Dict[str, Any], key: str, val: Any) -> List[Dict[str, An
     Args:
         obj (dict): Dictionary to be searched
         key (str): tuple of key and value.
-        value (any): value, which can be any type
+        val (any): value, which can be any type
 
     Returns:
         list of matched key-value pairs
 
     """
-    return list(extract(obj, key, val))
+    return list(extract(obj, key, [val]))
+
+
+def extract_values_multiple_key_values(obj: Dict[str, Any], key: str, vals: List[Any]) -> List[Dict[str, Any]]:
+    """
+    Pull all values where the key value matches an entry in vals from nested JSON.
+
+    Args:
+        obj (dict): Dictionary to be searched
+        key (str): a key in the dictionary
+        vals (List[any]): A list of values corresponding to the key, which can be any type
+
+    Returns:
+        list of matched key-value pairs
+
+    """
+    return list(extract(obj, key, vals))
 
 
 def extract_item_by_label(obj: Union[dict, list], label: str) -> Generator:

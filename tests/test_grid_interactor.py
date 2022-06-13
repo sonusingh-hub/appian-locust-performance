@@ -33,6 +33,15 @@ class TestGridInteractor(unittest.TestCase):
             grid = self.grid_interactor.find_grid_by_index(0, grid_form)
             self.assertEqual(grid.get('label'), form_label)
 
+    def test_find_grid_by_index_multiple_types(self) -> None:
+        form_labels = ['PagingGrid-FirstPagingGrid', 'SecondGridField']
+        indices = [1, 2]
+        form_label_keys = ['testLabel', 'label']
+        grid_form = read_mock_file_as_dict("multi_grid_types.json")
+        for form_label, index, form_label_key in zip(form_labels, indices, form_label_keys):
+            grid = self.grid_interactor.find_grid_by_index(index, grid_form)
+            self.assertEqual(grid[form_label_key], form_label)
+
     def test_find_grid_by_index_out_of_range(self) -> None:
         for grid_form in self.grid_forms:
             with self.assertRaisesRegex(Exception, 'Index 5 out of range'):
@@ -51,7 +60,7 @@ class TestGridInteractor(unittest.TestCase):
     def test_move_to_end_and_beginning(self) -> None:
         form_labels = ['Top Sales Reps by Total Sales', 'Employees']
         for form_label, grid_form in zip(form_labels, self.grid_forms):
-            grid = self.grid_interactor.find_paging_grid_by_label(form_label, grid_form)
+            grid = self.grid_interactor.find_grid_by_label(form_label, grid_form)
 
             end_save_value = self.grid_interactor.move_to_last_page(grid)
             if end_save_value.get('pagingInfo'):
@@ -71,7 +80,7 @@ class TestGridInteractor(unittest.TestCase):
     def test_move_to_right_left_boundaries(self) -> None:
         form_labels = ['Top Sales Reps by Total Sales', 'Employees']
         for form_label, grid_form in zip(form_labels, self.grid_forms):
-            grid = self.grid_interactor.find_paging_grid_by_label(form_label, grid_form)
+            grid = self.grid_interactor.find_grid_by_label(form_label, grid_form)
 
             beginning_save_value = self.grid_interactor.move_to_the_left(grid)
             if beginning_save_value.get('pagingInfo'):
@@ -91,7 +100,7 @@ class TestGridInteractor(unittest.TestCase):
     def test_move_to_right_and_left(self) -> None:
         form_labels = ['Top Sales Reps by Total Sales', 'Employees']
         for form_label, grid_form in zip(form_labels, self.grid_forms):
-            grid = self.grid_interactor.find_paging_grid_by_label(form_label, grid_form)
+            grid = self.grid_interactor.find_grid_by_label(form_label, grid_form)
 
             save_value = self.grid_interactor.move_to_the_right(grid)
             if save_value.get('pagingInfo'):
@@ -110,7 +119,7 @@ class TestGridInteractor(unittest.TestCase):
     def test_sort_ascending_and_descending_error(self) -> None:
         form_labels = ['Top Sales Reps by Total Sales', 'Employees']
         for form_label, grid_form in zip(form_labels, self.grid_forms):
-            grid = self.grid_interactor.find_paging_grid_by_label(form_label, grid_form)
+            grid = self.grid_interactor.find_grid_by_label(form_label, grid_form)
             with self.assertRaisesRegex(Exception, "Cannot sort, field 'fake' not found"):
                 self.grid_interactor.sort_grid(field_name='fake', paging_grid=grid)
 
@@ -119,7 +128,7 @@ class TestGridInteractor(unittest.TestCase):
         fields_to_sort = [['Total', 'AccountOwner'], ['First Name', 'Email']]
         for form_label, grid_form, field_to_sort in zip(form_labels, self.grid_forms, fields_to_sort):
             field_name = field_to_sort.pop(0)
-            grid = self.grid_interactor.find_paging_grid_by_label(form_label, grid_form)
+            grid = self.grid_interactor.find_grid_by_label(form_label, grid_form)
             sort_save = self.grid_interactor.sort_grid(field_name=field_name, ascending=True, paging_grid=grid)
 
             if sort_save.get('pagingInfo'):

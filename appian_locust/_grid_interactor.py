@@ -2,7 +2,7 @@ from typing import Any, Dict, List
 
 from .exceptions import ComponentNotFoundException
 
-from .helper import extract_values, find_component_by_attribute_in_dict, find_component_by_label_and_type_dict
+from .helper import extract_values, extract_values_multiple_key_values, find_component_by_attribute_in_dict, find_component_by_label_and_type_dict
 
 from . import logger
 
@@ -13,17 +13,6 @@ class GridInteractor:
     """
     Set of utility methods for interacting with grids, i.e. finding them, and manipulating them
     """
-
-    def find_paging_grid_by_label(self, label: str, form: Dict[str, Any]) -> Dict[str, Any]:
-        grid = find_component_by_attribute_in_dict(attribute='testLabel', value=f"PagingGrid-{label}", component_tree=form, raise_error=False)
-        if not grid:
-            grid = find_component_by_label_and_type_dict('label', label, 'GridField', form, raise_error=False)
-        if not grid:
-            raise Exception(f"Grid with label '{label}' not found in form")
-        grid_type = grid['#t']
-        if grid_type not in ("GridField", "PagingGridLayout"):
-            raise Exception(f"Element found was not a Grid, was instead a {grid_type}")
-        return grid
 
     def find_grid_by_label(self, label: str, form: Dict[str, Any]) -> Dict[str, Any]:
         grid = find_component_by_label_and_type_dict('testLabel', f"PagingGrid-{label}", 'PagingGridLayout', form, raise_error=False)
@@ -38,11 +27,8 @@ class GridInteractor:
         return grid
 
     def find_grid_by_index(self, index: int, form: Dict[str, Any]) -> Dict[str, Any]:
-        grids = extract_values(form, '#t', "GridField")
-
-        # If grids do not have a value, attempt trying to find a record powered grid.
-        if not grids:
-            grids = extract_values(form, '#t', "PagingGridLayout")
+        grids = extract_values_multiple_key_values(form, '#t', ["PagingGridLayout", "GridField"])
+        print(len(grids))
         if not grids:
             raise Exception("No grids found in form")
         if len(grids) < index:
