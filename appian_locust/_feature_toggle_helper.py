@@ -40,7 +40,7 @@ def _get_javascript_uri(interactor: _Interactor, headers: Dict[str, Any] = None)
         uri=news_uri, headers=headers, label="Login.Feature_Toggles.GetSites"
     )
     tempo_text = response.text
-    relative_regex = r'<script src="(\/suite\/tempo\/ui\/sail-client\/sites-.*?.js)'
+    relative_regex = r'<script src="(.*\/tempo\/ui\/sail-client\/sites-.*?.js)'
     cloud_regex = r'<script src="(https://web-assets.appiancloud.com/.*\/tempo\/ui\/sail-client\/sites-.*?.js)'
     for regex in [relative_regex, cloud_regex]:
         script_regex = interactor.replace_base_path_if_appropriate(regex)
