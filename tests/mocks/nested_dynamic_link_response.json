@@ -649,6 +649,32 @@
                                                                         "label": "",
                                                                         "tooltip": "",
                                                                         "#t": "RecordLink"
+                                                                    },
+                                                                    {
+                                                                        "_cId": "d93322b29a31574f3aecc1c4cd368b55",
+                                                                        "testLabel": "Related Actions_tab",
+                                                                        "label": "Related Actions",
+                                                                        "isDefault": "False",
+                                                                        "link": {
+                                                                            "_cId": "7ebd4a01ed07573ec20153027fe7b964",
+                                                                            "uuid": "058be2d0-0acb-453f-93ac-4c9f650cf004",
+                                                                            "siteUrlStub": "locust-site",
+                                                                            "pageUrlStub": "dashboard-interface",
+                                                                            "recordIdentifier": "101",
+                                                                            "_recordRef": "lEBDHZXVVJYQ_0rVBHdLlK2sik90S7r1viWdPLw3fD93MwNNjjTpVVAQyfQwyF2TbegPo4zZrQNbdal40oN0BcD78XX9Rd1ThXBvWJIQTZSkxk",
+                                                                            "recordRef": {
+                                                                                "id": "6#{http://www.appian.com/ae/types/2009}Integer#1",
+                                                                                "#t": "RecordReference"
+                                                                            },
+                                                                            "dashboard": "actions",
+                                                                            "label": "",
+                                                                            "tooltip": "",
+                                                                            "openLinkIn": "",
+                                                                            "#t": "RecordLink"
+                                                                        },
+                                                                        "contents": [],
+                                                                        "tooltip": "",
+                                                                        "browserTooltip": ""
                                                                     }
                                                                 ],
                                                                 "color": "#E48F1B"

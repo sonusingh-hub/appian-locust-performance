@@ -399,7 +399,7 @@ class _Interactor:
             record_link_url = get_url + "/record/" + record_link_url_suffix
         # Support record links on site pages
         elif "sites" in get_url and "/pages/" in get_url:
-            page_search = search(r'(?<=\/pages\/)\w+', get_url)
+            page_search = search(r'(?<=\/pages\/)([\w-]+)', get_url)
             if page_search:
                 page_name = page_search.group()
             else:
@@ -1141,11 +1141,12 @@ class _Interactor:
 
         # Create a new ButtonWidget component from the SearchBoxWidget
         c_id = component["_cId"]
-        action = find_component_by_attribute_in_dict("testLabel", "Applications-searchLink", component)
+        action = find_component_by_attribute_in_dict("_actionName", "onSearch", component)
         if not action:
-            raise ComponentNotFoundException(
-                f'''Could not find the Applications-searchLink component in the provided component
-                ''')
+            action = find_component_by_attribute_in_dict("testLabel", "Applications-searchLink", component)
+            if not action:
+                raise ComponentNotFoundException(
+                    f'''Could not find component by either _actionName onSearch or testLabel Applications-searchLink in the provided component''')
         save_into = action["saveInto"]
 
         search_box_button_component = {
