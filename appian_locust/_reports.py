@@ -8,6 +8,7 @@ from .uiform import SailUiForm
 
 REPORTS_INTERFACE_PATH = "/suite/rest/a/sites/latest/D6JMim/pages/reports/interface"
 REPORTS_NAV_PATH = "/suite/rest/a/sites/latest/D6JMim/page/reports/nav"
+ALL_REPORTS_URI = "/suite/rest/a/uicontainer/latest/reports"
 
 
 class _Reports(_Base):
@@ -29,6 +30,12 @@ class _Reports(_Base):
         # When Get All functions called, these variables will be used to cache the values
         self._reports: Dict[str, Any] = dict()
         self._errors: int = 0
+
+    def get_report_form_uri(self, report_name: str, exact_match: bool = True) -> str:
+        report_resp: dict = self.get_report(report_name, exact_match)
+        report_url_stub = report_resp['links'][1]['href'].rsplit(
+            '/', 1)[1]
+        return f"/suite/rest/a/sites/latest/D6JMim/pages/reports/report/{report_url_stub}/reportlink"
 
     def get_reports_interface(self, locust_request_label: str = "Reports") -> Dict[str, Any]:
         uri = self.interactor.host + REPORTS_INTERFACE_PATH
@@ -61,7 +68,7 @@ class _Reports(_Base):
         except Exception as e:
             log_locust_error(e, error_desc="Response Error", raise_error=False)
 
-        uri = "/suite/rest/a/uicontainer/latest/reports"
+        uri = ALL_REPORTS_URI
 
         self._reports = dict()
         error_key_string = "ERROR::"
@@ -115,7 +122,7 @@ class _Reports(_Base):
                 report_name, exact_match)))
         return current_report
 
-    def visit(self, report_name: str, exact_match: bool = True) -> Dict[str, Any]:
+    def fetch_report_json(self, report_name: str, form_uri: str) -> Dict[str, Any]:
         """
         This function calls the API for the specific report to get its "form" data
 
@@ -129,43 +136,24 @@ class _Reports(_Base):
 
             If full name of report is known,
 
-            >>> self.appian.reports.visit("report_name")
+            >>> self.appian.reports.fetch_report_json("report_name")
 
             If only partial name is known,
 
-            >>> self.appian.reports.visit("report_name", exact_match=False)
+            >>> self.appian.reports.fetch_report_json("report_name", exact_match=False)
 
         """
-
-        report_under_test = self.get_report(report_name, exact_match)
 
         headers = self.interactor.setup_request_headers()
         headers["Accept"] = "application/vnd.appian.tv.ui+json"
 
         # navigation request
-        tempo_site_url_stub = "D6JMim"
-        uri = "/suite/rest/a/sites/latest/{}/page/reports/nav".format(
-            tempo_site_url_stub)
         label = "Reports.Nav." + format_label(report_name, "::", 0)
-        self.interactor.get_page(uri=uri, headers=headers, label=label)  # report request
-        report_url_stub = report_under_test['links'][1]['href'].rsplit('/', 1)[1]
-        uri = "/suite/rest/a/sites/latest/{}/pages/reports/report/{}/reportlink".format(tempo_site_url_stub,
-                                                                                        report_url_stub)
+        self.interactor.get_page(uri=REPORTS_NAV_PATH, headers=headers, label=label)
+
+        # report request
         label = "Reports.GetUi." + format_label(report_name, "::", 0)
-        resp = self.interactor.get_page(uri=uri, headers=headers, label=label)
+        resp = self.interactor.get_page(uri=form_uri, headers=headers, label=label)
         test_response_for_error(resp)
         resp.raise_for_status()
         return resp.json()
-
-    def visit_and_get_form(self, report_name: str, exact_match: bool = True) -> SailUiForm:
-        report_resp: dict = self.get_report(report_name, exact_match)
-
-        tempo_site_url_stub = "D6JMim"
-        report_url_stub = report_resp['links'][1]['href'].rsplit(
-            '/', 1)[1]
-
-        form_uri = f"/suite/rest/a/sites/latest/{tempo_site_url_stub}/pages/reports/report/{report_url_stub}/reportlink"
-        form_json = self.visit(report_name, exact_match)
-
-        breadcrumb = f'Reports.SailUi.{format_label(report_name, "::", 0)}'
-        return SailUiForm(self.interactor, form_json, form_uri, breadcrumb=breadcrumb)
