@@ -28,7 +28,7 @@ KEY_UUID = "uuid"
 KEY_CONTEXT = "context"
 START_PROCESS_LINK_TYPE = 'StartProcessLink'
 PROCESS_TASK_LINK_TYPE = 'ProcessTaskLink'
-COMPONENTS_THAT_CAN_BE_FILLED = ["ParagraphField", "TextField"]
+COMPONENTS_THAT_CAN_BE_FILLED = ["ParagraphField", "TextField", "SearchBoxWidget"]
 
 log = logger.getLogger(__name__)
 
@@ -165,7 +165,7 @@ class SailUiForm:
             >>> form.fill_text_field('Title','My New Novel')
 
         """
-        attribute_to_find = 'testlabel' if is_test_label else 'label'
+        attribute_to_find = 'testLabel' if is_test_label else 'label'
         return self.fill_field_by_attribute_and_index(attribute_to_find, label, value, index, locust_request_label)
 
     @raises_locust_error
@@ -510,6 +510,30 @@ class SailUiForm:
 
         """
         return self.click_record_link_by_attribute_and_index(index=index, locust_request_label=locust_request_label)
+
+    @raises_locust_error
+    def click_record_view_link(self, label: str, locust_request_label: str = "") -> 'SailUiForm':
+        """
+        Click a record view link on the form if there is one present with the following label (case sensitive)
+        Otherwise throws a ComponentNotFoundException
+
+        Args:
+            label(str): Label of the record link to click
+
+        Keyword Args:
+            locust_request_label(str): Label used to identify the request for locust statistics
+
+        Returns (SailUiForm): The record form (feed) for the linked record.
+
+        """
+        view_tab_label = f"{label}_tab"
+        outer_component = find_component_by_attribute_in_dict(attribute="testLabel", value=view_tab_label, component_tree=self.state)
+        component = outer_component["link"]
+        locust_label = locust_request_label or f"{self.breadcrumb}.ClickRecordLink"
+        reeval_url = self._get_update_url_for_reeval(self.state)
+        new_state = self.interactor.click_record_link(reeval_url, component, self.context, self.uuid,
+                                                      locust_label=locust_label)
+        return self._reconcile_state(new_state, form_url=reeval_url)
 
     @raises_locust_error
     def click_start_process_link(self, label: str, site_name: str, page_name: str, is_mobile: bool = False, locust_request_label: str = "") -> 'SailUiForm':

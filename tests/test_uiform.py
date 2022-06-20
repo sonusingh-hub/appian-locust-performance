@@ -820,6 +820,20 @@ class TestSailUiForm(unittest.TestCase):
         self.assertEqual(args[1]['recordIdentifier'], '74')
 
     @patch('appian_locust._interactor._Interactor.click_record_link')
+    def test_click_record_view_link(self, mock_click_rl: MagicMock) -> None:
+        report_body = read_mock_file("nested_dynamic_link_response.json")
+        self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
+        sail_form = self.task_set.appian.reports.visit_and_get_form(self.report_name, exact_match=False)
+
+        sail_form.click_record_view_link(label='Related Actions')
+
+        args, _ = mock_click_rl.call_args_list[0]
+
+        print(f"args: {args[1]}")
+
+        self.assertEqual(args[1]['recordIdentifier'], '101')
+
+    @patch('appian_locust._interactor._Interactor.click_record_link')
     def test_click_record_link_by_index(self, mock_click_rl: MagicMock) -> None:
         report_body = read_mock_file("nested_dynamic_link_response.json")
         self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
