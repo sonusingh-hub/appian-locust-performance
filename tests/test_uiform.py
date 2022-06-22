@@ -128,7 +128,7 @@ class TestSailUiForm(unittest.TestCase):
 
         self.custom_locust.set_response(self.design_uri,
                                         200, design_landing_page_response)
-        design_sail_form = self.task_set.appian.design.visit()
+        design_sail_form = self.task_set.appian.visitor.visit_design()
 
         self.custom_locust.set_response(self.design_uri,
                                         200, deployment_tab_response)
@@ -146,7 +146,7 @@ class TestSailUiForm(unittest.TestCase):
         design_landing_page_response = read_mock_file("design_landing_page.json")
         self.custom_locust.set_response(self.design_uri,
                                         200, design_landing_page_response)
-        design_sail_form = self.task_set.appian.design.visit()
+        design_sail_form = self.task_set.appian.visitor.visit_design()
 
         self.custom_locust.set_response(self.design_uri,
                                         200, deployment_tab_response)

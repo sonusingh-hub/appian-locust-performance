@@ -1,0 +1,19 @@
+from typing import Any, Dict
+
+from ._design import _Design
+from ._interactor import _Interactor
+from ._locust_error_handler import raises_locust_error
+from .uiform import SailUiForm
+
+
+class DesignObjectUiForm(SailUiForm):
+
+    def __init__(self, interactor: _Interactor, state: Dict[str, Any], breadcrumb: str = "DesignObjectUi"):
+        super().__init__(interactor, state, breadcrumb)
+        self.__design = _Design(interactor)
+
+    @raises_locust_error
+    def launch_query_editor(self) -> 'DesignObjectUiForm':
+        query_editor_json = self.__design.click_expression_editor_toolbar_button("LaunchVQD", self.form_url, self.state, self.context, self.uuid)
+        self._reconcile_state(query_editor_json)
+        return self

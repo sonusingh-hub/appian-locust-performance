@@ -142,7 +142,7 @@ class SailUiForm:
         if not new_state:
             raise Exception(f"No response returned when trying to update the field with '{attribute}' = '{attribute_value}' at index '{index}'")
 
-        return self._reconcile_state(new_state, form_url=reeval_url)
+        return self._reconcile_state(new_state)
 
     @raises_locust_error
     def fill_text_field(self, label: str, value: str, is_test_label: bool = False, locust_request_label: str = "", index: int = 1) -> 'SailUiForm':
@@ -202,7 +202,7 @@ class SailUiForm:
                     with index: '{index}' on the current page")
                 ''')
 
-        return self._reconcile_state(new_state, form_url=reeval_url)
+        return self._reconcile_state(new_state)
 
     @raises_locust_error
     def fill_field_by_any_attribute(self, attribute: str, value_for_attribute: str, text_to_fill: str, locust_request_label: str = "", index: int = 1) -> 'SailUiForm':
@@ -407,7 +407,7 @@ class SailUiForm:
 
         if not new_state:
             raise Exception(f"No response returned when trying to click button with label '{label}'")
-        return self._reconcile_state(new_state, form_url=reeval_url)
+        return self._reconcile_state(new_state)
 
     @raises_locust_error
     def click_card_layout_by_index(self, index: int, locust_request_label: str = "") -> 'SailUiForm':
@@ -450,7 +450,7 @@ class SailUiForm:
             raise Exception(f"No response returned when trying to click card layout at index '{index}'")
 
         reeval_url = self._get_update_url_for_reeval(new_state)
-        return self._reconcile_state(new_state, form_url=reeval_url)
+        return self._reconcile_state(new_state)
 
     @raises_locust_error
     def click_record_link_by_attribute_and_index(self, attribute: str = "", attribute_value: str = "", index: int = 1, locust_request_label: str = "") -> 'SailUiForm':
@@ -474,7 +474,7 @@ class SailUiForm:
         reeval_url = self._get_update_url_for_reeval(self.state)
         new_state = self.interactor.click_record_link(reeval_url, component, self.context, self.uuid,
                                                       locust_label=locust_label)
-        return self._reconcile_state(new_state, form_url=reeval_url)
+        return self._reconcile_state(new_state)
 
     @raises_locust_error
     def click_record_link(self, label: str, is_test_label: bool = False, locust_request_label: str = "") -> 'SailUiForm':
@@ -534,7 +534,7 @@ class SailUiForm:
         reeval_url = self._get_update_url_for_reeval(self.state)
         new_state = self.interactor.click_record_link(reeval_url, component, self.context, self.uuid,
                                                       locust_label=locust_label)
-        return self._reconcile_state(new_state, form_url=reeval_url)
+        return self._reconcile_state(new_state)
 
     @raises_locust_error
     def click_start_process_link(self, label: str, site_name: str, page_name: str, is_mobile: bool = False, locust_request_label: str = "") -> 'SailUiForm':
@@ -563,9 +563,7 @@ class SailUiForm:
         locust_label = locust_request_label or f"{self.breadcrumb}.ClickStartProcessLink.{label}"
         new_state = self._click_start_process_link(site_name, page_name, is_mobile, component, locust_request_label=locust_label)
 
-        # get the re-eval URI from links object of the response (new_state)
-        reeval_url = self._get_update_url_for_reeval(new_state)
-        return self._reconcile_state(new_state, form_url=reeval_url)
+        return self._reconcile_state(new_state)
 
     @raises_locust_error
     def click_start_process_link_on_mobile(self, label: str, site_name: str, page_name: str, locust_request_label: str = "") -> 'SailUiForm':
@@ -704,9 +702,7 @@ class SailUiForm:
         new_state = self.interactor.click_related_action(component, record_type_stub=record_type_stub, opaque_record_id=opaque_record_id,
                                                          opaque_related_action_id=opaque_related_action_id,
                                                          locust_request_label=locust_label, open_in_a_dialog=open_action_in_a_dialog)
-        # get the re-eval URI from links object of the response (new_state)
-        reeval_url = self._get_update_url_for_reeval(new_state)
-        return self._reconcile_state(new_state, form_url=reeval_url)
+        return self._reconcile_state(new_state)
 
     @raises_locust_error
     def get_dropdown_items(self, label: str, is_test_label: bool = False) -> List[str]:
@@ -783,7 +779,7 @@ class SailUiForm:
             raise Exception(
                 f"No response returned when trying to click button with label '{label}'")
 
-        return self._reconcile_state(new_state, form_url=reeval_url)
+        return self._reconcile_state(new_state)
 
     @raises_locust_error
     def select_multi_dropdown_item(self, label: str, choice_label: List[str], locust_request_label: str = "", is_test_label: bool = False) -> 'SailUiForm':
@@ -832,7 +828,7 @@ class SailUiForm:
             raise Exception(
                 f"No response returned when trying to click button with label '{label}'")
 
-        return self._reconcile_state(new_state, form_url=reeval_url)
+        return self._reconcile_state(new_state)
 
     def _check_checkbox_by_attribute(self, attribute: str, value_for_attribute: str, indices: List[int], locust_request_label: str = "") -> 'SailUiForm':
         """
@@ -861,7 +857,7 @@ class SailUiForm:
                             and its value: '{value_for_attribute}' on the current page
                             ''')
 
-        return self._reconcile_state(new_state, form_url=reeval_url)
+        return self._reconcile_state(new_state)
 
     @raises_locust_error
     def check_checkbox_by_test_label(self, test_label: str, indices: List[int], locust_request_label: str = "") -> 'SailUiForm':
@@ -946,7 +942,7 @@ class SailUiForm:
                 inside the TabButtonGroup component with testLabel: '{tab_group_test_label}'''
             )
 
-        return self._reconcile_state(new_state, form_url=reeval_url)
+        return self._reconcile_state(new_state)
 
     @raises_locust_error
     def upload_document_to_upload_field(self, label: str, file_path: Union[str, List], locust_request_label: str = "") -> 'SailUiForm':
@@ -1086,7 +1082,7 @@ class SailUiForm:
                             with its value: '{date_input}' on the current page
                             ''')
 
-        return self._reconcile_state(new_state, form_url=reeval_url)
+        return self._reconcile_state(new_state)
 
     @raises_locust_error
     def fill_datetime_field(self, label: str, datetime_input: datetime.datetime, locust_request_label: str = "") -> 'SailUiForm':
@@ -1127,7 +1123,7 @@ class SailUiForm:
                             with its value: '{datetime_input}' on the current page
                             ''')
 
-        return self._reconcile_state(new_state, form_url=reeval_url)
+        return self._reconcile_state(new_state)
 
     @raises_locust_error
     def select_rows_in_grid(self, rows: List[int], label: str = None, index: int = None, locust_request_label: str = "") -> 'SailUiForm':
@@ -1158,7 +1154,7 @@ class SailUiForm:
         reeval_url = self._get_update_url_for_reeval(self.state)
         new_state = self.interactor.update_grid_from_sail_form(reeval_url, grid, new_grid_save,
                                                                self.context, self.uuid, context_label=context_label)
-        return self._reconcile_state(new_state, form_url=reeval_url)
+        return self._reconcile_state(new_state)
 
     @raises_locust_error
     def move_to_end_of_paging_grid(self, label: str = None, index: int = None, locust_request_label: str = "") -> 'SailUiForm':
@@ -1188,7 +1184,7 @@ class SailUiForm:
         reeval_url = self._get_update_url_for_reeval(self.state)
         new_state = self.interactor.update_grid_from_sail_form(reeval_url, grid, new_grid_save,
                                                                self.context, self.uuid, context_label=context_label)
-        return self._reconcile_state(new_state, form_url=reeval_url)
+        return self._reconcile_state(new_state)
 
     @raises_locust_error
     def move_to_beginning_of_paging_grid(self, label: str = None, index: int = None, locust_request_label: str = "") -> 'SailUiForm':
@@ -1215,7 +1211,7 @@ class SailUiForm:
         reeval_url = self._get_update_url_for_reeval(self.state)
         new_state = self.interactor.update_grid_from_sail_form(reeval_url, grid, new_grid_save,
                                                                self.context, self.uuid, context_label=context_label)
-        return self._reconcile_state(new_state, form_url=reeval_url)
+        return self._reconcile_state(new_state)
 
     @raises_locust_error
     def move_to_left_in_paging_grid(self, label: str = None, index: int = None, locust_request_label: str = "") -> 'SailUiForm':
@@ -1246,7 +1242,7 @@ class SailUiForm:
         reeval_url = self._get_update_url_for_reeval(self.state)
         new_state = self.interactor.update_grid_from_sail_form(reeval_url, grid, new_grid_save,
                                                                self.context, self.uuid, context_label=context_label)
-        return self._reconcile_state(new_state, form_url=reeval_url)
+        return self._reconcile_state(new_state)
 
     @raises_locust_error
     def move_to_right_in_paging_grid(self, label: str = None, index: int = None, locust_request_label: str = "") -> 'SailUiForm':
@@ -1277,7 +1273,7 @@ class SailUiForm:
         reeval_url = self._get_update_url_for_reeval(self.state)
         new_state = self.interactor.update_grid_from_sail_form(reeval_url, grid, new_grid_save,
                                                                self.context, self.uuid, context_label=context_label)
-        return self._reconcile_state(new_state, form_url=reeval_url)
+        return self._reconcile_state(new_state)
 
     @raises_locust_error
     def sort_paging_grid(self, label: str = None, index: int = None, field_name: str = "", ascending: bool = False, locust_request_label: str = "") -> 'SailUiForm':
@@ -1315,7 +1311,7 @@ class SailUiForm:
         reeval_url = self._get_update_url_for_reeval(self.state)
         new_state = self.interactor.update_grid_from_sail_form(reeval_url, grid, new_grid_save,
                                                                self.context, self.uuid, context_label=context_label)
-        return self._reconcile_state(new_state, form_url=reeval_url)
+        return self._reconcile_state(new_state)
 
     @raises_locust_error
     def select_radio_button_by_test_label(self, test_label: str, index: int, locust_request_label: str = "") -> 'SailUiForm':
@@ -1344,7 +1340,7 @@ class SailUiForm:
         if not new_state:
             raise Exception(
                 f"No response returned when trying to select radio button with testLabel '{test_label}'")
-        return self._reconcile_state(new_state, form_url=reeval_url)
+        return self._reconcile_state(new_state)
 
     @raises_locust_error
     def select_radio_button_by_label(self, label: str, index: int, locust_request_label: str = "") -> 'SailUiForm':
@@ -1376,7 +1372,7 @@ class SailUiForm:
         if not new_state:
             raise Exception(
                 f"No response returned when trying to select radio button with label '{label}'")
-        return self._reconcile_state(new_state, form_url=reeval_url)
+        return self._reconcile_state(new_state)
 
     @raises_locust_error
     def select_nav_card_by_index(self, nav_group_label: str, index: int, is_test_label: bool = False, locust_request_label: str = "") -> 'SailUiForm':
@@ -1427,7 +1423,7 @@ class SailUiForm:
         if not new_state:
             raise Exception(
                 f"No response returned when trying to select radio button with index '{field_index}'")
-        return self._reconcile_state(new_state, form_url=reeval_url)
+        return self._reconcile_state(new_state)
 
     def go_to_next_record_grid_page(self, locust_request_label: str = "") -> 'SailUiForm':
         context_label = locust_request_label or f"{self.breadcrumb}.NextPage"
@@ -1444,7 +1440,7 @@ class SailUiForm:
         if not new_state:
             raise Exception(
                 f"No response returned when navigating to next page on record list '{reeval_url}'")
-        return self._reconcile_state(new_state, form_url=reeval_url)
+        return self._reconcile_state(new_state)
 
     def get_record_header_form(self) -> 'SailUiForm':
         """
@@ -1560,7 +1556,7 @@ class SailUiForm:
         if not new_state:
             raise Exception(f"No response returned when trying to refresh after record action '{label}'")
 
-        return self._reconcile_state(new_state, form_url=reeval_url)
+        return self._reconcile_state(new_state)
 
     @raises_locust_error
     def click_record_search_button_by_index(self, index: int = 1, locust_request_label: str = "") -> 'SailUiForm':
@@ -1590,12 +1586,12 @@ class SailUiForm:
         if not new_state:
             raise Exception(f"No response returned when trying to click record search button at index '{index}'")
 
-        return self._reconcile_state(new_state, form_url=reeval_url)
+        return self._reconcile_state(new_state)
 
-    def _reconcile_state(self, new_state: dict, form_url: str = "") -> 'SailUiForm':
+    def _reconcile_state(self, new_state: dict) -> 'SailUiForm':
         self.interactor.datatype_cache.cache(new_state)
         self.state = self.reconciler.reconcile_ui(self.state, new_state)
-        self.form_url = form_url or self.form_url
+        self.form_url = self._get_update_url_for_reeval(self.state)
         self.uuid = self.state.get(KEY_UUID) or self.uuid
         self.context = self.state.get(KEY_CONTEXT) or self.context
         return self

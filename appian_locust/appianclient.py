@@ -11,8 +11,6 @@ from requests import Response
 from . import logger
 from ._actions import _Actions
 from ._admin import Admin
-from ._app_importer import AppImporter
-from ._design import Design
 from ._feature_flag import FeatureFlag
 from ._feature_toggle_helper import (get_client_feature_toggles,
                                      override_default_flags,
@@ -152,12 +150,10 @@ class AppianClient:
 
         self._actions = _Actions(self.interactor)
         self._admin = Admin(self.interactor)
-        self._design = Design(self.interactor)
         self._news = _News(self.interactor)
         self._records = _Records(self.interactor)
         self._tasks = _Tasks(self.interactor)
         self._sites = _Sites(self.interactor)
-        self._app_importer = AppImporter(self.interactor)
         self.visitor = Visitor(self.interactor)
 
         # Adding a few session specific attributes to self.client to that it can be carried and handled by session
@@ -194,24 +190,6 @@ class AppianClient:
         See :doc:`_actions <appian_locust._admin>`
         """
         return self._admin
-
-    @property
-    def app_importer(self) -> AppImporter:
-        """
-        API for importing applications
-
-        See :doc:`_app_importer <appian_locust._app_importer>`
-        """
-        return self._app_importer
-
-    @property
-    def design(self) -> Design:
-        """
-        API for interacting with /design
-
-        See :doc:`_actions <appian_locust._design>`
-        """
-        return self._design
 
     @property
     def news(self) -> _News:
