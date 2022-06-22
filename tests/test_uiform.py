@@ -68,14 +68,14 @@ class TestSailUiForm(unittest.TestCase):
         self.custom_locust.set_response(self.report_link_uri,
                                         500, '{}')
         with self.assertRaises(HTTPError):
-            self.task_set.appian.reports.visit_and_get_form(self.report_name, False)
+            self.task_set.appian.visitor.visit_report(self.report_name, False)
 
     def test_reports_form_modify_grid(self) -> None:
         form_label = 'Top Sales Reps by Total Sales'
         report_form = read_mock_file("report_with_rep_sales_grid.json")
         self.custom_locust.set_response(self.report_link_uri,
                                         200, report_form)
-        sail_form = self.task_set.appian.reports.visit_and_get_form(self.report_name, False)
+        sail_form = self.task_set.appian.visitor.visit_report(self.report_name, False)
         self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/pages/reports/report/yS9bXA/reportlink",
                                         200, report_form)
 
@@ -93,7 +93,7 @@ class TestSailUiForm(unittest.TestCase):
         report_form = read_mock_file("report_with_rep_sales_grid.json")
         self.custom_locust.set_response(self.report_link_uri,
                                         200, report_form)
-        sail_form = self.task_set.appian.reports.visit_and_get_form(self.report_name, False)
+        sail_form = self.task_set.appian.visitor.visit_report(self.report_name, False)
         with self.assertRaisesRegex(Exception, "Grid with label 'dummy_label' not found in form") as context:
             sail_form.move_to_beginning_of_paging_grid(label='dummy_label')
         with self.assertRaisesRegex(Exception, "Index 5 out of range"):
@@ -107,7 +107,7 @@ class TestSailUiForm(unittest.TestCase):
     def test_paging_grid_sort_by_label_finds_grid(self) -> None:
         report_form = read_mock_file("paging_grid_sortable.json")
         self.custom_locust.set_response(self.report_link_uri, 200, report_form)
-        sail_form = self.task_set.appian.reports.visit_and_get_form(self.report_name, False)
+        sail_form = self.task_set.appian.visitor.visit_report(self.report_name, False)
         self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/pages/reports/report/TNCDrA/reportlink", 200, report_form)
         sail_form.sort_paging_grid(label=" Dogs", field_name="Name")
 
@@ -115,10 +115,10 @@ class TestSailUiForm(unittest.TestCase):
         body_with_types = read_mock_file("page_resp.json")
         self.custom_locust.set_response(self.report_link_uri,
                                         200, body_with_types)
-        self.task_set.appian.reports.visit_and_get_form(self.report_name, False)
+        self.task_set.appian.visitor.visit_report(self.report_name, False)
         self.assertEqual(len(self.task_set.appian.interactor.datatype_cache._cached_datatype), 105)
 
-        self.task_set.appian.reports.visit_and_get_form(self.report_name, False)
+        self.task_set.appian.visitor.visit_report(self.report_name, False)
         self.assertEqual(len(self.task_set.appian.interactor.datatype_cache._cached_datatype), 105)
 
     def test_deployments_click_tab(self) -> None:
@@ -157,7 +157,7 @@ class TestSailUiForm(unittest.TestCase):
     def test_fill_text_field(self) -> None:
         report_body = read_mock_file("text_fields_same_label.json")
         self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
-        sail_form = self.task_set.appian.reports.visit_and_get_form(report_name=self.report_name, exact_match=False)
+        sail_form = self.task_set.appian.visitor.visit_report(report_name=self.report_name, exact_match=False)
 
         label = 'Text'
         value = 'Filling out the form...'
@@ -166,7 +166,7 @@ class TestSailUiForm(unittest.TestCase):
     def test_fill_text_field_by_index(self) -> None:
         report_body = read_mock_file("text_fields_same_label.json")
         self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
-        sail_form = self.task_set.appian.reports.visit_and_get_form(report_name=self.report_name, exact_match=False)
+        sail_form = self.task_set.appian.visitor.visit_report(report_name=self.report_name, exact_match=False)
 
         label = 'Text'
         value = 'Filling out the form...'
@@ -176,7 +176,7 @@ class TestSailUiForm(unittest.TestCase):
     def test_fill_text_field_no_fields(self) -> None:
         report_body = read_mock_file("text_fields_same_label.json")
         self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
-        sail_form = self.task_set.appian.reports.visit_and_get_form(self.report_name, exact_match=False)
+        sail_form = self.task_set.appian.visitor.visit_report(self.report_name, exact_match=False)
 
         label = 'Non-existant label'
         value = 'Filling out the form...'
@@ -188,7 +188,7 @@ class TestSailUiForm(unittest.TestCase):
     def test_fill_text_field_out_of_bounds_index(self) -> None:
         report_body = read_mock_file("text_fields_same_label.json")
         self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
-        sail_form = self.task_set.appian.reports.visit_and_get_form(self.report_name, exact_match=False)
+        sail_form = self.task_set.appian.visitor.visit_report(self.report_name, exact_match=False)
 
         label = 'Text'
         value = 'Filling out the form...'
@@ -199,7 +199,7 @@ class TestSailUiForm(unittest.TestCase):
     def test_fill_text_field_zero_index(self) -> None:
         report_body = read_mock_file("text_fields_same_label.json")
         self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
-        sail_form = self.task_set.appian.reports.visit_and_get_form(self.report_name, exact_match=False)
+        sail_form = self.task_set.appian.visitor.visit_report(self.report_name, exact_match=False)
 
         label = 'Text'
         value = 'Filling out the form...'
@@ -210,7 +210,7 @@ class TestSailUiForm(unittest.TestCase):
     def test_fill_text_field_negative_index(self) -> None:
         report_body = read_mock_file("text_fields_same_label.json")
         self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
-        sail_form = self.task_set.appian.reports.visit_and_get_form(self.report_name, exact_match=False)
+        sail_form = self.task_set.appian.visitor.visit_report(self.report_name, exact_match=False)
 
         label = 'Text'
         value = 'Filling out the form...'
@@ -811,7 +811,7 @@ class TestSailUiForm(unittest.TestCase):
     def test_click_record_link(self, mock_click_rl: MagicMock) -> None:
         report_body = read_mock_file("nested_dynamic_link_response.json")
         self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
-        sail_form = self.task_set.appian.reports.visit_and_get_form(self.report_name, exact_match=False)
+        sail_form = self.task_set.appian.visitor.visit_report(self.report_name, exact_match=False)
 
         sail_form.click_record_link('')
 
@@ -823,7 +823,7 @@ class TestSailUiForm(unittest.TestCase):
     def test_click_record_view_link(self, mock_click_rl: MagicMock) -> None:
         report_body = read_mock_file("nested_dynamic_link_response.json")
         self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
-        sail_form = self.task_set.appian.reports.visit_and_get_form(self.report_name, exact_match=False)
+        sail_form = self.task_set.appian.visitor.visit_report(self.report_name, exact_match=False)
 
         sail_form.click_record_view_link(label='Related Actions')
 
@@ -837,7 +837,7 @@ class TestSailUiForm(unittest.TestCase):
     def test_click_record_link_by_index(self, mock_click_rl: MagicMock) -> None:
         report_body = read_mock_file("nested_dynamic_link_response.json")
         self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
-        sail_form = self.task_set.appian.reports.visit_and_get_form(self.report_name, exact_match=False)
+        sail_form = self.task_set.appian.visitor.visit_report(self.report_name, exact_match=False)
 
         sail_form.click_record_link_by_index(index=2)
 
@@ -849,7 +849,7 @@ class TestSailUiForm(unittest.TestCase):
     def test_click_record_link_by_attribute_and_index(self, mock_click_rl: MagicMock) -> None:
         report_body = read_mock_file("nested_dynamic_link_response.json")
         self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
-        sail_form = self.task_set.appian.reports.visit_and_get_form(self.report_name, exact_match=False)
+        sail_form = self.task_set.appian.visitor.visit_report(self.report_name, exact_match=False)
 
         sail_form.click_record_link_by_attribute_and_index(attribute='pageUrlStub', attribute_value='reports', index=3)
 
@@ -860,7 +860,7 @@ class TestSailUiForm(unittest.TestCase):
     def test_click_record_link_missing_attribute(self) -> None:
         report_body = read_mock_file("nested_dynamic_link_response.json")
         self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
-        sail_form = self.task_set.appian.reports.visit_and_get_form(self.report_name, exact_match=False)
+        sail_form = self.task_set.appian.visitor.visit_report(self.report_name, exact_match=False)
 
         with self.assertRaises(ComponentNotFoundException) as context:
             sail_form.click_record_link_by_attribute_and_index(attribute='Nonexistant', attribute_value='attribute')
@@ -869,7 +869,7 @@ class TestSailUiForm(unittest.TestCase):
     def test_click_record_link_out_of_bounds_index(self) -> None:
         report_body = read_mock_file("nested_dynamic_link_response.json")
         self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
-        sail_form = self.task_set.appian.reports.visit_and_get_form(self.report_name, exact_match=False)
+        sail_form = self.task_set.appian.visitor.visit_report(self.report_name, exact_match=False)
 
         with self.assertRaisesRegex(Exception, "Index: '100' out of range"):
             sail_form.click_record_link_by_attribute_and_index(index=100)
@@ -877,7 +877,7 @@ class TestSailUiForm(unittest.TestCase):
     def test_click_record_link_zero_index(self) -> None:
         report_body = read_mock_file("nested_dynamic_link_response.json")
         self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
-        sail_form = self.task_set.appian.reports.visit_and_get_form(self.report_name, exact_match=False)
+        sail_form = self.task_set.appian.visitor.visit_report(self.report_name, exact_match=False)
 
         with self.assertRaisesRegex(Exception, "Invalid index: '0'. Please enter a positive number. Indexing is 1-based to match SAIL indexing convention"):
             sail_form.click_record_link_by_index(index=0)
@@ -885,7 +885,7 @@ class TestSailUiForm(unittest.TestCase):
     def test_click_record_link_negative_index(self) -> None:
         report_body = read_mock_file("nested_dynamic_link_response.json")
         self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
-        sail_form = self.task_set.appian.reports.visit_and_get_form(self.report_name, exact_match=False)
+        sail_form = self.task_set.appian.visitor.visit_report(self.report_name, exact_match=False)
 
         with self.assertRaisesRegex(Exception, "Invalid index: '-1'. Please enter a positive number"):
             sail_form.click_record_link_by_index(index=-1)

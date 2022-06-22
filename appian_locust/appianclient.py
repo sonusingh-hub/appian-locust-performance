@@ -21,10 +21,10 @@ from ._interactor import _Interactor
 from ._locust_error_handler import log_locust_error
 from ._news import _News
 from ._records import _Records
-from ._reports import _Reports
 from ._sites import _Sites
 from ._tasks import _Tasks
 from .exceptions import MissingConfigurationException
+from .visitor import Visitor
 
 log = logger.getLogger(__name__)
 
@@ -155,10 +155,10 @@ class AppianClient:
         self._design = Design(self.interactor)
         self._news = _News(self.interactor)
         self._records = _Records(self.interactor)
-        self._reports = _Reports(self.interactor)
         self._tasks = _Tasks(self.interactor)
         self._sites = _Sites(self.interactor)
         self._app_importer = AppImporter(self.interactor)
+        self.visitor = Visitor(self.interactor)
 
         # Adding a few session specific attributes to self.client to that it can be carried and handled by session
         # in case of having multiple sessions in the future.
@@ -230,15 +230,6 @@ class AppianClient:
         See :doc:`_records <appian_locust._records>`
         """
         return self._records
-
-    @property
-    def reports(self) -> _Reports:
-        """
-        API for importing applications
-
-        See :doc:`_reports <appian_locust._reports>`
-        """
-        return self._reports
 
     @property
     def tasks(self) -> _Tasks:
