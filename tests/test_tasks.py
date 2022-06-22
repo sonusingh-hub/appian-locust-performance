@@ -101,11 +101,16 @@ class TestTask(unittest.TestCase):
             task_to_accept
         )
         self.custom_locust.set_response(
+            "/suite/rest/a/task/latest/1/form",
+            200,
+            task_to_accept
+        )
+        self.custom_locust.set_response(
             "/suite/rest/a/task/latest/1/attributes",
             200,
             self.get_task_attributes(is_auto_acceptable=False))
         output = self.task_set.appian.tasks.visit_and_get_form("t-1", False)
-
+        print(output.state)
         self.assertEqual(output.form_url, "/suite/rest/a/task/latest/1/form")
 
 

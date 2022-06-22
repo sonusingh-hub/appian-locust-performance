@@ -116,7 +116,7 @@ class _Records(_Base):
             >>> self.appian.records.get_all_records_of_record_type("record_type_name")
         """
 
-        json_response, _ = self._record_type_list_request(record_type)
+        json_response = self._record_type_list_request(record_type)
 
         if column_index is not None:
             self._records[record_type], self._errors = get_records_from_json_by_column(json_response, column_index)
@@ -137,7 +137,7 @@ class _Records(_Base):
 
             >>> self.appian.records.get_all_records_of_record_type_mobile("record_type_name")
         """
-        json_response, _ = self._record_type_list_request(record_type, is_mobile=True)
+        json_response = self._record_type_list_request(record_type, is_mobile=True)
 
         self._records[record_type], self._errors = get_all_records_from_json(json_response)
 
@@ -212,7 +212,7 @@ class _Records(_Base):
             raise Exception(f"There is no record type with name {record_type} in the system under test (Exact match = {exact_match})")
         return current_record_type
 
-    def visit_record_instance(self, record_type: str = "", record_name: str = "", view_url_stub: str = "", exact_match: bool = True, locust_request_label: str = "") -> Tuple[Dict[str, Any], str]:
+    def visit_record_instance(self, record_type: str = "", record_name: str = "", view_url_stub: str = "", exact_match: bool = True, locust_request_label: str = "") -> Dict[str, Any]:
         """
         This function calls the API for the specific record view/instance to get its response data.
 
@@ -225,7 +225,7 @@ class _Records(_Base):
             exact_match (bool, optional): Should record type and record name matched exactly as it is or partial match.
             locust_request_label(str,optional): Label used to identify the request for locust statistics
 
-        Returns (tuple): Responses of Record's Get UI call in a dictionary and the request URI as a string.
+        Returns (dict): Responses of Record's Get UI call in a dictionary
 
         Examples:
 
@@ -269,12 +269,12 @@ class _Records(_Base):
 
         uri = f"/suite/rest/a/sites/latest/{tempo_site_url_stub}/page/records/record/{opaque_id}/view/{view_url_stub}"
         resp = self.interactor.get_page(uri=uri, headers=headers, label=locust_label)
-        return resp.json(), uri
+        return resp.json()
 
     # Alias for the above function to allow backwards compatability
     visit = visit_record_instance
 
-    def visit_record_type(self, record_type: str = "", exact_match: bool = True, is_mobile: bool = False) -> Tuple[Dict[str, Any], str]:
+    def visit_record_type(self, record_type: str = "", exact_match: bool = True, is_mobile: bool = False) -> Dict[str, Any]:
         """
         Navigate into desired record type and retrieve all metadata for associated list of record views.
 
@@ -310,9 +310,9 @@ class _Records(_Base):
         """
         # view_url_stub does not matter in case of feed response for a record instance. Feed Response for each tab on an record instance is the same
         # no matter which dashboard is selected.
-        form_json, form_uri = self.visit_record_instance(record_type, record_name, view_url_stub="summary", exact_match=exact_match)
+        form_json = self.visit_record_instance(record_type, record_name, view_url_stub="summary", exact_match=exact_match)
         breadcrumb = f'Records.{record_type}.{record_name}.Feed'
-        return SailUiForm(self.interactor, form_json, form_uri, breadcrumb=breadcrumb)
+        return SailUiForm(self.interactor, form_json, breadcrumb=breadcrumb)
 
     def visit_record_instance_and_get_form(self, record_type: str = "", record_name: str = "", view_url_stub: str = "", exact_match: bool = False) -> SailUiForm:
         """
@@ -347,11 +347,11 @@ class _Records(_Base):
             >>> self.appian.records.visit_and_get_form("record_type_name")
         """
 
-        form_json, form_uri = self.visit_record_instance(record_type, record_name, view_url_stub=view_url_stub, exact_match=exact_match)
+        form_json = self.visit_record_instance(record_type, record_name, view_url_stub=view_url_stub, exact_match=exact_match)
         # SAIL Code for the Record Summary View is embedded within the response.
         embedded_record_resp = get_record_summary_view_response(form_json)
         breadcrumb = f'Records.{record_type}.{format_label(record_name, "::", 0)}.SailUi'
-        return SailUiForm(self.interactor, json.loads(embedded_record_resp), form_uri, breadcrumb=breadcrumb)
+        return SailUiForm(self.interactor, json.loads(embedded_record_resp), breadcrumb=breadcrumb)
 
     visit_and_get_form = visit_record_instance_and_get_form
 
@@ -383,9 +383,9 @@ class _Records(_Base):
         """
         if not self._records or not self._record_types:
             self.get_all()
-        form_json, form_uri = self.visit_record_type(record_type, exact_match=exact_match, is_mobile=is_mobile)
+        form_json = self.visit_record_type(record_type, exact_match=exact_match, is_mobile=is_mobile)
         breadcrumb = f'Records.{record_type}.SailUi'
-        return SailUiForm(self.interactor, form_json, form_uri, breadcrumb=breadcrumb)
+        return SailUiForm(self.interactor, form_json, breadcrumb=breadcrumb)
 
         # ----- Private Functions ----- #
 
@@ -405,7 +405,7 @@ class _Records(_Base):
             self.get_all()
         return random.choice(list(self._records.keys()))
 
-    def _record_type_list_request(self, record_type: str, is_mobile: bool = False) -> Tuple[Dict[str, Any], str]:
+    def _record_type_list_request(self, record_type: str, is_mobile: bool = False) -> Dict[str, Any]:
         if record_type not in self._record_types:
             raise Exception(f"There is no record type with name {record_type} in the system under test")
         record_type_component = self._record_types[record_type]
@@ -423,7 +423,7 @@ class _Records(_Base):
         response = self.interactor.get_page(uri=uri, headers=headers, label=label)
         json_response = response.json()
 
-        return json_response, uri
+        return json_response
 
     def _get_mobile_records_uri(self, record_type_url_stub: str) -> str:
         if not record_type_url_stub:

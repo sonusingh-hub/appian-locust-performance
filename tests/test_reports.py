@@ -92,8 +92,10 @@ class TestReports(unittest.TestCase):
             side_effect=lambda uri, headers, label: response if uri == "some_url" else "",
         )
         setattr(self.interactor, 'get_page', get_page_mock)
+        get_form_uri_mock = unittest.mock.Mock(return_value="some_url")
+        setattr(self.reports_interactor, "get_report_form_uri", get_form_uri_mock)
 
-        output = self.reports_interactor.fetch_report_json("RTE Basic Test Report::qdjDPA", "some_url")
+        output = self.reports_interactor.fetch_report_json("RTE Basic Test Report::qdjDPA")
         self.assertEqual(output, {"ase": "ase2"})
 
     def test_reports_get_form_uri(self) -> None:

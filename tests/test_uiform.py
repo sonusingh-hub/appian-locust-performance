@@ -226,7 +226,7 @@ class TestSailUiForm(unittest.TestCase):
         self.custom_locust.enqueue_response(200, picker_widget_suggestions)
         self.custom_locust.enqueue_response(200, picker_widget_selected)
 
-        sail_form = SailUiForm(self.task_set.appian.interactor, sail_ui_actions_cmf, self.process_model_form_uri)
+        sail_form = SailUiForm(self.task_set.appian.interactor, sail_ui_actions_cmf)
 
         label = self.picker_label
         value = self.picker_value
@@ -245,7 +245,7 @@ class TestSailUiForm(unittest.TestCase):
         }
         self.custom_locust.enqueue_response(200, json.dumps(resp))
         self.custom_locust.enqueue_response(200, picker_widget_selected)
-        sail_form = SailUiForm(self.task_set.appian.interactor, sail_ui_actions_cmf, self.process_model_form_uri)
+        sail_form = SailUiForm(self.task_set.appian.interactor, sail_ui_actions_cmf)
 
         value = 'Admin User'
         sail_form.fill_picker_field(label, value)
@@ -257,7 +257,7 @@ class TestSailUiForm(unittest.TestCase):
 
         self.custom_locust.enqueue_response(200, picker_widget_suggestions)
         self.custom_locust.enqueue_response(200, picker_widget_selected)
-        sail_form = SailUiForm(self.task_set.appian.interactor, sail_ui_actions_cmf, self.process_model_form_uri)
+        sail_form = SailUiForm(self.task_set.appian.interactor, sail_ui_actions_cmf)
 
         label = self.picker_label
         value = 'GAC Guyana'
@@ -269,7 +269,7 @@ class TestSailUiForm(unittest.TestCase):
         picker_widget_suggestions = read_mock_file("picker_widget_no_suggestions.json")
 
         self.custom_locust.enqueue_response(200, picker_widget_suggestions)
-        sail_form = SailUiForm(self.task_set.appian.interactor, sail_ui_actions_cmf, self.process_model_form_uri)
+        sail_form = SailUiForm(self.task_set.appian.interactor, sail_ui_actions_cmf)
 
         label = self.picker_label
         value = 'You will not find me'
@@ -280,7 +280,7 @@ class TestSailUiForm(unittest.TestCase):
     def test_fill_picker_field_no_response(self) -> None:
         sail_ui_actions_cmf = json.loads(self.sail_ui_actions_response)
         self.custom_locust.enqueue_response(200, '{}')
-        sail_form = SailUiForm(self.task_set.appian.interactor, sail_ui_actions_cmf, self.process_model_form_uri)
+        sail_form = SailUiForm(self.task_set.appian.interactor, sail_ui_actions_cmf)
 
         label = self.picker_label
         value = 'You will not find me'
@@ -296,7 +296,7 @@ class TestSailUiForm(unittest.TestCase):
             'suggestions': [{'a': 'b'}]
         }
         self.custom_locust.enqueue_response(200, json.dumps(resp))
-        sail_form = SailUiForm(self.task_set.appian.interactor, sail_ui_actions_cmf, self.process_model_form_uri)
+        sail_form = SailUiForm(self.task_set.appian.interactor, sail_ui_actions_cmf)
 
         value = self.picker_value
         with self.assertRaisesRegex(Exception, "No identifiers found"):
@@ -311,7 +311,7 @@ class TestSailUiForm(unittest.TestCase):
             'suggestions': [{'identifier': {'idx': 1}}]
         }
         self.custom_locust.enqueue_response(200, json.dumps(resp))
-        sail_form = SailUiForm(self.task_set.appian.interactor, sail_ui_actions_cmf, self.process_model_form_uri)
+        sail_form = SailUiForm(self.task_set.appian.interactor, sail_ui_actions_cmf)
 
         value = self.picker_value
         with self.assertRaisesRegex(Exception, "Could not extract picker values"):
@@ -324,7 +324,7 @@ class TestSailUiForm(unittest.TestCase):
         self.custom_locust.enqueue_response(200, picker_widget_suggestions)
         self.custom_locust.enqueue_response(200, '{}')
 
-        sail_form = SailUiForm(self.task_set.appian.interactor, sail_ui_actions_cmf, self.process_model_form_uri)
+        sail_form = SailUiForm(self.task_set.appian.interactor, sail_ui_actions_cmf)
 
         label = self.picker_label
         value = self.picker_value
@@ -355,7 +355,7 @@ class TestSailUiForm(unittest.TestCase):
                     },
                 ]
             }
-            sail_form = SailUiForm(self.task_set.appian.interactor, ui, self.process_model_form_uri)
+            sail_form = SailUiForm(self.task_set.appian.interactor, ui)
             sail_form.upload_document_to_upload_field(label, 'fake_file')
 
     def test_upload_document_missing_file(self) -> None:
@@ -379,7 +379,7 @@ class TestSailUiForm(unittest.TestCase):
                     },
                 ]
             }
-            sail_form = SailUiForm(self.task_set.appian.interactor, ui, self.process_model_form_uri)
+            sail_form = SailUiForm(self.task_set.appian.interactor, ui)
             sail_form.upload_document_to_upload_field(label, file)
 
     def test_multi_upload_document_invalid_component(self) -> None:
@@ -402,21 +402,21 @@ class TestSailUiForm(unittest.TestCase):
                     },
                 ]
             }
-            sail_form = SailUiForm(self.task_set.appian.interactor, ui, self.process_model_form_uri)
+            sail_form = SailUiForm(self.task_set.appian.interactor, ui)
             sail_form.upload_documents_to_multiple_file_upload_field(label, 'fake_file')
 
     def test_multi_upload_document_invalid_file(self) -> None:
         with self.assertRaisesRegex(FileNotFoundError, "No such file or directory: "):
             ui = json.loads(self.file_upload_initial)
             label = 'File Upload 5'
-            sail_form = SailUiForm(self.task_set.appian.interactor, ui, self.process_model_form_uri)
+            sail_form = SailUiForm(self.task_set.appian.interactor, ui)
             sail_form.upload_documents_to_multiple_file_upload_field(label, ['fake_file'])
 
     @patch('appian_locust.SailUiForm.upload_documents_to_multiple_file_upload_field')
     def test_single_to_multi_upload_document(self, mock_upload_documents_to_multiple_file_upload_field: MagicMock) -> None:
         ui = json.loads(self.file_upload_initial)
         label = 'File Upload 5'
-        sail_form = SailUiForm(self.task_set.appian.interactor, ui, self.process_model_form_uri)
+        sail_form = SailUiForm(self.task_set.appian.interactor, ui)
         sail_form.upload_document_to_upload_field(label, 'fake_file')
         mock_upload_documents_to_multiple_file_upload_field.assert_called_once()
         args, kwargs = mock_upload_documents_to_multiple_file_upload_field.call_args_list[0]
@@ -430,7 +430,7 @@ class TestSailUiForm(unittest.TestCase):
                                                        mock_os_path_exists: MagicMock) -> None:
         ui = json.loads(self.file_upload_initial)
         label = 'File Upload 5'
-        sail_form = SailUiForm(self.task_set.appian.interactor, ui, self.process_model_form_uri)
+        sail_form = SailUiForm(self.task_set.appian.interactor, ui)
 
         sail_form.upload_document_to_upload_field(label, 'fake_file')
 
@@ -441,7 +441,7 @@ class TestSailUiForm(unittest.TestCase):
     def test_multi_to_single_upload_document(self, mock_upload_document_to_upload_field: MagicMock) -> None:
         ui = json.loads(self.file_upload_initial)
         label = 'File Upload 4'
-        sail_form = SailUiForm(self.task_set.appian.interactor, ui, self.process_model_form_uri)
+        sail_form = SailUiForm(self.task_set.appian.interactor, ui)
         sail_form.upload_documents_to_multiple_file_upload_field(label, 'fake_file')
         mock_upload_document_to_upload_field.assert_called_once()
 
@@ -450,11 +450,7 @@ class TestSailUiForm(unittest.TestCase):
                                         'ioBHer_bdD8Emw8hMSiA_CnpxaA0SVKp1kzE9BURlYvkxHjzPlX0d81Hmk',
                                         200,
                                         self.related_action_response)
-        sail_form = SailUiForm(self.task_set.appian.interactor,
-                               json.loads(self.record_instance_response),
-                               '/suite/rest/a/sites/latest/D6JMim/page/records/record/'
-                               'lIBHer_bdD8Emw8hLPETeiApJ24AA5ZJilzpBmewf--PdHDSUx022ZVdk6bhtcs5w_3twr_z1drDBwn8DKfhPp90o_A4GrZbDSh09DYkh5Mfq48'
-                               '/view/summary')
+        sail_form = SailUiForm(self.task_set.appian.interactor, json.loads(self.record_instance_response))
         record_instance_header_form = sail_form.get_record_header_form()
         # perform a related action
         record_instance_related_action_form = record_instance_header_form.click_related_action("Discuss Case History")
@@ -472,11 +468,7 @@ class TestSailUiForm(unittest.TestCase):
                                         'actionDialog/iwBIWonPMarTw_zHTsSC5HBmvtUFIZ8Nar8xAVLL-EvREVFV-D4OAWQ4z8a2Q',
                                         200, related_action_dialog_response)
 
-        sail_form = SailUiForm(self.task_set.appian.interactor,
-                               json.loads(record_instance_with_related_action_link_response),
-                               'suite/rest/a/sites/latest/connected-servicing/page/servicing-requests/record/'
-                               'lMBIWonPMarTw_zHV9tHY7Qv243EjNNOfm68ODkwcOZV5QkPIy_jUPbUMBdKMU5co2siOSdlQZiECCP4MTqB25k7gOVE83gI-zLH97k_QuvUtK0sQ/view/summary'
-                               )
+        sail_form = SailUiForm(self.task_set.appian.interactor, json.loads(record_instance_with_related_action_link_response))
         record_summary_view_form = sail_form.get_record_view_form()
         # perform a related action that opens in a dialog (which is a on the summary dashboard itself)
         record_instance_related_action_form = record_summary_view_form.click_related_action("Document Reconciliation")
@@ -487,21 +479,18 @@ class TestSailUiForm(unittest.TestCase):
 
     @patch('appian_locust._interactor._Interactor.get_page')
     def test_filter_records_using_searchbox(self, mock_get_page: MagicMock) -> None:
-        uri = 'suite/rest/a/sites/latest/D6JMim/pages/records/recordType/commit'
-        record_type_list_form = SailUiForm(self.task_set.appian.interactor,
-                                           json.loads(read_mock_file("records_response.json")),
-                                           uri)
+        uri = '/suite/rest/a/sites/latest/D6JMim/pages/records/recordType/commit'
+        record_type_list_form = SailUiForm(self.task_set.appian.interactor, json.loads(read_mock_file("records_response.json")))
         record_type_list_form.filter_records_using_searchbox("Actions Page")
 
         mock_get_page.assert_called_once()
-        args, kwargs = mock_get_page.call_args_list[0]
+        _, kwargs = mock_get_page.call_args_list[0]
         self.assertEqual(kwargs['uri'], f"{uri}?searchTerm=Actions%20Page")
         self.assertEqual(kwargs['headers']['Accept'], "application/vnd.appian.tv.ui+json")
 
     @patch('appian_locust._interactor._Interactor.click_start_process_link')
     def test_click_start_process_link(self, mock_click_spl: MagicMock) -> None:
-        uri = self.report_link_uri
-        test_form = SailUiForm(self.task_set.appian.interactor, json.loads(self.spl_response), uri)
+        test_form = SailUiForm(self.task_set.appian.interactor, json.loads(self.spl_response))
         mock_component_object = {
             "processModelOpaqueId": "iQB8GmxIr5iZT6YnVytCx9QKdJBPaRDdv_-hRj3HM747ZtRjSw",
             "cacheKey": "c93e2f33-06eb-42b2-9cfc-2c4a0e14088e"
@@ -520,10 +509,7 @@ class TestSailUiForm(unittest.TestCase):
 
     @patch('appian_locust.uiform.SailUiForm._click_start_process_link')
     def test_click_card_layout_by_index_spl(self, mock_click_spl: MagicMock) -> None:
-        uri = self.report_link_uri
-        test_form = SailUiForm(self.task_set.appian.interactor,
-                               json.loads(self.spl_response),
-                               uri)
+        test_form = SailUiForm(self.task_set.appian.interactor, json.loads(self.spl_response))
         component = find_component_by_label_and_type_dict('label', 'Request Pass', 'StartProcessLink', test_form.state)
         test_form.click_card_layout_by_index(1, locust_request_label=self.locust_label)
 
@@ -535,10 +521,7 @@ class TestSailUiForm(unittest.TestCase):
 
     @patch('appian_locust._interactor._Interactor.click_component')
     def test_click_card_layout_by_index_other_link(self, mock_click_component: MagicMock) -> None:
-        uri = self.report_link_uri
-        test_form = SailUiForm(self.task_set.appian.interactor,
-                               json.loads(self.spl_response),
-                               uri)
+        test_form = SailUiForm(self.task_set.appian.interactor, json.loads(self.spl_response))
 
         def get_call(name: str) -> Optional[Any]:
             return {
@@ -554,7 +537,7 @@ class TestSailUiForm(unittest.TestCase):
 
         mock_click_component.assert_called_once()
         args, kwargs = mock_click_component.call_args_list[0]
-        self.assertEqual(args[0], self.report_link_uri)
+        self.assertEqual(args[0], "/suite/rest/a/sites/latest/z1ck30E1/pages/home/report")
         self.assertEqual(args[1], component)
         self.assertEqual(args[2], test_form.context)
         self.assertEqual(args[3], test_form.uuid)
@@ -562,10 +545,7 @@ class TestSailUiForm(unittest.TestCase):
 
     @patch('appian_locust._interactor._Interactor.select_radio_button')
     def test_radio_button_select_by_label(self, mock_radio_select_component: MagicMock) -> None:
-        uri = self.report_link_uri
-        test_form = SailUiForm(self.task_set.appian.interactor,
-                               json.loads(self.radio_button_initial),
-                               uri)
+        test_form = SailUiForm(self.task_set.appian.interactor, json.loads(self.radio_button_initial))
         component = find_component_by_attribute_in_dict("label", "Cool Buttons", test_form.state)
         test_uuid = test_form.uuid
         test_context = test_form.context
@@ -579,28 +559,19 @@ class TestSailUiForm(unittest.TestCase):
         self.assertEqual(kwargs["context_label"], self.locust_label)
 
     def test_click_card_layout_by_index_no_link(self) -> None:
-        uri = self.report_link_uri
-        test_form = SailUiForm(self.task_set.appian.interactor,
-                               json.loads(self.spl_response),
-                               uri)
+        test_form = SailUiForm(self.task_set.appian.interactor, json.loads(self.spl_response))
 
         with self.assertRaisesRegex(Exception, "CardLayout found at index: 2 does not have a link on it"):
             test_form.click_card_layout_by_index(2)
 
     def _setup_date_form(self) -> SailUiForm:
-        uri = self.date_task_uri
         self.custom_locust.set_response(self.date_task_uri, 200, self.date_response)
-        test_form = SailUiForm(self.task_set.appian.interactor,
-                               json.loads(self.date_response),
-                               uri)
+        test_form = SailUiForm(self.task_set.appian.interactor, json.loads(self.date_response))
         return test_form
 
     def _setup_multi_dropdown_form(self) -> SailUiForm:
-        uri = self.multi_dropdown_uri
         self.custom_locust.set_response(self.multi_dropdown_uri, 200, self.multi_dropdown_response)
-        test_form = SailUiForm(self.task_set.appian.interactor,
-                               json.loads(self.multi_dropdown_response),
-                               uri)
+        test_form = SailUiForm(self.task_set.appian.interactor, json.loads(self.multi_dropdown_response))
         return test_form
 
     def _setup_action_response_with_ui(self, file_name: str = "form_content_response.json") -> None:
@@ -648,7 +619,7 @@ class TestSailUiForm(unittest.TestCase):
 
     def test_get_dropdown_choices_multiple(self) -> None:
         resp_json = read_mock_file(file_name='dropdown_test_ui.json')
-        ui_form = SailUiForm(self.task_set.appian.interactor, json.loads(resp_json), '')
+        ui_form = SailUiForm(self.task_set.appian.interactor, json.loads(resp_json))
         choices = ui_form.get_dropdown_items("Customer Type")
         self.assertEqual(["-- Please select a value --",
                           "Buy Side Asset Manager",
@@ -659,7 +630,7 @@ class TestSailUiForm(unittest.TestCase):
 
     def test_get_dropdown_choices_errors(self) -> None:
         resp_json = read_mock_file(file_name='dropdown_test_ui.json')
-        ui_form = SailUiForm(self.task_set.appian.interactor, json.loads(resp_json), '')
+        ui_form = SailUiForm(self.task_set.appian.interactor, json.loads(resp_json))
         with self.assertRaises(ComponentNotFoundException):
             ui_form.get_dropdown_items("Dropdown that DNE")
         with self.assertRaises(InvalidComponentException):
@@ -667,7 +638,7 @@ class TestSailUiForm(unittest.TestCase):
 
     def test_empty_get_dropdown_choices(self) -> None:
         state = {'ui': [{'label': "Empty Dropdown", 'choices': []}]}
-        ui_form = SailUiForm(self.task_set.appian.interactor, state, '')
+        ui_form = SailUiForm(self.task_set.appian.interactor, state)
         self.assertEqual([], ui_form.get_dropdown_items("Empty Dropdown"))
 
     def test_select_multi_dropdown_success(self) -> None:
@@ -701,9 +672,7 @@ class TestSailUiForm(unittest.TestCase):
     def _setup_grid_form(self) -> SailUiForm:
         uri = self.sites_task_uri
         self.custom_locust.set_response(uri, 200, self.sites_task_report_resp)
-        test_form = SailUiForm(self.task_set.appian.interactor,
-                               json.loads(self.sites_task_report_resp),
-                               uri)
+        test_form = SailUiForm(self.task_set.appian.interactor, json.loads(self.sites_task_report_resp))
         return test_form
 
     def test_select_grid_row_success(self) -> None:
@@ -744,19 +713,13 @@ class TestSailUiForm(unittest.TestCase):
         self.assertEqual(268435892, second_selected['#v'])
 
     def test_dispatch_click_task_no_id(self) -> None:
-        uri = self.report_link_uri
-        sites_task_report = SailUiForm(self.task_set.appian.interactor,
-                                       json.loads(self.sites_task_report_resp),
-                                       uri)
+        sites_task_report = SailUiForm(self.task_set.appian.interactor, json.loads(self.sites_task_report_resp))
         component = {'#t': PROCESS_TASK_LINK_TYPE, 'label': "my task"}
         with self.assertRaisesRegex(Exception, "No task id found for task with name 'my task'"):
             sites_task_report._dispatch_click(component, 'no label')
 
     def test_dispatch_click_task_with_id(self) -> None:
-        uri = self.report_link_uri
-        sites_task_report = SailUiForm(self.task_set.appian.interactor,
-                                       json.loads(self.sites_task_report_resp),
-                                       uri)
+        sites_task_report = SailUiForm(self.task_set.appian.interactor, json.loads(self.sites_task_report_resp))
         initial_uuid = sites_task_report.uuid
         initial_context = sites_task_report.context
         task_to_accept = read_mock_file('task_accept_resp.json')
@@ -794,7 +757,7 @@ class TestSailUiForm(unittest.TestCase):
 
         self.custom_locust.enqueue_response(200, self.record_action_refresh_response)
 
-        sail_form = SailUiForm(self.task_set.appian.interactor, sail_ui_record_action_before, "http://localhost.com")
+        sail_form = SailUiForm(self.task_set.appian.interactor, sail_ui_record_action_before)
 
         sail_form.refresh_after_record_action("Update Table 1 (Dup) (PSF)")
 
@@ -803,7 +766,7 @@ class TestSailUiForm(unittest.TestCase):
 
         self.custom_locust.enqueue_response(200, self.uiform_click_record_search_button_response)
 
-        sail_form = SailUiForm(self.task_set.appian.interactor, sail_ui_site_with_record_search_button, "http://localhost.com")
+        sail_form = SailUiForm(self.task_set.appian.interactor, sail_ui_site_with_record_search_button)
 
         sail_form.click_record_search_button_by_index()
 

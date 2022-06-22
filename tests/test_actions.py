@@ -214,7 +214,7 @@ class TestActions(unittest.TestCase):
         dropdown_label = "Customer Type"
         sail_form.select_dropdown_item(dropdown_label, 'Buy Side Asset Manager')
 
-        mock_get_update_url_for_reeval.assert_called_once_with(initial_state)
+        mock_get_update_url_for_reeval.assert_called_with(initial_state)
         mock_send_dropdown_update.assert_called_once()
         args, kwargs = mock_send_dropdown_update.call_args
         self.assertEqual(args[0], "/mocked/re-eval/url")
@@ -235,7 +235,7 @@ class TestActions(unittest.TestCase):
         dropdown_label = "Customer Type"
         sail_form.select_dropdown_item(dropdown_label, 'Buy Side Asset Manager')
 
-        mock_get_update_url_for_reeval.assert_called_once_with(initial_state)
+        mock_get_update_url_for_reeval.assert_called_with(initial_state)
         mock_send_dropdown_update.assert_called_once()
         args, kwargs = mock_send_dropdown_update.call_args
         self.assertEqual(args[0], "/mocked/re-eval/url")

@@ -180,22 +180,19 @@ class TestRecords(unittest.TestCase):
             self.task_set.appian.records.fetch_record_type("something else")
 
     def test_records_visit(self) -> None:
-        output_json, output_uri = self.task_set.appian.records.visit_record_instance(
+        output_json = self.task_set.appian.records.visit_record_instance(
             "Commits", self.record_instance_name, exact_match=False, locust_request_label='')
         self.assertIsInstance(output_json, dict)
-        self.assertTrue("summary" in output_uri)
 
     def test_records_visit_random_success(self) -> None:
         self.custom_locust.set_default_response(200, self.record_summary_view)
-        output_json, output_uri = self.task_set.appian.records.visit_record_instance(locust_request_label='')
+        output_json = self.task_set.appian.records.visit_record_instance(locust_request_label='')
         self.assertIsInstance(output_json, dict)
-        self.assertTrue("summary" in output_uri)
 
     def test_records_visit_random_of_selected_record_type_success(self) -> None:
         self.custom_locust.set_default_response(200, self.record_summary_view)
-        output_json, output_uri = self.task_set.appian.records.visit_record_instance(record_type="Commits", locust_request_label='')
+        output_json = self.task_set.appian.records.visit_record_instance(record_type="Commits", locust_request_label='')
         self.assertIsInstance(output_json, dict)
-        self.assertTrue("summary" in output_uri)
 
     def test_records_visit_random_no_record_type_failure(self) -> None:
         with self.assertRaisesRegex(Exception,
@@ -203,24 +200,20 @@ class TestRecords(unittest.TestCase):
             self.task_set.appian.records.visit_record_instance(record_name=self.record_instance_name, exact_match=False)
 
     def test_records_visit_with_urlstub(self) -> None:
-        output_json, output_uri = self.task_set.appian.records.visit_record_instance(
+        output_json = self.task_set.appian.records.visit_record_instance(
             "Commits", self.record_instance_name, "summary", exact_match=False, locust_request_label='')
         self.assertIsInstance(output_json, dict)
-        self.assertTrue("summary" in output_uri)
 
     def test_record_types_visit(self) -> None:
-        output_json, output_uri = self.task_set.appian.records.visit_record_type(
+        output_json = self.task_set.appian.records.visit_record_type(
             "Commits", exact_match=False)
         self.assertIsInstance(output_json, dict)
-        self.assertTrue("commit" in output_uri)
 
     def test_record_type_visit_random_success(self) -> None:
         self.custom_locust.set_default_response(200, self.records)
-        output_json, output_uri = self.task_set.appian.records.visit_record_type()
-        print(output_uri)
+        output_json = self.task_set.appian.records.visit_record_type()
         self.assertIsInstance(output_json, dict)
         self.assertEqual(output_json.get("#t"), "UiConfig")
-        self.assertTrue("commit"in output_uri or "BE5pSw" in output_uri)
 
     def test_record_type_visit_failure(self) -> None:
         with self.assertRaises(Exception) as e:

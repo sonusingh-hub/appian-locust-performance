@@ -122,7 +122,7 @@ class _Reports(_Base):
                 report_name, exact_match)))
         return current_report
 
-    def fetch_report_json(self, report_name: str, form_uri: str) -> Dict[str, Any]:
+    def fetch_report_json(self, report_name: str, exact_match: bool = True) -> Dict[str, Any]:
         """
         This function calls the API for the specific report to get its "form" data
 
@@ -143,7 +143,7 @@ class _Reports(_Base):
             >>> self.appian.reports.fetch_report_json("report_name", exact_match=False)
 
         """
-
+        form_uri = self.get_report_form_uri(report_name, exact_match)
         headers = self.interactor.setup_request_headers()
         headers["Accept"] = "application/vnd.appian.tv.ui+json"
 

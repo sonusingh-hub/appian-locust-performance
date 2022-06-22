@@ -39,7 +39,7 @@ class ClientMode(enum.Enum):
 
 
 class SailUiForm:
-    def __init__(self, interactor: _Interactor, state: Dict[str, Any], url: str, breadcrumb: str = "SailUi"):
+    def __init__(self, interactor: _Interactor, state: Dict[str, Any], breadcrumb: str = "SailUi"):
         """
         UIForm Class used to interact with a SAIL form used in an action, record, etc..
 
@@ -54,7 +54,8 @@ class SailUiForm:
         self.interactor: _Interactor = interactor
         self.task_opener: _TaskOpener = _TaskOpener(self.interactor)
         self.state: Dict[str, Any] = state
-        self.form_url = url
+        self.form_url = ""
+        self.form_url = self._get_update_url_for_reeval(state)
         if any(key not in self.state for key in (KEY_CONTEXT, KEY_UUID)):
             return None
         self.context: dict = self.state[KEY_CONTEXT]
@@ -1462,7 +1463,7 @@ class SailUiForm:
         # record "feed" form has no breadcrumb - set up a breadcrumb
         self.breadcrumb = "Record.HeaderForm.SailUi"
 
-        return SailUiForm(self.interactor, json.loads(record_header_response), self.form_url,
+        return SailUiForm(self.interactor, json.loads(record_header_response),
                           breadcrumb=self.breadcrumb)
 
     def get_record_view_form(self) -> 'SailUiForm':
@@ -1481,7 +1482,7 @@ class SailUiForm:
         # record "feed" form has no breadcrumb - set up a breadcrumb
         self.breadcrumb = "Record.ViewForm.SailUi"
 
-        return SailUiForm(self.interactor, json.loads(record_view_response), self.form_url, breadcrumb=self.breadcrumb)
+        return SailUiForm(self.interactor, json.loads(record_view_response), breadcrumb=self.breadcrumb)
 
     def filter_records_using_searchbox(self, search_term: str = "", locust_request_label: str = "") -> 'SailUiForm':
         """
@@ -1504,7 +1505,7 @@ class SailUiForm:
 
         headers = self.interactor.setup_sail_headers()
         response = self.interactor.get_page(uri=search_uri, headers=headers, label=context_label)
-        return SailUiForm(self.interactor, response.json(), self.form_url, breadcrumb=context_label)
+        return SailUiForm(self.interactor, response.json(), breadcrumb=context_label)
 
     def assert_no_validations_present(self) -> 'SailUiForm':
         """
@@ -1609,9 +1610,11 @@ class SailUiForm:
         # If state is None (usually for tests) we return empty string for re-eval url
         if not state:
             return ""
+        reeval_url = self.form_url
+        if "links" not in state:
+            return reeval_url
         # get the re-eval URI from links object of the response (new_state)
         list_of_links = state["links"]
-        reeval_url = self.form_url
         for link_object in list_of_links:
             if link_object.get("rel") == "update":
                 reeval_url = urlparse(link_object.get("href", "")).path

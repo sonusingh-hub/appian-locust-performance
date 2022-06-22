@@ -185,8 +185,6 @@ class _Actions(_Base):
 
         Returns: SailUiForm
         """
-        initial_action_resp: dict = self.get_action(action_name, exact_match)
-        form_url = urlparse(initial_action_resp[KEY_FORM_HREF]).path
         action_key = format_label(action_name, "::", 0)
         label = locust_request_label or f'Actions.GetUi.{action_key}'
         form_json: dict = self.visit(action_name, exact_match, label=label)
@@ -198,7 +196,7 @@ class _Actions(_Base):
             form_json = resp.json()
 
         breadcrumb = locust_request_label or f'Actions.SailUi.{action_key}'
-        return SailUiForm(self.interactor, form_json, form_url, breadcrumb=breadcrumb)
+        return SailUiForm(self.interactor, form_json, breadcrumb=breadcrumb)
 
     def start_action(self, action_name: str, skip_design_call: bool = False, exact_match: bool = False) -> Response:
         """
