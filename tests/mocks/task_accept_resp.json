@@ -7,7 +7,7 @@
     "taskId": "2108532",
     "links": [
         {
-            "href": "https://an-appian-instance.host.net/suite/rest/a/task/latest/ioBHmqWXn-YADHst7ZW45JNExTCm1c6yfjFesgFo4d7Dgfjj1lNnc_3MyQ/form",
+            "href": "https://an-appian-instance.host.net/suite/rest/a/task/latest/1/form",
             "rel": "update",
             "title": "Update",
             "type": "application/vnd.appian.tv.ui+json; c=2; t=TASK_FORM",

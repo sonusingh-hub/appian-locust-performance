@@ -19,8 +19,7 @@ class Visitor:
         Returns (SailUiForm): Response of report's Get UI call in SailUiForm
 
         """
-        report_form_uri = self.__reports.get_report_form_uri(report_name, exact_match)
-        report_json = self.__reports.fetch_report_json(report_name, report_form_uri)
+        report_json = self.__reports.fetch_report_json(report_name, exact_match)
 
         breadcrumb = f'Reports.SailUi.{format_label(report_name, "::", 0)}'
-        return SailUiForm(self.__interactor, report_json, report_form_uri, breadcrumb=breadcrumb)
+        return SailUiForm(self.__interactor, report_json, breadcrumb=breadcrumb)

@@ -120,15 +120,14 @@ class _Sites(_Base):
         """
 
         site_page_response: Response = self.navigate_to_tab_and_record_if_applicable(site_name, page_name)
-        form_uri = site_page_response.request.path_url
         site_page_json_response = site_page_response.json()
         if site_page_json_response.get("feed"):
             record_view_response = get_record_summary_view_response(site_page_json_response)
             breadcrumb = f"Sites.{site_name}.{page_name}.SailUi"
-            return SailUiForm(self.interactor, json.loads(record_view_response), form_uri, breadcrumb=breadcrumb)
+            return SailUiForm(self.interactor, json.loads(record_view_response), breadcrumb=breadcrumb)
         else:
             breadcrumb = f"Sites.{site_name}.{page_name}.SailUi"
-            return SailUiForm(self.interactor, site_page_json_response, form_uri, breadcrumb=breadcrumb)
+            return SailUiForm(self.interactor, site_page_json_response, breadcrumb=breadcrumb)
 
     def get_all(self, search_string: str = None, locust_request_label: str = None) -> Dict[str, Any]:
         """
@@ -219,11 +218,10 @@ class _Sites(_Base):
 
         """
         resp: Response = self.navigate_to_tab(site_name, page_name)
-        form_uri = resp.request.path_url
         form_json = resp.json()
 
         breadcrumb = f"Sites.{site_name}.{page_name}.SailUi"
-        return SailUiForm(self.interactor, form_json, form_uri, breadcrumb=breadcrumb)
+        return SailUiForm(self.interactor, form_json, breadcrumb=breadcrumb)
 
     def _get_and_memoize_site_data(self, site_name: str, display_name: str, pages_names: List[str]) -> 'Site':
         pages = {}

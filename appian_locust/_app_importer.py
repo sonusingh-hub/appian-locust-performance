@@ -33,7 +33,7 @@ class AppImporter:
         label = "Design.LandingPage"
         response = self.interactor.get_page(DESIGN_URI_PATH, headers=headers, label=label)
         response.raise_for_status()
-        initial_form = SailUiForm(self.interactor, response.json(), DESIGN_URI_PATH, breadcrumb=f'{label}.SailUi')
+        initial_form = SailUiForm(self.interactor, response.json(), breadcrumb=f'{label}.SailUi')
 
         # Open the import modal
         modal_form = initial_form.click_button("Import")

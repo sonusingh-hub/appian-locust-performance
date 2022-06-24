@@ -109,8 +109,8 @@ class TestSites(unittest.TestCase):
         self.set_sites_json(site_name)
         expected_uuid = 'abc123'
         expected_context = '{"abc":"123"}'
-        form_content = f'{{"context":{expected_context}, "uuid":"{expected_uuid}"}}'
         expected_url = f"/suite/rest/a/sites/latest/{site_name}/pages/{page_name}/{link_type}"
+        form_content = f'{{"context":{expected_context}, "uuid":"{expected_uuid}", "links":[{{"href": "{expected_url}", "rel": "update"}}]}}'
         self.custom_locust.set_response(expected_url,
                                         200,
                                         form_content)

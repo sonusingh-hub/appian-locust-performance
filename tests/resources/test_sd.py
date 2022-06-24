@@ -13,7 +13,7 @@ class SiteDesignerTaskSet(AppianTaskSet):
         resp = self.appian.interactor.get_page(uri, label="LoadSiteDesignerPage", headers=headers)
         # print(resp)
         # print(resp.text)
-        form = SailUiForm(self.appian.interactor, resp.json(), uri, breadcrumb='SitesDesigner')
+        form = SailUiForm(self.appian.interactor, resp.json(), breadcrumb='SitesDesigner')
         form = form.click('Add Page').select_dropdown_item('Type', 'Record List')
         for extr in helper.extract_values(form.state, 'label', 'Content'):
             print('Choices after selecting record list ' + str(len(extr['choices'])))

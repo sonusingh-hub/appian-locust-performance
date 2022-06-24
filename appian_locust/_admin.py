@@ -27,4 +27,4 @@ class Admin:
         label = "Admin.MainMenu"
         response = self.interactor.get_page(ADMIN_URI_PATH, headers=headers, label=label)
         response.raise_for_status()
-        return SailUiForm(self.interactor, response.json(), ADMIN_URI_PATH, breadcrumb=f'{label}.SailUi')
+        return SailUiForm(self.interactor, response.json(), breadcrumb=f'{label}.SailUi')

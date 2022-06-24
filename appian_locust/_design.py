@@ -26,7 +26,7 @@ class Design:
         label = "Design.ApplicationList"
         response = self.interactor.get_page(DESIGN_URI_PATH, headers=headers, label=label)
         response.raise_for_status()
-        return SailUiForm(self.interactor, response.json(), DESIGN_URI_PATH, breadcrumb=f'{label}.SailUi')
+        return SailUiForm(self.interactor, response.json(), breadcrumb=f'{label}.SailUi')
 
     @raises_locust_error
     def visit_object(self, opaque_id: str) -> 'SailUiForm':
@@ -46,7 +46,7 @@ class Design:
         label = "Design.SelectedObject." + opaque_id[0:10]
         response = self.interactor.get_page(uri, headers=headers, label=label)
         response.raise_for_status()
-        return SailUiForm(self.interactor, response.json(), uri, breadcrumb=f'{label}.SailUi')
+        return SailUiForm(self.interactor, response.json(), breadcrumb=f'{label}.SailUi')
 
     @raises_locust_error
     def visit_app(self, app_id: str) -> 'SailUiForm':
@@ -66,7 +66,7 @@ class Design:
         label = f"Design.SelectedApplication.{app_id}"
         response = self.interactor.get_page(uri, headers=headers, label=label)
         response.raise_for_status()
-        return SailUiForm(self.interactor, response.json(), uri, breadcrumb=f'{label}.SailUi')
+        return SailUiForm(self.interactor, response.json(), breadcrumb=f'{label}.SailUi')
 
     def create_application(self, application_name: str) -> 'SailUiForm':
         """
