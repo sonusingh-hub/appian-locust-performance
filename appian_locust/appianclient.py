@@ -21,6 +21,7 @@ from ._news import _News
 from ._records import _Records
 from ._sites import _Sites
 from ._tasks import _Tasks
+from .appian_metadata_provider import AppianMetadataProvider
 from .exceptions import MissingConfigurationException
 from .visitor import Visitor
 
@@ -155,6 +156,7 @@ class AppianClient:
         self._tasks = _Tasks(self.interactor)
         self._sites = _Sites(self.interactor)
         self.visitor = Visitor(self.interactor)
+        self.metadata_provider = AppianMetadataProvider(self.interactor)
 
         # Adding a few session specific attributes to self.client to that it can be carried and handled by session
         # in case of having multiple sessions in the future.

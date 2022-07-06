@@ -18,18 +18,6 @@ class TestReports(unittest.TestCase):
         setattr(self.interactor, 'setup_request_headers', setup_headers_mock)
         self.reports_interactor: _Reports = _Reports(self.interactor)
 
-    def test_reports_get_all(self) -> None:
-        response_mock = unittest.mock.Mock(return_value=json.loads(self.reports))
-        response = Response()
-        setattr(response, 'json', response_mock)
-        get_page_mock = unittest.mock.Mock(
-            side_effect=lambda uri, label: response if uri == ALL_REPORTS_URI else ""
-        )
-        setattr(self.interactor, 'get_page', get_page_mock)
-
-        all_reports = self.reports_interactor.get_all()
-        self.assertIsInstance(all_reports, dict)
-
     def test_reports_get(self) -> None:
         response_mock = unittest.mock.Mock(return_value=json.loads(self.reports))
         response = Response()
