@@ -46,7 +46,7 @@ class TestAppImport(unittest.TestCase):
             self.custom_locust.enqueue_response(200, read_mock_file("design_click_import_button_resp_final.json"))
             self.custom_locust.enqueue_response(200, read_mock_file("design_landing_page.json"))
 
-        self.task_set.appian.app_importer.import_app(path_to_file)
+        self.task_set.appian.visitor.visit_design().import_application(path_to_file)
 
     def test_app_importer_e_to_e_for_inspect_and_import(self) -> None:
         self.task_set.on_start()
@@ -65,7 +65,7 @@ class TestAppImport(unittest.TestCase):
             self.custom_locust.enqueue_response(200, read_mock_file("design_click_import_button_resp_final.json"))
             self.custom_locust.enqueue_response(200, read_mock_file("design_landing_page.json"))
 
-        self.task_set.appian.app_importer.import_app(app_file_path=path_to_file, inspect_and_import=True)
+        self.task_set.appian.visitor.visit_design().import_application(app_file_path=path_to_file, inspect_and_import=True)
 
     def test_app_importer_e_to_e_with_cust_file(self) -> None:
         self.task_set.on_start()
@@ -88,7 +88,7 @@ class TestAppImport(unittest.TestCase):
             self.custom_locust.enqueue_response(200, read_mock_file("design_click_import_button_resp_final.json"))
             self.custom_locust.enqueue_response(200, read_mock_file("design_landing_page.json"))
 
-        self.task_set.appian.app_importer.import_app(path_to_app, customization_file_path=path_to_cust_file)
+        self.task_set.appian.visitor.visit_design().import_application(path_to_app, customization_file_path=path_to_cust_file)
 
     def test_app_importer_e_to_e_with_cust_file_error(self) -> None:
         self.task_set.on_start()
@@ -111,7 +111,7 @@ class TestAppImport(unittest.TestCase):
             self.custom_locust.enqueue_response(200, read_mock_file("design_landing_page.json"))
 
         with self.assertRaises(Exception) as e:
-            self.task_set.appian.app_importer.import_app(path_to_app, customization_file_path=path_to_cust_file)
+            self.task_set.appian.visitor.visit_design().import_application(path_to_app, customization_file_path=path_to_cust_file)
 
 
 if __name__ == '__main__':
