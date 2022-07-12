@@ -335,9 +335,9 @@ def find_component_by_type_and_attribute_and_index_in_dict(
 
     if not raise_error:
         return None
-    if not type_check_passed_once:
+    if type and not type_check_passed_once:
         raise ComponentNotFoundException(f"No components with type '{type}' found on page")
-    if not attribute_check_passed_once:
+    if attribute and not attribute_check_passed_once:
         raise ComponentNotFoundException(f"No components with {attribute} '{value}' found on page")
     raise Exception(f"Index: '{originial_index}' out of range")
 

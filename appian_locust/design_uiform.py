@@ -5,7 +5,7 @@ from ._design import _Design
 from ._interactor import _Interactor
 from ._locust_error_handler import raises_locust_error
 from .application_uiform import ApplicationUiForm
-from .helper import find_component_by_attribute_in_dict, extract_all_by_label
+from .helper import find_component_by_attribute_in_dict
 from .uiform import SailUiForm
 
 log = logger.getLogger(__name__)
@@ -27,11 +27,11 @@ class DesignUiForm(SailUiForm):
 
         Returns (ApplicationUiForm): The latest state of the UiForm, representing the application clicked on
         """
-        grid_component = self.__design.find_design_grid(self.state)
+        grid_component = self.__design.find_design_grid(self._state)
         column = find_component_by_attribute_in_dict('label', "Name", grid_component["columns"], throw_attribute_exception=True)
         for index in range(len(column["data"])):
             if column["data"][index] == application_name:
-                return ApplicationUiForm(self.interactor, self._dispatch_click(column["links"][index], "DesignGrid"), f"Application.{ application_name }.Ui")
+                return ApplicationUiForm(self._interactor, self._dispatch_click(column["links"][index], "DesignGrid"), f"Application.{ application_name }.Ui")
         raise Exception(f"No Application with name { application_name } found in /design grid")
 
     @raises_locust_error
@@ -44,7 +44,7 @@ class DesignUiForm(SailUiForm):
         """
         app_form = self.__design._create_object(self, link_name='New Application', object_name=application_name)
         app_form.breadcrumb = f"Design.SelectedApplicationByName.{application_name}"
-        return ApplicationUiForm(self.interactor, self.state, self.breadcrumb)
+        return ApplicationUiForm(self._interactor, self._state, self.breadcrumb)
 
     def import_application(self, app_file_path: str, customization_file_path: str = None, inspect_and_import: bool = False) -> None:
         # Open the import modal

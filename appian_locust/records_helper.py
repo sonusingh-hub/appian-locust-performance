@@ -1,3 +1,4 @@
+import json
 from typing import Any, Dict, Tuple, Optional
 
 from ._locust_error_handler import log_locust_error
@@ -78,7 +79,7 @@ def get_records_from_json_by_column(json_response: Dict[str, Any], column_index:
     return records, error_key_count
 
 
-def get_record_summary_view_response(form_json: Dict[str, Any]) -> str:
+def get_record_summary_view_response(form_json: Dict[str, Any]) -> Dict[str, Any]:
     """
         This returns the contents of "x-embedded-summary" from Record Instance's Feed response
     """
@@ -88,10 +89,10 @@ def get_record_summary_view_response(form_json: Dict[str, Any]) -> str:
         log_locust_error(Exception("Parser was not able to find embedded SAIL code within JSON response for the requested Record Instance."),
                          raise_error=True
                          )
-    return record_summary_response[0]
+    return json.loads(record_summary_response[0])
 
 
-def get_record_header_response(form_json: Dict[str, Any]) -> str:
+def get_record_header_response(form_json: Dict[str, Any]) -> Dict[str, Any]:
     """
         This returns the contents of "x-embedded-header" from Record Instance's Feed response.
         Header response is needed in cases like clicking on a related action.
@@ -102,7 +103,7 @@ def get_record_header_response(form_json: Dict[str, Any]) -> str:
         log_locust_error(Exception("Parser was not able to find embedded SAIL code within JSON response for the requested Record Instance."),
                          raise_error=True
                          )
-    return record_header_response[0]
+    return json.loads(record_header_response[0])
 
 
 def _is_grid(res_dict_var: Dict[str, Any]) -> bool:

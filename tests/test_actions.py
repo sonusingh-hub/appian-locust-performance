@@ -209,17 +209,17 @@ class TestActions(unittest.TestCase):
 
         sail_form: SailUiForm = self.task_set.appian.actions.visit_and_get_form(
             "Create a Case", False)
-        initial_state = sail_form.state
+        initial_state = sail_form._state
 
         dropdown_label = "Customer Type"
         sail_form.select_dropdown_item(dropdown_label, 'Buy Side Asset Manager')
 
-        mock_get_update_url_for_reeval.assert_called_with(sail_form.state)
+        mock_get_update_url_for_reeval.assert_called_with(sail_form._state)
         mock_send_dropdown_update.assert_called_once()
         args, kwargs = mock_send_dropdown_update.call_args
         self.assertEqual(args[0], "/mocked/re-eval/url")
         self.assertIsNone(kwargs["url_stub"])
-        self.assertNotEqual(sail_form.state, initial_state)
+        self.assertNotEqual(sail_form._state, initial_state)
 
     @patch('appian_locust.SailUiForm._get_update_url_for_reeval', return_value="/mocked/re-eval/url")
     @patch('appian_locust.uiform._Interactor.send_dropdown_update')
@@ -230,17 +230,17 @@ class TestActions(unittest.TestCase):
 
         sail_form: SailUiForm = self.task_set.appian.actions.visit_and_get_form(
             "Create a Case", False)
-        initial_state = sail_form.state
+        initial_state = sail_form._state
 
         dropdown_label = "Customer Type"
         sail_form.select_dropdown_item(dropdown_label, 'Buy Side Asset Manager')
 
-        mock_get_update_url_for_reeval.assert_called_with(sail_form.state)
+        mock_get_update_url_for_reeval.assert_called_with(sail_form._state)
         mock_send_dropdown_update.assert_called_once()
         args, kwargs = mock_send_dropdown_update.call_args
         self.assertEqual(args[0], "/mocked/re-eval/url")
         self.assertEqual(kwargs["url_stub"], "url_stub123")
-        self.assertNotEqual(sail_form.state, initial_state)
+        self.assertNotEqual(sail_form._state, initial_state)
 
     @patch('appian_locust.uiform._Interactor.send_multiple_dropdown_update')
     def test_multiple_dropdown_not_found(self, mock_send_multiple_dropdown_update: MagicMock) -> None:
@@ -267,7 +267,7 @@ class TestActions(unittest.TestCase):
 
         sail_form: SailUiForm = self.task_set.appian.actions.visit_and_get_form(
             "Create a Case", False)
-        state1 = sail_form.state
+        state1 = sail_form._state
 
         button_label = "test-radio-button"
         sail_form.select_radio_button_by_test_label(button_label, 1)
@@ -306,13 +306,13 @@ class TestActions(unittest.TestCase):
         self.setup_action_response_with_ui('dropdown_test_ui.json')
         sail_form: SailUiForm = self.task_set.appian.actions.visit_and_get_form(
             "Create a Case", False)
-        initial_state = sail_form.state
+        initial_state = sail_form._state
         button_index = 1
         sail_form.select_radio_button_by_index(button_index, 1)
 
         mock_select_radio_button.assert_called_once()
         mock_find_component_by_index.assert_called_with('RadioButtonField', button_index, initial_state)
-        self.assertNotEqual(sail_form.state, initial_state)
+        self.assertNotEqual(sail_form._state, initial_state)
 
     def test_actions_form_radio_button_by_index_error(self) -> None:
         self.setup_action_response_with_ui('dropdown_test_ui.json')

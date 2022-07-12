@@ -33,7 +33,7 @@ class TestDesignUiform(unittest.TestCase):
         self.custom_locust.set_response("/suite/rest/a/applications/latest/app/design", 200, result_state)
         application = design.click_application("Appian CMF")
         self.assertEqual(type(application), ApplicationUiForm)
-        self.assertEqual(application.state, json.loads(result_state))
+        self.assertEqual(application._state, json.loads(result_state))
 
     def test_create_app_and_record_type(self) -> None:
         app_landing_page = read_mock_file("design_app_landing_page.json")

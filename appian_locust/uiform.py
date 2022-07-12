@@ -5,7 +5,7 @@ import json
 import os
 import random
 import warnings
-from typing import Any, Dict, List, Union, Optional
+from typing import Any, Dict, List, Union, Optional, TYPE_CHECKING
 from urllib.parse import quote, urlparse
 
 from appian_locust.records_helper import _is_grid
@@ -20,9 +20,10 @@ from .exceptions import ComponentNotFoundException, InvalidComponentException, C
 from .helper import (extract_all_by_label, find_component_by_attribute_and_index_in_dict,
                      find_component_by_attribute_in_dict, find_component_by_index_in_dict,
                      find_component_by_label_and_type_dict, find_component_by_type_and_attribute_and_index_in_dict)
-from .records_helper import (get_record_header_response,
-                             get_record_summary_view_response,
-                             get_url_stub_from_record_list_url_path)
+from .records_helper import (get_url_stub_from_record_list_url_path)
+
+if TYPE_CHECKING:
+    from .record_uiform import RecordInstanceUiForm
 
 KEY_UUID = "uuid"
 KEY_CONTEXT = "context"
@@ -51,21 +52,21 @@ class SailUiForm:
             breadcrumbs: Path used to create locust labels
 
         """
-        self.interactor: _Interactor = interactor
-        self.task_opener: _TaskOpener = _TaskOpener(self.interactor)
-        self.state: Dict[str, Any] = state
+        self._interactor: _Interactor = interactor
+        self.task_opener: _TaskOpener = _TaskOpener(self._interactor)
+        self._state: Dict[str, Any] = state
         self.form_url = ""
         self.form_url = self._get_update_url_for_reeval(state)
-        if any(key not in self.state for key in (KEY_CONTEXT, KEY_UUID)):
+        if any(key not in self._state for key in (KEY_CONTEXT, KEY_UUID)):
             return None
-        self.context: dict = self.state[KEY_CONTEXT]
-        self.uuid: str = self.state[KEY_UUID]
+        self.context: dict = self._state[KEY_CONTEXT]
+        self.uuid: str = self._state[KEY_UUID]
         self.grid_interactor: GridInteractor = GridInteractor()
         self.reconciler: UiReconciler = UiReconciler()
         self.breadcrumb = breadcrumb
 
         # Cache data types on opening new form
-        self.interactor.datatype_cache.cache(self.state)
+        self._interactor.datatype_cache.cache(self._state)
 
     def get_response(self) -> Optional[Dict[str, Any]]:
         """
@@ -75,7 +76,7 @@ class SailUiForm:
 
         """
         warnings.warn("The method 'get_response' is deprecated, just do 'self.state' to get the latest returned value")
-        return self.state
+        return self._state
 
     @property
     def latest_state(self) -> Optional[Dict[str, Any]]:
@@ -86,7 +87,7 @@ class SailUiForm:
 
         """
         warnings.warn("The method 'latest_state' is deprecated, just do 'self.state' on the last returned value")
-        return self.state
+        return self._state
 
     def get_latest_form(self) -> 'SailUiForm':
         """
@@ -100,7 +101,7 @@ class SailUiForm:
         return self
 
     def __str__(self) -> str:
-        return f"self_state={json.dumps(self.state,indent=4)}"
+        return f"self_state={json.dumps(self._state,indent=4)}"
 
     @raises_locust_error
     def fill_field_by_attribute_and_index(self, attribute: str, attribute_value: str, fill_value: str, index: int = 1, locust_request_label: str = "") -> 'SailUiForm':
@@ -130,14 +131,14 @@ class SailUiForm:
             # and fills it with "Hello, Testing"
 
         """
-        component = find_component_by_attribute_and_index_in_dict(attribute, attribute_value, index, self.state)
+        component = find_component_by_attribute_and_index_in_dict(attribute, attribute_value, index, self._state)
 
         if component.get("#t", "") not in COMPONENTS_THAT_CAN_BE_FILLED:
             raise Exception(f"The Component with '{attribute}' = '{attribute_value}' is not a component that can be filled")
 
-        reeval_url = self._get_update_url_for_reeval(self.state)
+        reeval_url = self._get_update_url_for_reeval(self._state)
         locust_label = locust_request_label or f"{self.breadcrumb}.FillTextFieldByAttribute.{attribute}"
-        new_state = self.interactor.fill_textfield(
+        new_state = self._interactor.fill_textfield(
             reeval_url, component, fill_value, self.context, self.uuid, label=locust_label)
         if not new_state:
             raise Exception(f"No response returned when trying to update the field with '{attribute}' = '{attribute_value}' at index '{index}'")
@@ -190,10 +191,10 @@ class SailUiForm:
             # selects the first ParagraphField with the value "Hello, Testing"
 
         """
-        component = find_component_by_index_in_dict(type_of_component, index, self.state)
-        reeval_url = self._get_update_url_for_reeval(self.state)
+        component = find_component_by_index_in_dict(type_of_component, index, self._state)
+        reeval_url = self._get_update_url_for_reeval(self._state)
         locust_label = locust_request_label or f"{self.breadcrumb}.FillTextFieldByIndex.{index}"
-        new_state = self.interactor.fill_textfield(
+        new_state = self._interactor.fill_textfield(
             reeval_url, component, text_to_fill, self.context, self.uuid, label=locust_label)
         if not new_state:
             raise Exception(
@@ -266,10 +267,10 @@ class SailUiForm:
         """
         # pickerFieldCustom will add a test-Label at the level where the suggestions/saveInto exist
         test_label = f'test-{label}'
-        component = find_component_by_label_and_type_dict('testLabel', test_label, 'PickerWidget', self.state)
+        component = find_component_by_label_and_type_dict('testLabel', test_label, 'PickerWidget', self._state)
 
         locust_label = fill_request_label or f"{self.breadcrumb}.FillPickerField.{label}"
-        new_state = self.interactor.fill_pickerfield_text(
+        new_state = self._interactor.fill_pickerfield_text(
             self.form_url, component, value, self.context, self.uuid, label=locust_label)
 
         if not new_state:
@@ -301,7 +302,7 @@ class SailUiForm:
         dict_value = identifiers[v_choice]
 
         locust_label = pick_request_label or f"{self.breadcrumb}.SelectPickerSuggestion.{label}"
-        newer_state = self.interactor.select_pickerfield_suggestion(
+        newer_state = self._interactor.select_pickerfield_suggestion(
             self.form_url, component, dict_value, self.context, self.uuid, label=locust_label)
 
         if not newer_state:
@@ -397,7 +398,7 @@ class SailUiForm:
         """
         attribute_to_find = 'testLabel' if is_test_label else 'label'
 
-        component = find_component_by_attribute_and_index_in_dict(attribute_to_find, label, index, self.state)
+        component = find_component_by_attribute_and_index_in_dict(attribute_to_find, label, index, self._state)
 
         locust_label = locust_request_label or f"{self.breadcrumb}.Click.{label}"
         new_state = self._dispatch_click(component=component, locust_label=locust_label)
@@ -432,7 +433,7 @@ class SailUiForm:
             >>> form.click_card_layout_by_index(2)
 
         """
-        component = find_component_by_index_in_dict("CardLayout", index, self.state)
+        component = find_component_by_index_in_dict("CardLayout", index, self._state)
 
         if not component.get("link"):
             raise Exception(f"CardLayout found at index: {index} does not have a link on it")
@@ -444,7 +445,7 @@ class SailUiForm:
             page_name = link_component["sitePageUrlStub"]
             new_state = self._click_start_process_link(site_name, page_name, False, link_component, locust_request_label=locust_label)
         else:
-            new_state = self.interactor.click_component(self.form_url, link_component, self.context, self.uuid, label=locust_label)
+            new_state = self._interactor.click_component(self.form_url, link_component, self.context, self.uuid, label=locust_label)
 
         if not new_state:
             raise Exception(f"No response returned when trying to click card layout at index '{index}'")
@@ -453,7 +454,7 @@ class SailUiForm:
         return self._reconcile_state(new_state)
 
     @raises_locust_error
-    def click_record_link_by_attribute_and_index(self, attribute: str = "", attribute_value: str = "", index: int = 1, locust_request_label: str = "") -> 'SailUiForm':
+    def click_record_link_by_attribute_and_index(self, attribute: str = "", attribute_value: str = "", index: int = 1, locust_request_label: str = "") -> 'RecordInstanceUiForm':
         """
         Click the index'th record link on the form if there is one present with an attribute matching attribute_value
         If no attribute is provided, the index'th record link is selected from all record links in the form
@@ -469,15 +470,16 @@ class SailUiForm:
 
         """
         component_type = 'RecordLink'
-        component = find_component_by_type_and_attribute_and_index_in_dict(self.state, component_type, attribute, attribute_value, index)
+        component = find_component_by_type_and_attribute_and_index_in_dict(self._state, component_type, attribute, attribute_value, index)
         locust_label = locust_request_label or f"{self.breadcrumb}.ClickRecordLink"
-        reeval_url = self._get_update_url_for_reeval(self.state)
-        new_state = self.interactor.click_record_link(reeval_url, component, self.context, self.uuid,
-                                                      locust_label=locust_label)
-        return self._reconcile_state(new_state)
+        reeval_url = self._get_update_url_for_reeval(self._state)
+        new_state = self._interactor.click_record_link(reeval_url, component, self.context, self.uuid,
+                                                       locust_label=locust_label)
+        from .record_uiform import RecordInstanceUiForm
+        return RecordInstanceUiForm(self._interactor, new_state)
 
     @raises_locust_error
-    def click_record_link(self, label: str, is_test_label: bool = False, locust_request_label: str = "") -> 'SailUiForm':
+    def click_record_link(self, label: str, is_test_label: bool = False, locust_request_label: str = "") -> 'RecordInstanceUiForm':
         """
         Click a record link on the form if there is one present with the following label (case sensitive)
         Otherwise throws a ComponentNotFoundException
@@ -489,14 +491,14 @@ class SailUiForm:
         Keyword Args:
             locust_request_label(str): Label used to identify the request for locust statistics
 
-        Returns (SailUiForm): The record form (feed) for the linked record.
+        Returns (RecordUiForm): The record form (feed) for the linked record.
 
         """
         attribute_to_find = 'testLabel' if is_test_label else 'label'
         return self.click_record_link_by_attribute_and_index(attribute=attribute_to_find, attribute_value=label, locust_request_label=locust_request_label)
 
     @raises_locust_error
-    def click_record_link_by_index(self, index: int, locust_request_label: str = "") -> 'SailUiForm':
+    def click_record_link_by_index(self, index: int, locust_request_label: str = "") -> 'RecordInstanceUiForm':
         """
         Click the index'th record link on the form
         Otherwise throws a ComponentNotFoundException
@@ -513,7 +515,7 @@ class SailUiForm:
         return self.click_record_link_by_attribute_and_index(index=index, locust_request_label=locust_request_label)
 
     @raises_locust_error
-    def click_record_view_link(self, label: str, locust_request_label: str = "") -> 'SailUiForm':
+    def click_record_view_link(self, label: str, locust_request_label: str = "") -> 'RecordInstanceUiForm':
         """
         Click a record view link on the form if there is one present with the following label (case sensitive)
         Otherwise throws a ComponentNotFoundException
@@ -528,13 +530,14 @@ class SailUiForm:
 
         """
         view_tab_label = f"{label}_tab"
-        outer_component = find_component_by_attribute_in_dict(attribute="testLabel", value=view_tab_label, component_tree=self.state)
+        outer_component = find_component_by_attribute_in_dict(attribute="testLabel", value=view_tab_label, component_tree=self._state)
         component = outer_component["link"]
         locust_label = locust_request_label or f"{self.breadcrumb}.ClickRecordLink"
-        reeval_url = self._get_update_url_for_reeval(self.state)
-        new_state = self.interactor.click_record_link(reeval_url, component, self.context, self.uuid,
-                                                      locust_label=locust_label)
-        return self._reconcile_state(new_state)
+        reeval_url = self._get_update_url_for_reeval(self._state)
+        new_state = self._interactor.click_record_link(reeval_url, component, self.context, self.uuid,
+                                                       locust_label=locust_label)
+        from .record_uiform import RecordInstanceUiForm
+        return RecordInstanceUiForm(self._interactor, new_state)
 
     @raises_locust_error
     def click_start_process_link(self, label: str, site_name: str, page_name: str, is_mobile: bool = False, locust_request_label: str = "") -> 'SailUiForm':
@@ -558,7 +561,7 @@ class SailUiForm:
 
         """
 
-        component = find_component_by_label_and_type_dict('label', label, START_PROCESS_LINK_TYPE, self.state)
+        component = find_component_by_label_and_type_dict('label', label, START_PROCESS_LINK_TYPE, self._state)
 
         locust_label = locust_request_label or f"{self.breadcrumb}.ClickStartProcessLink.{label}"
         new_state = self._click_start_process_link(site_name, page_name, is_mobile, component, locust_request_label=locust_label)
@@ -602,9 +605,9 @@ class SailUiForm:
         elif not cache_key:
             raise Exception(f"StartProcessLink component does not have cache key set.")
 
-        return self.interactor.click_start_process_link(component=component, process_model_opaque_id=process_model_opaque_id,
-                                                        cache_key=cache_key, site_name=site_name, page_name=page_name, is_mobile=is_mobile,
-                                                        locust_request_label=locust_request_label)
+        return self._interactor.click_start_process_link(component=component, process_model_opaque_id=process_model_opaque_id,
+                                                         cache_key=cache_key, site_name=site_name, page_name=page_name, is_mobile=is_mobile,
+                                                         locust_request_label=locust_request_label)
 
     def _dispatch_click(self, component: Dict[str, Any], locust_label: str) -> Dict[str, Any]:
         """
@@ -644,9 +647,9 @@ class SailUiForm:
             }
             new_state = self.task_opener.visit_by_task_id(task_name, task_id, extra_headers=headers)
         elif link_component:
-            new_state = self.interactor.click_component(self.form_url, link_component, self.context, self.uuid, label=locust_label)
+            new_state = self._interactor.click_component(self.form_url, link_component, self.context, self.uuid, label=locust_label)
         else:
-            new_state = self.interactor.click_component(self.form_url, component, self.context, self.uuid, label=locust_label)
+            new_state = self._interactor.click_component(self.form_url, component, self.context, self.uuid, label=locust_label)
         return new_state
 
     @raises_locust_error
@@ -679,7 +682,7 @@ class SailUiForm:
             >>> header_form.click_related_action('Request upgrade')
 
         """
-        component = find_component_by_attribute_in_dict('label', label, self.state)
+        component = find_component_by_attribute_in_dict('label', label, self._state)
 
         # Support scenario where related action label is found within outer "ButtonWidget" rather than directly in "RelatedActionLink" component
         if "source" not in component:
@@ -699,9 +702,9 @@ class SailUiForm:
                             ''')
         locust_label = locust_request_label or f"{self.breadcrumb}.ClickRelatedActionLink.{label}"
 
-        new_state = self.interactor.click_related_action(component, record_type_stub=record_type_stub, opaque_record_id=opaque_record_id,
-                                                         opaque_related_action_id=opaque_related_action_id,
-                                                         locust_request_label=locust_label, open_in_a_dialog=open_action_in_a_dialog)
+        new_state = self._interactor.click_related_action(component, record_type_stub=record_type_stub, opaque_record_id=opaque_record_id,
+                                                          opaque_related_action_id=opaque_related_action_id,
+                                                          locust_request_label=locust_label, open_in_a_dialog=open_action_in_a_dialog)
         return self._reconcile_state(new_state)
 
     @raises_locust_error
@@ -724,7 +727,7 @@ class SailUiForm:
         """
         attribute_to_find = 'testLabel' if is_test_label else 'label'
         component = find_component_by_attribute_in_dict(
-            attribute_to_find, label, self.state)
+            attribute_to_find, label, self._state)
 
         choices: list = component.get('choices')
         if choices is None or not isinstance(choices, list):
@@ -756,7 +759,7 @@ class SailUiForm:
         """
         attribute_to_find = 'testLabel' if is_test_label else 'label'
         component = find_component_by_attribute_in_dict(
-            attribute_to_find, label, self.state)
+            attribute_to_find, label, self._state)
 
         choices: list = component.get('choices')
         if not choices:
@@ -766,14 +769,14 @@ class SailUiForm:
 
         index = choices.index(choice_label) + 1  # Appian is _sigh_ one indexed
         locust_label = locust_request_label or f'{self.breadcrumb}.SelectDropdownWithLabel.{label}'
-        reeval_url = self._get_update_url_for_reeval(self.state)
+        reeval_url = self._get_update_url_for_reeval(self._state)
 
         # Opting to use this field, rather than self.form_url, because 'sail-application-url' is the same between web and mobile
-        url = self.state.get('sail-application-url')
+        url = self._state.get('sail-application-url')
         # url_stub should only be populated if the page is a record list
         url_stub = get_url_stub_from_record_list_url_path(url)
 
-        new_state = self.interactor.send_dropdown_update(
+        new_state = self._interactor.send_dropdown_update(
             reeval_url, component, self.context, self.uuid, index=index, label=locust_label, url_stub=url_stub)
         if not new_state:
             raise Exception(
@@ -806,7 +809,7 @@ class SailUiForm:
         """
         attribute_to_find = 'testLabel' if is_test_label else 'label'
         component = find_component_by_attribute_in_dict(
-            attribute_to_find, label, self.state)
+            attribute_to_find, label, self._state)
 
         choices: list = component.get('choices')
         if not choices:
@@ -815,14 +818,14 @@ class SailUiForm:
             raise ChoiceNotFoundException(f"Choice {choice_label} not found for component {label}, valid choices were {choices}")
         index_multi = [choices.index(current_label) + 1 for current_label in choice_label]  # Appian is _sigh_ one indexed
         locust_label = locust_request_label or f'{self.breadcrumb}.SelectMultupleDropdownWithLabel.{choice_label}'
-        reeval_url = self._get_update_url_for_reeval(self.state)
+        reeval_url = self._get_update_url_for_reeval(self._state)
 
         # Opting to use this field, rather than self.form_url, because 'sail-application-url' is the same between web and mobile
-        url = self.state.get('sail-application-url')
+        url = self._state.get('sail-application-url')
         # url_stub should only be populated if the page is a record list
         url_stub = get_url_stub_from_record_list_url_path(url)
 
-        new_state = self.interactor.send_multiple_dropdown_update(
+        new_state = self._interactor.send_multiple_dropdown_update(
             reeval_url, component, self.context, self.uuid, index=index_multi, label=locust_label, url_stub=url_stub)
         if not new_state:
             raise Exception(
@@ -845,12 +848,12 @@ class SailUiForm:
 
         Returns (SailUiForm): The latest state of the UiForm
         """
-        component = find_component_by_attribute_in_dict(attribute, value_for_attribute, self.state,
+        component = find_component_by_attribute_in_dict(attribute, value_for_attribute, self._state,
                                                         throw_attribute_exception=True)
 
         locust_label = locust_request_label or f'{self.breadcrumb}.CheckCheckboxByAttribute.{attribute}'
-        reeval_url = self._get_update_url_for_reeval(self.state)
-        new_state = self.interactor.select_checkbox_item(
+        reeval_url = self._get_update_url_for_reeval(self._state)
+        new_state = self._interactor.select_checkbox_item(
             reeval_url, component, self.context, self.uuid, indices=indices, context_label=locust_label)
         if not new_state:
             raise Exception(f'''No response returned when trying to check checkbox which was found with attribute: '{attribute}'
@@ -931,10 +934,10 @@ class SailUiForm:
 
         """
         # find the TabButtonGroup, which is the  model we need for the SaveRequest
-        reeval_url = self._get_update_url_for_reeval(self.state)
+        reeval_url = self._get_update_url_for_reeval(self._state)
 
-        tab_group_component = find_component_by_attribute_in_dict('testLabel', tab_group_test_label, self.state)
-        new_state = self.interactor.click_selected_tab(
+        tab_group_component = find_component_by_attribute_in_dict('testLabel', tab_group_test_label, self._state)
+        new_state = self._interactor.click_selected_tab(
             reeval_url, tab_group_component, tab_label, self.context, self.uuid)
         if not new_state:
             raise Exception(
@@ -967,7 +970,7 @@ class SailUiForm:
 
         """
         component = find_component_by_attribute_in_dict(
-            'label', label, self.state)
+            'label', label, self._state)
 
         # Inner component can be the upload field
         if component.get('#t') != 'FileUploadWidget' and 'contents' in component:
@@ -988,9 +991,9 @@ class SailUiForm:
 
         if not os.path.exists(str(file_path)):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), file_path)
-        doc_id = self.interactor.upload_document_to_server(str(file_path), is_encrypted=is_encrypted)
+        doc_id = self._interactor.upload_document_to_server(str(file_path), is_encrypted=is_encrypted)
         locust_label = locust_request_label or f"{self.breadcrumb}.FileUpload.{label}"
-        new_state = self.interactor.upload_document_to_field(
+        new_state = self._interactor.upload_document_to_field(
             self.form_url, component, self.context, self.uuid, doc_id=doc_id, locust_label=locust_label)
         if not new_state:
             raise Exception(
@@ -1019,7 +1022,7 @@ class SailUiForm:
 
         """
         component = find_component_by_attribute_in_dict(
-            'label', label, self.state)
+            'label', label, self._state)
 
         # Inner component can be the upload field
         if component.get('#t') != 'MultipleFileUploadWidget' and 'contents' in component:
@@ -1038,9 +1041,9 @@ class SailUiForm:
         for file_path in file_paths:
             if not os.path.exists(file_path):
                 raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), file_path)
-            doc_ids.append(self.interactor.upload_document_to_server(file_path, is_encrypted=is_encrypted))
+            doc_ids.append(self._interactor.upload_document_to_server(file_path, is_encrypted=is_encrypted))
         locust_label = locust_request_label or f"{self.breadcrumb}.MultiFileUpload.{label}"
-        new_state = self.interactor.upload_document_to_field(
+        new_state = self._interactor.upload_document_to_field(
             self.form_url, component, self.context, self.uuid, doc_id=doc_ids, locust_label=locust_label)
         if not new_state:
             raise Exception(
@@ -1070,12 +1073,12 @@ class SailUiForm:
         if not isinstance(date_input, datetime.date):
             raise Exception("Input must be of type datetime.date")
         field_type = 'DatePickerField'
-        date_field = find_component_by_label_and_type_dict('label', label, field_type, self.state)
+        date_field = find_component_by_label_and_type_dict('label', label, field_type, self._state)
 
         locust_label = locust_request_label or f'{self.breadcrumb}.FillDateField'
-        reeval_url = self._get_update_url_for_reeval(self.state)
+        reeval_url = self._get_update_url_for_reeval(self._state)
 
-        new_state = self.interactor.update_date_field(
+        new_state = self._interactor.update_date_field(
             reeval_url, date_field, date_input, self.context, self.uuid, locust_label=locust_label)
         if not new_state:
             raise Exception(f'''No response returned when trying to update: '{label}'
@@ -1111,12 +1114,12 @@ class SailUiForm:
         if not isinstance(datetime_input, datetime.datetime):
             raise Exception("Input must be of type datetime.datetime")
         field_type = 'DateTimePickerField'
-        datetime_field = find_component_by_label_and_type_dict('label', label, field_type, self.state)
+        datetime_field = find_component_by_label_and_type_dict('label', label, field_type, self._state)
 
         locust_label = locust_request_label or f'{self.breadcrumb}.FillDateTimeField'
-        reeval_url = self._get_update_url_for_reeval(self.state)
+        reeval_url = self._get_update_url_for_reeval(self._state)
 
-        new_state = self.interactor.update_datetime_field(
+        new_state = self._interactor.update_datetime_field(
             reeval_url, datetime_field, datetime_input, self.context, self.uuid, locust_label=locust_label)
         if not new_state:
             raise Exception(f'''No response returned when trying to update: '{label}'
@@ -1145,15 +1148,15 @@ class SailUiForm:
 
             >>> form.select_rows_in_grid(rows=[1], label='my nice grid')
         """
-        grid = self.grid_interactor.find_grid_by_label_or_index(self.state, label=label, index=index)
+        grid = self.grid_interactor.find_grid_by_label_or_index(self._state, label=label, index=index)
         grid_label = self.grid_interactor.format_grid_display_label(grid)
 
         new_grid_save = self.grid_interactor.select_rows(grid, rows)
         context_label = locust_request_label or f"{self.breadcrumb}.Grid.SelectRows.{grid_label}"
 
-        reeval_url = self._get_update_url_for_reeval(self.state)
-        new_state = self.interactor.update_grid_from_sail_form(reeval_url, grid, new_grid_save,
-                                                               self.context, self.uuid, context_label=context_label)
+        reeval_url = self._get_update_url_for_reeval(self._state)
+        new_state = self._interactor.update_grid_from_sail_form(reeval_url, grid, new_grid_save,
+                                                                self.context, self.uuid, context_label=context_label)
         return self._reconcile_state(new_state)
 
     @raises_locust_error
@@ -1175,15 +1178,15 @@ class SailUiForm:
 
             >>> form.move_to_end_of_paging_grid(label='my nice grid')
         """
-        grid = self.grid_interactor.find_grid_by_label_or_index(self.state, label=label, index=index)
+        grid = self.grid_interactor.find_grid_by_label_or_index(self._state, label=label, index=index)
         grid_label = self.grid_interactor.format_grid_display_label(grid)
 
         new_grid_save = self.grid_interactor.move_to_last_page(grid)
         context_label = locust_request_label or f"{self.breadcrumb}.Grid.MoveToEnd.{grid_label}"
 
-        reeval_url = self._get_update_url_for_reeval(self.state)
-        new_state = self.interactor.update_grid_from_sail_form(reeval_url, grid, new_grid_save,
-                                                               self.context, self.uuid, context_label=context_label)
+        reeval_url = self._get_update_url_for_reeval(self._state)
+        new_state = self._interactor.update_grid_from_sail_form(reeval_url, grid, new_grid_save,
+                                                                self.context, self.uuid, context_label=context_label)
         return self._reconcile_state(new_state)
 
     @raises_locust_error
@@ -1202,15 +1205,15 @@ class SailUiForm:
 
             >>> form.move_to_beginning_of_paging_grid(label='my nice grid')
         """
-        grid = self.grid_interactor.find_grid_by_label_or_index(self.state, label=label, index=index)
+        grid = self.grid_interactor.find_grid_by_label_or_index(self._state, label=label, index=index)
         grid_label = self.grid_interactor.format_grid_display_label(grid)
 
         new_grid_save = self.grid_interactor.move_to_first_page(grid)
         context_label = locust_request_label or f"{self.breadcrumb}.Grid.MoveToBeginning.{grid_label}"
 
-        reeval_url = self._get_update_url_for_reeval(self.state)
-        new_state = self.interactor.update_grid_from_sail_form(reeval_url, grid, new_grid_save,
-                                                               self.context, self.uuid, context_label=context_label)
+        reeval_url = self._get_update_url_for_reeval(self._state)
+        new_state = self._interactor.update_grid_from_sail_form(reeval_url, grid, new_grid_save,
+                                                                self.context, self.uuid, context_label=context_label)
         return self._reconcile_state(new_state)
 
     @raises_locust_error
@@ -1233,15 +1236,15 @@ class SailUiForm:
 
             >>> form.move_to_left_in_paging_grid(label='my nice grid')
         """
-        grid = self.grid_interactor.find_grid_by_label_or_index(self.state, label=label, index=index)
+        grid = self.grid_interactor.find_grid_by_label_or_index(self._state, label=label, index=index)
         grid_label = self.grid_interactor.format_grid_display_label(grid)
 
         new_grid_save = self.grid_interactor.move_to_the_left(grid)
         context_label = locust_request_label or f"{self.breadcrumb}.Grid.MoveLeft.{grid_label}"
 
-        reeval_url = self._get_update_url_for_reeval(self.state)
-        new_state = self.interactor.update_grid_from_sail_form(reeval_url, grid, new_grid_save,
-                                                               self.context, self.uuid, context_label=context_label)
+        reeval_url = self._get_update_url_for_reeval(self._state)
+        new_state = self._interactor.update_grid_from_sail_form(reeval_url, grid, new_grid_save,
+                                                                self.context, self.uuid, context_label=context_label)
         return self._reconcile_state(new_state)
 
     @raises_locust_error
@@ -1264,15 +1267,15 @@ class SailUiForm:
 
             >>> form.move_to_right_in_paging_grid(index=0) # move to right in first grid on the page
         """
-        grid = self.grid_interactor.find_grid_by_label_or_index(self.state, label=label, index=index)
+        grid = self.grid_interactor.find_grid_by_label_or_index(self._state, label=label, index=index)
         grid_label = self.grid_interactor.format_grid_display_label(grid)
 
         new_grid_save = self.grid_interactor.move_to_the_right(grid)
         context_label = locust_request_label or f"{self.breadcrumb}.Grid.MoveRight.{grid_label}"
 
-        reeval_url = self._get_update_url_for_reeval(self.state)
-        new_state = self.interactor.update_grid_from_sail_form(reeval_url, grid, new_grid_save,
-                                                               self.context, self.uuid, context_label=context_label)
+        reeval_url = self._get_update_url_for_reeval(self._state)
+        new_state = self._interactor.update_grid_from_sail_form(reeval_url, grid, new_grid_save,
+                                                                self.context, self.uuid, context_label=context_label)
         return self._reconcile_state(new_state)
 
     @raises_locust_error
@@ -1302,15 +1305,15 @@ class SailUiForm:
         """
         if not field_name:
             raise Exception("Field to sort cannot be blank when sorting a grid")
-        grid = self.grid_interactor.find_grid_by_label_or_index(self.state, label=label, index=index)
+        grid = self.grid_interactor.find_grid_by_label_or_index(self._state, label=label, index=index)
         grid_label = self.grid_interactor.format_grid_display_label(grid)
 
         new_grid_save = self.grid_interactor.sort_grid(field_name=field_name, paging_grid=grid, ascending=ascending)
         context_label = locust_request_label or f"{self.breadcrumb}.Grid.Sort.{grid_label}.{field_name}"
 
-        reeval_url = self._get_update_url_for_reeval(self.state)
-        new_state = self.interactor.update_grid_from_sail_form(reeval_url, grid, new_grid_save,
-                                                               self.context, self.uuid, context_label=context_label)
+        reeval_url = self._get_update_url_for_reeval(self._state)
+        new_state = self._interactor.update_grid_from_sail_form(reeval_url, grid, new_grid_save,
+                                                                self.context, self.uuid, context_label=context_label)
         return self._reconcile_state(new_state)
 
     @raises_locust_error
@@ -1331,11 +1334,11 @@ class SailUiForm:
 
         """
         component = find_component_by_attribute_in_dict(
-            'testLabel', test_label, self.state)
+            'testLabel', test_label, self._state)
 
-        reeval_url = self._get_update_url_for_reeval(self.state)
+        reeval_url = self._get_update_url_for_reeval(self._state)
         context_label = locust_request_label or f"{self.breadcrumb}.RadioButton.SelectByTestLabel.{test_label}"
-        new_state = self.interactor.select_radio_button(
+        new_state = self._interactor.select_radio_button(
             reeval_url, component, self.context, self.uuid, index=index, context_label=context_label)
         if not new_state:
             raise Exception(
@@ -1363,11 +1366,11 @@ class SailUiForm:
 
         """
         component = find_component_by_attribute_in_dict(
-            'label', label, self.state)
+            'label', label, self._state)
 
-        reeval_url = self._get_update_url_for_reeval(self.state)
+        reeval_url = self._get_update_url_for_reeval(self._state)
         context_label = locust_request_label or f"{self.breadcrumb}.RadioButton.SelectByLabel.{label}"
-        new_state = self.interactor.select_radio_button(
+        new_state = self._interactor.select_radio_button(
             reeval_url, component, self.context, self.uuid, index=index, context_label=context_label)
         if not new_state:
             raise Exception(
@@ -1414,11 +1417,11 @@ class SailUiForm:
 
         """
         component = find_component_by_index_in_dict(
-            'RadioButtonField', field_index, self.state)
+            'RadioButtonField', field_index, self._state)
 
-        reeval_url = self._get_update_url_for_reeval(self.state)
+        reeval_url = self._get_update_url_for_reeval(self._state)
         context_label = locust_request_label or f"{self.breadcrumb}.RadioButton.SelectByIndex.{index}"
-        new_state = self.interactor.select_radio_button(
+        new_state = self._interactor.select_radio_button(
             reeval_url, component, self.context, self.uuid, index=index, context_label=context_label)
         if not new_state:
             raise Exception(
@@ -1427,58 +1430,20 @@ class SailUiForm:
 
     def go_to_next_record_grid_page(self, locust_request_label: str = "") -> 'SailUiForm':
         context_label = locust_request_label or f"{self.breadcrumb}.NextPage"
-        headers = self.interactor.setup_request_headers()
+        headers = self._interactor.setup_request_headers()
         headers["Accept"] = "application/vnd.appian.tv.ui+json"
-        reeval_url = self._get_update_url_for_reeval(self.state)
+        reeval_url = self._get_update_url_for_reeval(self._state)
         label = 'NEXT'
-        if not _is_grid(self.state):
+        if not _is_grid(self._state):
             raise Exception("Not a grid record list")
         component = find_component_by_attribute_in_dict(
-            'label', label, self.state)
-        new_state = self.interactor.interact_with_record_grid(
+            'label', label, self._state)
+        new_state = self._interactor.interact_with_record_grid(
             post_url=reeval_url, grid_component=component, context=self.context, uuid=self.uuid, context_label=context_label)
         if not new_state:
             raise Exception(
                 f"No response returned when navigating to next page on record list '{reeval_url}'")
         return self._reconcile_state(new_state)
-
-    def get_record_header_form(self) -> 'SailUiForm':
-        """
-        Extracts the embedded record header form from a record "feed" form to enable interaction with components in the record header.
-
-        Returns (SailUiForm): The record header UiForm embedded within a record "feed" form.
-
-        Examples:
-
-            >>> form.get_record_header_form()
-
-        """
-        # self in this case is a record form (feed) containing embedded forms (header and view form)
-        record_header_response = get_record_header_response(self.state)
-
-        # record "feed" form has no breadcrumb - set up a breadcrumb
-        self.breadcrumb = "Record.HeaderForm.SailUi"
-
-        return SailUiForm(self.interactor, json.loads(record_header_response),
-                          breadcrumb=self.breadcrumb)
-
-    def get_record_view_form(self) -> 'SailUiForm':
-        """
-        Extracts the embedded record view form from a record "feed" form to enable interaction with components in the record view.
-
-        Returns (SailUiForm): The record view UiForm embedded within a record "feed" form.
-
-        Examples:
-
-            >>> form.get_record_view_form()
-
-        """
-        record_view_response = get_record_summary_view_response(self.state)
-
-        # record "feed" form has no breadcrumb - set up a breadcrumb
-        self.breadcrumb = "Record.ViewForm.SailUi"
-
-        return SailUiForm(self.interactor, json.loads(record_view_response), breadcrumb=self.breadcrumb)
 
     def filter_records_using_searchbox(self, search_term: str = "", locust_request_label: str = "") -> 'SailUiForm':
         """
@@ -1499,9 +1464,9 @@ class SailUiForm:
         context_label = locust_request_label or f"{self.breadcrumb}.RecordType.SearchByText"
         search_uri = f"{self.form_url}?searchTerm={quote(search_term)}"
 
-        headers = self.interactor.setup_sail_headers()
-        response = self.interactor.get_page(uri=search_uri, headers=headers, label=context_label)
-        return SailUiForm(self.interactor, response.json(), breadcrumb=context_label)
+        headers = self._interactor.setup_sail_headers()
+        response = self._interactor.get_page(uri=search_uri, headers=headers, label=context_label)
+        return SailUiForm(self._interactor, response.json(), breadcrumb=context_label)
 
     def assert_no_validations_present(self) -> 'SailUiForm':
         """
@@ -1509,7 +1474,7 @@ class SailUiForm:
 
         Returns (SailUiForm): Form as it was when validations were asserted
         """
-        validations: list = extract_all_by_label(self.state, "validations")
+        validations: list = extract_all_by_label(self._state, "validations")
         validation_present = False
         for validation in validations:
             if validation:
@@ -1543,14 +1508,14 @@ class SailUiForm:
         """
 
         record_action_component = find_component_by_attribute_in_dict(
-            'label', label, self.state)
+            'label', label, self._state)
 
         record_action_trigger_component = find_component_by_attribute_in_dict(
-            '_actionName', 'sail:record-action-trigger', self.state)
+            '_actionName', 'sail:record-action-trigger', self._state)
 
-        reeval_url = self._get_update_url_for_reeval(self.state)
+        reeval_url = self._get_update_url_for_reeval(self._state)
         locust_label = locust_request_label or f"{self.breadcrumb}.RefreshAfterRecordAction.{label}"
-        new_state = self.interactor.refresh_after_record_action(
+        new_state = self._interactor.refresh_after_record_action(
             reeval_url, record_action_component, record_action_trigger_component, self.context, self.uuid, label=locust_label)
 
         if not new_state:
@@ -1576,11 +1541,11 @@ class SailUiForm:
             >>> form.click_record_search_button_by_index(1)
 
         """
-        component = find_component_by_index_in_dict("SearchBoxWidget", index, self.state)
+        component = find_component_by_index_in_dict("SearchBoxWidget", index, self._state)
 
-        reeval_url = self._get_update_url_for_reeval(self.state)
+        reeval_url = self._get_update_url_for_reeval(self._state)
         locust_label = locust_request_label or f"{self.breadcrumb}.ClickRecordSearchButtonByIndex.{index}"
-        new_state = self.interactor.click_record_search_button(
+        new_state = self._interactor.click_record_search_button(
             reeval_url, component, self.context, self.uuid, label=locust_label)
 
         if not new_state:
@@ -1589,11 +1554,11 @@ class SailUiForm:
         return self._reconcile_state(new_state)
 
     def _reconcile_state(self, new_state: dict) -> 'SailUiForm':
-        self.interactor.datatype_cache.cache(new_state)
-        self.state = self.reconciler.reconcile_ui(self.state, new_state)
-        self.form_url = self._get_update_url_for_reeval(self.state)
-        self.uuid = self.state.get(KEY_UUID) or self.uuid
-        self.context = self.state.get(KEY_CONTEXT) or self.context
+        self._interactor.datatype_cache.cache(new_state)
+        self._state = self.reconciler.reconcile_ui(self._state, new_state)
+        self.form_url = self._get_update_url_for_reeval(self._state)
+        self.uuid = self._state.get(KEY_UUID) or self.uuid
+        self.context = self._state.get(KEY_CONTEXT) or self.context
         return self
 
     def _get_update_url_for_reeval(self, state: Dict[str, Any]) -> str:
