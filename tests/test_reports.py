@@ -8,6 +8,7 @@ import json
 
 class TestReports(unittest.TestCase):
     reports = read_mock_file("reports_response.json")
+    reports_modified = read_mock_file("reports_response_modified.json")
     reports_interface = read_mock_file("reports_interface.json")
     reports_nav = read_mock_file("reports_nav.json")
 
@@ -68,7 +69,7 @@ class TestReports(unittest.TestCase):
         setattr(self.interactor, 'get_page', get_page_mock)
 
         with self.assertRaisesRegex(Exception, "There is no report with name .* in the system under test.*"):
-            self.reports_interactor.get_report("some random word")
+            self.reports_interactor.get_report("some random word", False)
 
     def test_reports_fetch_report_json(self) -> None:
         response_mock = unittest.mock.Mock(return_value={"ase": "ase2"})
@@ -97,6 +98,21 @@ class TestReports(unittest.TestCase):
         setattr(self.interactor, 'get_page', get_page_mock)
         output = self.reports_interactor.get_report_form_uri("RTE Basic Test Report::qdjDPA")
         self.assertEqual(output, "/suite/rest/a/sites/latest/D6JMim/pages/reports/report/qdjDPA/reportlink")
+
+    def test_reports_get_report_requires_search(self) -> None:
+        response_mock = unittest.mock.Mock(return_value=json.loads(self.reports))
+        response = Response()
+        setattr(response, 'json', response_mock)
+
+        valid_response_mock = unittest.mock.Mock(return_value=json.loads(self.reports_modified))
+        valid_response = Response()
+        setattr(valid_response, 'json', valid_response_mock)
+
+        get_page_mock = unittest.mock.Mock(
+            side_effect=lambda uri, label: response if uri == ALL_REPORTS_URI else valid_response
+        )
+        setattr(self.interactor, 'get_page', get_page_mock)
+        self.reports_interactor.get_report("ASE", False)
 
 
 if __name__ == '__main__':

@@ -1,4 +1,5 @@
 from typing import Any, Dict
+from urllib.parse import quote
 
 from ._base import _Base
 from ._interactor import _Interactor
@@ -69,6 +70,13 @@ class _Reports(_Base):
             log_locust_error(e, error_desc="Response Error", raise_error=False)
 
         uri = ALL_REPORTS_URI
+        if search_string:
+            # If using exact_match=True, then a unique identifier is require to be appended, which must be removed for the search
+            search_string = search_string.split("::")[0]
+
+            # Format search string to be compatible with URLs
+            search_string = quote(search_string)
+            uri = f"{uri}?q={search_string}"
 
         self._reports = dict()
         error_key_string = "ERROR::"
@@ -117,6 +125,8 @@ class _Reports(_Base):
 
         """
         _, current_report = super().get(self._reports, report_name, exact_match)
+        if not current_report:
+            _, current_report = super().get(self._reports, report_name, exact_match, search_string=report_name)
         if not current_report:
             raise (Exception("There is no report with name {} in the system under test (Exact match = {})".format(
                 report_name, exact_match)))

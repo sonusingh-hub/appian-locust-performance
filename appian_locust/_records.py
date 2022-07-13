@@ -1,6 +1,7 @@
 import json
 import random
 from typing import Any, Dict, Tuple
+from urllib.parse import quote
 
 import requests
 
@@ -67,10 +68,17 @@ class _Records(_Base):
         except Exception as e:
             log_locust_error(e, error_desc="Response Error", raise_error=False)
 
+        if search_string:
+            # If using exact_match=True, then a unique identifier is require to be appended, which must be removed for the search
+            search_string = search_string.split("::")[0]
+
+            # Format search string to be compatible with URLs
+            search_string = quote(search_string)
+
         self.get_all_record_types(locust_request_label=locust_request_label)
         for record_type in self._record_types:
             try:
-                self.get_all_records_of_record_type(record_type)
+                self.get_all_records_of_record_type(record_type, search_string=search_string)
             except requests.exceptions.HTTPError as e:
                 log.warning(e)
                 continue
@@ -101,7 +109,7 @@ class _Records(_Base):
 
         return self._record_types
 
-    def get_all_records_of_record_type(self, record_type: str, column_index: int = None) -> Dict[str, Any]:
+    def get_all_records_of_record_type(self, record_type: str, column_index: int = None, search_string: str = None) -> Dict[str, Any]:
         """
         Navigate to the desired record type and load all metadata for the associated list of record views into cache.
 
@@ -116,7 +124,7 @@ class _Records(_Base):
             >>> self.appian.records.get_all_records_of_record_type("record_type_name")
         """
 
-        json_response = self._record_type_list_request(record_type)
+        json_response = self._record_type_list_request(record_type, search_string=search_string)
 
         if column_index is not None:
             self._records[record_type], self._errors = get_records_from_json_by_column(json_response, column_index)
@@ -125,7 +133,7 @@ class _Records(_Base):
 
         return self._records
 
-    def get_all_records_of_record_type_mobile(self, record_type: str) -> Dict[str, Any]:
+    def get_all_records_of_record_type_mobile(self, record_type: str, search_string: str = None) -> Dict[str, Any]:
         """
         Retrieves all the available "records" for the given record type for a mobile device.
 
@@ -137,7 +145,7 @@ class _Records(_Base):
 
             >>> self.appian.records.get_all_records_of_record_type_mobile("record_type_name")
         """
-        json_response = self._record_type_list_request(record_type, is_mobile=True)
+        json_response = self._record_type_list_request(record_type, is_mobile=True, search_string=search_string)
 
         self._records[record_type], self._errors = get_all_records_from_json(json_response)
 
@@ -152,9 +160,17 @@ class _Records(_Base):
 
         Returns (dict): List of records and associated metadata
         """
+
+        if search_string:
+            # If using exact_match=True, then a unique identifier is require to be appended, which must be removed for the search
+            search_string = search_string.split("::")[0]
+
+            # Format search string to be compatible with URLs
+            search_string = quote(search_string)
+
         self.get_all_record_types()
         for record_type in self._record_types:
-            self.get_all_records_of_record_type_mobile(record_type)
+            self.get_all_records_of_record_type_mobile(record_type, search_string=search_string)
         return self._records
 
     def fetch_record_instance(self, record_type: str, record_name: str, exact_match: bool = True) -> Dict[str, Any]:
@@ -184,6 +200,9 @@ class _Records(_Base):
         self.fetch_record_type(record_type, exact_match=exact_match)
         _, current_record = super().get(self._records[record_type], record_name, exact_match,
                                         ignore_retry=True)
+        if not current_record:
+            _, current_record = super().get(self._records[record_type], record_name, exact_match,
+                                            search_string=record_name)
         if not current_record:
             raise Exception(f"There is no record with name {record_name} found in record type {record_type} (Exact match = {exact_match})")
         return current_record
@@ -313,7 +332,7 @@ class _Records(_Base):
             self.get_all()
         return random.choice(list(self._records.keys()))
 
-    def _record_type_list_request(self, record_type: str, is_mobile: bool = False) -> Dict[str, Any]:
+    def _record_type_list_request(self, record_type: str, is_mobile: bool = False, search_string: str = None) -> Dict[str, Any]:
         if record_type not in self._record_types:
             raise Exception(f"There is no record type with name {record_type} in the system under test")
         record_type_component = self._record_types[record_type]
@@ -324,7 +343,8 @@ class _Records(_Base):
         else:
             tempo_site_url_stub = "D6JMim"
             uri = f"/suite/rest/a/sites/latest/{tempo_site_url_stub}/pages/records/recordType/{record_type_url_stub}"
-
+            if search_string:
+                uri = f"{uri}?searchTerm={search_string}"
         label = f"Records.{record_type}"
         headers = self.interactor.setup_request_headers()
         headers["Accept"] = "application/vnd.appian.tv.ui+json"
@@ -333,7 +353,10 @@ class _Records(_Base):
 
         return json_response
 
-    def _get_mobile_records_uri(self, record_type_url_stub: str) -> str:
+    def _get_mobile_records_uri(self, record_type_url_stub: str, search_string: str = None) -> str:
         if not record_type_url_stub:
             raise Exception("Mobile records uri must have a unique stub provided.")
-        return f"/suite/rest/a/applications/latest/legacy/tempo/records/type/{record_type_url_stub}/view/all"
+        uri = f"/suite/rest/a/applications/latest/legacy/tempo/records/type/{record_type_url_stub}"
+        if search_string:
+            return f"{uri}/search/{search_string}"
+        return f"{uri}/view/all"
