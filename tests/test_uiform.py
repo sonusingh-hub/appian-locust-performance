@@ -4,7 +4,7 @@ import unittest
 from typing import Any, List, Optional
 from unittest.mock import MagicMock, call, patch
 
-from appian_locust import AppianTaskSet, SailUiForm
+from appian_locust import AppianTaskSet, SailUiForm, RecordInstanceUiForm
 from appian_locust.helper import (ENV, find_component_by_attribute_in_dict,
                                   find_component_by_index_in_dict,
                                   find_component_by_label_and_type_dict)
@@ -450,13 +450,12 @@ class TestSailUiForm(unittest.TestCase):
                                         'ioBHer_bdD8Emw8hMSiA_CnpxaA0SVKp1kzE9BURlYvkxHjzPlX0d81Hmk',
                                         200,
                                         self.related_action_response)
-        sail_form = SailUiForm(self.task_set.appian.interactor, json.loads(self.record_instance_response))
-        record_instance_header_form = sail_form.get_record_header_form()
+        record_instance_header_form = RecordInstanceUiForm(self.task_set.appian.interactor, json.loads(self.record_instance_response), summary_view=False)
         # perform a related action
         record_instance_related_action_form = record_instance_header_form.click_related_action("Discuss Case History")
 
         # Assert fields on the related action form
-        text_component = find_component_by_attribute_in_dict('label', 'Action Type', record_instance_related_action_form.state)
+        text_component = find_component_by_attribute_in_dict('label', 'Action Type', record_instance_related_action_form._state)
         self.assertEqual(text_component.get("#t"), "TextField")
 
     def test_click_related_action_link_on_summary_dashboard(self) -> None:
@@ -468,13 +467,12 @@ class TestSailUiForm(unittest.TestCase):
                                         'actionDialog/iwBIWonPMarTw_zHTsSC5HBmvtUFIZ8Nar8xAVLL-EvREVFV-D4OAWQ4z8a2Q',
                                         200, related_action_dialog_response)
 
-        sail_form = SailUiForm(self.task_set.appian.interactor, json.loads(record_instance_with_related_action_link_response))
-        record_summary_view_form = sail_form.get_record_view_form()
+        record_instance_summary_form = RecordInstanceUiForm(self.task_set.appian.interactor, json.loads(record_instance_with_related_action_link_response))
         # perform a related action that opens in a dialog (which is a on the summary dashboard itself)
-        record_instance_related_action_form = record_summary_view_form.click_related_action("Document Reconciliation")
+        record_instance_related_action_form = record_instance_summary_form.click_related_action("Document Reconciliation")
 
         # Assert fields on the related action form
-        dropdown_component = find_component_by_attribute_in_dict('label', 'Document Type', record_instance_related_action_form.state)
+        dropdown_component = find_component_by_attribute_in_dict('label', 'Document Type', record_instance_related_action_form._state)
         self.assertEqual(dropdown_component.get("#t"), "DropdownField")
 
     @patch('appian_locust._interactor._Interactor.get_page')
@@ -510,7 +508,7 @@ class TestSailUiForm(unittest.TestCase):
     @patch('appian_locust.uiform.SailUiForm._click_start_process_link')
     def test_click_card_layout_by_index_spl(self, mock_click_spl: MagicMock) -> None:
         test_form = SailUiForm(self.task_set.appian.interactor, json.loads(self.spl_response))
-        component = find_component_by_label_and_type_dict('label', 'Request Pass', 'StartProcessLink', test_form.state)
+        component = find_component_by_label_and_type_dict('label', 'Request Pass', 'StartProcessLink', test_form._state)
         test_form.click_card_layout_by_index(1, locust_request_label=self.locust_label)
 
         mock_click_spl.assert_called_once()
@@ -532,7 +530,7 @@ class TestSailUiForm(unittest.TestCase):
         mock_state = MagicMock()
         mock_state.get.side_effect = get_call
         mock_click_component.return_value = mock_state
-        component = find_component_by_index_in_dict("DynamicLink", 3, test_form.state)
+        component = find_component_by_index_in_dict("DynamicLink", 3, test_form._state)
         test_form.click_card_layout_by_index(3, locust_request_label=self.locust_label)
 
         mock_click_component.assert_called_once()
@@ -546,7 +544,7 @@ class TestSailUiForm(unittest.TestCase):
     @patch('appian_locust._interactor._Interactor.select_radio_button')
     def test_radio_button_select_by_label(self, mock_radio_select_component: MagicMock) -> None:
         test_form = SailUiForm(self.task_set.appian.interactor, json.loads(self.radio_button_initial))
-        component = find_component_by_attribute_in_dict("label", "Cool Buttons", test_form.state)
+        component = find_component_by_attribute_in_dict("label", "Cool Buttons", test_form._state)
         test_uuid = test_form.uuid
         test_context = test_form.context
         test_form.select_radio_button_by_label("Cool Buttons", 1, locust_request_label=self.locust_label)
@@ -749,7 +747,7 @@ class TestSailUiForm(unittest.TestCase):
 
         # Assert ui state updated
         self.assertEqual('Available Case Workers',
-                         find_component_by_attribute_in_dict('label', 'Available Case Workers', sites_task_report.state).get('label')
+                         find_component_by_attribute_in_dict('label', 'Available Case Workers', sites_task_report._state).get('label')
                          )
 
     def test_refresh_after_record_action_interaction(self) -> None:
@@ -770,8 +768,9 @@ class TestSailUiForm(unittest.TestCase):
 
         sail_form.click_record_search_button_by_index()
 
+    @patch('appian_locust.record_uiform.RecordInstanceUiForm')
     @patch('appian_locust._interactor._Interactor.click_record_link')
-    def test_click_record_link(self, mock_click_rl: MagicMock) -> None:
+    def test_click_record_link(self, mock_click_rl: MagicMock, mock_summary_view: MagicMock) -> None:
         report_body = read_mock_file("nested_dynamic_link_response.json")
         self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
         sail_form = self.task_set.appian.visitor.visit_report(self.report_name, exact_match=False)
@@ -782,8 +781,9 @@ class TestSailUiForm(unittest.TestCase):
 
         self.assertEqual(args[1]['recordIdentifier'], '74')
 
+    @patch('appian_locust.record_uiform.RecordInstanceUiForm')
     @patch('appian_locust._interactor._Interactor.click_record_link')
-    def test_click_record_view_link(self, mock_click_rl: MagicMock) -> None:
+    def test_click_record_view_link(self, mock_click_rl: MagicMock, mock_summary_view: MagicMock) -> None:
         report_body = read_mock_file("nested_dynamic_link_response.json")
         self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
         sail_form = self.task_set.appian.visitor.visit_report(self.report_name, exact_match=False)
@@ -796,8 +796,9 @@ class TestSailUiForm(unittest.TestCase):
 
         self.assertEqual(args[1]['recordIdentifier'], '101')
 
+    @patch('appian_locust.record_uiform.RecordInstanceUiForm')
     @patch('appian_locust._interactor._Interactor.click_record_link')
-    def test_click_record_link_by_index(self, mock_click_rl: MagicMock) -> None:
+    def test_click_record_link_by_index(self, mock_click_rl: MagicMock, mock_summary_view: MagicMock) -> None:
         report_body = read_mock_file("nested_dynamic_link_response.json")
         self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
         sail_form = self.task_set.appian.visitor.visit_report(self.report_name, exact_match=False)
@@ -808,8 +809,9 @@ class TestSailUiForm(unittest.TestCase):
 
         self.assertEqual(args[1]['recordIdentifier'], '22')
 
+    @patch('appian_locust.record_uiform.RecordInstanceUiForm')
     @patch('appian_locust._interactor._Interactor.click_record_link')
-    def test_click_record_link_by_attribute_and_index(self, mock_click_rl: MagicMock) -> None:
+    def test_click_record_link_by_attribute_and_index(self, mock_click_rl: MagicMock, mock_summary_view: MagicMock) -> None:
         report_body = read_mock_file("nested_dynamic_link_response.json")
         self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
         sail_form = self.task_set.appian.visitor.visit_report(self.report_name, exact_match=False)

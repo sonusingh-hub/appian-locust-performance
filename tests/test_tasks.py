@@ -110,7 +110,7 @@ class TestTask(unittest.TestCase):
             200,
             self.get_task_attributes(is_auto_acceptable=False))
         output = self.task_set.appian.tasks.visit_and_get_form("t-1", False)
-        print(output.state)
+        print(output._state)
         self.assertEqual(output.form_url, "/suite/rest/a/task/latest/1/form")
 
 

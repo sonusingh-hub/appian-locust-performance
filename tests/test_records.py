@@ -221,7 +221,7 @@ class TestRecords(unittest.TestCase):
 
     @unittest.mock.patch('appian_locust.records_helper.find_component_by_attribute_in_dict', return_value={'children': [json.dumps({"a": "b"})]})
     def test_records_form_example_success(self, find_component_by_attribute_in_dict_function: Any) -> None:
-        sail_form = self.task_set.appian.records.visit_record_instance_and_get_form(
+        sail_form = self.task_set.appian.visitor.visit_record_instance(
             "Commits",
             self.record_instance_name,
             view_url_stub="summary",
@@ -235,7 +235,7 @@ class TestRecords(unittest.TestCase):
         record_type = "Commits"
         exact_match = False
         with self.assertRaises(Exception) as context:
-            self.task_set.appian.records.visit_record_instance_and_get_form(
+            self.task_set.appian.visitor.visit_record_instance(
                 record_type,
                 record_name,
                 view_url_stub="summary",
@@ -247,7 +247,7 @@ class TestRecords(unittest.TestCase):
     def test_records_form_incorrect_type(self) -> None:
         exact_match = False
         with self.assertRaises(Exception) as context:
-            self.task_set.appian.records.visit_record_instance_and_get_form(
+            self.task_set.appian.visitor.visit_record_instance(
                 "Fake Type",
                 self.record_instance_name,
                 view_url_stub="summary",
@@ -259,7 +259,7 @@ class TestRecords(unittest.TestCase):
     @unittest.mock.patch('appian_locust.records_helper.find_component_by_attribute_in_dict', return_value={'children': None})
     def test_records_form_no_embedded_summary(self, find_component_by_attribute_in_dict_function: Any) -> None:
         with self.assertRaises(Exception) as context:
-            self.task_set.appian.records.visit_record_instance_and_get_form(
+            self.task_set.appian.visitor.visit_record_instance(
                 record_type="Commits",
                 record_name=self.record_instance_name,
                 view_url_stub="summary",
@@ -269,21 +269,21 @@ class TestRecords(unittest.TestCase):
             "Parser was not able to find embedded SAIL code within JSON response for the requested Record Instance.")
 
     def test_record_types_form_example_success(self) -> None:
-        sail_form = self.task_set.appian.records.visit_record_type_and_get_form(
+        sail_form = self.task_set.appian.visitor.visit_record_type(
             "Commits",
             exact_match=False
         )
         self.assertTrue(isinstance(sail_form, SailUiForm))
 
     def test_record_type_random_form_example_success(self) -> None:
-        sail_form = self.task_set.appian.records.visit_record_type_and_get_form(exact_match=False)
+        sail_form = self.task_set.appian.visitor.visit_record_type(exact_match=False)
         self.assertTrue(isinstance(sail_form, SailUiForm))
 
     def test_record_type_form_incorrect_type(self) -> None:
         record_type = "Fake Type"
         exact_match = True
         with self.assertRaises(Exception) as context:
-            self.task_set.appian.records.visit_record_type_and_get_form(
+            self.task_set.appian.visitor.visit_record_type(
                 record_type,
                 exact_match
             )
@@ -303,15 +303,6 @@ class TestRecords(unittest.TestCase):
         with self.assertRaises(Exception):
             self.task_set.appian.records._get_random_record_instance()
             mock_get_all.assert_called_once()
-
-    def test_get_record_instance_feed_Response(self) -> None:
-        sail_form = self.task_set.appian.records.visit_record_instance_and_get_feed_form(
-            "Commits",
-            self.record_instance_name,
-            exact_match=False)
-
-        self.assertTrue(isinstance(sail_form, SailUiForm))
-        self.assertEqual(sail_form.state.get("feed", {}).get("title", ""), self.record_instance_name)
 
 
 if __name__ == '__main__':

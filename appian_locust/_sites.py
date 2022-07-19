@@ -124,7 +124,7 @@ class _Sites(_Base):
         if site_page_json_response.get("feed"):
             record_view_response = get_record_summary_view_response(site_page_json_response)
             breadcrumb = f"Sites.{site_name}.{page_name}.SailUi"
-            return SailUiForm(self.interactor, json.loads(record_view_response), breadcrumb=breadcrumb)
+            return SailUiForm(self.interactor, record_view_response, breadcrumb=breadcrumb)
         else:
             breadcrumb = f"Sites.{site_name}.{page_name}.SailUi"
             return SailUiForm(self.interactor, site_page_json_response, breadcrumb=breadcrumb)

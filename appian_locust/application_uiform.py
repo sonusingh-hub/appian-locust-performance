@@ -16,11 +16,11 @@ class ApplicationUiForm(SailUiForm):
 
     @raises_locust_error
     def click_design_object(self, design_object_name: str) -> DesignObjectUiForm:
-        grid_component = self.__design.find_design_grid(self.state)
+        grid_component = self.__design.find_design_grid(self._state)
         link_component = find_component_by_attribute_in_dict('testLabel', design_object_name, grid_component, throw_attribute_exception=True)
         opaque_id = link_component.get("uri").split('/')[-1]
         breadcrumb = "Design.SelectedObject." + opaque_id[0:10] + ".SailUi"
-        return DesignObjectUiForm(self.interactor, self.__design.fetch_design_object_json(opaque_id), breadcrumb)
+        return DesignObjectUiForm(self._interactor, self.__design.fetch_design_object_json(opaque_id), breadcrumb)
 
     @raises_locust_error
     def create_record_type(self, record_type_name: str) -> 'ApplicationUiForm':

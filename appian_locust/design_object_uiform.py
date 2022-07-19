@@ -14,6 +14,6 @@ class DesignObjectUiForm(SailUiForm):
 
     @raises_locust_error
     def launch_query_editor(self) -> 'DesignObjectUiForm':
-        query_editor_json = self.__design.click_expression_editor_toolbar_button("LaunchVQD", self.form_url, self.state, self.context, self.uuid)
+        query_editor_json = self.__design.click_expression_editor_toolbar_button("LaunchVQD", self.form_url, self._state, self.context, self.uuid)
         self._reconcile_state(query_editor_json)
         return self
