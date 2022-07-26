@@ -18,7 +18,6 @@ from ._feature_toggle_helper import (get_client_feature_toggles,
 from ._interactor import _Interactor
 from ._locust_error_handler import log_locust_error
 from ._news import _News
-from ._records import _Records
 from ._sites import _Sites
 from ._tasks import _Tasks
 from .appian_metadata_provider import AppianMetadataProvider
@@ -152,7 +151,6 @@ class AppianClient:
         self._actions = _Actions(self.interactor)
         self._admin = Admin(self.interactor)
         self._news = _News(self.interactor)
-        self._records = _Records(self.interactor)
         self._tasks = _Tasks(self.interactor)
         self._sites = _Sites(self.interactor)
         self.visitor = Visitor(self.interactor)
@@ -201,15 +199,6 @@ class AppianClient:
         See :doc:`_news <appian_locust._news>`
         """
         return self._news
-
-    @property
-    def records(self) -> _Records:
-        """
-        API for interacting with record lists and record dashboards
-
-        See :doc:`_records <appian_locust._records>`
-        """
-        return self._records
 
     @property
     def tasks(self) -> _Tasks:

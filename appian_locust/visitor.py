@@ -2,6 +2,7 @@ from appian_locust.record_uiform import RecordInstanceUiForm
 from .application_uiform import ApplicationUiForm
 from .design_object_uiform import DesignObjectUiForm
 from .design_uiform import DesignUiForm
+from .record_list_uiform import RecordListUiForm
 from .uiform import SailUiForm
 from ._design import _Design
 from ._interactor import _Interactor
@@ -60,7 +61,7 @@ class Visitor:
         breadcrumb = f'Records.{record_type}.{format_label(record_name, "::", 0)}.SailUi'
         return RecordInstanceUiForm(self.__interactor, form_json, summary_view=summary_view, breadcrumb=breadcrumb)
 
-    def visit_record_type(self, record_type: str = "", exact_match: bool = False, is_mobile: bool = False) -> SailUiForm:
+    def visit_record_type(self, record_type: str = "", exact_match: bool = False, is_mobile: bool = False) -> RecordListUiForm:
         """
         This function calls the API for the specific record type and returns a SAIL form representing the list of records for that record type.
 
@@ -71,5 +72,5 @@ class Visitor:
         Returns (SailUiForm): UI representing list of records for that record type
         """
         form_json = self.__records.visit_record_type(record_type, exact_match=exact_match, is_mobile=is_mobile)
-        breadcrumb = f'Records.{record_type}.SailUi'
-        return SailUiForm(self.__interactor, form_json, breadcrumb=breadcrumb)
+        breadcrumb = f'Records.{record_type}.RecordListUi'
+        return RecordListUiForm(self.__interactor, form_json, breadcrumb=breadcrumb)
