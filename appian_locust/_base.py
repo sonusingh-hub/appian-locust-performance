@@ -46,9 +46,9 @@ class _Base():
                     items_in_dict = self.get_all(search_string)
                 else:
                     items_in_dict = self.get_all()
+                current_item = list_filter(
+                    list(items_in_dict.keys()), item_name, exact_match)
 
-        current_item = list_filter(
-            list(items_in_dict.keys()), item_name, exact_match)
         if len(current_item) > 0:
             if len(current_item) > 1:
                 log.warning(

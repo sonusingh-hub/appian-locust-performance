@@ -160,9 +160,22 @@ class TestRecords(unittest.TestCase):
             self.task_set.appian.records.fetch_record_instance("something else 1", self.record_instance_name, False)
 
     def test_records_fetch_record_instance_missing(self) -> None:
+        self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/pages/records/recordType/commit?searchTerm=something%20else", 200,
+                                        self.records)
+        self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/pages/records/recordType/BE5pSw?searchTerm=something%20else", 200,
+                                        self.grid_records)
         with self.assertRaisesRegex(Exception,
                                     "There is no record with name .* found in record type .*"):
             self.task_set.appian.records.fetch_record_instance("Commits", "something else", False)
+
+    def test_records_fetch_record_instance_needs_search(self) -> None:
+        self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/pages/records/recordType/commit?searchTerm=Fake%20Record", 200,
+                                        self.grid_records)
+        self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/pages/records/recordType/BE5pSw?searchTerm=Fake%20Record", 200,
+                                        self.grid_records)
+        with self.assertRaisesRegex(Exception,
+                                    "There is no record with name .* found in record type .*"):
+            self.task_set.appian.records.fetch_record_instance("Commits", "Fake Record", False)
 
     def test_records_fetch_record_type(self) -> None:
         self.task_set.appian.records.get_all()
@@ -234,6 +247,10 @@ class TestRecords(unittest.TestCase):
         record_name = "Fake Record"
         record_type = "Commits"
         exact_match = False
+        self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/pages/records/recordType/commit?searchTerm=Fake%20Record", 200,
+                                        self.records)
+        self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/pages/records/recordType/BE5pSw?searchTerm=Fake%20Record", 200,
+                                        self.grid_records)
         with self.assertRaises(Exception) as context:
             self.task_set.appian.visitor.visit_record_instance(
                 record_type,
