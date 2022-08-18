@@ -28,7 +28,6 @@ class GridInteractor:
 
     def find_grid_by_index(self, index: int, form: Dict[str, Any]) -> Dict[str, Any]:
         grids = extract_values_multiple_key_values(form, '#t', ["PagingGridLayout", "GridField"])
-        print(len(grids))
         if not grids:
             raise Exception("No grids found in form")
         if len(grids) < index:
