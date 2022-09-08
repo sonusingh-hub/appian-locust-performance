@@ -29,7 +29,7 @@ class TestReports(unittest.TestCase):
         setattr(self.interactor, 'get_page', get_page_mock)
 
         reports = self.reports_interactor.get_report(
-            "RTE Basic Test Report::qdjDPA")
+            "RTE Basic Test Report")
         self.assertIsInstance(reports, dict)
 
     def test_reports_get_corrupt_report(self) -> None:
@@ -96,7 +96,7 @@ class TestReports(unittest.TestCase):
         )
 
         setattr(self.interactor, 'get_page', get_page_mock)
-        output = self.reports_interactor.get_report_form_uri("RTE Basic Test Report::qdjDPA")
+        output = self.reports_interactor.get_report_form_uri("RTE Basic Test Report")
         self.assertEqual(output, "/suite/rest/a/sites/latest/D6JMim/pages/reports/report/qdjDPA/reportlink")
 
     def test_reports_get_report_requires_search(self) -> None:
