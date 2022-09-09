@@ -39,7 +39,7 @@ class TestNews(unittest.TestCase):
 
     def test_news_get(self) -> None:
         news = self.task_set.appian.news.get_news(
-            "x-1::Administrator Custom")
+            "x-1")
         self.assertIsInstance(news, dict)
 
     def test_news_get_corrupt_news_post(self) -> None:
@@ -53,7 +53,7 @@ class TestNews(unittest.TestCase):
         self.task_set.appian.news._news = dict()  # Resetting the cache.
         self.custom_locust.set_response("/suite/api/feed/tempo?q=Admin", 200, self.news)
         action = self.task_set.appian.news.get_news(
-            "x-1::Administrator Custom", True, "Admin")
+            "x-1", True, "Admin")
         self.assertIsInstance(action, dict)
 
     def test_news_get_missing_news(self) -> None:

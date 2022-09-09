@@ -139,10 +139,8 @@ def list_filter(list_var: List[str], filter_string: str, exact_match: bool = Fal
     """
     # Exact Matches gets priority even when exact match is set to false
     return_list = list(filter(lambda current_item: (
-        current_item == filter_string), list_var))
+        current_item.split("::")[0] == filter_string), list_var))
     if not exact_match:
-        return_list = list(filter(lambda current_item: (
-            current_item == filter_string), list_var))
         return_list.extend(list(filter(lambda current_item: (
             bool(re.search(".*" + re.escape(filter_string) + ".*", current_item)) and current_item not in return_list),
             list_var)))

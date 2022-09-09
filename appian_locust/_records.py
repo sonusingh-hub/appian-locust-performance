@@ -268,6 +268,8 @@ class _Records(_Base):
 
         if not record_name:
             record_type, record_name = self._get_random_record_instance(record_type)
+            # remove id from record name
+            record_name = record_name.split("::")[0]
 
         if not record_type:
             raise Exception("If record_name parameter is specified, record_type must also be included")

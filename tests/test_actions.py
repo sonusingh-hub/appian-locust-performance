@@ -77,7 +77,7 @@ class TestActions(unittest.TestCase):
 
     def test_actions_get_missing_action(self) -> None:
         with self.assertRaisesRegex(Exception, "There is no action with name .* in the system under test.*"):
-            self.task_set.appian.actions.get_action("Create a Case", exact_match=True)
+            self.task_set.appian.actions.get_action("Missing Action", exact_match=True)
 
     def setup_action_response_no_ui(self) -> None:
         action = self.task_set.appian.actions.get_action("Create a Case", False)
