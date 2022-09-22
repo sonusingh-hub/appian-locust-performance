@@ -1317,6 +1317,27 @@ class SailUiForm:
         return self._reconcile_state(new_state)
 
     @raises_locust_error
+    def select_card_choice_field_by_label(self, label: str, index: int, locust_request_label: str = "") -> 'SailUiForm':
+        """
+        Select a card by it's lable
+        Index is position to be selected
+
+        Args:
+            label(str): Label of the radio button field
+            index(int): Index of the radio button to select
+
+        Returns (SailUiForm): The latest state of the UiForm
+
+        Examples:
+
+            >>> form.select_card_choice_field_by_label('myLabel', 1)  # selects the first item
+
+        """
+        context_label = locust_request_label or f"{self.breadcrumb}.CardChoice.SelectByLabel.{label}"
+        label = "cardChoiceField-" + label
+        return self.select_radio_button_by_test_label(label, index, context_label)
+
+    @raises_locust_error
     def select_radio_button_by_test_label(self, test_label: str, index: int, locust_request_label: str = "") -> 'SailUiForm':
         """
         Selects a radio button by its test label

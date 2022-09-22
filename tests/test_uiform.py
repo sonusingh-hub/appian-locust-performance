@@ -30,6 +30,7 @@ class TestSailUiForm(unittest.TestCase):
     sail_ui_actions_response = read_mock_file("sail_ui_actions_cmf.json")
     file_upload_initial = read_mock_file("multiple_file_upload_widget.json")
     radio_button_initial = read_mock_file("radio_button_selector.json")
+    card_choice_initial = read_mock_file("cardchoice_layout_interface.json")
     record_action_launch_form_before_refresh = read_mock_file("record_action_launch_form_before_refresh.json")
     record_action_refresh_response = read_mock_file("record_action_refresh_response.json")
     site_with_record_search_button = read_mock_file("site_with_record_search_button.json")
@@ -551,6 +552,24 @@ class TestSailUiForm(unittest.TestCase):
         mock_radio_select_component.assert_called_once()
         args, kwargs = mock_radio_select_component.call_args_list[0]
         self.assertEqual(args[0], self.report_link_uri)
+        self.assertEqual(args[1], component)
+        self.assertEqual(args[2], test_context)
+        self.assertEqual(args[3], test_uuid)
+        self.assertEqual(kwargs["context_label"], self.locust_label)
+
+    @patch('appian_locust._interactor._Interactor.select_radio_button')
+    def test_card_choice_field_select_by_label(self, mock_radio_select_component: MagicMock) -> None:
+        uri = "/suite/rest/a/sites/latest/test01/pages/test01/interface"
+        test_form = SailUiForm(self.task_set.appian.interactor,
+                               json.loads(self.card_choice_initial),
+                               uri)
+        component = find_component_by_attribute_in_dict("testLabel", "cardChoiceField-Card Choices", test_form._state)
+        test_uuid = test_form.uuid
+        test_context = test_form.context
+        test_form.select_card_choice_field_by_label("Card Choices", 2, locust_request_label=self.locust_label)
+        mock_radio_select_component.assert_called_once()
+        args, kwargs = mock_radio_select_component.call_args_list[0]
+        self.assertEqual(args[0], uri)
         self.assertEqual(args[1], component)
         self.assertEqual(args[2], test_context)
         self.assertEqual(args[3], test_uuid)

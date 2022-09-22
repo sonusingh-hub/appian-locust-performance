@@ -233,6 +233,7 @@ class AppianClient:
 
         headers = self.interactor.setup_request_headers(logout_uri)
         self.interactor.get_page(logout_uri, headers=headers, label="Logout.LoadUi", check_login=False)
+        self.client.cookies.clear()
 
     def get_client_feature_toggles(self) -> None:
         try:
