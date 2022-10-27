@@ -47,6 +47,9 @@ class TestVisitor(unittest.TestCase):
         # Set up responses for records
         self.setUp_record_responses()
 
+    def setUp_task_responses(self) -> None:
+        self.custom_locust.set_response(_Tasks.INITIAL_FEED_URI, 200, self.task_feed_resp)
+
     def get_task_attributes(self, is_auto_acceptable: bool) -> str:
         return f"""
         {{
@@ -56,13 +59,6 @@ class TestVisitor(unittest.TestCase):
             "taskId": "1",
             "isAutoAcceptable": {'true' if is_auto_acceptable else 'false'}
         }}"""
-
-    def setUp_task_responses(self) -> None:
-        self.custom_locust.set_response(
-            "/suite/rest/a/task/latest/1/attributes",
-            200,
-            self.get_task_attributes(is_auto_acceptable=True))
-        self.custom_locust.set_response(_Tasks.INITIAL_FEED_URI, 200, self.task_feed_resp)
 
     def setUp_report_responses(self) -> None:
         self.custom_locust.set_response("/suite/rest/a/uicontainer/latest/reports", 200, read_mock_file("reports_response.json"))

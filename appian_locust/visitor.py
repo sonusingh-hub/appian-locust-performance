@@ -9,7 +9,6 @@ from ._interactor import _Interactor
 from ._records import _Records
 from ._reports import _Reports
 from ._tasks import _Tasks
-from ._task_opener import _TaskOpener
 from .helper import format_label
 
 
@@ -17,7 +16,6 @@ class Visitor:
     def __init__(self, interactor: _Interactor):
         self.__interactor = interactor
         self._tasks = _Tasks(self.__interactor)
-        self._taskopener = _TaskOpener(self.__interactor)
         self.__reports = _Reports(self.__interactor)
         self.__design = _Design(self.__interactor)
         self.__records = _Records(self.__interactor)
@@ -35,7 +33,6 @@ class Visitor:
             SailUiForm: SAIL form for the task
         """
         initial_task_resp: dict = self._tasks.get_task(task_name, exact_match)
-        #clean_id = initial_task_resp["id"].replace("t-", "")
         children = initial_task_resp.get("content", {}).get("children", [])
         task_title = children[0]
 
