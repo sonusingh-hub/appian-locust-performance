@@ -148,8 +148,8 @@ class _Tasks(_Base):
             e = Exception(f'There is no task with name "{task_name}" in the system under test (Exact match = {exact_match})')
             log_locust_error(e, raise_error=True)
         return current_task
-
-    def visit(self, task_name: str, exact_match: bool = True) -> Dict[str, Any]:
+        
+    def get_task_form_json(self, task_name: str, locust_request_label: str = "", exact_match: bool = True) -> Dict[str, Any]:
         """
         This function calls the API for the specific task to get its "form" data
 
@@ -163,11 +163,11 @@ class _Tasks(_Base):
 
             If full name of task is known,
 
-            >>> self.appian.task.visit("task_name")
+            >>> self.appian.task.get_task_form_json("task_name")
 
             If only partial name is known,
 
-            >>> self.appian.task.visit("task_name", exact_match=False)
+            >>> self.appian.task.get_task_form_json("task_name", exact_match=False)
 
         """
 
@@ -177,28 +177,4 @@ class _Tasks(_Base):
         children = task.get("content", {}).get("children", [])
         task_title = children[0]
 
-        return self.task_opener.visit_by_task_id(task_title, clean_id)
-
-    def visit_and_get_form(self, task_name: str, exact_match: bool = True, locust_request_label: str = "") -> SailUiForm:
-        """
-        Gets the SailUiForm given a task name
-
-        Args:
-            task_name (str): Name of the task to search for
-            exact_match (bool, optional): Whether or not a full match is returned. Defaults to True.
-            locust_request_label (str, optional): label to be used within locust
-
-        Returns:
-            SailUiForm: SAIL form for the task
-        """
-        initial_task_resp: dict = self.get_task(task_name, exact_match)
-        clean_id = initial_task_resp["id"].replace("t-", "")
-        children = initial_task_resp.get("content", {}).get("children", [])
-        task_title = children[0]
-
-        if not locust_request_label:
-            breadcrumb = f"Tasks.{task_title}"
-        else:
-            breadcrumb = locust_request_label
-        form_json = self.task_opener.visit_by_task_id(breadcrumb, clean_id)
-        return SailUiForm(self.interactor, form_json, breadcrumb=breadcrumb)
+        return self.task_opener.visit_by_task_id(task_title=task_title, task_id=clean_id, locust_request_label=locust_request_label)

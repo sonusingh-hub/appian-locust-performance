@@ -19,7 +19,6 @@ from ._interactor import _Interactor
 from ._locust_error_handler import log_locust_error
 from ._news import _News
 from ._sites import _Sites
-from ._tasks import _Tasks
 from .appian_metadata_provider import AppianMetadataProvider
 from .exceptions import MissingConfigurationException
 from .visitor import Visitor
@@ -151,7 +150,6 @@ class AppianClient:
         self._actions = _Actions(self.interactor)
         self._admin = Admin(self.interactor)
         self._news = _News(self.interactor)
-        self._tasks = _Tasks(self.interactor)
         self._sites = _Sites(self.interactor)
         self.visitor = Visitor(self.interactor)
         self.metadata_provider = AppianMetadataProvider(self.interactor)
@@ -199,15 +197,6 @@ class AppianClient:
         See :doc:`_news <appian_locust._news>`
         """
         return self._news
-
-    @property
-    def tasks(self) -> _Tasks:
-        """
-        API for interacting with tasks and task forms in Appian
-
-        See :doc:`_tasks <appian_locust._tasks>`
-        """
-        return self._tasks
 
     @property
     def sites(self) -> _Sites:

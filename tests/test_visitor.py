@@ -7,12 +7,15 @@ from .mock_client import CustomLocust
 from .mock_reader import read_mock_file
 from appian_locust import AppianTaskSet, SailUiForm, ApplicationUiForm, DesignUiForm, DesignObjectUiForm, RecordListUiForm, RecordInstanceUiForm
 from appian_locust.helper import ENV
+from appian_locust._tasks import _Tasks
 from appian_locust._reports import REPORTS_INTERFACE_PATH, REPORTS_NAV_PATH
 from appian_locust._records import RECORDS_INTERFACE_PATH, RECORDS_NAV_PATH
 
 
 class TestVisitor(unittest.TestCase):
     design_landing_page = read_mock_file("design_landing_page.json")
+    task_feed_resp = read_mock_file("tasks_response.json")
+    task_feed_with_next = read_mock_file("tasks_response_with_next.json")
     record_types = read_mock_file("record_types_response.json")
     # Record Instance List for a specific RecordType
     records = read_mock_file("records_response.json")
@@ -35,11 +38,31 @@ class TestVisitor(unittest.TestCase):
         self.custom_locust.set_response("auth?appian_environment=tempo", 200, '{}')
         self.task_set.on_start()
 
+        # Setup responses for tasks
+        self.setUp_task_responses()
+
         # Setup responses for page types
         self.setUp_report_responses()
 
         # Set up responses for records
         self.setUp_record_responses()
+
+    def get_task_attributes(self, is_auto_acceptable: bool) -> str:
+        return f"""
+        {{
+            "isOfflineTask": false,
+            "isSailTask": true,
+            "isQuickTask": false,
+            "taskId": "1",
+            "isAutoAcceptable": {'true' if is_auto_acceptable else 'false'}
+        }}"""
+
+    def setUp_task_responses(self) -> None:
+        self.custom_locust.set_response(
+            "/suite/rest/a/task/latest/1/attributes",
+            200,
+            self.get_task_attributes(is_auto_acceptable=True))
+        self.custom_locust.set_response(_Tasks.INITIAL_FEED_URI, 200, self.task_feed_resp)
 
     def setUp_report_responses(self) -> None:
         self.custom_locust.set_response("/suite/rest/a/uicontainer/latest/reports", 200, read_mock_file("reports_response.json"))
@@ -66,6 +89,49 @@ class TestVisitor(unittest.TestCase):
 
     def tearDown(self) -> None:
         self.task_set.on_stop()
+
+    def test_visit_task_success(self) -> None:
+        task_to_accept = read_mock_file('task_accept_resp.json')
+        self.custom_locust.set_response(
+            "/suite/rest/a/task/latest/1/status",
+            200,
+            task_to_accept
+        )
+        self.custom_locust.set_response(
+            "/suite/rest/a/task/latest/1/form",
+            200,
+            task_to_accept
+        )
+        self.custom_locust.set_response(
+            "/suite/rest/a/task/latest/1/attributes",
+            200,
+            self.get_task_attributes(is_auto_acceptable=False))
+        output = self.task_set.appian.visitor.visit_task("t-1", False)
+        print(output._state)
+        self.assertEqual(output.form_url, "/suite/rest/a/task/latest/1/form")
+
+    def test_visit_task_failure(self) -> None:
+        task_to_accept = read_mock_file('task_accept_resp.json')
+        self.custom_locust.set_response(
+            "/suite/rest/a/task/latest/1/status",
+            200,
+            task_to_accept
+        )
+        self.custom_locust.set_response(
+            "/suite/rest/a/task/latest/1/form",
+            200,
+            task_to_accept
+        )
+        self.custom_locust.set_response(
+            "/suite/rest/a/task/latest/1/attributes",
+            200,
+            self.get_task_attributes(is_auto_acceptable=False))
+        
+        task_name = "nonexistent task"
+        exact_match = False
+        with self.assertRaises(Exception) as context:
+            self.task_set.appian.visitor.visit_task(task_name, exact_match)
+            self.assertEqual(context.exception.args[0], f"There is no task with name {task_name} in the system under test (Exact match = {exact_match})")
 
     def test_visit_report_success(self) -> None:
         self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/pages/reports/report/qdjDPA/reportlink",
