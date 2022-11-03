@@ -148,7 +148,7 @@ class _Tasks(_Base):
             e = Exception(f'There is no task with name "{task_name}" in the system under test (Exact match = {exact_match})')
             log_locust_error(e, raise_error=True)
         return current_task
-        
+
     def get_task_form_json(self, task_name: str, locust_request_label: str = "", exact_match: bool = True) -> Dict[str, Any]:
         """
         This function calls the API for the specific task to get its "form" data
@@ -170,11 +170,10 @@ class _Tasks(_Base):
             >>> self.appian.task.get_task_form_json("task_name", exact_match=False)
 
         """
-
+        breadcrumb = locust_request_label
         task = self.get_task(task_name, exact_match)
-
         clean_id = task["id"].replace("t-", "")
         children = task.get("content", {}).get("children", [])
         task_title = children[0]
 
-        return self.task_opener.visit_by_task_id(task_title=task_title, task_id=clean_id, locust_request_label=locust_request_label)
+        return self.task_opener.visit_by_task_id(task_title=task_title, task_id=clean_id, locust_request_label=breadcrumb)
