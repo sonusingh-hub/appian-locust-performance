@@ -122,7 +122,7 @@ class TestVisitor(unittest.TestCase):
             "/suite/rest/a/task/latest/1/attributes",
             200,
             self.get_task_attributes(is_auto_acceptable=False))
-        
+
         task_name = "nonexistent task"
         exact_match = False
         with self.assertRaises(Exception) as context:
