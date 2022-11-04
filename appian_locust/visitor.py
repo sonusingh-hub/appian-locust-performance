@@ -8,15 +8,39 @@ from ._design import _Design
 from ._interactor import _Interactor
 from ._records import _Records
 from ._reports import _Reports
+from ._tasks import _Tasks
 from .helper import format_label
 
 
 class Visitor:
     def __init__(self, interactor: _Interactor):
         self.__interactor = interactor
+        self._tasks = _Tasks(self.__interactor)
         self.__reports = _Reports(self.__interactor)
         self.__design = _Design(self.__interactor)
         self.__records = _Records(self.__interactor)
+
+    def visit_task(self, task_name: str, exact_match: bool = True, locust_request_label: str = "") -> SailUiForm:
+        """
+        Gets the SailUiForm given a task name
+
+        Args:
+            task_name (str): Name of the task to search for
+            exact_match (bool, optional): Whether or not a full match is returned. Defaults to True.
+            locust_request_label (str, optional): label to be used within locust
+
+        Returns:
+            SailUiForm: SAIL form for the task
+        """
+        initial_task_resp: dict = self._tasks.get_task(task_name, exact_match)
+        children = initial_task_resp.get("content", {}).get("children", [])
+        task_title = children[0]
+
+        if not locust_request_label:
+            breadcrumb = f"Tasks.{task_title}"
+        else:
+            breadcrumb = locust_request_label
+        return SailUiForm(self.__interactor, self._tasks.get_task_form_json(task_name=task_title, locust_request_label=breadcrumb, exact_match=False), breadcrumb=breadcrumb)
 
     def visit_report(self, report_name: str, exact_match: bool = True) -> 'SailUiForm':
         """
