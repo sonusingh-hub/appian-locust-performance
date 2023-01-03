@@ -151,7 +151,7 @@ class _Interactor:
         else:
             log_locust_error(Exception("Cannot POST a payload that is not of type dict or string"))
             sys.exit(1)
-        with self.client.post(uri, data=post_payload, headers=headers, name=label, files=files,
+        with self.client.post(uri, data=post_payload, headers=headers, timeout=60, name=label, files=files,
                               catch_response=True) as resp:  # type: ResponseContextManager
             try:
                 test_response_for_error(resp, uri, raise_error=check_login, username=username)
@@ -259,6 +259,7 @@ class _Interactor:
         uri = self.replace_base_path_if_appropriate(uri)
         if headers is not None:
             kwargs['headers'] = headers
+            kwargs['timeout'] = 60
         with self.client.get(uri, **kwargs) as resp:  # type: ResponseContextManager
             if check_login and not self.portals_mode:
                 self.check_login(resp)
