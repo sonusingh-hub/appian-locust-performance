@@ -1,7 +1,7 @@
 import enum
 import json
 import random
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Union, Optional
 
 from requests import Response
 
@@ -129,7 +129,7 @@ class _Sites(_Base):
             breadcrumb = f"Sites.{site_name}.{page_name}.SailUi"
             return SailUiForm(self.interactor, site_page_json_response, breadcrumb=breadcrumb)
 
-    def get_all(self, search_string: str = None, locust_request_label: str = None) -> Dict[str, Any]:
+    def get_all(self, search_string: Optional[str] = None, locust_request_label: Optional[str] = None) -> Dict[str, Any]:
         """
         Gets and stores data for all sites, including all of their url stubs
         """

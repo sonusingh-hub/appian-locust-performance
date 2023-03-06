@@ -1,5 +1,4 @@
-from typing import Any, Dict
-from urllib.parse import urlparse
+from typing import Any, Dict, Optional
 
 from requests.models import Response
 
@@ -55,7 +54,7 @@ class _Actions(_Base):
         resp = self.interactor.get_page(uri, headers, locust_request_label)
         return resp.json()
 
-    def get_all(self, search_string: str = None, locust_request_label: str = "Actions") -> Dict[str, Any]:
+    def get_all(self, search_string: Optional[str] = None, locust_request_label: str = "Actions") -> Dict[str, Any]:
         """
         Retrieves all the available "actions" and associated metadata from "Appian-Tempo-Actions"
 

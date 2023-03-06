@@ -1,11 +1,11 @@
 from queue import Queue
-from typing import Any, AnyStr, Dict, List, Tuple
+from typing import Any, AnyStr, Dict, List, Tuple, Optional
 
 import requests
 from appian_locust import AppianTaskSequence
 from locust import User, events, task
 from locust.clients import HttpSession
-from requests.models import PreparedRequest, Response
+from requests.models import PreparedRequest, Response, CaseInsensitiveDict
 
 
 class CustomLocust(User):
@@ -25,7 +25,7 @@ class CustomLocust(User):
         tuples = [(item['method'], item['path']) for item in self.client.request_list]
         return tuples
 
-    def set_response(self, path: str, status_code: int, body: AnyStr, cookies: dict = None,  headers: dict = {}) -> None:
+    def set_response(self, path: str, status_code: int, body: AnyStr, cookies: Optional[dict] = None,  headers: dict = {}) -> None:
         self.client.set_response(path, status_code, body, cookies=cookies, headers=headers)
 
     def set_default_response(self, status_code: int, body: str) -> None:
@@ -110,7 +110,7 @@ class MockClient:
         response = self.make_response(status_code, body, cookies=self.enqueue_cookies)
         self.dummy_responses.put(response)
 
-    def set_response(self, path: str, status_code: int, body: str, cookies: dict = None, headers: dict = {}) -> None:
+    def set_response(self, path: str, status_code: int, body: str, cookies: Optional[dict] = None, headers: CaseInsensitiveDict = CaseInsensitiveDict(None)) -> None:
         response = self.make_response(status_code, body, path=path, cookies=cookies, headers=headers)
         self.response_dict[path] = response
 
@@ -118,7 +118,7 @@ class MockClient:
         response = self.make_response(status_code, body)
         self.default_response = response
 
-    def make_response(self, status_code: int, body: str, path: str = "", cookies: dict = None, headers: dict = {}) -> 'MockResponse':
+    def make_response(self, status_code: int, body: str, path: str = "", cookies: Optional[dict] = None, headers: CaseInsensitiveDict = CaseInsensitiveDict(None)) -> 'MockResponse':
         response = MockResponse()
         response.status_code = status_code
         content = str.encode(body)

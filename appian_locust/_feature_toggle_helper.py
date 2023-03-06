@@ -1,5 +1,5 @@
 import re
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Tuple, Optional
 
 from locust.clients import HttpSession
 
@@ -30,7 +30,7 @@ def get_client_feature_toggles(interactor: _Interactor, session: HttpSession) ->
         raise Exception(f"Could not find flag string within uri {script_uri}")
 
 
-def _get_javascript_uri(interactor: _Interactor, headers: Dict[str, Any] = None) -> Any:
+def _get_javascript_uri(interactor: _Interactor, headers: Optional[Dict[str, Any]] = None) -> Any:
     """
     Gets the URI for the javascript file that contains the Feature Toggles
     """
@@ -52,7 +52,7 @@ def _get_javascript_uri(interactor: _Interactor, headers: Dict[str, Any] = None)
     return None
 
 
-def _get_javascript_and_find_feature_flag(client: HttpSession, script_uri: str, headers: Dict[str, Any] = None) -> Any:
+def _get_javascript_and_find_feature_flag(client: HttpSession, script_uri: str, headers: Optional[Dict[str, Any]] = None) -> Any:
     """
     Read through minified javascript for feature flags
     """

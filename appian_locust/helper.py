@@ -13,7 +13,7 @@ ENV = Environment()
 log = logger.getLogger(__name__)
 
 
-def format_label(label: str, delimiter: str = None, index: int = 0) -> str:
+def format_label(label: str, delimiter: Optional[str] = None, index: int = 0) -> str:
     """
     Simply formats the string by replacing a space with underscores
 

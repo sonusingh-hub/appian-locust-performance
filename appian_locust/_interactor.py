@@ -55,7 +55,7 @@ class _Interactor:
     def set_user_agent_to_mobile(self) -> None:
         self.user_agent = "AppianAndroid/20.2 (Google AOSP on IA Emulator, 9; Build 0-SNAPSHOT; AppianPhone)"
 
-    def setup_request_headers(self, uri: str = None) -> dict:
+    def setup_request_headers(self, uri: Optional[str] = None) -> dict:
         """
         Generates standard headers for session
 
@@ -122,8 +122,8 @@ class _Interactor:
             return uri.replace('/suite', self.client.base_path_override, 1)
         return uri
 
-    def post_page(self, uri: str, payload: Any = {}, headers: Dict[str, Any] = None, label: str = None,
-                  files: dict = None, check_login: bool = True) -> Response:
+    def post_page(self, uri: str, payload: Any = {}, headers: Optional[Dict[str, Any]] = None, label: Optional[str] = None,
+                  files: Optional[dict] = None, check_login: bool = True) -> Response:
         """
         Given a uri, executes POST request and returns response
 
@@ -151,7 +151,7 @@ class _Interactor:
         else:
             log_locust_error(Exception("Cannot POST a payload that is not of type dict or string"))
             sys.exit(1)
-        with self.client.post(uri, data=post_payload, headers=headers, name=label, files=files,
+        with self.client.post(uri, data=post_payload, headers=headers, timeout=60, name=label, files=files,
                               catch_response=True) as resp:  # type: ResponseContextManager
             try:
                 test_response_for_error(resp, uri, raise_error=check_login, username=username)
@@ -164,7 +164,7 @@ class _Interactor:
                 self.write_response_to_lib_folder(label, resp)
             return resp
 
-    def login(self, auth: list = None, retry: bool = True, check_login: bool = True) -> Tuple[HttpSession, Response]:
+    def login(self, auth: Optional[list] = None, retry: bool = True, check_login: bool = True) -> Tuple[HttpSession, Response]:
         if auth is not None:
             self.auth = auth
         """
@@ -236,7 +236,7 @@ class _Interactor:
             if login_page_resp.ok and '__appianCsrfToken' in login_page_resp.cookies:
                 self.login()
 
-    def get_page(self, uri: str, headers: Optional[Dict[str, Any]] = None, label: str = None,
+    def get_page(self, uri: str, headers: Optional[Dict[str, Any]] = None, label: Optional[str] = None,
                  check_login: bool = True) -> Response:
         """
         Given a uri, executes GET request and returns response
@@ -259,6 +259,7 @@ class _Interactor:
         uri = self.replace_base_path_if_appropriate(uri)
         if headers is not None:
             kwargs['headers'] = headers
+            kwargs['timeout'] = 60
         with self.client.get(uri, **kwargs) as resp:  # type: ResponseContextManager
             if check_login and not self.portals_mode:
                 self.check_login(resp)
@@ -269,7 +270,7 @@ class _Interactor:
                 self.write_response_to_lib_folder(label, resp)
             return resp
 
-    def get_webapi(self, uri: str, headers: Dict[str, Any] = None, label: str = None,
+    def get_webapi(self, uri: str, headers: Optional[Dict[str, Any]] = None, label: Optional[str] = None,
                    queryparameters: Dict[str, Any] = {}) -> Response:
         """
         Same as ``get_page``. Additionally it accepts the query parameter to add query parameter while running "GET" operation
@@ -360,7 +361,7 @@ class _Interactor:
             log.info(cleaned_label + ' | X-Trace-Id: ' + response.headers['X-Trace-Id'])
 
     def click_record_link(self, get_url: str, component: Dict[str, Any], context: Dict[str, Any],
-                          label: str = None, headers: Dict[str, Any] = None, locust_label: str = "") -> Dict[str, Any]:
+                          label: Optional[str] = None, headers: Optional[Dict[str, Any]] = None, locust_label: str = "") -> Dict[str, Any]:
         '''
         Use this function to interact specifically with record links, which represent links to new sail forms.
         Args:
@@ -438,7 +439,7 @@ class _Interactor:
 
     def click_start_process_link(self, component: Dict[str, Any], process_model_opaque_id: str,
                                  cache_key: str, site_name: str, page_name: str, is_mobile: bool = False,
-                                 locust_request_label: str = None) -> Dict[str, Any]:
+                                 locust_request_label: Optional[str] = None) -> Dict[str, Any]:
         '''
         Use this function to interact with start process links, which start a process and return the
         start form.
@@ -514,8 +515,8 @@ class _Interactor:
     # COMPONENT RELATED METHODS
 
     def click_component(self, post_url: str, component: Dict[str, Any], context: Dict[str, Any],
-                        uuid: str, label: str = None, headers: Dict[str, Any] = None,
-                        client_mode: str = None) -> Dict[str, Any]:
+                        uuid: str, label: Optional[str] = None, headers: Optional[Dict[str, Any]] = None,
+                        client_mode: Optional[str] = None) -> Dict[str, Any]:
         '''
             Calls the post operation to click certain SAIL components such as Buttons and Dynamic Links
 
@@ -552,7 +553,7 @@ class _Interactor:
     click_link = click_component
 
     def send_dropdown_update(self, post_url: str, dropdown: Dict[str, Any], context: Dict[str, Any],
-                             uuid: str, index: int, label: str = None, url_stub: str = None) -> Dict[str, Any]:
+                             uuid: str, index: int, label: Optional[str] = None, url_stub: Optional[str] = None) -> Dict[str, Any]:
         '''
             Calls the post operation to send an update to a dropdown
 
@@ -590,7 +591,7 @@ class _Interactor:
         return resp.json()
 
     def send_multiple_dropdown_update(self, post_url: str, multi_dropdown: Dict[str, Any], context: Dict[str, Any],
-                                      uuid: str, index: List[int], label: str = None, url_stub: str = None) -> Dict[str, Any]:
+                                      uuid: str, index: List[int], label: Optional[str] = None, url_stub: Optional[str] = None) -> Dict[str, Any]:
         '''
             Calls the post operation to send an update to a multiple dropdown
 
@@ -650,7 +651,7 @@ class _Interactor:
         return payload
 
     def fill_textfield(self, post_url: str, text_field: Dict[str, Any], text: str,
-                       context: Dict[str, Any], uuid: str, label: str = None) -> Dict[str, Any]:
+                       context: Dict[str, Any], uuid: str, label: Optional[str] = None) -> Dict[str, Any]:
         """
         Fill a TextField with the given text
         Args:
@@ -680,7 +681,7 @@ class _Interactor:
         return resp.json()
 
     def fill_pickerfield_text(self, post_url: str, picker_field: Dict[str, Any], text: str,
-                              context: Dict[str, Any], uuid: str, label: str = None) -> Dict[str, Any]:
+                              context: Dict[str, Any], uuid: str, label: Optional[str] = None) -> Dict[str, Any]:
         """
         Fill a Picker field with the given text and randomly select one of the suggested item
         Args:
@@ -714,7 +715,7 @@ class _Interactor:
         return resp.json()
 
     def select_pickerfield_suggestion(self, post_url: str, picker_field: Dict[str, Any], selection: Dict[str, Any],
-                                      context: Dict[str, Any], uuid: str, label: str = None) -> Dict[str, Any]:
+                                      context: Dict[str, Any], uuid: str, label: Optional[str] = None) -> Dict[str, Any]:
         """
         Select a Picker field from available selections
         Args:
@@ -752,7 +753,7 @@ class _Interactor:
 
     def select_checkbox_item(self, post_url: str, checkbox: Dict[str, Any],
                              context: Dict[str, Any], uuid: str, indices: list,
-                             context_label: str = None) -> Dict[str, Any]:
+                             context_label: Optional[str] = None) -> Dict[str, Any]:
         '''
             Calls the post operation to send an update to a checkbox to check all appropriate boxes
 
@@ -835,7 +836,7 @@ class _Interactor:
         return resp.json()
 
     def select_radio_button(self, post_url: str, buttons: Dict[str, Any], context: Dict[str, Any],
-                            uuid: str, index: int, context_label: str = None) -> Dict[str, Any]:
+                            uuid: str, index: int, context_label: Optional[str] = None) -> Dict[str, Any]:
         '''
             Calls the post operation to send an update to a radio button to select the appropriate button
 
@@ -897,7 +898,7 @@ class _Interactor:
 
     def upload_document_to_field(self, post_url: str, upload_field: Dict[str, Any],
                                  context: Dict[str, Any], uuid: str, doc_id: Union[int, List[int]],
-                                 locust_label: str = None, client_mode: str = 'DESIGN') -> Dict[str, Any]:
+                                 locust_label: Optional[str] = None, client_mode: str = 'DESIGN') -> Dict[str, Any]:
         '''
             Calls the post operation to send an update to a upload_field to upload a document or list thereof.
             Requires a previously uploaded document id or ids
@@ -947,7 +948,7 @@ class _Interactor:
 
     def update_date_field(self, post_url: str, date_field_component: Dict[str, Any],
                           date_input: date, context: Dict[str, Any], uuid: str,
-                          locust_label: str = None) -> Dict[str, Any]:
+                          locust_label: Optional[str] = None) -> Dict[str, Any]:
         '''
             Calls the post operation to update a date field
 
@@ -984,7 +985,7 @@ class _Interactor:
 
     def update_datetime_field(self, post_url: str, datetime_field: Dict[str, Any],
                               datetime_input: datetime, context: Dict[str, Any], uuid: str,
-                              locust_label: str = None) -> Dict[str, Any]:
+                              locust_label: Optional[str] = None) -> Dict[str, Any]:
         '''
             Calls the post operation to update a date field
 
@@ -1023,7 +1024,7 @@ class _Interactor:
     def update_grid_from_sail_form(self, post_url: str,
                                    grid_component: Dict[str, Any], new_grid_save_value: Dict[str, Any],
                                    context: Dict[str, Any], uuid: str,
-                                   context_label: str = None) -> Dict[str, Any]:
+                                   context_label: Optional[str] = None) -> Dict[str, Any]:
         """
             Calls the post operation to send a grid update
 
@@ -1053,7 +1054,7 @@ class _Interactor:
     def interact_with_record_grid(self, post_url: str,
                                   grid_component: Dict[str, Any],
                                   context: Dict[str, Any], uuid: str,
-                                  context_label: str = None) -> Dict[str, Any]:
+                                  context_label: Optional[str] = None) -> Dict[str, Any]:
         """
             Calls the post operation to send a record grid update
 
@@ -1083,7 +1084,7 @@ class _Interactor:
 
     def refresh_after_record_action(self, post_url: str, record_action_component: Dict[str, Any],
                                     record_action_trigger_component: Dict[str, Any],
-                                    context: Dict[str, Any], uuid: str, label: str = None) -> Dict[str, Any]:
+                                    context: Dict[str, Any], uuid: str, label: Optional[str] = None) -> Dict[str, Any]:
         """
             Calls the post operation to refresh a form after completion of a record action
 
@@ -1125,7 +1126,7 @@ class _Interactor:
         return resp.json()
 
     def click_record_search_button(self, post_url: str, component: Dict[str, Any], context: Dict[str, Any],
-                                   uuid: str, label: str = None) -> Dict[str, Any]:
+                                   uuid: str, label: Optional[str] = None) -> Dict[str, Any]:
         """
             Calls the post operation to click a record search button
 
@@ -1171,7 +1172,7 @@ class _Interactor:
         return resp.json()
 
     def click_expression_editor_toolbar_button(self, button_action: str, post_url: str, editor_component: Dict[str, Any], context: Dict[str, Any], uuid: str,
-                                               new_value: Dict[str, Any], label: str = None) -> Dict[str, Any]:
+                                               new_value: Dict[str, Any], label: Optional[str] = None) -> Dict[str, Any]:
         """
             Calls the post operation to click on a button in the toolbar for the ExpressionEditorWidget
 
@@ -1202,7 +1203,7 @@ class _Interactor:
         return resp.json()
 
     def launch_query_editor(self, post_url: str, editor_component: Dict[str, Any],
-                            context: Dict[str, Any], uuid: str, expr: str, label: str = None) -> Dict[str, Any]:
+                            context: Dict[str, Any], uuid: str, expr: str, label: Optional[str] = None) -> Dict[str, Any]:
         """
             Calls the post operation to click on the LaunchVQD button in the toolbar for the ExpressionEditorWidget.
             This will launch the query editor with the provided expression.

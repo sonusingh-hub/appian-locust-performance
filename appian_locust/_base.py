@@ -1,6 +1,6 @@
 from .helper import list_filter
 from . import logger
-from typing import Any
+from typing import Any, Optional
 
 
 log = logger.getLogger(__name__)
@@ -11,14 +11,14 @@ class _Base():
     Base class for classes ``_Actions``, ``_News``, ``_Records``, ``_Reports``, ``_Tasks``, ``Sites``
     """
 
-    def get_all(self, search_string: str = None, locust_request_label: str = "") -> Any:
+    def get_all(self, search_string: Optional[str] = None, locust_request_label: str = "") -> Any:
         """
         Common Get All function prototype that is overwritten by subclasses.
         Created only to conform to Mypy validation.
         """
         return None
 
-    def get(self, items_in_dict: dict, item_name: str, exact_match: bool = True, ignore_retry: bool = False, search_string: str = None) -> tuple:
+    def get(self, items_in_dict: dict, item_name: str, exact_match: bool = True, ignore_retry: bool = False, search_string: Optional[str] = None) -> tuple:
         """
         Common Get function to get the specific component from dictionary of items. If item is not found, it calls
         get_all function to update itself and retry.

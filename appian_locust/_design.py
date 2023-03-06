@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from ._interactor import _Interactor
 from ._locust_error_handler import raises_locust_error
@@ -77,7 +77,7 @@ class _Design:
         return find_component_by_type_and_attribute_and_index_in_dict(state, "GridField", "testLabel", "GRID-LABEL")
 
     def click_expression_editor_toolbar_button(self, button_action: str, post_url: str, state: Dict[str, Any], context: Dict[str, Any], uuid: str,
-                                               label: str = None) -> Dict[str, Any]:
+                                               label: Optional[str] = None) -> Dict[str, Any]:
 
         expression_editor_component = find_component_by_type_and_attribute_and_index_in_dict(state, type="ExpressionInfoPanel")["editorWidget"]
         expression = expression_editor_component["value"]

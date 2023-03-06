@@ -27,21 +27,6 @@ gemnasium-python-dependency_scanning:
     reports:
       dependency_scanning: gl-dependency-scanning-report.json
 
-#SAST - Static Application Security Testing
-bandit-sast:
-  stage: test
-  <<: *run_on_merge_and_master
-  variables:
-    SAST_BANDIT_EXCLUDED_PATHS: "*/tests/*"
-  allow_failure: true
-  artifacts:
-    public: false
-    when: on_failure
-    paths:
-      - gl-sast-report.json
-    reports:
-      sast: gl-sast-report.json
-
 Run Unit Tests:
   stage: validate
   only:

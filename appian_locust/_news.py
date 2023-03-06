@@ -1,4 +1,4 @@
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Tuple, Optional
 
 from appian_locust import logger
 from appian_locust._base import _Base
@@ -27,7 +27,7 @@ class _News(_Base):
         self._news: Dict[str, Any] = dict()
         self._errors: int = 0
 
-    def get_all(self, search_string: str = None, locust_request_label: str = "") -> Dict[str, Any]:
+    def get_all(self, search_string: Optional[str] = None, locust_request_label: str = "") -> Dict[str, Any]:
         """
         Retrieves all the available "news" and associated metadata from "Appian-Tempo-News"
 
@@ -74,7 +74,7 @@ class _News(_Base):
             log.warning(f"News search failed for keyword: '{search_string}'")
         return self._news
 
-    def get_news(self, news_name: str, exact_match: bool = True, search_string: str = None) -> Dict[str, Any]:
+    def get_news(self, news_name: str, exact_match: bool = True, search_string: Optional[str] = None) -> Dict[str, Any]:
         """
         Get the information about specific news by name.
 
@@ -104,7 +104,7 @@ class _News(_Base):
                 news_name, exact_match)))
         return current_news
 
-    def visit(self, news_name: str, exact_match: bool = True, search_string: str = None) -> None:
+    def visit(self, news_name: str, exact_match: bool = True, search_string: Optional[str] = None) -> None:
         """
         This function calls the nav API for the specific news item and its related records if any
 
@@ -132,7 +132,7 @@ class _News(_Base):
                 if str(link['href']).strip() != "":
                     self.interactor.get_page(link['href'], headers, label="News.LoadEntry." + news_name)
 
-    def visit_news_entry(self, news_name: str, exact_match: bool = True, search_string: str = None) -> Tuple:
+    def visit_news_entry(self, news_name: str, exact_match: bool = True, search_string: Optional[str] = None) -> Tuple:
         """
         This function simulates navigating to a single entry in the ui. There are two parts to navigating to a
         news entry: navigating to the view and getting the news entry's feed.
@@ -167,7 +167,7 @@ class _News(_Base):
 
         return (view_status_code, feed_status_code)
 
-    def _visit_internal(self, news_name: str, exact_match: bool = True, search_string: str = None) -> Tuple:
+    def _visit_internal(self, news_name: str, exact_match: bool = True, search_string: Optional[str] = None) -> Tuple:
         current_news = self.get_news(news_name, exact_match, search_string)
         headers = self.interactor.setup_request_headers()
         tempo_site_url_stub = "D6JMim"
