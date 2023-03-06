@@ -1,4 +1,4 @@
-from typing import Any, Dict, Union
+from typing import Any, Dict, Union, Optional
 
 from . import logger
 from ._base import _Base
@@ -31,7 +31,7 @@ class _Tasks(_Base):
         self._tasks: Dict[str, Any] = dict()
         self._next_uri: Union[str, None] = _Tasks.INITIAL_FEED_URI
 
-    def get_all(self, search_string: str = None, locust_request_label: str = "Tasks") -> Dict[str, Any]:
+    def get_all(self, search_string: Optional[str] = None, locust_request_label: str = "Tasks") -> Dict[str, Any]:
         """
         Retrieves all the available "tasks" and associated metadata from "Appian-Tempo-Tasks"
 

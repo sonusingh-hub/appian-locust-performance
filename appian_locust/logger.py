@@ -1,4 +1,5 @@
 import logging
+from typing import Optional
 
 """
 Custom logger module borrowing all the functionality of original python's logger module.
@@ -17,7 +18,7 @@ Example:
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 
-def getLogger(name: str = None) -> logging.Logger:
+def getLogger(name: Optional[str] = None) -> logging.Logger:
     """
 
     Args:

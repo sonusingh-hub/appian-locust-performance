@@ -2,7 +2,7 @@ from http import server
 import os
 import urllib.parse
 import uuid
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 
 from locust import SequentialTaskSet, TaskSet
 from locust.clients import HttpSession
@@ -111,7 +111,7 @@ class NoOpEvents():
         return {}
 
 
-def appian_client_without_locust(host: str, record_mode: bool = False, base_path_override: str = None) -> 'AppianClient':
+def appian_client_without_locust(host: str, record_mode: bool = False, base_path_override: Optional[str] = None) -> 'AppianClient':
     """
     Returns an AppianClient that can be used without locust to make requests against a host, e.g.
 
@@ -130,7 +130,7 @@ def appian_client_without_locust(host: str, record_mode: bool = False, base_path
 
 
 class AppianClient:
-    def __init__(self, session: HttpSession, host: str, base_path_override: str = None, portals_mode: bool = False) -> None:
+    def __init__(self, session: HttpSession, host: str, base_path_override: Optional[str] = None, portals_mode: bool = False) -> None:
         """
         Appian client class contains all the required functions to interact with Tempo.
 
@@ -207,7 +207,7 @@ class AppianClient:
         """
         return self._sites
 
-    def login(self, auth: list = None, check_login: bool = True) -> Tuple[HttpSession, Response]:
+    def login(self, auth: Optional[list] = None, check_login: bool = True) -> Tuple[HttpSession, Response]:
         return self.interactor.login(auth, check_login=check_login)
 
     def logout(self) -> None:

@@ -1,6 +1,7 @@
 import json
 import os
 import unittest
+from typing import Optional
 
 from appian_locust import AppianTaskSet
 from appian_locust.helper import find_component_by_attribute_in_dict, find_component_by_index_in_dict
@@ -27,7 +28,7 @@ class TestInteractor(unittest.TestCase):
     default_user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36"
     mobile_user_agent = "AppianAndroid/20.2 (Google AOSP on IA Emulator, 9; Build 0-SNAPSHOT; AppianPhone)"
 
-    def setUpWithPath(self, base_path_override: str = None) -> None:
+    def setUpWithPath(self, base_path_override: Optional[str] = None) -> None:
         self.custom_locust = CustomLocust(Locust())
         parent_task_set = TaskSet(self.custom_locust)
         setattr(parent_task_set, "host", "")

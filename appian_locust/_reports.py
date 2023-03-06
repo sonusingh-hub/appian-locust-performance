@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 from urllib.parse import quote
 
 from ._base import _Base
@@ -50,7 +50,7 @@ class _Reports(_Base):
         resp = self.interactor.get_page(uri, headers, f'{locust_request_label}.Nav')
         return resp.json()
 
-    def get_all(self, search_string: str = None, locust_request_label: str = "Reports.Feed") -> Dict[str, Any]:
+    def get_all(self, search_string: Optional[str] = None, locust_request_label: str = "Reports.Feed") -> Dict[str, Any]:
         """
         Retrieves all the available "reports" and associated metadata from "Appian-Tempo-Reports"
 

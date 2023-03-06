@@ -13,6 +13,8 @@ pytest-cov = "==2.7.1"
 autopep8 = "==1.4.4"
 #appian-locust = {editable = true,path = "."}
 twine = "==2.0.0"
+types-requests = "==2.28.11.15"
+types-urllib3 = "==1.26.25.8"
 
 [requires]
 python_version = "3.7"

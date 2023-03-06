@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from . import logger
 from ._interactor import _Interactor
@@ -21,7 +21,7 @@ class _TaskOpener:
 
         self._tasks: Dict[str, Any] = dict()
 
-    def accept_a_task(self, payload: str, task_id: str, headers: Dict[str, Any] = None, task_title: str = "", locust_request_label: str = "") -> Dict[str, Any]:
+    def accept_a_task(self, payload: str, task_id: str, headers: Optional[Dict[str, Any]] = None, task_title: str = "", locust_request_label: str = "") -> Dict[str, Any]:
         """Accept a task if necessary
 
         Args:
@@ -52,7 +52,7 @@ class _TaskOpener:
                                          label=label)
         return resp.json()
 
-    def visit_by_task_id(self, task_title: str, task_id: str, extra_headers: Dict[str, Any] = None, locust_request_label: str = "") -> Dict[str, Any]:
+    def visit_by_task_id(self, task_title: str, task_id: str, extra_headers: Optional[Dict[str, Any]] = None, locust_request_label: str = "") -> Dict[str, Any]:
         """Vist a task page and the corresponding json using the task_id
 
         Args:

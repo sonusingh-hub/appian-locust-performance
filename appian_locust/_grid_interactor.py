@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from .exceptions import ComponentNotFoundException
 
@@ -34,7 +34,7 @@ class GridInteractor:
             raise Exception(f"Index {index} out of range, only found {len(grids)} grid(s) in form")
         return grids[index]
 
-    def find_grid_by_label_or_index(self, form: Dict[str, Any], label: str = None, index: int = None) -> Dict[str, Any]:
+    def find_grid_by_label_or_index(self, form: Dict[str, Any], label: Optional[str] = None, index: Optional[int] = None) -> Dict[str, Any]:
         if label:
             grid = self.find_grid_by_label(label, form)
         elif index is not None:  # 0 is a valid index

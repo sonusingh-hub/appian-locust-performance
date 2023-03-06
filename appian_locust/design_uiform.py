@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from . import logger
 from ._design import _Design
@@ -46,7 +46,7 @@ class DesignUiForm(SailUiForm):
         app_form.breadcrumb = f"Design.SelectedApplicationByName.{application_name}"
         return ApplicationUiForm(self._interactor, self._state, self.breadcrumb)
 
-    def import_application(self, app_file_path: str, customization_file_path: str = None, inspect_and_import: bool = False) -> None:
+    def import_application(self, app_file_path: str, customization_file_path: Optional[str] = None, inspect_and_import: bool = False) -> None:
         # Open the import modal
         self.click_button("Import")
 

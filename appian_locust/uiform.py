@@ -1129,7 +1129,7 @@ class SailUiForm:
         return self._reconcile_state(new_state)
 
     @raises_locust_error
-    def select_rows_in_grid(self, rows: List[int], label: str = None, index: int = None, locust_request_label: str = "") -> 'SailUiForm':
+    def select_rows_in_grid(self, rows: List[int], label: Optional[str] = None, index: Optional[int] = None, locust_request_label: str = "") -> 'SailUiForm':
         """
         Selects rows in a grid
         Either a label or an index is required, indices are useful if there is no title for the grid
@@ -1160,7 +1160,7 @@ class SailUiForm:
         return self._reconcile_state(new_state)
 
     @raises_locust_error
-    def move_to_end_of_paging_grid(self, label: str = None, index: int = None, locust_request_label: str = "") -> 'SailUiForm':
+    def move_to_end_of_paging_grid(self, label: Optional[str] = None, index: Optional[int] = None, locust_request_label: str = "") -> 'SailUiForm':
         """
         Moves to the end of a paging grid, if possible
         Either a label or an index is required, indices are useful if there is no title for the grid
@@ -1190,7 +1190,7 @@ class SailUiForm:
         return self._reconcile_state(new_state)
 
     @raises_locust_error
-    def move_to_beginning_of_paging_grid(self, label: str = None, index: int = None, locust_request_label: str = "") -> 'SailUiForm':
+    def move_to_beginning_of_paging_grid(self, label: Optional[str] = None, index: Optional[int] = None, locust_request_label: str = "") -> 'SailUiForm':
         """
         Moves to the beginning of a paging grid, if possible
         Either a label or an index is required, indices are useful if there is no title for the grid
@@ -1217,7 +1217,7 @@ class SailUiForm:
         return self._reconcile_state(new_state)
 
     @raises_locust_error
-    def move_to_left_in_paging_grid(self, label: str = None, index: int = None, locust_request_label: str = "") -> 'SailUiForm':
+    def move_to_left_in_paging_grid(self, label: Optional[str] = None, index: Optional[int] = None, locust_request_label: str = "") -> 'SailUiForm':
         """
         Moves to the left in a paging grid, if possible
         It might require getting the state of the grid if you've moved to the end/ previous part of the grid
@@ -1248,7 +1248,7 @@ class SailUiForm:
         return self._reconcile_state(new_state)
 
     @raises_locust_error
-    def move_to_right_in_paging_grid(self, label: str = None, index: int = None, locust_request_label: str = "") -> 'SailUiForm':
+    def move_to_right_in_paging_grid(self, label: Optional[str] = None, index: Optional[int] = None, locust_request_label: str = "") -> 'SailUiForm':
         """
         Moves to the right in a paging grid, if possible
         It might require getting the state of the grid if you've moved within the grid
@@ -1279,7 +1279,7 @@ class SailUiForm:
         return self._reconcile_state(new_state)
 
     @raises_locust_error
-    def sort_paging_grid(self, label: str = None, index: int = None, field_name: str = "", ascending: bool = False, locust_request_label: str = "") -> 'SailUiForm':
+    def sort_paging_grid(self, label: Optional[str] = None, index: Optional[int] = None, field_name: str = "", ascending: bool = False, locust_request_label: str = "") -> 'SailUiForm':
         """
         Sorts a paging grid by the field name, which is not necessarily the same as the label of the column
         And might require inspecting the JSON to determine what the sort field is
