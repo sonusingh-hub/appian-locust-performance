@@ -10,7 +10,7 @@ with open(os.path.join('appian_locust', 'VERSION')) as version_file:
 
 setup(
     name="appian-locust",
-    version=version or "UNKNOWN",
+    version=version or "0.0.0.0+LOCAL",
     description='Tools and functions to make testing Appian with Locust easier',
     author='Appian Performance & Reliability Engineering Squad',
     long_description=long_description,
