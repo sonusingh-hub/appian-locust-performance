@@ -178,6 +178,9 @@ class TestAppianBase(unittest.TestCase):
         mock_send.return_value = resp
         resp.history = []
         resp.content = ""
+        resp.url = host + base_path_override
+        resp.reason = "TEST"
+        resp.status_code = 200
 
         # When
         client = appian_client_without_locust(host, record_mode=True,
