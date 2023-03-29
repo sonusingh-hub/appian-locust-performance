@@ -1,5 +1,5 @@
 import unittest
-from typing import List
+from typing import List, Generator, Callable
 
 import appian_locust._feature_toggle_helper as feature_toggle_helper
 from appian_locust import AppianTaskSet
@@ -236,7 +236,7 @@ class FeatureToggleHelperTest(unittest.TestCase):
         # Then
         self.assertEqual(shortVal, 0x7ffceebc)
 
-    def create_override_flag_mask_runner(self, flags: List[FeatureFlag], expectedResult: int) -> None:
+    def create_override_flag_mask_runner(self, flags: Callable[[], Generator[FeatureFlag, None, None]], expectedResult: int) -> None:
         # When
         feature_flag_mask = feature_toggle_helper._create_override_flag_mask(flags)
 
@@ -245,7 +245,8 @@ class FeatureToggleHelperTest(unittest.TestCase):
 
     def test_create_override_flag_mask_no_flag(self) -> None:
         # Given
-        flags: List[FeatureFlag] = []
+        def flags() -> Generator[FeatureFlag, None, None]:
+            yield from ()
         expectedResult = 0
 
         # Then
@@ -253,7 +254,8 @@ class FeatureToggleHelperTest(unittest.TestCase):
 
     def test_create_override_flag_mask_one_flag(self) -> None:
         # Given
-        flags = [FeatureFlag.SAIL_FORMS]
+        def flags() -> Generator[FeatureFlag, None, None]:
+            yield FeatureFlag.SAIL_FORMS
         expectedResult = 4
 
         # Then
@@ -261,19 +263,21 @@ class FeatureToggleHelperTest(unittest.TestCase):
 
     def test_create_override_flag_mask_multiple_flags(self) -> None:
         # Given
-        flags = [FeatureFlag.SAIL_FORMS, FeatureFlag.COMPACT_URI_TEMPLATES]
+        def flags() -> Generator[FeatureFlag, None, None]:
+            yield FeatureFlag.SAIL_FORMS
+            yield FeatureFlag.COMPACT_URI_TEMPLATES
         expectedResult = 1028
 
         # Then
         self.create_override_flag_mask_runner(flags, expectedResult)
 
-    def override_default_flags_runner(self, flags: List[FeatureFlag], expected_featured_flag_extended: str,  expected_feature_flag: str) -> None:
+    def override_default_flags_runner(self, flags: Callable[[], Generator[FeatureFlag, None, None]], expected_featured_flag_extended: str,  expected_feature_flag: str) -> None:
         # Given a snippet of the sites page
         self.task_set.appian.interactor.client.feature_flag_extended = "149dc1fffceebc"
         self.task_set.appian.interactor.client.feature_flag = "7ffceebc"
 
         # When
-        feature_toggle_helper.override_default_flags(self.task_set.appian.interactor, flags)
+        feature_toggle_helper.override_default_feature_flags(self.task_set.appian.interactor, flags)
 
         # Then
         self.assertEqual(self.task_set.appian.interactor.client.feature_flag_extended, expected_featured_flag_extended)
@@ -281,26 +285,32 @@ class FeatureToggleHelperTest(unittest.TestCase):
 
     def test_override_default_flags_no_flags(self) -> None:
         # Given a snippet of the sites page
-        flags: List[FeatureFlag] = []
+        def flags() -> Generator[FeatureFlag, None, None]:
+            yield from ()
 
-        self.override_default_flags_runner(flags, "149dc1fffceebc", "7ffceebc")
+        self.override_default_flags_runner((flags), "149dc1fffceebc", "7ffceebc")
 
     def test_override_default_flags_one_flag(self) -> None:
         # Given a snippet of the sites page
-        flags = [FeatureFlag.SHORT_CIRCUIT_PARTIAL_RENDERING]
+        def flags() -> Generator[FeatureFlag, None, None]:
+            yield FeatureFlag.SHORT_CIRCUIT_PARTIAL_RENDERING
 
         self.override_default_flags_runner(flags, "149dc1fffcefbc", "7ffcefbc")
 
     def test_override_default_flags_multiple_flags(self) -> None:
         # Given a snippet of the sites page
-        flags = [FeatureFlag.SHORT_CIRCUIT_PARTIAL_RENDERING, FeatureFlag.INLINE_TASK_CONTROLS]
+        def flags() -> Generator[FeatureFlag, None, None]:
+            yield FeatureFlag.SHORT_CIRCUIT_PARTIAL_RENDERING
+            yield FeatureFlag.INLINE_TASK_CONTROLS
 
         self.override_default_flags_runner(flags, "149dc1fffcffbc", "7ffcffbc")
 
     def test_declare_device_as_mobile(self) -> None:
         # Given a snippet of the sites page
         self.custom_locust.set_response("/suite/sites", 200, self.html_snippet)
-        flags = [FeatureFlag.RECORD_LIST_FEED_ITEM_DTO]
+
+        def flags() -> Generator[FeatureFlag, None, None]:
+            yield FeatureFlag.RECORD_LIST_FEED_ITEM_DTO
 
         self.override_default_flags_runner(flags, "149dd1fffceebc", "7ffceebc")
 
