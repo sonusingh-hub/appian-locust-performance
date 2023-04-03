@@ -1,5 +1,5 @@
 import re
-from typing import Any, Dict, List, Tuple, Optional
+from typing import Any, Dict, Tuple, Optional, Generator, Callable
 
 from locust.clients import HttpSession
 
@@ -40,15 +40,14 @@ def _get_javascript_uri(interactor: _Interactor, headers: Optional[Dict[str, Any
         uri=news_uri, headers=headers, label="Login.Feature_Toggles.GetSites"
     )
     tempo_text = response.text
-    relative_regex = r'<script src="(.*\/tempo\/ui\/sail-client\/sites-.*?.js)'
-    cloud_regex = r'<script src="(https://web-assets.appiancloud.com/.*\/tempo\/ui\/sail-client\/sites-.*?.js)'
-    for regex in [relative_regex, cloud_regex]:
+
+    for regex in __get_javascript_uri_regex():
         script_regex = interactor.replace_base_path_if_appropriate(regex)
         uri_match = re.search(script_regex, tempo_text)
         if uri_match:
             script_uri = uri_match.groups()[0]
             return script_uri
-        log.info(f"Could not find feature toggle uri using regex {relative_regex}")
+        log.info(f"Could not find feature toggle uri using regex {regex}")
     return None
 
 
@@ -77,11 +76,7 @@ def _get_javascript_and_find_feature_flag(client: HttpSession, script_uri: str, 
             if flag_str:
                 # Not reading the whole stream will throw errors, so continue reading once found
                 continue
-            script_regexes = [
-                r'RAW_DEFAULT_FEATURE_FLAGS=(0x\w+|\d+);',
-                r'RAW_DEFAULT_FEATURE_FLAGS=jsbi__WEBPACK_IMPORTED_MODULE_\d+__\["default"\].BigInt\("(0b[01]+)"\);',
-            ]
-            for script_regex in script_regexes:
+            for script_regex in __get_javascript_feature_flag_regex():
                 js_match = re.search(script_regex, prev_chunk + chunk)
                 if js_match:
                     flag_str = js_match.groups()[0]
@@ -115,19 +110,19 @@ def _truncate_flag_extended(flag_extended: int) -> int:
     return flag_extended & old_flag_mask
 
 
-def _create_override_flag_mask(flags_to_override: List[FeatureFlag]) -> int:
+def _create_override_flag_mask(flags_to_override: Callable[[], Generator[FeatureFlag, None, None]]) -> int:
     """
     Given a list of flag enums from FeatureFlag, this will set that flag to 1 to override the default feature set.
     returns flag mask reflecting all the flags combined.
     """
     flags = 0
-    for flag in flags_to_override:
+    for flag in flags_to_override():
         if isinstance(flag, FeatureFlag):
             flags |= (1 << flag.value)
     return flags
 
 
-def override_default_flags(interactor: _Interactor, flags_to_override: List[FeatureFlag]) -> None:
+def override_default_feature_flags(interactor: _Interactor, flags_to_override: Callable[[], Generator[FeatureFlag, None, None]]) -> None:
     """
     Given a list of flag enums from FeatureFlag, override_default_flags gets the flag mask to
     set all of the flags to true, and it overrides the current feature flag extended value to
@@ -144,4 +139,18 @@ def set_mobile_feature_flags(interactor: _Interactor) -> None:
     """
     This overrides the feature flags to tell the service that the request is coming from a mobile device.
     """
-    override_default_flags(interactor, [FeatureFlag.RECORD_LIST_FEED_ITEM_DTO])
+    override_default_feature_flags(interactor, __get_mobile_feature_flag_overrides)
+
+
+def __get_mobile_feature_flag_overrides() -> Generator[FeatureFlag, None, None]:
+    yield FeatureFlag.RECORD_LIST_FEED_ITEM_DTO
+
+
+def __get_javascript_uri_regex() -> Generator[str, None, None]:
+    yield r'<script src="(.*\/tempo\/ui\/sail-client\/sites-.*?.js)'
+    yield r'<script src="(https://web-assets.appiancloud.com/.*\/tempo\/ui\/sail-client\/sites-.*?.js)'
+
+
+def __get_javascript_feature_flag_regex() -> Generator[str, None, None]:
+    yield r'RAW_DEFAULT_FEATURE_FLAGS=(0x\w+|\d+);'
+    yield r'RAW_DEFAULT_FEATURE_FLAGS=jsbi__WEBPACK_IMPORTED_MODULE_\d+__\["default"\].BigInt\("(0b[01]+)"\);'

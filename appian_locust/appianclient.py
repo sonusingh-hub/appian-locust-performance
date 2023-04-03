@@ -2,7 +2,7 @@ from http import server
 import os
 import urllib.parse
 import uuid
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Optional, Callable, Generator
 
 from locust import SequentialTaskSet, TaskSet
 from locust.clients import HttpSession
@@ -13,7 +13,7 @@ from ._actions import _Actions
 from ._admin import Admin
 from ._feature_flag import FeatureFlag
 from ._feature_toggle_helper import (get_client_feature_toggles,
-                                     override_default_flags,
+                                     override_default_feature_flags,
                                      set_mobile_feature_flags)
 from ._interactor import _Interactor
 from ._locust_error_handler import log_locust_error
@@ -328,8 +328,19 @@ class AppianTaskSet(TaskSet):
 
         See :doc:`override_default_flags <appian_locust._feature_toggle_helper>`
         """
+        def flags_to_override_generator() -> Generator[FeatureFlag, None, None]:
+            yield from flags_to_override
+        self.override_default_flags_generator(flags_to_override_generator)
+
+    def override_default_flags_generator(self, flags_to_override: Callable[[], Generator[FeatureFlag, None, None]]) -> None:
+        """
+        API for overriding default feature flags.
+        Usage of generator provides memory performance improvements.
+
+        See :doc:`override_default_flags <appian_locust._feature_toggle_helper>`
+        """
         try:
-            override_default_flags(self.appian.interactor, flags_to_override)
+            override_default_feature_flags(self.appian.interactor, flags_to_override)
         except Exception as e:
             log_locust_error(e, error_desc="Override Default Flags Error")
             raise e
