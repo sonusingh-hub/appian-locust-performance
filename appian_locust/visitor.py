@@ -8,6 +8,7 @@ from ._design import _Design
 from ._interactor import _Interactor
 from ._records import _Records
 from ._reports import _Reports
+from ._sites import _Sites, PageType
 from ._tasks import _Tasks
 from .helper import format_label
 
@@ -19,6 +20,7 @@ class Visitor:
         self.__reports = _Reports(self.__interactor)
         self.__design = _Design(self.__interactor)
         self.__records = _Records(self.__interactor)
+        self.__sites = _Sites(self.__interactor)
 
     def visit_task(self, task_name: str, exact_match: bool = True, locust_request_label: str = "") -> SailUiForm:
         """
@@ -98,3 +100,60 @@ class Visitor:
         form_json = self.__records.visit_record_type(record_type, exact_match=exact_match, is_mobile=is_mobile)
         breadcrumb = f'Records.{record_type}.RecordListUi'
         return RecordListUiForm(self.__interactor, form_json, breadcrumb=breadcrumb)
+
+    def visit_site(self, site_name: str, page_name: str) -> 'SailUiForm':
+        """
+        Get a SailUiForm for a Task, Report or Action
+
+        Args:
+            site_name(str): Site where the page exists
+            page_name(str): Page to navigate to
+
+        Returns: SailUiForm
+
+        Example:
+            >>> self.appian.visitor.visit_site("site_name","page_name")
+
+        """
+        form_json = self.__sites.fetch_site_tab_json(site_name, page_name)
+
+        breadcrumb = f"Sites.{site_name}.{page_name}.SailUi"
+        return SailUiForm(self.__interactor, form_json, breadcrumb=breadcrumb)
+
+    def visit_site_recordlist(self, site_name: str, page_name: str) -> 'RecordListUiForm':
+        """
+        Get a RecordListUiForm for a record list page on a site
+
+        Args:
+            site_name(str): Site where the page exists
+            page_name(str): Page to navigate to
+
+        Returns: SailUiForm
+
+        Example:
+            >>> self.appian.visitor.visit_site_recordlist("site_name","page_name")
+
+        """
+        page_type = self.__sites.get_site_page_type(site_name, page_name)
+        if page_type != PageType.RECORD:
+            raise Exception(f"Page {page_name} on site {site_name} is not of type record")
+        form_json = self.__sites.fetch_site_tab_json(site_name, page_name)
+
+        breadcrumb = f"Sites.{site_name}.{page_name}.SailUi"
+        return RecordListUiForm(self.__interactor, form_json, breadcrumb=breadcrumb)
+
+    def visit_site_recordlist_and_get_random_record_form(self, site_name: str, page_name: str) -> RecordInstanceUiForm:
+        """
+        Navigates to a site page that is a recordlist then clicks on a random record instance on the first page
+
+        Args:
+            site_name: Site Url stub
+            page_name: Page Url stub
+
+        Returns: RecordInstanceUiForm
+        """
+
+        site_page_json_response = self.__sites.fetch_site_tab_record_json(site_name, page_name)
+        summary_view = site_page_json_response.get("feed") is not None
+        breadcrumb = f"Sites.{site_name}.{page_name}.SailUi"
+        return RecordInstanceUiForm(self.__interactor, site_page_json_response, summary_view=summary_view, breadcrumb=breadcrumb)

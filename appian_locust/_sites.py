@@ -38,7 +38,7 @@ class _Sites(_Base):
         self._sites: Dict[str, Site] = {}
         self._sites_records: Dict[str, Dict[str, Any]] = {}
 
-    def navigate_to_tab(self, site_name: str, page_name: str) -> Response:
+    def fetch_site_tab_json(self, site_name: str, page_name: str) -> Dict[str, Any]:
         """
         Navigates to a site page, either a record, action or report.
 
@@ -48,29 +48,19 @@ class _Sites(_Base):
 
         Returns: Response of report/action/record
         """
-        if site_name not in self._sites:
-            self.get_site_data_by_site_name(site_name)
 
-        if site_name not in self._sites:
-            raise SiteNotFoundException(f"The site with name '{site_name}' could not be found")
-        site: Site = self._sites[site_name]
-        if page_name not in [page.page_name for page in site.pages.values()]:
-            raise PageNotFoundException(f"The site with name '{site_name}' does not contain the page {page_name}")
-        page = site.pages[page_name]
-        page_type = page.page_type.value
-
+        page_type = self.get_site_page_type(site_name, page_name).value
         headers = self._setup_headers_with_sail_json()
 
         self.interactor.get_page(f"/suite/rest/a/sites/latest/{site_name}/page/{page_name}/nav", headers=headers,
                                  label=f"Sites.{site_name}.{page_name}.Nav")
         resp = self.interactor.get_page(f"/suite/rest/a/sites/latest/{site_name}/pages/{page_name}/{page_type}", headers=headers,
                                         label=f"Sites.{site_name}.{page_name}.Ui")
-        return resp
+        return resp.json()
 
-    def navigate_to_tab_and_record_if_applicable(self, site_name: str, page_name: str) -> Response:
+    def fetch_site_tab_record_json(self, site_name: str, page_name: str) -> Dict[str, Any]:
         """
-        Navigates to a site page, either a record, interface, action or report.
-        If a record, then clicks on a random record on the first page.
+        Navigate to a recordList page on a site, then grab a random page from that site
 
         Note: Any record available in the record list as a recordLink will be hit using this function.  There is no
         guarantee that this record will be of any specific type and may not point to a record view.
@@ -81,17 +71,16 @@ class _Sites(_Base):
 
         Returns: Response of report/action, or in the case of a record, response of record object
         """
-        resp = self.navigate_to_tab(site_name, page_name)
+        resp_json = self.fetch_site_tab_json(site_name, page_name)
         if not self._sites[site_name].pages[page_name].page_type == PageType.RECORD:
-            return resp
+            raise Exception(f"Page {page_name} on site {site_name} is not of type record")
         headers = self._setup_headers_with_sail_json()
         if page_name not in self._sites_records:
-            records_for_page, errors = get_all_records_from_json(resp.json())
+            records_for_page, errors = get_all_records_from_json(resp_json)
             self._sites_records[page_name] = records_for_page
         records = list(self._sites_records[page_name])
         if not records:
-            log.error(f"No records found for site={site_name}, page={page_name}")
-            return resp
+            raise Exception(f"No records found for site={site_name}, page={page_name}")
         record_key = random.choice(list(self._sites_records[page_name]))
         label = f"Sites.{site_name}.{page_name}." + format_label(record_key, "::", 0)[:30]
         record_id = record_key.split("::")[1]
@@ -105,29 +94,7 @@ class _Sites(_Base):
             f"/suite/rest/a/sites/latest/{site_name}/page/{page_name}/record/{record_id}/view/summary",
             headers=headers,
             label=label + ".View")
-        return record_resp
-
-    def navigate_to_tab_and_record_get_form(self, site_name: str, page_name: str) -> SailUiForm:
-        """
-        Navigates to a site page, either a record, action or report.
-        If it is a record, then clicks on a random record instance on the first page
-
-        Args:
-            site_name: Site Url stub
-            page_name: Page Url stub
-
-        Returns: SailUiForm of a report/action, or in the case of a record, SailUiForm of a record instance
-        """
-
-        site_page_response: Response = self.navigate_to_tab_and_record_if_applicable(site_name, page_name)
-        site_page_json_response = site_page_response.json()
-        if site_page_json_response.get("feed"):
-            record_view_response = get_record_summary_view_response(site_page_json_response)
-            breadcrumb = f"Sites.{site_name}.{page_name}.SailUi"
-            return SailUiForm(self.interactor, record_view_response, breadcrumb=breadcrumb)
-        else:
-            breadcrumb = f"Sites.{site_name}.{page_name}.SailUi"
-            return SailUiForm(self.interactor, site_page_json_response, breadcrumb=breadcrumb)
+        return record_resp.json()
 
     def get_all(self, search_string: Optional[str] = None, locust_request_label: Optional[str] = None) -> Dict[str, Any]:
         """
@@ -203,25 +170,17 @@ class _Sites(_Base):
         page_type = self._get_type_from_link_type(link_type_raw)
         return Page(page_name, page_type)
 
-    def visit_and_get_form(self, site_name: str, page_name: str) -> 'SailUiForm':
-        """
-        Get a SailUiForm for a Task, Report or Action
+    def get_site_page_type(self, site_name: str, page_name: str) -> 'PageType':
+        if site_name not in self._sites:
+            self.get_site_data_by_site_name(site_name)
 
-        Args:
-            site_name(str): Site where the page exists
-            page_name(str): Page to navigate to
-
-        Returns: SailUiForm
-
-        Example:
-            >>> self.appian.sites.visit_and_get_form("site_name","page_name")
-
-        """
-        resp: Response = self.navigate_to_tab(site_name, page_name)
-        form_json = resp.json()
-
-        breadcrumb = f"Sites.{site_name}.{page_name}.SailUi"
-        return SailUiForm(self.interactor, form_json, breadcrumb=breadcrumb)
+        if site_name not in self._sites:
+            raise SiteNotFoundException(f"The site with name '{site_name}' could not be found")
+        site: Site = self._sites[site_name]
+        if page_name not in [page.page_name for page in site.pages.values()]:
+            raise PageNotFoundException(f"The site with name '{site_name}' does not contain the page {page_name}")
+        page = site.pages[page_name]
+        return page.page_type
 
     def _get_and_memoize_site_data(self, site_name: str, display_name: str, pages_names: List[str]) -> 'Site':
         pages = {}

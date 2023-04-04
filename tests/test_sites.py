@@ -3,6 +3,7 @@ from .mock_client import CustomLocust
 from .mock_reader import read_mock_file
 from requests import Response
 from appian_locust import AppianTaskSet
+from appian_locust._interactor import _Interactor
 from appian_locust._sites import _Sites, SiteNotFoundException, PageNotFoundException, PageType
 from appian_locust.uiform import SailUiForm
 import json
@@ -14,7 +15,10 @@ class TestSites(unittest.TestCase):
 
     def setUp(self) -> None:
         self.custom_locust = CustomLocust(Locust())
+        setattr(self.custom_locust.client, "feature_flag", "")
+        setattr(self.custom_locust.client, "feature_flag_extended", "")
         parent_task_set = TaskSet(self.custom_locust)
+
         setattr(parent_task_set, "host", "")
         setattr(parent_task_set, "auth", ["", ""])
         self.task_set = AppianTaskSet(parent_task_set)
@@ -22,6 +26,9 @@ class TestSites(unittest.TestCase):
 
         # test_on_start_auth_success is covered here.
         self.custom_locust.set_response("auth?appian_environment=tempo", 200, '{}')
+        self.interactor = _Interactor(self.custom_locust.client, "")
+        self.interactor.login(["", ""])
+        self.sites_interactor = _Sites(self.interactor)
         self.task_set.on_start()
 
         all_sites_str = read_mock_file("all_sites.json")
@@ -44,8 +51,8 @@ class TestSites(unittest.TestCase):
             for i in range(5):
                 self.custom_locust.client.enqueue_response(200, page_resp_json)
 
-        self.task_set.appian.sites.get_all()
-        all_sites = self.task_set.appian.sites._sites
+        self.sites_interactor.get_all()
+        all_sites = self.sites_interactor._sites
         self.assertEqual(len(all_sites.keys()), 136)
         self.assertTrue("rla" in all_sites, "rla not found in list of sites")
 
@@ -61,7 +68,7 @@ class TestSites(unittest.TestCase):
     def test_sites_get(self) -> None:
         site_name = 'mrn'
         self.set_sites_json(site_name)
-        site = self.task_set.appian.sites.get_site_data_by_site_name('mrn')
+        site = self.sites_interactor.get_site_data_by_site_name('mrn')
 
     def test_sites_link_type(self) -> None:
         for type_pair in [('InternalActionLink', 'action'),
@@ -71,22 +78,22 @@ class TestSites(unittest.TestCase):
             original_link_type = type_pair[0]
             expected_link_type = type_pair[1]
             link_full = f"{{http://www.host.net/ae/types/2009}}{original_link_type}"
-            link_type = self.task_set.appian.sites._get_type_from_link_type(link_full)
+            link_type = self.sites_interactor._get_type_from_link_type(link_full)
             self.assertEqual(link_type.value, expected_link_type)
 
     def test_sites_bad_link_type(self) -> None:
         with self.assertRaises(Exception) as e:
             bad_link_type = "this is garbage"
-            self.task_set.appian.sites._get_type_from_link_type(bad_link_type)
+            self.sites_interactor._get_type_from_link_type(bad_link_type)
         self.assertEqual(e.exception.args[0], f"Invalid Link Type: {bad_link_type}")
 
     def test_navigate_to_tab_error_cases(self) -> None:
         site_name = "abc"
         self.set_sites_json(site_name)
         with self.assertRaises(SiteNotFoundException):
-            self.task_set.appian.sites.navigate_to_tab("other_site", "123")
+            self.sites_interactor.fetch_site_tab_json("other_site", "123")
         with self.assertRaises(PageNotFoundException):
-            self.task_set.appian.sites.navigate_to_tab(site_name, "123")
+            self.sites_interactor.fetch_site_tab_json(site_name, "123")
 
     def test_navigate_to_tab_success(self) -> None:
         site_name = "abc"
@@ -98,39 +105,8 @@ class TestSites(unittest.TestCase):
         self.custom_locust.set_response(f"/suite/rest/a/sites/latest/{site_name}/pages/{page_name}/{link_type}",
                                         200,
                                         '{"test":"abc"}')
-        tab_resp = self.task_set.appian.sites.navigate_to_tab(site_name, page_name)
-        self.assertEqual({'test': 'abc'}, tab_resp.json())
-
-    def test_visit_and_get_form_success(self) -> None:
-        site_name = "abc"
-        page_name = "create-mrn"
-        link_type = "report"  # Default Page Info
-
-        self.set_sites_json(site_name)
-        expected_uuid = 'abc123'
-        expected_context = '{"abc":"123"}'
-        expected_url = f"/suite/rest/a/sites/latest/{site_name}/pages/{page_name}/{link_type}"
-        form_content = f'{{"context":{expected_context}, "uuid":"{expected_uuid}", "links":[{{"href": "{expected_url}", "rel": "update"}}]}}'
-        self.custom_locust.set_response(expected_url,
-                                        200,
-                                        form_content)
-        ui_form: SailUiForm = self.task_set.appian.sites.visit_and_get_form(site_name, page_name)
-        self.assertEqual(expected_uuid, ui_form.uuid)
-        self.assertEqual(json.loads(expected_context), ui_form.context)
-        self.assertEqual(expected_url, ui_form.form_url)
-
-    def test_navigate_to_tab_and_record_report_success(self) -> None:
-        site_name = "abc"
-        page_name = "create-mrn"
-        link_type = "report"  # Default Page Info
-
-        self.set_sites_json(site_name)
-
-        self.custom_locust.set_response(f"/suite/rest/a/sites/latest/{site_name}/pages/{page_name}/{link_type}",
-                                        200,
-                                        '{"test":"abc"}')
-        tab_resp = self.task_set.appian.sites.navigate_to_tab_and_record_if_applicable(site_name, page_name)
-        self.assertEqual({'test': 'abc'}, tab_resp.json())
+        tab_resp = self.sites_interactor.fetch_site_tab_json(site_name, page_name)
+        self.assertEqual({'test': 'abc'}, tab_resp)
 
     def test_get_sites_records(self) -> None:
         site_name = "orders"
@@ -146,7 +122,7 @@ class TestSites(unittest.TestCase):
             self.custom_locust.set_response(endpoint, 200, nav_resp)
 
         nav_ui = json.loads(nav_resp)
-        for mocked_page_name in self.task_set.appian.sites.get_page_names_from_ui(nav_ui):
+        for mocked_page_name in self.sites_interactor.get_page_names_from_ui(nav_ui):
             self.custom_locust.set_response(f"/suite/rest/a/applications/latest/legacy/sites/{site_name}/page/{mocked_page_name}",
                                             200,
                                             page_resp)
@@ -156,9 +132,9 @@ class TestSites(unittest.TestCase):
 
         self.custom_locust.set_default_response(200, record_resp)
 
-        resp = self.task_set.appian.sites.navigate_to_tab_and_record_if_applicable(site_name, page_name)
+        resp = self.sites_interactor.fetch_site_tab_record_json(site_name, page_name)
 
-        self.assertEqual(resp.text, record_resp)
+        self.assertEqual(resp, json.loads(record_resp))
 
 
 if __name__ == '__main__':
