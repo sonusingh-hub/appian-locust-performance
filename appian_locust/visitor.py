@@ -2,6 +2,7 @@ from appian_locust.record_uiform import RecordInstanceUiForm
 from .application_uiform import ApplicationUiForm
 from .design_object_uiform import DesignObjectUiForm
 from .design_uiform import DesignUiForm
+from .news_info import NewsInfo
 from .record_list_uiform import RecordListUiForm
 from .uiform import SailUiForm
 from ._design import _Design
@@ -157,3 +158,6 @@ class Visitor:
         summary_view = site_page_json_response.get("feed") is not None
         breadcrumb = f"Sites.{site_name}.{page_name}.SailUi"
         return RecordInstanceUiForm(self.__interactor, site_page_json_response, summary_view=summary_view, breadcrumb=breadcrumb)
+
+    def visit_news(self) -> NewsInfo:
+        return NewsInfo(self.__interactor)
