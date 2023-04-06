@@ -10,6 +10,7 @@ from appian_locust.helper import ENV
 from appian_locust._tasks import _Tasks
 from appian_locust._reports import REPORTS_INTERFACE_PATH, REPORTS_NAV_PATH
 from appian_locust._records import RECORDS_INTERFACE_PATH, RECORDS_NAV_PATH
+from appian_locust._sites import _Sites
 
 
 class TestVisitor(unittest.TestCase):
@@ -25,6 +26,7 @@ class TestVisitor(unittest.TestCase):
     record_instance_name = "Actions Page"
     records_interface = read_mock_file("records_interface.json")
     records_nav = read_mock_file("records_nav.json")
+    sites_nav_resp = read_mock_file("sites_nav_resp.json")
 
     def setUp(self) -> None:
         self.custom_locust = CustomLocust(Locust())
@@ -44,8 +46,11 @@ class TestVisitor(unittest.TestCase):
         # Setup responses for page types
         self.setUp_report_responses()
 
-        # Set up responses for records
+        # Setup responses for records
         self.setUp_record_responses()
+
+        # Setup responses for sites
+        self.setUp_sites_responses()
 
     def setUp_task_responses(self) -> None:
         self.custom_locust.set_response(_Tasks.INITIAL_FEED_URI, 200, self.task_feed_resp)
@@ -83,6 +88,15 @@ class TestVisitor(unittest.TestCase):
         self.custom_locust.set_response(RECORDS_INTERFACE_PATH, 200, self.records_interface)
         self.custom_locust.set_response(RECORDS_NAV_PATH, 200, self.records_nav)
 
+    def setUp_sites_responses(self) -> None:
+        page_resp_json = read_mock_file("page_resp.json")
+        all_sites_str = read_mock_file("all_sites.json")
+        self.custom_locust.set_response(_Sites.TEMPO_SITE_PAGE_NAV, 200, all_sites_str)
+        self.custom_locust.client.set_default_response(200, page_resp_json)
+
+    def setUp_sites_json(self, site_name: str) -> None:
+        self.custom_locust.set_response(f"/suite/rest/a/sites/latest/{site_name}/nav", 200, self.sites_nav_resp)
+
     def tearDown(self) -> None:
         self.task_set.on_stop()
 
@@ -103,7 +117,6 @@ class TestVisitor(unittest.TestCase):
             200,
             self.get_task_attributes(is_auto_acceptable=False))
         output = self.task_set.appian.visitor.visit_task("t-1", False)
-        print(output._state)
         self.assertEqual(output.form_url, "/suite/rest/a/task/latest/1/form")
 
     def test_visit_task_failure(self) -> None:
@@ -265,6 +278,60 @@ class TestVisitor(unittest.TestCase):
             )
         self.assertEqual(
             context.exception.args[0], f"There is no record type with name Fake Type in the system under test (Exact match = {exact_match})")
+
+    def test_visit_site_recordlist_and_get_random_record_form_failure(self) -> None:
+        site_name = "abc"
+        page_name = "create-mrn"
+        link_type = "report"  # Default Page Info
+
+        self.setUp_sites_json(site_name)
+        expected_uuid = 'abc123'
+        expected_context = '{"abc":"123"}'
+        expected_url = f"/suite/rest/a/sites/latest/{site_name}/pages/{page_name}/{link_type}"
+        form_content = f'{{"context":{expected_context}, "uuid":"{expected_uuid}", "links":[{{"href": "{expected_url}", "rel": "update"}}]}}'
+        self.custom_locust.set_response(expected_url,
+                                        200,
+                                        form_content)
+        with self.assertRaises(Exception) as context:
+            self.task_set.appian.visitor.visit_site_recordlist_and_get_random_record_form(site_name, page_name)
+        self.assertEqual(
+            context.exception.args[0], f"Page {page_name} on site {site_name} is not of type record")
+
+    def test_visit_site_recordlist_failure(self) -> None:
+        site_name = "abc"
+        page_name = "create-mrn"
+        link_type = "report"  # Default Page Info
+
+        self.setUp_sites_json(site_name)
+        expected_uuid = 'abc123'
+        expected_context = '{"abc":"123"}'
+        expected_url = f"/suite/rest/a/sites/latest/{site_name}/pages/{page_name}/{link_type}"
+        form_content = f'{{"context":{expected_context}, "uuid":"{expected_uuid}", "links":[{{"href": "{expected_url}", "rel": "update"}}]}}'
+        self.custom_locust.set_response(expected_url,
+                                        200,
+                                        form_content)
+        with self.assertRaises(Exception) as context:
+            self.task_set.appian.visitor.visit_site_recordlist(site_name, page_name)
+        self.assertEqual(
+            context.exception.args[0], f"Page {page_name} on site {site_name} is not of type record")
+
+    def test_visit_site(self) -> None:
+        site_name = "abc"
+        page_name = "create-mrn"
+        link_type = "report"  # Default Page Info
+
+        self.setUp_sites_json(site_name)
+        expected_uuid = 'abc123'
+        expected_context = '{"abc":"123"}'
+        expected_url = f"/suite/rest/a/sites/latest/{site_name}/pages/{page_name}/{link_type}"
+        form_content = f'{{"context":{expected_context}, "uuid":"{expected_uuid}", "links":[{{"href": "{expected_url}", "rel": "update"}}]}}'
+        self.custom_locust.set_response(expected_url,
+                                        200,
+                                        form_content)
+        ui_form: SailUiForm = self.task_set.appian.visitor.visit_site(site_name, page_name)
+        self.assertEqual(expected_uuid, ui_form.uuid)
+        self.assertEqual(json.loads(expected_context), ui_form.context)
+        self.assertEqual(expected_url, ui_form.form_url)
 
 
 if __name__ == '__main__':

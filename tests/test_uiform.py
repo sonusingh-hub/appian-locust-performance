@@ -811,8 +811,6 @@ class TestSailUiForm(unittest.TestCase):
 
         args, _ = mock_click_rl.call_args_list[0]
 
-        print(f"args: {args[1]}")
-
         self.assertEqual(args[1]['recordIdentifier'], '101')
 
     @patch('appian_locust.record_uiform.RecordInstanceUiForm')

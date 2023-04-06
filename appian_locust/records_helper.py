@@ -25,15 +25,18 @@ def get_all_records_from_json(json_response: Dict[str, Any]) -> Tuple[Dict[str, 
                 records[error_key_string + str(error_key_count)] = {}
                 log_locust_error(e, error_desc="Corrupt Record Error")
     else:
-        all_linked_items = extract_values(json_response, "#t", "LinkedItem")
-        for current_item in all_linked_items:
+        all_items = extract_values(json_response, "#t", "LinkedItem")
+        label_extractor = _get_linkedItem_label
+        if len(all_items) == 0:
+            all_items = extract_values(json_response, "#t", "FeedItemLayout")
+            label_extractor = _get_feedItemLayout_label
+        for current_item in all_items:
             record_link_raw = extract_values(current_item, "#t", "RecordLink")
             if len(record_link_raw) > 0:
-                label_raw = extract_values(current_item["values"], "#t", "string")
                 record_item = record_link_raw[0]
                 try:
                     opaque_id = record_item["_recordRef"]
-                    label = label_raw[0]["#v"]
+                    label = label_extractor(current_item)
                     record_item["label"] = label
                     key = label + "::" + opaque_id
                     records[key] = record_item
@@ -142,3 +145,11 @@ def get_url_stub_from_record_list_post_request_url(post_url: Optional[str]) -> O
     if post_url:
         record_url_match = match(r'[\S]+\/pages\/records\/recordType\/([\w]+)', post_url)
     return record_url_match.groups()[0] if record_url_match else None
+
+
+def _get_linkedItem_label(item: Dict[str, Any]) -> str:
+    return extract_values(item["values"], "#t", "string")[0]["#v"]
+
+
+def _get_feedItemLayout_label(item: Dict[str, Any]) -> str:
+    return item["title"]

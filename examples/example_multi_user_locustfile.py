@@ -44,6 +44,7 @@ class FrontendUserActor(HttpUser):
     wait_time = between(0.500, 0.500)
     weight = 3
 
+
 class AdminUserActor(HttpUser):
     """
     This represents the user that will interact with the admin panel

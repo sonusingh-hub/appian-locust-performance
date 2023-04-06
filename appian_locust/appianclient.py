@@ -150,7 +150,6 @@ class AppianClient:
         self._actions = _Actions(self.interactor)
         self._admin = Admin(self.interactor)
         self._news = _News(self.interactor)
-        self._sites = _Sites(self.interactor)
         self.visitor = Visitor(self.interactor)
         self.metadata_provider = AppianMetadataProvider(self.interactor)
 
@@ -197,15 +196,6 @@ class AppianClient:
         See :doc:`_news <appian_locust._news>`
         """
         return self._news
-
-    @property
-    def sites(self) -> _Sites:
-        """
-        API for interacting with sites in Appian
-
-        See :doc:`_sites <appian_locust._sites>`
-        """
-        return self._sites
 
     def login(self, auth: Optional[list] = None, check_login: bool = True) -> Tuple[HttpSession, Response]:
         return self.interactor.login(auth, check_login=check_login)

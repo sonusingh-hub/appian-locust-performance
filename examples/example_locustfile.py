@@ -5,6 +5,8 @@ from locust import HttpUser, task, between
 from appian_locust import AppianTaskSet
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
+
+
 class GetFrontPageTaskSet(AppianTaskSet):
     def on_start(self):
         super().on_start()
@@ -17,7 +19,7 @@ class GetFrontPageTaskSet(AppianTaskSet):
 
 class UserActor(HttpUser):
     tasks = [GetFrontPageTaskSet]
-    config_file = os.path.join(CURRENT_DIR,'example_config.json')
+    config_file = os.path.join(CURRENT_DIR, 'example_config.json')
     config = {}
     if os.path.exists(config_file):
         with open(config_file, 'r') as config_file:
