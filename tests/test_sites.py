@@ -32,7 +32,7 @@ class TestSites(unittest.TestCase):
         self.task_set.on_start()
 
         all_sites_str = read_mock_file("all_sites.json")
-        self.custom_locust.set_response(_Sites.TEMPO_SITE_PAGE_NAV, 200, all_sites_str)
+        self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/page/news/nav", 200, all_sites_str)
 
         # Default responses are page responses
         page_resp_json = read_mock_file("page_resp.json")

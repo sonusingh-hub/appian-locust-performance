@@ -14,7 +14,7 @@ from locust import Locust, TaskSet
 
 from .mock_client import CustomLocust, MockClient, SampleAppianTaskSequence
 from .mock_reader import read_mock_file
-from appian_locust._actions import ACTIONS_INTERFACE_PATH, ACTIONS_NAV_PATH, ACTIONS_FEED_PATH
+from appian_locust._actions import ACTIONS_INTERFACE_PATH, ACTIONS_FEED_PATH
 
 log = logger.getLogger(__name__)
 
@@ -42,7 +42,7 @@ class TestAppianBase(unittest.TestCase):
 
         self.task_set.on_start()
         self.custom_locust.set_response(ACTIONS_INTERFACE_PATH, 200, self.actions_interface)
-        self.custom_locust.set_response(ACTIONS_NAV_PATH, 200, self.actions_nav)
+        self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/page/actions/nav", 200, self.actions_nav)
         self.custom_locust.set_response(ACTIONS_FEED_PATH, 200, self.actions_feed)
 
     def tearDown(self) -> None:
@@ -158,7 +158,7 @@ class TestAppianBase(unittest.TestCase):
         inner_client.set_response(
             f"{host}/suite/api/tempo/open-a-case/available-actions?ids=%5B%5D", 200, actions)
         inner_client.set_response(host + ACTIONS_INTERFACE_PATH, 200, self.actions_interface)
-        inner_client.set_response(host + ACTIONS_NAV_PATH, 200, self.actions_nav)
+        inner_client.set_response(host + "/suite/rest/a/sites/latest/D6JMim/page/actions/nav", 200, self.actions_nav)
         inner_client.set_response(host + ACTIONS_FEED_PATH, 200, self.actions_feed)
         appian_client = AppianClient(inner_client, "https://my-fake-host.com")
 

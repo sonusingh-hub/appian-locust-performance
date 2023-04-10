@@ -7,6 +7,10 @@ from appian_locust._locust_error_handler import log_locust_error
 
 log = logger.getLogger(__name__)
 
+NEWS_FEED_PATH = "/suite/api/feed/tempo?t=e,x,b&m=menu-news&st=o"
+NEWS_NAV_PATH = ["/suite/rest/a/sites/latest/D6JMim/page/", "news", "/nav"]
+NEWS_SEARCH_PATH = "/suite/api/feed/tempo?q="
+
 
 class _News(_Base):
     def __init__(self, interactor: _Interactor) -> None:
@@ -44,10 +48,10 @@ class _News(_Base):
 
         """
         if search_string:
-            uri = "/suite/api/feed/tempo?q=" + search_string
+            uri = NEWS_SEARCH_PATH + search_string
             label = "News.Search." + search_string
         else:
-            uri = "/suite/api/feed/tempo?t=e,x,b&m=menu-news&st=o"
+            uri = NEWS_FEED_PATH
             label = locust_request_label or "News.Feed"
 
         self._news = dict()
@@ -170,10 +174,12 @@ class _News(_Base):
     def _visit_internal(self, news_name: str, exact_match: bool = True, search_string: Optional[str] = None) -> Tuple:
         current_news = self.get_news(news_name, exact_match, search_string)
         headers = self.interactor.setup_request_headers()
-        tempo_site_url_stub = "D6JMim"
 
         # Nav
-        nav_uri = "/suite/rest/a/sites/latest/" + tempo_site_url_stub + "/page/news/nav"
+        nav_uri = NEWS_NAV_PATH[0]
+        if self.interactor.url_pattern_version == 1:
+            nav_uri += "p."
+        nav_uri += NEWS_NAV_PATH[1] + NEWS_NAV_PATH[2]
         # navigation request before the search
         headers["Accept"] = "application/vnd.appian.tv.ui+json"
         self.interactor.get_page(uri=nav_uri, headers=headers, label="News.Nav")

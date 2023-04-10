@@ -1,5 +1,6 @@
 from http import server
 import os
+import re
 import urllib.parse
 import uuid
 from typing import List, Tuple, Optional, Callable, Generator
@@ -254,7 +255,17 @@ class AppianTaskSet(TaskSet):
         self._appian = AppianClient(self.client, self.host, base_path_override=base_path_override, portals_mode=portals_mode)
         if not portals_mode:
             self.auth = self.determine_auth()
-            self.appian.login(self.auth)
+            resp = self.appian.login(self.auth)
+            test = r'\\\\\\/suite\\\\\\/rest\\\\\\/a\\\\\\/sites\\\\\\/latest\\\\\\/D6JMim\\\\\\/page\\\\\\/(.+)\\\\\\'
+            m = re.search(test, resp[1].text)
+            if m is None or m.group(1) == 'news':
+                # old way
+                self.appian.interactor.url_pattern_version = 0
+            elif m.group(1) == 'p.news':
+                # new way
+                self.appian.interactor.url_pattern_version = 1
+            else:
+                log.error("appian-locust could not determine appian interaction url pattern.  Please upgrade to the latest version.")
 
         self.appian.get_client_feature_toggles()
 

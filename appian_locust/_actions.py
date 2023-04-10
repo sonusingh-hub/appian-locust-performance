@@ -11,10 +11,11 @@ from .uiform import SailUiForm
 
 log = logger.getLogger(__name__)
 
-KEY_FORM_HREF = "formHref"
-ACTIONS_INTERFACE_PATH = "/suite/rest/a/sites/latest/D6JMim/pages/actions/interface"
-ACTIONS_NAV_PATH = "/suite/rest/a/sites/latest/D6JMim/page/actions/nav"
+ACTIONS_ALL_PATH = "/suite/api/tempo/open-a-case/available-actions?ids=%5B%5D"
 ACTIONS_FEED_PATH = "/suite/api/feed/tempo?m=menu-actions&c=0"
+ACTIONS_INTERFACE_PATH = "/suite/rest/a/sites/latest/D6JMim/pages/actions/interface"
+ACTIONS_NAV_PATH = ("/suite/rest/a/sites/latest/D6JMim/page/", "actions", "/nav")
+KEY_FORM_HREF = "formHref"
 
 
 class _Actions(_Base):
@@ -43,7 +44,10 @@ class _Actions(_Base):
         return resp.json()
 
     def get_actions_nav(self, locust_request_label: str = "Actions") -> Dict[str, Any]:
-        uri = self.interactor.host + ACTIONS_NAV_PATH
+        uri = self.interactor.host + ACTIONS_NAV_PATH[0]
+        if self.interactor.url_pattern_version == 1:
+            uri += "p."
+        uri += ACTIONS_NAV_PATH[1] + ACTIONS_NAV_PATH[2]
         headers = self.interactor.setup_sail_headers()
         resp = self.interactor.get_page(uri, headers, f'{locust_request_label}.Nav')
         return resp.json()
@@ -75,12 +79,10 @@ class _Actions(_Base):
         except Exception as e:
             log_locust_error(e, error_desc="Response Error", raise_error=False)
 
-        path = "/suite/api/tempo/open-a-case/available-actions?ids=%5B%5D"
-
-        headers = self.interactor.setup_request_headers(self.interactor.host + path)
+        headers = self.interactor.setup_request_headers(self.interactor.host + ACTIONS_ALL_PATH)
 
         resp = self.interactor.get_page(
-            self.interactor.host + path, headers=headers, label="Actions.MainMenu.AvailableActions"
+            self.interactor.host + ACTIONS_ALL_PATH, headers=headers, label="Actions.MainMenu.AvailableActions"
         )
         self._actions = dict()
         error_key_string = "ERROR::"

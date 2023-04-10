@@ -12,7 +12,7 @@ from locust import Locust, TaskSet
 from requests.exceptions import HTTPError
 from tests.mock_client import CustomLocust
 from tests.mock_reader import read_mock_file
-from appian_locust._records import RECORDS_INTERFACE_PATH, RECORDS_NAV_PATH
+from appian_locust._records import RECORDS_INTERFACE_PATH
 
 log = logger.getLogger(__name__)
 
@@ -54,7 +54,7 @@ class TestRecords(unittest.TestCase):
             200,
             self.record_summary_view)
         self.custom_locust.set_response(RECORDS_INTERFACE_PATH, 200, self.records_interface)
-        self.custom_locust.set_response(RECORDS_NAV_PATH, 200, self.records_nav)
+        self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/page/records/nav", 200, self.records_nav)
 
     def test_records_get_all(self) -> None:
         all_records = self.record_interactor.get_all()

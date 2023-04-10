@@ -16,7 +16,7 @@ from requests.exceptions import HTTPError
 
 from .mock_client import CustomLocust
 from .mock_reader import read_mock_file
-from appian_locust._reports import REPORTS_INTERFACE_PATH, REPORTS_NAV_PATH
+from appian_locust._reports import REPORTS_INTERFACE_PATH
 
 
 class TestSailUiForm(unittest.TestCase):
@@ -63,7 +63,7 @@ class TestSailUiForm(unittest.TestCase):
         self.custom_locust.set_response("/suite/rest/a/uicontainer/latest/reports", 200, self.reports)
         ENV.stats.clear_all()
         self.custom_locust.set_response(REPORTS_INTERFACE_PATH, 200, self.reports_interface)
-        self.custom_locust.set_response(REPORTS_NAV_PATH, 200, self.reports_nav)
+        self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/page/reports/nav", 200, self.reports_nav)
 
     def test_reports_form_example_fail(self) -> None:
         self.custom_locust.set_response(self.report_link_uri,

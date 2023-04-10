@@ -17,8 +17,12 @@ from ._locust_error_handler import log_locust_error
 
 log = logger.getLogger(__name__)
 
+RECORDS_ALL_PATH = "/suite/rest/a/applications/latest/app/records/view/all"
 RECORDS_INTERFACE_PATH = "/suite/rest/a/sites/latest/D6JMim/pages/records/interface"
-RECORDS_NAV_PATH = "/suite/rest/a/sites/latest/D6JMim/page/records/nav"
+RECORDS_NAV_PATH = ["/suite/rest/a/sites/latest/D6JMim/page/", "records", "/nav"]
+RECORDS_MOBILE_PATH = "/suite/rest/a/applications/latest/legacy/tempo/records/type/"
+RECORD_TYPE_VIEW_PATH = "/suite/rest/a/sites/latest/D6JMim/pages/records/recordType/"
+RECORD_VIEW_PATH = ["/suite/rest/a/sites/latest/", "/page/records/record/", "/view/"]
 
 
 class _Records(_Base):
@@ -48,7 +52,10 @@ class _Records(_Base):
         return resp.json()
 
     def get_records_nav(self, locust_request_label: str = "Records") -> Dict[str, Any]:
-        uri = self.interactor.host + RECORDS_NAV_PATH
+        uri = self.interactor.host + RECORDS_NAV_PATH[0]
+        if self.interactor.url_pattern_version == 1:
+            uri += "p."
+        uri += RECORDS_NAV_PATH[1] + RECORDS_NAV_PATH[2]
         headers = self.interactor.setup_sail_headers()
         resp = self.interactor.get_page(uri, headers, f'{locust_request_label}.Nav')
         return resp.json()
@@ -91,7 +98,7 @@ class _Records(_Base):
 
         Returns (dict): List of record types and associated metadata
         """
-        uri = "/suite/rest/a/applications/latest/app/records/view/all"
+        uri = RECORDS_ALL_PATH
         self._record_types = dict()
 
         headers = self.interactor.setup_request_headers()
@@ -287,8 +294,7 @@ class _Records(_Base):
             view_url_stub = dashboard_val if dashboard_val else "summary"
 
         locust_label = locust_request_label or f'Records.{record_type}.{record_label}.{view_url_stub}'
-
-        uri = f"/suite/rest/a/sites/latest/{tempo_site_url_stub}/page/records/record/{opaque_id}/view/{view_url_stub}"
+        uri = f"{RECORD_VIEW_PATH[0]}{tempo_site_url_stub}{RECORD_VIEW_PATH[1]}{opaque_id}{RECORD_VIEW_PATH[2]}{view_url_stub}"
         resp = self.interactor.get_page(uri=uri, headers=headers, label=locust_label)
         return resp.json()
 
@@ -343,8 +349,7 @@ class _Records(_Base):
         if is_mobile:
             uri = self._get_mobile_records_uri(record_type_url_stub)
         else:
-            tempo_site_url_stub = "D6JMim"
-            uri = f"/suite/rest/a/sites/latest/{tempo_site_url_stub}/pages/records/recordType/{record_type_url_stub}"
+            uri = f"{RECORD_TYPE_VIEW_PATH}{record_type_url_stub}"
             if search_string:
                 uri = f"{uri}?searchTerm={search_string}"
         label = f"Records.{record_type}"
@@ -358,7 +363,7 @@ class _Records(_Base):
     def _get_mobile_records_uri(self, record_type_url_stub: str, search_string: Optional[str] = None) -> str:
         if not record_type_url_stub:
             raise Exception("Mobile records uri must have a unique stub provided.")
-        uri = f"/suite/rest/a/applications/latest/legacy/tempo/records/type/{record_type_url_stub}"
+        uri = f"{RECORDS_MOBILE_PATH}{record_type_url_stub}"
         if search_string:
             return f"{uri}/search/{search_string}"
         return f"{uri}/view/all"

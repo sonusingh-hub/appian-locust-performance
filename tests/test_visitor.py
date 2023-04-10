@@ -8,8 +8,8 @@ from .mock_reader import read_mock_file
 from appian_locust import AppianTaskSet, SailUiForm, ApplicationUiForm, DesignUiForm, DesignObjectUiForm, RecordListUiForm, RecordInstanceUiForm
 from appian_locust.helper import ENV
 from appian_locust._tasks import _Tasks
-from appian_locust._reports import REPORTS_INTERFACE_PATH, REPORTS_NAV_PATH
-from appian_locust._records import RECORDS_INTERFACE_PATH, RECORDS_NAV_PATH
+from appian_locust._reports import REPORTS_INTERFACE_PATH
+from appian_locust._records import RECORDS_INTERFACE_PATH
 from appian_locust._sites import _Sites
 
 
@@ -68,7 +68,7 @@ class TestVisitor(unittest.TestCase):
     def setUp_report_responses(self) -> None:
         self.custom_locust.set_response("/suite/rest/a/uicontainer/latest/reports", 200, read_mock_file("reports_response.json"))
         self.custom_locust.set_response(REPORTS_INTERFACE_PATH, 200, read_mock_file("reports_interface.json"))
-        self.custom_locust.set_response(REPORTS_NAV_PATH, 200, read_mock_file("reports_nav.json"))
+        self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/page/reports/nav", 200, read_mock_file("reports_nav.json"))
 
     def setUp_record_responses(self) -> None:
         self.custom_locust.set_response("/suite/rest/a/applications/latest/app/records/view/all", 200,
@@ -86,12 +86,12 @@ class TestVisitor(unittest.TestCase):
             200,
             self.record_summary_view)
         self.custom_locust.set_response(RECORDS_INTERFACE_PATH, 200, self.records_interface)
-        self.custom_locust.set_response(RECORDS_NAV_PATH, 200, self.records_nav)
+        self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/page/records/nav", 200, self.records_nav)
 
     def setUp_sites_responses(self) -> None:
         page_resp_json = read_mock_file("page_resp.json")
         all_sites_str = read_mock_file("all_sites.json")
-        self.custom_locust.set_response(_Sites.TEMPO_SITE_PAGE_NAV, 200, all_sites_str)
+        self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/page/news/nav", 200, all_sites_str)
         self.custom_locust.client.set_default_response(200, page_resp_json)
 
     def setUp_sites_json(self, site_name: str) -> None:
