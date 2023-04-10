@@ -9,7 +9,7 @@ import os
 import unittest
 from unittest.mock import patch, MagicMock
 from typing import Optional
-from appian_locust._actions import ACTIONS_INTERFACE_PATH, ACTIONS_NAV_PATH, ACTIONS_FEED_PATH
+from appian_locust._actions import ACTIONS_INTERFACE_PATH, ACTIONS_FEED_PATH
 
 
 class TestActions(unittest.TestCase):
@@ -37,7 +37,7 @@ class TestActions(unittest.TestCase):
         self.custom_locust.set_response(
             "/suite/api/tempo/open-a-case/available-actions?ids=%5B%5D", 200, self.actions)
         self.custom_locust.set_response(ACTIONS_INTERFACE_PATH, 200, self.actions_interface)
-        self.custom_locust.set_response(ACTIONS_NAV_PATH, 200, self.actions_nav)
+        self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/page/actions/nav", 200, self.actions_nav)
         self.custom_locust.set_response(ACTIONS_FEED_PATH, 200, self.actions_feed)
 
     def tearDown(self) -> None:

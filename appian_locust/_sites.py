@@ -8,6 +8,7 @@ from requests import Response
 from . import logger
 from ._base import _Base
 from ._interactor import _Interactor
+from ._news import NEWS_NAV_PATH
 from .helper import extract_values, format_label
 from .records_helper import (get_all_records_from_json,
                              get_record_summary_view_response)
@@ -15,9 +16,11 @@ from .uiform import SailUiForm
 
 log = logger.getLogger(__name__)
 
+SITES_NAV_PATH = ["/suite/rest/a/sites/latest/", "/page/", "/nav"]
+SITES_PAGE_PATH = ["/suite/rest/a/sites/latest/", "/pages/", "/"]
+
 
 class _Sites(_Base):
-    TEMPO_SITE_PAGE_NAV = "/suite/rest/a/sites/latest/D6JMim/page/news/nav"
     BROWSER_ACCEPT_HEADER = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3"
 
     def __init__(self, interactor: _Interactor) -> None:
@@ -52,10 +55,15 @@ class _Sites(_Base):
         page_type = self.get_site_page_type(site_name, page_name).value
         headers = self._setup_headers_with_sail_json()
 
-        self.interactor.get_page(f"/suite/rest/a/sites/latest/{site_name}/page/{page_name}/nav", headers=headers,
-                                 label=f"Sites.{site_name}.{page_name}.Nav")
-        resp = self.interactor.get_page(f"/suite/rest/a/sites/latest/{site_name}/pages/{page_name}/{page_type}", headers=headers,
-                                        label=f"Sites.{site_name}.{page_name}.Ui")
+        base_path = f"{SITES_NAV_PATH[0]}{site_name}{SITES_NAV_PATH[1]}"
+        if self.interactor.url_pattern_version == 1:
+            base_path += f"p.{page_name}"
+        else:
+            base_path += f"{page_name}"
+        base_path += SITES_NAV_PATH[2]
+        self.interactor.get_page(base_path, headers=headers, label=f"Sites.{site_name}.{page_name}.Nav")
+        base_path = f"{SITES_PAGE_PATH[0]}{site_name}{SITES_PAGE_PATH[1]}{page_name}{SITES_PAGE_PATH[2]}{page_type}"
+        resp = self.interactor.get_page(base_path, headers=headers, label=f"Sites.{site_name}.{page_name}.Ui")
         return resp.json()
 
     def fetch_site_tab_record_json(self, site_name: str, page_name: str) -> Dict[str, Any]:
@@ -101,7 +109,11 @@ class _Sites(_Base):
         Gets and stores data for all sites, including all of their url stubs
         """
         headers = self._setup_headers_with_sail_json()
-        all_site_resp = self.interactor.get_page(_Sites.TEMPO_SITE_PAGE_NAV, headers=headers, label="Sites.SiteNames")
+        uri = NEWS_NAV_PATH[0]
+        if self.interactor.url_pattern_version == 1:
+            uri += "p."
+        uri += NEWS_NAV_PATH[1] + NEWS_NAV_PATH[2]
+        all_site_resp = self.interactor.get_page(uri, headers=headers, label="Sites.SiteNames")
         all_site_json = all_site_resp.json()
         for site_info in extract_values(all_site_json, '#t', 'SitePageLink'):
             if 'siteUrlStub' in site_info:

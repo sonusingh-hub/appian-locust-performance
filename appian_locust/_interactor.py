@@ -45,6 +45,7 @@ class _Interactor:
         self.datatype_cache = DataTypeCache()
         self.user_agent = ""
         self.portals_mode = portals_mode
+        self.url_pattern_version = 0
         # Set to default as desktop request.
         self.set_user_agent_to_desktop()
 

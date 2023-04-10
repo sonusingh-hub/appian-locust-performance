@@ -7,9 +7,10 @@ from ._locust_error_handler import log_locust_error, test_response_for_error
 from .helper import format_label
 from .uiform import SailUiForm
 
-REPORTS_INTERFACE_PATH = "/suite/rest/a/sites/latest/D6JMim/pages/reports/interface"
-REPORTS_NAV_PATH = "/suite/rest/a/sites/latest/D6JMim/page/reports/nav"
 ALL_REPORTS_URI = "/suite/rest/a/uicontainer/latest/reports"
+REPORTS_INTERFACE_PATH = "/suite/rest/a/sites/latest/D6JMim/pages/reports/interface"
+REPORTS_LINK_PATH = ["/suite/rest/a/sites/latest/D6JMim/pages/reports/report/", "/reportlink"]
+REPORTS_NAV_PATH = ["/suite/rest/a/sites/latest/D6JMim/page/", "reports", "/nav"]
 
 
 class _Reports(_Base):
@@ -36,7 +37,8 @@ class _Reports(_Base):
         report_resp: dict = self.get_report(report_name, exact_match)
         report_url_stub = report_resp['links'][1]['href'].rsplit(
             '/', 1)[1]
-        return f"/suite/rest/a/sites/latest/D6JMim/pages/reports/report/{report_url_stub}/reportlink"
+        uri = f"{REPORTS_LINK_PATH[0]}{report_url_stub}{REPORTS_LINK_PATH[1]}"
+        return uri
 
     def get_reports_interface(self, locust_request_label: str = "Reports") -> Dict[str, Any]:
         uri = self.interactor.host + REPORTS_INTERFACE_PATH
@@ -45,7 +47,10 @@ class _Reports(_Base):
         return resp.json()
 
     def get_reports_nav(self, locust_request_label: str = "Reports") -> Dict[str, Any]:
-        uri = self.interactor.host + REPORTS_NAV_PATH
+        uri = self.interactor.host + REPORTS_NAV_PATH[0]
+        if self.interactor.url_pattern_version == 1:
+            uri += "p."
+        uri += REPORTS_NAV_PATH[1] + REPORTS_NAV_PATH[2]
         headers = self.interactor.setup_sail_headers()
         resp = self.interactor.get_page(uri, headers, f'{locust_request_label}.Nav')
         return resp.json()
@@ -158,10 +163,12 @@ class _Reports(_Base):
         headers["Accept"] = "application/vnd.appian.tv.ui+json"
 
         # navigation request
+        uri = REPORTS_NAV_PATH[0]
+        if self.interactor.url_pattern_version == 1:
+            uri += "p."
+        uri += REPORTS_NAV_PATH[1] + REPORTS_NAV_PATH[2]
         label = "Reports.Nav." + format_label(report_name, "::", 0)
-        self.interactor.get_page(uri=REPORTS_NAV_PATH, headers=headers, label=label)
-
-        # report request
+        self.interactor.get_page(uri=uri, headers=headers, label=label)  # report request
         label = "Reports.GetUi." + format_label(report_name, "::", 0)
         resp = self.interactor.get_page(uri=form_uri, headers=headers, label=label)
         test_response_for_error(resp)
