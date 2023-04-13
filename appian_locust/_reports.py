@@ -76,9 +76,6 @@ class _Reports(_Base):
 
         uri = ALL_REPORTS_URI
         if search_string:
-            # If using exact_match=True, then a unique identifier is require to be appended, which must be removed for the search
-            search_string = search_string.split("::")[0]
-
             # Format search string to be compatible with URLs
             search_string = quote(search_string)
             uri = f"{uri}?q={search_string}"

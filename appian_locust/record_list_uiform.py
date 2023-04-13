@@ -2,7 +2,7 @@ from typing import Any, Dict
 from urllib.parse import quote
 
 from ._interactor import _Interactor
-from .records_helper import get_record_header_response, get_record_summary_view_response
+from .records_helper import get_all_records_from_json
 from .uiform import SailUiForm
 
 
@@ -11,7 +11,7 @@ class RecordListUiForm(SailUiForm):
     def __init__(self, interactor: _Interactor, state: Dict[str, Any], breadcrumb: str = "RecordListUi"):
         super().__init__(interactor, state, breadcrumb)
 
-    def filter_records_using_searchbox(self, search_term: str = "", locust_request_label: str = "") -> 'SailUiForm':
+    def filter_records_using_searchbox(self, search_term: str = "", locust_request_label: str = "") -> 'RecordListUiForm':
         """
         This method allows you to Filter the Record Type List (displaying record instance for a specific record type)
         which makes the same request when typing something in the search box and reloading the page.
@@ -33,3 +33,7 @@ class RecordListUiForm(SailUiForm):
         headers = self._interactor.setup_sail_headers()
         response = self._interactor.get_page(uri=search_uri, headers=headers, label=context_label)
         return RecordListUiForm(self._interactor, response.json(), breadcrumb=context_label)
+
+    def get_visible_record_instances(self) -> Dict[str, Any]:
+        record_instances, _ = get_all_records_from_json(self._state)
+        return record_instances

@@ -4,7 +4,7 @@ from typing import Any
 from unittest.mock import MagicMock, patch
 
 from appian_locust import AppianTaskSet, logger
-from appian_locust.uiform import SailUiForm
+from appian_locust.record_list_uiform import RecordListUiForm
 from locust import Locust, TaskSet
 
 from requests.exceptions import HTTPError
@@ -36,7 +36,7 @@ class TestRecordListUiForm(unittest.TestCase):
     @patch('appian_locust._interactor._Interactor.get_page')
     def test_filter_records_using_searchbox(self, mock_get_page: MagicMock) -> None:
         uri = '/suite/rest/a/sites/latest/D6JMim/pages/records/recordType/commit'
-        record_type_list_form = SailUiForm(self.task_set.appian.interactor, json.loads(read_mock_file("records_response.json")))
+        record_type_list_form = RecordListUiForm(self.task_set.appian.interactor, json.loads(read_mock_file("records_response.json")))
         record_type_list_form.filter_records_using_searchbox("Actions Page")
 
         mock_get_page.assert_called_once()
