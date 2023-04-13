@@ -1324,7 +1324,17 @@ class SailUiForm:
         """
         context_label = locust_request_label or f"{self.breadcrumb}.CardChoice.SelectByLabel.{label}"
         label = "cardChoiceField-" + label
-        return self.select_radio_button_by_test_label(label, index, context_label)
+        component = find_component_by_attribute_in_dict(
+            'testLabel', label, self._state)
+
+        reeval_url = self._get_update_url_for_reeval(self._state)
+        new_value = component["identifiers"][index - 1]
+        new_state = self._interactor.click_generic_element(
+            reeval_url, component, self.context, self.uuid, new_value=new_value, label=context_label)
+        if not new_state:
+            raise Exception(
+                f"No response returned when trying to select card choice field with testLabel '{label}'")
+        return self._reconcile_state(new_state)
 
     @raises_locust_error
     def select_radio_button_by_test_label(self, test_label: str, index: int, locust_request_label: str = "") -> 'SailUiForm':

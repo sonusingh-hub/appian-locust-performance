@@ -592,7 +592,7 @@ class TestSailUiForm(unittest.TestCase):
         self.assertEqual(args[3], test_uuid)
         self.assertEqual(kwargs["context_label"], self.locust_label)
 
-    @patch('appian_locust._interactor._Interactor.select_radio_button')
+    @patch('appian_locust._interactor._Interactor.click_generic_element')
     def test_card_choice_field_select_by_label(self, mock_radio_select_component: MagicMock) -> None:
         uri = "/suite/rest/a/sites/latest/test01/pages/test01/interface"
         test_form = SailUiForm(self.task_set.appian.interactor,
@@ -611,7 +611,7 @@ class TestSailUiForm(unittest.TestCase):
         self.assertEqual(args[1], component)
         self.assertEqual(args[2], test_context)
         self.assertEqual(args[3], test_uuid)
-        self.assertEqual(kwargs["context_label"], self.locust_label)
+        self.assertEqual(kwargs["label"], self.locust_label)
 
     def test_click_card_layout_by_index_no_link(self) -> None:
         test_form = SailUiForm(self.task_set.appian.interactor, json.loads(self.spl_response))
