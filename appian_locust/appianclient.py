@@ -18,8 +18,6 @@ from ._feature_toggle_helper import (get_client_feature_toggles,
                                      set_mobile_feature_flags)
 from ._interactor import _Interactor
 from ._locust_error_handler import log_locust_error
-from ._news import _News
-from ._sites import _Sites
 from .appian_metadata_provider import AppianMetadataProvider
 from .exceptions import MissingConfigurationException
 from .visitor import Visitor
@@ -150,7 +148,6 @@ class AppianClient:
 
         self._actions = _Actions(self.interactor)
         self._admin = Admin(self.interactor)
-        self._news = _News(self.interactor)
         self.visitor = Visitor(self.interactor)
         self.metadata_provider = AppianMetadataProvider(self.interactor)
 
@@ -188,15 +185,6 @@ class AppianClient:
         See :doc:`_actions <appian_locust._admin>`
         """
         return self._admin
-
-    @property
-    def news(self) -> _News:
-        """
-        API for interacting with the news feed
-
-        See :doc:`_news <appian_locust._news>`
-        """
-        return self._news
 
     def login(self, auth: Optional[list] = None, check_login: bool = True) -> Tuple[HttpSession, Response]:
         return self.interactor.login(auth, check_login=check_login)
