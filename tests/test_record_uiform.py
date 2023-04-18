@@ -52,18 +52,30 @@ class TestRecordUiform(unittest.TestCase):
 
     def test_open_summary_view(self) -> None:
         record = self.task_set.appian.visitor.visit_record_instance("Commits", "Actions Page")
-        self.assertEqual("48b34e295ac83ec011d2aeb6d51527de", record._state["_cId"])
+        record_state = record.get_latest_state()
+        self.assertIsNotNone(record_state, "Unexpected behavior: record_state is None")
+        if record_state is not None:
+            self.assertEqual("48b34e295ac83ec011d2aeb6d51527de", record_state["_cId"])
 
     def test_open_header_view(self) -> None:
         record = self.task_set.appian.visitor.visit_record_instance("Commits", "Actions Page", summary_view=False)
-        self.assertEqual("f658254dfed5a0987dd32148f2594053", record._state["_cId"])
+        record_state = record.get_latest_state()
+        self.assertIsNotNone(record_state, "Unexpected behavior: record_state is None")
+        if record_state is not None:
+            self.assertEqual("f658254dfed5a0987dd32148f2594053", record_state["_cId"])
 
     def test_switch_to_header_view(self) -> None:
         record = self.task_set.appian.visitor.visit_record_instance("Commits", "Actions Page")
         record.get_header_view()
-        self.assertEqual("f658254dfed5a0987dd32148f2594053", record._state["_cId"])
+        record_state = record.get_latest_state()
+        self.assertIsNotNone(record_state, "Unexpected behavior: record_state is None")
+        if record_state is not None:
+            self.assertEqual("f658254dfed5a0987dd32148f2594053", record_state["_cId"])
 
     def test_switch_to_summary_view(self) -> None:
         record = self.task_set.appian.visitor.visit_record_instance("Commits", "Actions Page", summary_view=False)
         record.get_summary_view()
-        self.assertEqual("48b34e295ac83ec011d2aeb6d51527de", record._state["_cId"])
+        record_state = record.get_latest_state()
+        self.assertIsNotNone(record_state, "Unexpected behavior: record_state is None")
+        if record_state is not None:
+            self.assertEqual("48b34e295ac83ec011d2aeb6d51527de", record_state["_cId"])

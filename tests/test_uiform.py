@@ -65,6 +65,27 @@ class TestSailUiForm(unittest.TestCase):
         self.custom_locust.set_response(REPORTS_INTERFACE_PATH, 200, self.reports_interface)
         self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/page/reports/nav", 200, self.reports_nav)
 
+    def test_get_latest_state(self) -> None:
+        mock_state = {"a": {"b": 2}}
+        mock_url = self.process_model_form_uri
+        sail_form = SailUiForm(self.task_set.appian.interactor, mock_state, mock_url)
+        returned_state = sail_form.get_latest_state()
+        self.assertEqual(mock_state, returned_state)
+
+    def test_if_get_latest_state_returns_deepcopy(self) -> None:
+        mock_state = {"a": {"b": 2}}
+        mock_url = self.process_model_form_uri
+        sail_form = SailUiForm(self.task_set.appian.interactor, mock_state, mock_url)
+        returned_state = sail_form.get_latest_state()
+        self.assertIsNotNone(returned_state, "Unexpected behavior: returned_state is None")
+        if returned_state is not None:
+            returned_state["b"] = 45
+            """
+            If we don't return deep copy, then change in returned_state dict should result in
+            same change in mock_state dict as well, and ultimately both should be equal.
+            """
+            self.assertNotEqual(mock_state, returned_state)
+
     def test_reports_form_example_fail(self) -> None:
         self.custom_locust.set_response(self.report_link_uri,
                                         500, '{}')
@@ -139,7 +160,7 @@ class TestSailUiForm(unittest.TestCase):
                                         200, deployment_outgoing_tab_response)
         outgoing_tab_form = deployments_sail_form.get_latest_form().click_tab_by_label("Outgoing", "deployment-secondary-tabs")
 
-        component = find_component_by_attribute_in_dict("label", "OneApp", outgoing_tab_form.latest_state)
+        component = find_component_by_attribute_in_dict("label", "OneApp", outgoing_tab_form.get_latest_state())
         self.assertEqual("OneApp", component.get('label'))
 
     def test_deployments_click_tab_exception(self) -> None:
@@ -456,7 +477,7 @@ class TestSailUiForm(unittest.TestCase):
         record_instance_related_action_form = record_instance_header_form.click_related_action("Discuss Case History")
 
         # Assert fields on the related action form
-        text_component = find_component_by_attribute_in_dict('label', 'Action Type', record_instance_related_action_form._state)
+        text_component = find_component_by_attribute_in_dict('label', 'Action Type', record_instance_related_action_form.get_latest_state())
         self.assertEqual(text_component.get("#t"), "TextField")
 
     def test_click_related_action_link_on_summary_dashboard(self) -> None:
@@ -473,7 +494,7 @@ class TestSailUiForm(unittest.TestCase):
         record_instance_related_action_form = record_instance_summary_form.click_related_action("Document Reconciliation")
 
         # Assert fields on the related action form
-        dropdown_component = find_component_by_attribute_in_dict('label', 'Document Type', record_instance_related_action_form._state)
+        dropdown_component = find_component_by_attribute_in_dict('label', 'Document Type', record_instance_related_action_form.get_latest_state())
         self.assertEqual(dropdown_component.get("#t"), "DropdownField")
 
     @patch('appian_locust._interactor._Interactor.get_page')
@@ -509,7 +530,10 @@ class TestSailUiForm(unittest.TestCase):
     @patch('appian_locust.uiform.SailUiForm._click_start_process_link')
     def test_click_card_layout_by_index_spl(self, mock_click_spl: MagicMock) -> None:
         test_form = SailUiForm(self.task_set.appian.interactor, json.loads(self.spl_response))
-        component = find_component_by_label_and_type_dict('label', 'Request Pass', 'StartProcessLink', test_form._state)
+        test_form_state = test_form.get_latest_state()
+        self.assertIsNotNone(test_form_state, "Unexpected behavior: test form state is None")
+        if test_form_state is not None:
+            component = find_component_by_label_and_type_dict('label', 'Request Pass', 'StartProcessLink', test_form_state)
         test_form.click_card_layout_by_index(1, locust_request_label=self.locust_label)
 
         mock_click_spl.assert_called_once()
@@ -531,7 +555,10 @@ class TestSailUiForm(unittest.TestCase):
         mock_state = MagicMock()
         mock_state.get.side_effect = get_call
         mock_click_component.return_value = mock_state
-        component = find_component_by_index_in_dict("DynamicLink", 3, test_form._state)
+        test_form_state = test_form.get_latest_state()
+        self.assertIsNotNone(test_form_state, "Unexpected behavior: test_form_state is None")
+        if test_form_state is not None:
+            component = find_component_by_index_in_dict("DynamicLink", 3, test_form_state)
         test_form.click_card_layout_by_index(3, locust_request_label=self.locust_label)
 
         mock_click_component.assert_called_once()
@@ -545,7 +572,10 @@ class TestSailUiForm(unittest.TestCase):
     @patch('appian_locust._interactor._Interactor.select_radio_button')
     def test_radio_button_select_by_label(self, mock_radio_select_component: MagicMock) -> None:
         test_form = SailUiForm(self.task_set.appian.interactor, json.loads(self.radio_button_initial))
-        component = find_component_by_attribute_in_dict("label", "Cool Buttons", test_form._state)
+        test_form_state = test_form.get_latest_state()
+        self.assertIsNotNone(test_form_state, "Unexpected behavior: test_form_state is None")
+        if test_form_state is not None:
+            component = find_component_by_attribute_in_dict("label", "Cool Buttons", test_form_state)
         test_uuid = test_form.uuid
         test_context = test_form.context
         test_form.select_radio_button_by_label("Cool Buttons", 1, locust_request_label=self.locust_label)
@@ -563,7 +593,10 @@ class TestSailUiForm(unittest.TestCase):
         test_form = SailUiForm(self.task_set.appian.interactor,
                                json.loads(self.card_choice_initial),
                                uri)
-        component = find_component_by_attribute_in_dict("testLabel", "cardChoiceField-Card Choices", test_form._state)
+        test_form_state = test_form.get_latest_state()
+        self.assertIsNotNone(test_form_state, "Unexpected behavior: test_form_state is None")
+        if test_form_state is not None:
+            component = find_component_by_attribute_in_dict("testLabel", "cardChoiceField-Card Choices", test_form_state)
         test_uuid = test_form.uuid
         test_context = test_form.context
         test_form.select_card_choice_field_by_label("Card Choices", 2, locust_request_label=self.locust_label)
@@ -764,10 +797,13 @@ class TestSailUiForm(unittest.TestCase):
         self.assertEqual(task_to_accept_state['uuid'], sites_task_report.uuid)
         self.assertEqual(task_to_accept_state['context'], sites_task_report.context)
 
-        # Assert ui state updated
-        self.assertEqual('Available Case Workers',
-                         find_component_by_attribute_in_dict('label', 'Available Case Workers', sites_task_report._state).get('label')
-                         )
+        sites_task_report_state = sites_task_report.get_latest_state()
+        self.assertIsNotNone(sites_task_report_state, "Unexpected behavior: sites_task_report_state is None")
+        if sites_task_report_state is not None:
+            # Assert ui state updated
+            self.assertEqual('Available Case Workers',
+                             find_component_by_attribute_in_dict('label', 'Available Case Workers', sites_task_report_state).get('label')
+                             )
 
     def test_refresh_after_record_action_interaction(self) -> None:
         sail_ui_record_action_before = json.loads(self.record_action_launch_form_before_refresh)

@@ -33,4 +33,4 @@ class TestApplicationUiform(unittest.TestCase):
             "/suite/rest/a/applications/latest/app/design/lIBKSzmcS2f-JBIoXdpEpcXkuLVVXxoykWGSNEqB-oPAfjLayGXYe7CkjVo53babGjVtBl2x-96-oRsUrFC3i3bZm3cF0kG7wwaG-9H6213zpNl", 200, result_state)
         application = application.click_design_object("RE_stockData")
         self.assertEqual(type(application), DesignObjectUiForm)
-        self.assertEqual(application._state, json.loads(result_state))
+        self.assertEqual(application.get_latest_state(), json.loads(result_state))

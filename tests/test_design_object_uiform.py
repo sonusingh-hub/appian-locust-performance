@@ -34,4 +34,4 @@ class TestDesignObjectUiform(unittest.TestCase):
         self.custom_locust.set_response(
             f"/suite/rest/a/applications/latest/app/design/{ design_object_id }", 200, result_dict)
         sail_form.launch_query_editor()
-        self.assertEqual(sail_form._state, json.loads(result_dict))
+        self.assertEqual(sail_form.get_latest_state(), json.loads(result_dict))
