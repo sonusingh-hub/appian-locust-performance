@@ -247,7 +247,7 @@ class TestVisitor(unittest.TestCase):
             exact_match=False
         )
         self.assertTrue(isinstance(sail_form, RecordInstanceUiForm))
-        self.assertEqual(sail_form.get_response(), {"a": "b"})
+        self.assertEqual(sail_form.get_latest_state(), {"a": "b"})
 
     def test_records_form_incorrect_name(self) -> None:
         record_name = "Fake Record"

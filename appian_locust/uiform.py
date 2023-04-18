@@ -7,6 +7,7 @@ import random
 import warnings
 from typing import Any, Dict, List, Union, Optional, TYPE_CHECKING
 from urllib.parse import quote, urlparse
+from copy import deepcopy
 
 from appian_locust.records_helper import _is_grid
 
@@ -68,26 +69,14 @@ class SailUiForm:
         # Cache data types on opening new form
         self._interactor.datatype_cache.cache(self._state)
 
-    def get_response(self) -> Optional[Dict[str, Any]]:
+    def get_latest_state(self) -> Optional[Dict[str, Any]]:
         """
-        Latest state response
+        Provides a deep copy of latest state of UI form.
 
-        Returns (dict): The last recorded response
-
-        """
-        warnings.warn("The method 'get_response' is deprecated, just do 'self.state' to get the latest returned value")
-        return self._state
-
-    @property
-    def latest_state(self) -> Optional[Dict[str, Any]]:
-        """
-        Latest state response
-
-        Returns (dict): The last recorded response
+        Returns (dict): deep copy of last recorded response.
 
         """
-        warnings.warn("The method 'latest_state' is deprecated, just do 'self.state' on the last returned value")
-        return self._state
+        return deepcopy(self._state)
 
     def get_latest_form(self) -> 'SailUiForm':
         """
