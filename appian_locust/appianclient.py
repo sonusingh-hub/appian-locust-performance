@@ -21,6 +21,7 @@ from ._locust_error_handler import log_locust_error
 from .appian_metadata_provider import AppianMetadataProvider
 from .exceptions import MissingConfigurationException
 from .visitor import Visitor
+from .siteHelper import SiteHelper
 
 log = logger.getLogger(__name__)
 
@@ -149,6 +150,7 @@ class AppianClient:
         self._actions = _Actions(self.interactor)
         self._admin = Admin(self.interactor)
         self.visitor = Visitor(self.interactor)
+        self.site_helper = SiteHelper(self.interactor)
         self.metadata_provider = AppianMetadataProvider(self.interactor)
 
         # Adding a few session specific attributes to self.client to that it can be carried and handled by session
