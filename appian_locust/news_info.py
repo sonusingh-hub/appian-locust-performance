@@ -9,7 +9,7 @@ class NewsInfo:
     def __init__(self, interactor: _Interactor):
         self.__news = _News(interactor)
 
-    def get_all_news_entries(self, search_string: Optional[str] = None) -> Dict[str, Any]:
+    def get_all_available_entries(self, search_string: Optional[str] = None) -> Dict[str, Any]:
         """
         Retrieves all the available "news" and associated metadata from "Appian-Tempo-News"
 
@@ -69,6 +69,6 @@ class NewsInfo:
 
             If only partial name is known,
 
-            >>> news_info.visit_news_entry("news_name", exact_match=False)
+            >>> news_info.visit_news_entry("news_n", exact_match=False)
         """
         return self.__news.visit_news_entry(news_name, exact_match, search_string)

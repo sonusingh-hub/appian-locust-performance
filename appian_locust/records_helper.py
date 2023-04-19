@@ -6,6 +6,14 @@ from .helper import extract_values, find_component_by_attribute_in_dict
 from re import match
 
 
+def get_all_record_types_from_json(json_response: Dict[str, Any]) -> Dict[str, Any]:
+    response = dict()
+    for current_record_type in json_response["ui"]["contents"][0]["feedItems"]:
+        title = current_record_type['title'].strip()
+        response[title] = current_record_type
+    return response
+
+
 def get_all_records_from_json(json_response: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
     is_grid = _is_grid(json_response)
     records = {}

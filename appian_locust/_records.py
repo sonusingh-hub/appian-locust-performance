@@ -9,10 +9,8 @@ from appian_locust import logger
 
 from ._base import _Base
 from ._interactor import _Interactor
-from .helper import format_label
 from .records_helper import (get_all_records_from_json,
-                             get_record_summary_view_response, get_records_from_json_by_column)
-from .uiform import SailUiForm
+                             get_all_record_types_from_json, get_records_from_json_by_column)
 from ._locust_error_handler import log_locust_error
 
 log = logger.getLogger(__name__)
@@ -76,9 +74,6 @@ class _Records(_Base):
             log_locust_error(e, error_desc="Response Error", raise_error=False)
 
         if search_string:
-            # If using exact_match=True, then a unique identifier is require to be appended, which must be removed for the search
-            search_string = search_string.split("::")[0]
-
             # Format search string to be compatible with URLs
             search_string = quote(search_string)
 
@@ -98,23 +93,25 @@ class _Records(_Base):
 
         Returns (dict): List of record types and associated metadata
         """
+
+        json_response = self.fetch_all_records_json(locust_request_label)
+
+        self._record_types = get_all_record_types_from_json(json_response)
+        for title in self._record_types.keys():
+            self._records[title] = dict()
+
+        return self._record_types
+
+    def fetch_all_records_json(self, locust_request_label: str = "Records") -> Dict[str, Any]:
         uri = RECORDS_ALL_PATH
-        self._record_types = dict()
 
         headers = self.interactor.setup_request_headers()
         headers['X-Appian-Features-Extended'] = 'e4bc'
         headers["Accept"] = "application/vnd.appian.tv.ui+json"
         response = self.interactor.get_page(uri=uri, headers=headers, label=locust_request_label)
-        json_response = response.json()
         if not(self._is_response_good(response.text)):
             raise(Exception("Unexpected response on Get call of All Records"))
-
-        for current_record_type in json_response["ui"]["contents"][0]["feedItems"]:
-            title = current_record_type['title'].strip()
-            self._record_types[title] = current_record_type
-            self._records[title] = dict()
-
-        return self._record_types
+        return response.json()
 
     def get_all_records_of_record_type(self, record_type: str, column_index: Optional[int] = None, search_string: Optional[str] = None) -> Dict[str, Any]:
         """
@@ -169,9 +166,6 @@ class _Records(_Base):
         """
 
         if search_string:
-            # If using exact_match=True, then a unique identifier is require to be appended, which must be removed for the search
-            search_string = search_string.split("::")[0]
-
             # Format search string to be compatible with URLs
             search_string = quote(search_string)
 
@@ -345,14 +339,17 @@ class _Records(_Base):
             raise Exception(f"There is no record type with name {record_type} in the system under test")
         record_type_component = self._record_types[record_type]
         record_type_url_stub = record_type_component['link']['value']['urlstub']
+        return self.fetch_record_type_json(record_type_url_stub, is_mobile, search_string, f"Records.{record_type}")
 
+    def fetch_record_type_json(self, record_type_url_stub: str, is_mobile: bool = False, search_string: Optional[str] = None, label: Optional[str] = None) -> Dict[str, Any]:
+        if not label:
+            label = f"Records.{record_type_url_stub}"
         if is_mobile:
             uri = self._get_mobile_records_uri(record_type_url_stub)
         else:
             uri = f"{RECORD_TYPE_VIEW_PATH}{record_type_url_stub}"
             if search_string:
                 uri = f"{uri}?searchTerm={search_string}"
-        label = f"Records.{record_type}"
         headers = self.interactor.setup_request_headers()
         headers["Accept"] = "application/vnd.appian.tv.ui+json"
         response = self.interactor.get_page(uri=uri, headers=headers, label=label)

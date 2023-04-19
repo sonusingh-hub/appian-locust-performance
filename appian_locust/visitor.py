@@ -2,9 +2,9 @@ from appian_locust.record_uiform import RecordInstanceUiForm
 from .application_uiform import ApplicationUiForm
 from .design_object_uiform import DesignObjectUiForm
 from .design_uiform import DesignUiForm
-from .news_info import NewsInfo
 from .record_list_uiform import RecordListUiForm
 from .uiform import SailUiForm
+from ._actions import _Actions
 from ._design import _Design
 from ._interactor import _Interactor
 from ._records import _Records
@@ -17,7 +17,7 @@ from .helper import format_label
 class Visitor:
     def __init__(self, interactor: _Interactor):
         self.__interactor = interactor
-        self._tasks = _Tasks(self.__interactor)
+        self.__tasks = _Tasks(self.__interactor)
         self.__reports = _Reports(self.__interactor)
         self.__design = _Design(self.__interactor)
         self.__records = _Records(self.__interactor)
@@ -35,7 +35,7 @@ class Visitor:
         Returns:
             SailUiForm: SAIL form for the task
         """
-        initial_task_resp: dict = self._tasks.get_task(task_name, exact_match)
+        initial_task_resp: dict = self.__tasks.get_task(task_name, exact_match)
         children = initial_task_resp.get("content", {}).get("children", [])
         task_title = children[0]
 
@@ -43,7 +43,7 @@ class Visitor:
             breadcrumb = f"Tasks.{task_title}"
         else:
             breadcrumb = locust_request_label
-        return SailUiForm(self.__interactor, self._tasks.get_task_form_json(task_name=task_title, locust_request_label=breadcrumb, exact_match=False), breadcrumb=breadcrumb)
+        return SailUiForm(self.__interactor, self.__tasks.get_task_form_json(task_name=task_title, locust_request_label=breadcrumb, exact_match=False), breadcrumb=breadcrumb)
 
     def visit_report(self, report_name: str, exact_match: bool = True) -> 'SailUiForm':
         """
@@ -158,6 +158,3 @@ class Visitor:
         summary_view = site_page_json_response.get("feed") is not None
         breadcrumb = f"Sites.{site_name}.{page_name}.SailUi"
         return RecordInstanceUiForm(self.__interactor, site_page_json_response, summary_view=summary_view, breadcrumb=breadcrumb)
-
-    def visit_news(self) -> NewsInfo:
-        return NewsInfo(self.__interactor)

@@ -497,17 +497,6 @@ class TestSailUiForm(unittest.TestCase):
         dropdown_component = find_component_by_attribute_in_dict('label', 'Document Type', record_instance_related_action_form.get_latest_state())
         self.assertEqual(dropdown_component.get("#t"), "DropdownField")
 
-    @patch('appian_locust._interactor._Interactor.get_page')
-    def test_filter_records_using_searchbox(self, mock_get_page: MagicMock) -> None:
-        uri = '/suite/rest/a/sites/latest/D6JMim/pages/records/recordType/commit'
-        record_type_list_form = SailUiForm(self.task_set.appian.interactor, json.loads(read_mock_file("records_response.json")))
-        record_type_list_form.filter_records_using_searchbox("Actions Page")
-
-        mock_get_page.assert_called_once()
-        _, kwargs = mock_get_page.call_args_list[0]
-        self.assertEqual(kwargs['uri'], f"{uri}?searchTerm=Actions%20Page")
-        self.assertEqual(kwargs['headers']['Accept'], "application/vnd.appian.tv.ui+json")
-
     @patch('appian_locust._interactor._Interactor.click_start_process_link')
     def test_click_start_process_link(self, mock_click_spl: MagicMock) -> None:
         test_form = SailUiForm(self.task_set.appian.interactor, json.loads(self.spl_response))
