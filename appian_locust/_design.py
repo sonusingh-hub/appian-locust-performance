@@ -98,19 +98,8 @@ class _Design:
             }
         }
 
-        payload = save_builder() \
-            .component(expression_editor_component) \
-            .context(context) \
-            .uuid(uuid) \
-            .value(new_value) \
-            .build()
-
         locust_label = label or f'Click \'{button_action}\' Expression Editor Widget Button'
-
-        resp = self.interactor.post_page(
-            post_url, payload=payload, label=locust_label
-        )
-        return resp.json()
+        return self.interactor.click_generic_element(post_url, expression_editor_component, context, uuid, new_value, locust_label)
 
     def _create_object(self, ui_form: SailUiForm, link_name: str, object_name: str) -> 'SailUiForm':
         return ui_form.click(link_name)\
