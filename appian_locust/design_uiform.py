@@ -69,3 +69,37 @@ class DesignUiForm(SailUiForm):
         self.assert_no_validations_present()
 
         self.click_button("Close")
+
+    def search_applications(self, search_str: str, locust_label: Optional[str] = None) -> 'DesignUiForm':
+        """
+        Search the application list in /design, must be on page with application list
+        Args:
+            search_str (str): The string to search
+            locust_label (str): Label to associate request with
+
+        Returns (DesignUiForm): A UiForm with updated state after the search is complete
+
+        """
+        new_state = self.__design.search_design_grid(
+            search_str, self._get_update_url_for_reeval(self._state), self._state, self.context, self.uuid,
+            f"{self.breadcrumb}.ApplicationSearch"
+        )
+        self._reconcile_state(new_state)
+        return self
+
+    def search_objects(self, search_str: str, locust_label: Optional[str] = None) -> 'DesignUiForm':
+        """
+            Search the design object list in /design, must be on page with design object list
+            Args:
+                search_str (str): The string to search
+                locust_label (str): Label to associate request with
+
+            Returns (DesignUiForm): A UiForm with updated state after the search is complete
+
+        """
+        new_state = self.__design.search_design_grid(
+            search_str, self._get_update_url_for_reeval(self._state), self._state, self.context, self.uuid,
+            f"{self.breadcrumb}.ObjectSearch"
+        )
+        self._reconcile_state(new_state)
+        return self

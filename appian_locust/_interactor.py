@@ -137,7 +137,6 @@ class _Interactor:
         Returns: Json response of post operation
 
         """
-
         if headers is None:
             headers = self.setup_sail_headers()
 

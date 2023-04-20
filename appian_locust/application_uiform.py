@@ -4,7 +4,6 @@ from ._design import _Design
 from ._interactor import _Interactor
 from ._locust_error_handler import raises_locust_error
 from .design_object_uiform import DesignObjectUiForm
-from .helper import find_component_by_attribute_in_dict
 from .uiform import SailUiForm
 
 
@@ -16,9 +15,7 @@ class ApplicationUiForm(SailUiForm):
 
     @raises_locust_error
     def click_design_object(self, design_object_name: str) -> DesignObjectUiForm:
-        grid_component = self.__design.find_design_grid(self._state)
-        link_component = find_component_by_attribute_in_dict('testLabel', design_object_name, grid_component, throw_attribute_exception=True)
-        opaque_id = link_component.get("uri").split('/')[-1]
+        opaque_id = self.__design.find_design_object_opaque_id_in_grid(design_object_name, self._state)
         breadcrumb = "Design.SelectedObject." + opaque_id[0:10] + ".SailUi"
         return DesignObjectUiForm(self._interactor, self.__design.fetch_design_object_json(opaque_id), breadcrumb)
 
@@ -36,9 +33,9 @@ class ApplicationUiForm(SailUiForm):
     @raises_locust_error
     def create_report(self, report_name: str) -> 'ApplicationUiForm':
         """
-        Takes an application form and creates a record type with the given name
+        Takes an application form and creates a report with the given name
 
-        Returns: The SAIL UI Form after the record type is created
+        Returns: The SAIL UI Form after the report is created
 
         """
         self.__design._create_object(self, link_name='Report', object_name=report_name)
