@@ -110,7 +110,7 @@ class TestActions(unittest.TestCase):
                                         200,
                                         '{"context": "12345","links": [{"href": "https://instance.host.net/suite/form","rel": "update","title": "Update", \
                                         "type": "application/vnd.appian.tv.ui+json; c=2; t=START_FORM","method": "POST"}], "ui": {"#t": "UiComponentsDelta","modifiedComponents": []}}')
-        sail_form: SailUiForm = self.task_set.appian.actions.visit_and_get_form(
+        sail_form: SailUiForm = self.task_set.appian.visitor.visit_action_and_get_form(
             "Create a Case", False)
 
         label = 'Title'
@@ -132,7 +132,7 @@ class TestActions(unittest.TestCase):
             200,
             '{"context": "12345","links": [{"href": "https://instance.host.net/suite/form","rel": "update","title": "Update", \
             "type": "application/vnd.appian.tv.ui+json; c=2; t=START_FORM","method": "POST"}], "ui": {"#t": "UiComponentsDelta","modifiedComponents": []}}')
-        sail_form: SailUiForm = self.task_set.appian.actions.visit_and_get_form("Create a Case")
+        sail_form: SailUiForm = self.task_set.appian.visitor.visit_action_and_get_form("Create a Case")
 
         label = 'Title'
         value = "Look at me, I am filling out a form"
@@ -144,7 +144,7 @@ class TestActions(unittest.TestCase):
 
     def test_actions_form_example_missing_field(self) -> None:
         self.setup_action_response_with_ui()
-        sail_form: SailUiForm = self.task_set.appian.actions.visit_and_get_form(
+        sail_form: SailUiForm = self.task_set.appian.visitor.visit_action_and_get_form(
             "Create a Case", False)
 
         value = "Look at me, I am filling out a form"
@@ -162,7 +162,7 @@ class TestActions(unittest.TestCase):
 
     def test_actions_form_example_bad_response(self) -> None:
         self.setup_action_response_with_ui()
-        sail_form: SailUiForm = self.task_set.appian.actions.visit_and_get_form(
+        sail_form: SailUiForm = self.task_set.appian.visitor.visit_action_and_get_form(
             "Create a Case", False)
 
         self.custom_locust.set_response(
@@ -184,7 +184,7 @@ class TestActions(unittest.TestCase):
     def test_actions_form_dropdown_errors(self) -> None:
         self.setup_action_response_with_ui('dropdown_test_ui.json')
 
-        sail_form: SailUiForm = self.task_set.appian.actions.visit_and_get_form(
+        sail_form: SailUiForm = self.task_set.appian.visitor.visit_action_and_get_form(
             "Create a Case", False)
 
         dropdown_label = "missing dropdown"
@@ -207,7 +207,7 @@ class TestActions(unittest.TestCase):
                                            mock_get_update_url_for_reeval: MagicMock) -> None:
         self.setup_action_response_with_ui('dropdown_test_ui.json')
 
-        sail_form: SailUiForm = self.task_set.appian.actions.visit_and_get_form(
+        sail_form: SailUiForm = self.task_set.appian.visitor.visit_action_and_get_form(
             "Create a Case", False)
         initial_state = sail_form.get_latest_state()
 
@@ -228,7 +228,7 @@ class TestActions(unittest.TestCase):
         # 'dropdown_test_record_list_ui.json' contains a 'sail-application-url' field
         self.setup_action_response_with_ui('dropdown_test_record_list_ui.json')
 
-        sail_form: SailUiForm = self.task_set.appian.actions.visit_and_get_form(
+        sail_form: SailUiForm = self.task_set.appian.visitor.visit_action_and_get_form(
             "Create a Case", False)
         initial_state = sail_form.get_latest_state()
 
@@ -245,7 +245,7 @@ class TestActions(unittest.TestCase):
     @patch('appian_locust.uiform._Interactor.send_multiple_dropdown_update')
     def test_multiple_dropdown_not_found(self, mock_send_multiple_dropdown_update: MagicMock) -> None:
         self.setup_action_response_with_ui('dropdown_test_ui.json')
-        sail_form: SailUiForm = self.task_set.appian.actions.visit_and_get_form(
+        sail_form: SailUiForm = self.task_set.appian.visitor.visit_action_and_get_form(
             "Create a Case", False)
 
         dropdown_label = "Regions wrong label"
@@ -265,7 +265,7 @@ class TestActions(unittest.TestCase):
                                                         mock_find_component_by_label: MagicMock) -> None:
         self.setup_action_response_with_ui('dropdown_test_ui.json')
 
-        sail_form: SailUiForm = self.task_set.appian.actions.visit_and_get_form(
+        sail_form: SailUiForm = self.task_set.appian.visitor.visit_action_and_get_form(
             "Create a Case", False)
         state1 = sail_form.get_latest_state()
 
@@ -285,7 +285,7 @@ class TestActions(unittest.TestCase):
     def test_actions_form_radio_button_by_label_error(self) -> None:
         self.setup_action_response_with_ui('dropdown_test_ui.json')
 
-        sail_form: SailUiForm = self.task_set.appian.actions.visit_and_get_form(
+        sail_form: SailUiForm = self.task_set.appian.visitor.visit_action_and_get_form(
             "Create a Case", False)
 
         button_label = "missing button"
@@ -304,7 +304,7 @@ class TestActions(unittest.TestCase):
     def test_actions_form_radio_button_by_index_success(self, mock_select_radio_button: MagicMock,
                                                         mock_find_component_by_index: MagicMock) -> None:
         self.setup_action_response_with_ui('dropdown_test_ui.json')
-        sail_form: SailUiForm = self.task_set.appian.actions.visit_and_get_form(
+        sail_form: SailUiForm = self.task_set.appian.visitor.visit_action_and_get_form(
             "Create a Case", False)
         initial_state = sail_form.get_latest_state()
         button_index = 1
@@ -317,7 +317,7 @@ class TestActions(unittest.TestCase):
     def test_actions_form_radio_button_by_index_error(self) -> None:
         self.setup_action_response_with_ui('dropdown_test_ui.json')
 
-        sail_form: SailUiForm = self.task_set.appian.actions.visit_and_get_form(
+        sail_form: SailUiForm = self.task_set.appian.visitor.visit_action_and_get_form(
             "Create a Case", False)
 
         index_too_low = -1

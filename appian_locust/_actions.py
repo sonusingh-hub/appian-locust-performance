@@ -174,18 +174,6 @@ class _Actions(_Base):
         return resp.json()
 
     def visit_and_get_form(self, action_name: str, exact_match: bool = False, locust_request_label: str = "") -> SailUiForm:
-        """
-        Gets the action by name and returns the corresponding SailUiForm to interact with
-
-        If the action is activity chained, this will attempt to start the process and retrieve the chained SAIL form.
-
-        Args:
-            action_name (str): Name of the action
-            exact_match (bool): Should action name match exactly or to be partial match. Default : True
-            locust_request_label (str, optional): label to be used within locust
-
-        Returns: SailUiForm
-        """
         action_key = format_label(action_name, "::", 0)
         label = locust_request_label or f'Actions.GetUi.{action_key}'
         form_json: dict = self.visit(action_name, exact_match, label=label)

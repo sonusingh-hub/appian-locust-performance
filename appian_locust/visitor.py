@@ -22,6 +22,7 @@ class Visitor:
         self.__design = _Design(self.__interactor)
         self.__records = _Records(self.__interactor)
         self.__sites = _Sites(self.__interactor)
+        self.__actions = _Actions(self.__interactor)
 
     def visit_task(self, task_name: str, exact_match: bool = True, locust_request_label: str = "") -> SailUiForm:
         """
@@ -158,3 +159,18 @@ class Visitor:
         summary_view = site_page_json_response.get("feed") is not None
         breadcrumb = f"Sites.{site_name}.{page_name}.SailUi"
         return RecordInstanceUiForm(self.__interactor, site_page_json_response, summary_view=summary_view, breadcrumb=breadcrumb)
+
+    def visit_action_and_get_form(self, action_name: str, exact_match: bool = False, locust_request_label: str = "") -> SailUiForm:
+        """
+        Gets the action by name and returns the corresponding SailUiForm to interact with
+
+        If the action is activity chained, this will attempt to start the process and retrieve the chained SAIL form.
+
+        Args:
+            action_name (str): Name of the action
+            exact_match (bool): Should action name match exactly or to be partial match. Default : False
+            locust_request_label (str, optional): label to be used within locust
+
+        Returns: SailUiForm
+        """
+        return self.__actions.visit_and_get_form(action_name, exact_match, locust_request_label)
