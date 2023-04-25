@@ -21,7 +21,7 @@ class ActionsInfo:
         """
         return self.__actions.get_all()
 
-    def get_action_info(self, action_name: str, exact_match: bool = True) -> Dict[str, Any]:
+    def get_action_info(self, action_name: str, exact_match: bool = False) -> Dict[str, Any]:
         """
         Get the information about specific action by name.
 
@@ -44,3 +44,9 @@ class ActionsInfo:
 
         """
         return self.__actions.get_action(action_name=action_name, exact_match=exact_match)
+
+    def clear_actions_cache(self) -> None:
+        self.__actions.clear_actions_cache()
+
+    def get_errors_count(self) -> int:
+        return self.__actions.get_errors_count()

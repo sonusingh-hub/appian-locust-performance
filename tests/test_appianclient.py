@@ -164,7 +164,7 @@ class TestAppianBase(unittest.TestCase):
 
         # When
         client, resp = appian_client.login(["a", "1"])
-        appian_client.actions.get_all()
+        appian_client.tempo_navigator.navigate_to_actions_and_get_info().get_all_available_actions()
 
         # Then
         self.assertEqual(200, resp.status_code)

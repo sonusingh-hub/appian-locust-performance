@@ -614,7 +614,7 @@ class TestSailUiForm(unittest.TestCase):
         return test_form
 
     def _setup_action_response_with_ui(self, file_name: str = "form_content_response.json") -> None:
-        action = self.task_set.appian.actions.get_action("Create a Case", False)
+        action = self.task_set.appian.tempo_navigator.navigate_to_actions_and_get_info().get_action_info("Create a Case", False)
         resp_json = read_mock_file(file_name)
         self.custom_locust.set_response(action['formHref'], 200, resp_json)
 

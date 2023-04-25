@@ -37,6 +37,12 @@ class _Actions(_Base):
         self._actions: Dict[str, Any] = dict()
         self._errors: int = 0
 
+    def get_errors_count(self) -> int:
+        return self._errors
+
+    def clear_actions_cache(self) -> None:
+        self._actions = dict()
+
     def get_actions_interface(self, locust_request_label: str = "Actions") -> Dict[str, Any]:
         uri = self.interactor.host + ACTIONS_INTERFACE_PATH
         headers = self.interactor.setup_sail_headers()

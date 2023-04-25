@@ -44,11 +44,11 @@ class TestActions(unittest.TestCase):
         self.task_set.on_stop()
 
     def test_actions_get_all(self) -> None:
-        all_actions = self.task_set.appian.actions.get_all()
+        all_actions = self.task_set.appian.tempo_navigator.navigate_to_actions_and_get_info().get_all_available_actions()
         self.assertTrue(len(list(all_actions.keys())) > 0)
 
     def test_actions_get(self) -> None:
-        action = self.task_set.appian.actions.get_action(
+        action = self.task_set.appian.tempo_navigator.navigate_to_actions_and_get_info().get_action_info(
             self.action_under_test)
         self.assertEqual(action['displayLabel'], 'Create a Case')
 
@@ -56,50 +56,50 @@ class TestActions(unittest.TestCase):
         corrupt_actions = self.actions.replace('"opaqueId": "koBOPgHGLIgHRQzrdseZ66wChtz5aQqM_RBTDeSBi9lWr4b18XPJqrikBSQYzzp8_e2Wgw0ku-apJjK94StAV1R3DU5zipwSXfCTA"',
                                                '"corrupt_opaqueId": "koBOPgHGLIgHRQzrdseZ66wChtz5aQqM_RBTDeSBi9lWr4b18XPJqrikBSQYzzp8_e2Wgw0ku-apJjK94StAV1R3DU5zipwSXfCTA"')
         self.custom_locust.set_response("/suite/api/tempo/open-a-case/available-actions?ids=%5B%5D", 200, corrupt_actions)
-        all_actions = self.task_set.appian.actions.get_all()
+        all_actions = self.task_set.appian.tempo_navigator.navigate_to_actions_and_get_info().get_all_available_actions()
         self.assertTrue("ERROR::1" in str(all_actions))
-        self.assertTrue(self.task_set.appian.actions._errors == 1)
+        self.assertTrue(self.task_set.appian.tempo_navigator.navigate_to_actions_and_get_info().get_errors_count() == 1)
 
     def test_actions_zero_actions(self) -> None:
         corrupt_actions = self.actions.replace('"actions"', '"nonexistent_actions"')
         self.custom_locust.set_response("/suite/api/tempo/open-a-case/available-actions?ids=%5B%5D", 200, corrupt_actions)
-        all_actions = self.task_set.appian.actions.get_all()
+        all_actions = self.task_set.appian.tempo_navigator.navigate_to_actions_and_get_info().get_all_available_actions()
         self.assertTrue(all_actions == {})
 
     def test_actions_get_partial_match(self) -> None:
-        action = self.task_set.appian.actions.get_action("Create a Case", False)
+        action = self.task_set.appian.tempo_navigator.navigate_to_actions_and_get_info().get_action_info("Create a Case", False)
         self.assertEqual(action['displayLabel'], 'Create a Case')
 
     def test_actions_get_multiple_matches(self) -> None:
-        self.task_set.appian.actions._actions = dict()  # Resetting the cache.
-        action = self.task_set.appian.actions.get_action("Create a C", False)
+        self.task_set.appian.tempo_navigator.navigate_to_actions_and_get_info().clear_actions_cache()
+        action = self.task_set.appian.tempo_navigator.navigate_to_actions_and_get_info().get_action_info("Create a C", False)
         self.assertTrue("Create a C" in action['displayLabel'])
 
     def test_actions_get_missing_action(self) -> None:
         with self.assertRaisesRegex(Exception, "There is no action with name .* in the system under test.*"):
-            self.task_set.appian.actions.get_action("Missing Action", exact_match=True)
+            self.task_set.appian.tempo_navigator.navigate_to_actions_and_get_info().get_action_info("Missing Action", exact_match=True)
 
     def setup_action_response_no_ui(self) -> None:
-        action = self.task_set.appian.actions.get_action("Create a Case", False)
+        action = self.task_set.appian.tempo_navigator.navigate_to_actions_and_get_info().get_action_info("Create a Case", False)
         self.custom_locust.set_response(action['formHref'], 200, "{}")
 
     def setup_action_response_with_ui(self, file_name: str = "form_content_response.json") -> None:
-        action = self.task_set.appian.actions.get_action("Create a Case", False)
+        action = self.task_set.appian.tempo_navigator.navigate_to_actions_and_get_info().get_action_info("Create a Case", False)
         resp_json = read_mock_file(file_name)
         self.custom_locust.set_response(action['formHref'], 200, resp_json)
 
     def test_actions_visit(self) -> None:
         self.setup_action_response_no_ui()
-        action = self.task_set.appian.actions.visit("Create a Case", False)
+        action = self.task_set.appian.visitor.visit_action_and_get_form("Create a Case", False).get_latest_state()
         self.assertIsInstance(action, dict)
 
     def test_actions_start(self) -> None:
         self.setup_action_response_no_ui()
-        self.task_set.appian.actions.start_action(
+        self.task_set.appian.site_helper.start_action(
             self.action_under_test)
 
     def test_actions_start_skip_design_call(self) -> None:
-        self.task_set.appian.actions.start_action(
+        self.task_set.appian.site_helper.start_action(
             self.action_under_test,
             True)
 
@@ -122,7 +122,7 @@ class TestActions(unittest.TestCase):
         self.assertEqual("12345", resp['context'])
 
     def test_actions_form_example_activity_chained(self) -> None:
-        action = self.task_set.appian.actions.get_action("Create a Case", False)
+        action = self.task_set.appian.tempo_navigator.navigate_to_actions_and_get_info().get_action_info("Create a Case", False)
         resp_json = read_mock_file("form_content_response.json")
 
         self.custom_locust.set_response(action['formHref'], 200, '{"mobileEnabled": "false", "empty": "true", "formType": "START_FORM"}')
