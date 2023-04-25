@@ -27,7 +27,7 @@ class ActionsInfo:
 
         Args:
             action_name (str): Name of the action
-            exact_match (bool): Should action name match exactly or to be partial match. Default : True
+            exact_match (bool): Should action name match exactly or to be partial match. Default : False
 
         Returns (dict): Specific Action's info
 

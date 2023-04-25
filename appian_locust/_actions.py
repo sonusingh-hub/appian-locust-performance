@@ -116,7 +116,7 @@ class _Actions(_Base):
 
         Args:
             action_name (str): Name of the action
-            exact_match (bool): Should action name match exactly or to be partial match. Default : True
+            exact_match (bool): Should action name match exactly or to be partial match. Default : False
 
         Returns (dict): Specific Action's info
 
@@ -146,7 +146,7 @@ class _Actions(_Base):
         Args:
             action_name (str): Name of the action to be called. Name of the action will be in the below pattern.
                          "displayLabel::opaquqId"
-            exact_match (bool, optional): Should action name match exactly or to be partial match. Default : True
+            exact_match (bool, optional): Should action name match exactly or to be partial match. Default : False
 
         Returns (dict): Response of actions's Get UI call in dictionary
 
@@ -202,7 +202,7 @@ class _Actions(_Base):
         Args:
             action_name(str): Name of the action
             skip_design_call(bool, optional): to skip the "GET" call for the action's UI. Default : False
-            exact_match (bool, optional): Should action name match exactly or to be partial match. Default : True
+            exact_match (bool, optional): Should action name match exactly or to be partial match. Default : False
 
         Returns: NONE
 
