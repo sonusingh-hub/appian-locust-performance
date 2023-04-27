@@ -221,7 +221,7 @@ class TestVisitor(unittest.TestCase):
         self.assertEqual(type(sail_form), DesignObjectUiForm)
         self.assertEqual(0, len(ENV.stats.errors))
 
-    @unittest.mock.patch('appian_locust.records_helper.find_component_by_attribute_in_dict', return_value={'children': None})
+    @patch('appian_locust.records_helper.find_component_by_attribute_in_dict', return_value={'children': None})
     def test_records_form_no_embedded_summary(self, find_component_by_attribute_in_dict_function: Any) -> None:
         with self.assertRaises(Exception) as context:
             self.task_set.appian.visitor.visit_record_instance(
@@ -255,7 +255,7 @@ class TestVisitor(unittest.TestCase):
         self.assertEqual(
             context.exception.args[0], f"There is no record type with name {record_type} in the system under test")
 
-    @unittest.mock.patch('appian_locust.records_helper.find_component_by_attribute_in_dict', return_value={'children': [json.dumps({"a": "b"})]})
+    @patch('appian_locust.records_helper.find_component_by_attribute_in_dict', return_value={'children': [json.dumps({"a": "b"})]})
     def test_records_form_example_success(self, find_component_by_attribute_in_dict_function: Any) -> None:
         sail_form = self.task_set.appian.visitor.visit_record_instance(
             "Commits",
