@@ -10,6 +10,7 @@ from ._interactor import _Interactor
 from ._records import _Records
 from ._reports import _Reports
 from ._sites import _Sites, PageType
+from ._admin import _Admin
 from ._tasks import _Tasks
 from .helper import format_label
 
@@ -23,6 +24,7 @@ class Visitor:
         self.__records = _Records(self.__interactor)
         self.__sites = _Sites(self.__interactor)
         self.__actions = _Actions(self.__interactor)
+        self.__admin = _Admin(self.__interactor)
 
     def visit_task(self, task_name: str, exact_match: bool = True, locust_request_label: str = "") -> SailUiForm:
         """
@@ -120,6 +122,18 @@ class Visitor:
         form_json = self.__sites.fetch_site_tab_json(site_name, page_name)
 
         breadcrumb = f"Sites.{site_name}.{page_name}.SailUi"
+        return SailUiForm(self.__interactor, form_json, breadcrumb=breadcrumb)
+
+    def visit_admin(self) -> SailUiForm:
+        """
+        Navigates to /admin
+
+        Returns: SailUiForm
+
+        """
+        form_json = self.__admin.fetch_admin_json()
+
+        breadcrumb = f"Admin.MainMenu.SailUi"
         return SailUiForm(self.__interactor, form_json, breadcrumb=breadcrumb)
 
     def visit_site_recordlist(self, site_name: str, page_name: str) -> 'RecordListUiForm':

@@ -1,25 +1,21 @@
+from typing import Any, Dict
+
 from ._interactor import _Interactor
 from ._locust_error_handler import raises_locust_error
-from .uiform import SailUiForm
 
 ADMIN_URI_PATH: str = "/suite/rest/a/applications/latest/app/admin"
 
 
-class Admin:
+class _Admin:
     def __init__(self, interactor: _Interactor):
         self.interactor = interactor
 
     @raises_locust_error
-    def visit(self) -> 'SailUiForm':
+    def fetch_admin_json(self) -> Dict[str, Any]:
         """
         Navigates to /admin
 
-        Returns: The SAIL UI Form
-
-        Example:
-
-            >>> self.appian.admin.visit()
-
+        Returns: The response of /admin
         """
         # Navigate to Admin Console
         headers = self.interactor.setup_sail_headers()
@@ -27,4 +23,4 @@ class Admin:
         label = "Admin.MainMenu"
         response = self.interactor.get_page(ADMIN_URI_PATH, headers=headers, label=label)
         response.raise_for_status()
-        return SailUiForm(self.interactor, response.json(), breadcrumb=f'{label}.SailUi')
+        return response.json()
