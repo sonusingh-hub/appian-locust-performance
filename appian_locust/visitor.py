@@ -160,17 +160,32 @@ class Visitor:
         breadcrumb = f"Sites.{site_name}.{page_name}.SailUi"
         return RecordInstanceUiForm(self.__interactor, site_page_json_response, summary_view=summary_view, breadcrumb=breadcrumb)
 
-    def visit_action_and_get_form(self, action_name: str, exact_match: bool = False, locust_request_label: str = "") -> SailUiForm:
+    def visit_action(self, action_name: str, exact_match: bool = False, locust_request_label: str = "") -> SailUiForm:
         """
         Gets the action by name and returns the corresponding SailUiForm to interact with
 
         If the action is activity chained, this will attempt to start the process and retrieve the chained SAIL form.
 
         Args:
-            action_name (str): Name of the action
-            exact_match (bool): Should action name match exactly or to be partial match. Default : False
-            locust_request_label (str, optional): label to be used within locust
+            action_name (str): Name of the action to be called. Name of the action will be in the below pattern.
+                         "displayLabel::opaquqId"
+            exact_match (bool, optional): Should action name match exactly or to be partial match. Default : False
+            locust_request_label (str, optional): label to be used within locust. Default: '' (empty string)
 
         Returns: SailUiForm
+
+        Examples:
+
+            If the full name of the action is known, with the opaque ID,
+
+            >>> self.appian.visitor.visit_action("action_name:igB0K7YxC0UQ2Fhx4hicRw...", exact_match=True)
+
+            If only the display name is known, or part of the display name
+
+            >>> self.appian.visitor.visit_action("action_name")
+            >>> self.appian.visitor.visit_action("actio")
         """
-        return self.__actions.visit_and_get_form(action_name, exact_match, locust_request_label)
+        action_key = format_label(action_name, "::", 0)
+        label = locust_request_label or f'Actions.GetUi.{action_key}'
+        form_json = self.__actions.fetch_action_json(action_name, exact_match, label)
+        return SailUiForm(self.__interactor, form_json, breadcrumb=label)

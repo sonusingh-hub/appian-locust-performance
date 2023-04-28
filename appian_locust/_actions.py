@@ -139,7 +139,7 @@ class _Actions(_Base):
                 action_name, exact_match)))
         return current_action
 
-    def visit(self, action_name: str, exact_match: bool = False, label: str = "") -> Dict[str, Any]:
+    def fetch_action_json(self, action_name: str, exact_match: bool = False, label: str = "") -> Dict[str, Any]:
         """
         This function calls the API for the specific action to get its "form" data
 
@@ -154,15 +154,14 @@ class _Actions(_Base):
 
             If the full name of the action is known, with the opaque ID,
 
-            >>> self.appian.action.visit("action_name:igB0K7YxC0UQ2Fhx4hicRw...", exact_match=True)
+            >>> self.appian.action.fetch_action_json("action_name:igB0K7YxC0UQ2Fhx4hicRw...", exact_match=True)
 
             If only the display name is known, or part of the display name
 
-            >>> self.appian.action.visit("action_name")
-            >>> self.appian.action.visit("actio")
+            >>> self.appian.action.fetch_action_json("action_name")
+            >>> self.appian.action.fetch_action_json("actio")
 
         """
-
         action_under_test = self.get_action(action_name, exact_match)
 
         headers = self.interactor.setup_request_headers(action_under_test[KEY_FORM_HREF])
@@ -177,21 +176,14 @@ class _Actions(_Base):
             headers=headers,
             label=label,
         )
-        return resp.json()
-
-    def visit_and_get_form(self, action_name: str, exact_match: bool = False, locust_request_label: str = "") -> SailUiForm:
-        action_key = format_label(action_name, "::", 0)
-        label = locust_request_label or f'Actions.GetUi.{action_key}'
-        form_json: dict = self.visit(action_name, exact_match, label=label)
-
+        resp_json = resp.json()
         # Check to see if we're in an activity chained form, and if so, make post call
-        if form_json.get('empty') == 'true':
-            resp: Response = self.start_action(action_name, exact_match=exact_match)
-            resp.raise_for_status()
-            form_json = resp.json()
+        if resp_json.get('empty') == 'true':
+            activity_chained_form_resp: Response = self.start_action(action_name, skip_design_call=True, exact_match=exact_match)
+            activity_chained_form_resp.raise_for_status()
+            resp_json = activity_chained_form_resp.json()
 
-        breadcrumb = locust_request_label or f'Actions.SailUi.{action_key}'
-        return SailUiForm(self.interactor, form_json, breadcrumb=breadcrumb)
+        return resp_json
 
     def start_action(self, action_name: str, skip_design_call: bool = False, exact_match: bool = False) -> Response:
         """
@@ -218,7 +210,7 @@ class _Actions(_Base):
             # not required to kick off processes. This request causes a call
             # to design to retrieve the UI, meaning this it will cause more K
             # activity, but it does not kick off processes on the exec engines.
-            self.visit(action_name)
+            self.fetch_action_json(action_name)
 
         headers = self.interactor.setup_sail_headers()
         headers["Origin"] = self.interactor.host
