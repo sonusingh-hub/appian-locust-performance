@@ -21,13 +21,13 @@ class ActionsInfo:
         """
         return self.__actions.get_all()
 
-    def get_action_info(self, action_name: str, exact_match: bool = True) -> Dict[str, Any]:
+    def get_action_info(self, action_name: str, exact_match: bool = False) -> Dict[str, Any]:
         """
         Get the information about specific action by name.
 
         Args:
             action_name (str): Name of the action
-            exact_match (bool): Should action name match exactly or to be partial match. Default : True
+            exact_match (bool): Should action name match exactly or to be partial match. Default : False
 
         Returns (dict): Specific Action's info
 

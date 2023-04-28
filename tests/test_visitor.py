@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import patch, MagicMock
 import json
 
 from typing import Any
@@ -10,7 +11,7 @@ from appian_locust.helper import ENV
 from appian_locust._tasks import _Tasks
 from appian_locust._reports import REPORTS_INTERFACE_PATH
 from appian_locust._records import RECORDS_INTERFACE_PATH
-from appian_locust._sites import _Sites
+from appian_locust._actions import ACTIONS_ALL_PATH, ACTIONS_INTERFACE_PATH, ACTIONS_FEED_PATH
 
 
 class TestVisitor(unittest.TestCase):
@@ -27,6 +28,10 @@ class TestVisitor(unittest.TestCase):
     records_interface = read_mock_file("records_interface.json")
     records_nav = read_mock_file("records_nav.json")
     sites_nav_resp = read_mock_file("sites_nav_resp.json")
+    actions = read_mock_file("actions_response.json")
+    actions_interface = read_mock_file("actions_interface.json")
+    actions_nav = read_mock_file("actions_nav.json")
+    actions_feed = read_mock_file("actions_feed.json")
 
     def setUp(self) -> None:
         self.custom_locust = CustomLocust(Locust())
@@ -51,6 +56,9 @@ class TestVisitor(unittest.TestCase):
 
         # Setup responses for sites
         self.setUp_sites_responses()
+
+        # Setup responses for actions
+        self.setUp_actions_json()
 
     def setUp_task_responses(self) -> None:
         self.custom_locust.set_response(_Tasks.INITIAL_FEED_URI, 200, self.task_feed_resp)
@@ -96,6 +104,15 @@ class TestVisitor(unittest.TestCase):
 
     def setUp_sites_json(self, site_name: str) -> None:
         self.custom_locust.set_response(f"/suite/rest/a/sites/latest/{site_name}/nav", 200, self.sites_nav_resp)
+
+    def setUp_actions_json(self) -> None:
+        self.custom_locust.set_response(
+            "auth?appian_environment=tempo", 200, '{}')
+        self.custom_locust.set_response(
+            "/suite/api/tempo/open-a-case/available-actions?ids=%5B%5D", 200, self.actions)
+        self.custom_locust.set_response(ACTIONS_INTERFACE_PATH, 200, self.actions_interface)
+        self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/page/actions/nav", 200, self.actions_nav)
+        self.custom_locust.set_response(ACTIONS_FEED_PATH, 200, self.actions_feed)
 
     def tearDown(self) -> None:
         self.task_set.on_stop()
@@ -332,6 +349,15 @@ class TestVisitor(unittest.TestCase):
         self.assertEqual(expected_uuid, ui_form.uuid)
         self.assertEqual(json.loads(expected_context), ui_form.context)
         self.assertEqual(expected_url, ui_form.form_url)
+
+    def setup_action_response_no_ui(self) -> None:
+        action = self.task_set.appian.tempo_navigator.navigate_to_actions_and_get_info().get_action_info("Create a Case", False)
+        self.custom_locust.set_response(action['formHref'], 200, "{}")
+
+    def test_actions_visit(self) -> None:
+        self.setup_action_response_no_ui()
+        action = self.task_set.appian.visitor.visit_action("Create a Case", False).get_latest_state()
+        self.assertIsInstance(action, dict)
 
 
 if __name__ == '__main__':

@@ -40,7 +40,7 @@ class TestSiteHelper(unittest.TestCase):
         self.task_set.on_stop()
 
     def setup_action_response_no_ui(self) -> None:
-        action = self.task_set.appian.actions.get_action("Create a Case", False)
+        action = self.task_set.appian.tempo_navigator.navigate_to_actions_and_get_info().get_action_info("Create a Case", False)
         self.custom_locust.set_response(action['formHref'], 200, "{}")
 
     def test_actions_start(self) -> None:

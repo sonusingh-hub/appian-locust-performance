@@ -10,7 +10,6 @@ from locust.clients import HttpSession
 from requests import Response
 
 from . import logger
-from ._actions import _Actions
 from ._admin import Admin
 from ._feature_flag import FeatureFlag
 from ._feature_toggle_helper import (get_client_feature_toggles,
@@ -20,6 +19,7 @@ from ._interactor import _Interactor
 from ._locust_error_handler import log_locust_error
 from .appian_metadata_provider import AppianMetadataProvider
 from .exceptions import MissingConfigurationException
+from .tempo_navigator import TempoNavigator
 from .visitor import Visitor
 from .siteHelper import SiteHelper
 
@@ -147,11 +147,11 @@ class AppianClient:
         self.host = _trim_trailing_slash(host)
         self._interactor = _Interactor(self.client, self.host, portals_mode=portals_mode)
 
-        self._actions = _Actions(self.interactor)
         self._admin = Admin(self.interactor)
         self.visitor = Visitor(self.interactor)
         self.site_helper = SiteHelper(self.interactor)
         self.metadata_provider = AppianMetadataProvider(self.interactor)
+        self.tempo_navigator = TempoNavigator(self.interactor)
 
         # Adding a few session specific attributes to self.client to that it can be carried and handled by session
         # in case of having multiple sessions in the future.
@@ -169,15 +169,6 @@ class AppianClient:
         See :doc:`_interactor <appian_locust._interactor>`
         """
         return self._interactor
-
-    @property
-    def actions(self) -> _Actions:
-        """
-        API for querying, starting and completing actions
-
-        See :doc:`_actions <appian_locust._actions>`
-        """
-        return self._actions
 
     @property
     def admin(self) -> Admin:

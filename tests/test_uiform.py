@@ -10,13 +10,15 @@ from appian_locust.helper import (ENV, find_component_by_attribute_in_dict,
                                   find_component_by_label_and_type_dict)
 from appian_locust.uiform import (PROCESS_TASK_LINK_TYPE,
                                   ComponentNotFoundException,
-                                  InvalidComponentException)
+                                  InvalidComponentException,
+                                  ChoiceNotFoundException)
 from locust import TaskSet, User
 from requests.exceptions import HTTPError
 
 from .mock_client import CustomLocust
 from .mock_reader import read_mock_file
 from appian_locust._reports import REPORTS_INTERFACE_PATH
+from appian_locust._actions import ACTIONS_ALL_PATH, ACTIONS_INTERFACE_PATH, ACTIONS_FEED_PATH
 
 
 class TestSailUiForm(unittest.TestCase):
@@ -47,6 +49,10 @@ class TestSailUiForm(unittest.TestCase):
     locust_label = "I am a label"
     reports_interface = read_mock_file("reports_interface.json")
     reports_nav = read_mock_file("reports_nav.json")
+    actions = read_mock_file("actions_response.json")
+    actions_interface = read_mock_file("actions_interface.json")
+    actions_nav = read_mock_file("actions_nav.json")
+    actions_feed = read_mock_file("actions_feed.json")
 
     def setUp(self) -> None:
         self.custom_locust = CustomLocust(User(ENV))
@@ -64,6 +70,16 @@ class TestSailUiForm(unittest.TestCase):
         ENV.stats.clear_all()
         self.custom_locust.set_response(REPORTS_INTERFACE_PATH, 200, self.reports_interface)
         self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/page/reports/nav", 200, self.reports_nav)
+        self.setUp_actions_json()
+
+    def setUp_actions_json(self) -> None:
+        self.custom_locust.set_response(
+            "auth?appian_environment=tempo", 200, '{}')
+        self.custom_locust.set_response(
+            "/suite/api/tempo/open-a-case/available-actions?ids=%5B%5D", 200, self.actions)
+        self.custom_locust.set_response(ACTIONS_INTERFACE_PATH, 200, self.actions_interface)
+        self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/page/actions/nav", 200, self.actions_nav)
+        self.custom_locust.set_response(ACTIONS_FEED_PATH, 200, self.actions_feed)
 
     def test_get_latest_state(self) -> None:
         mock_state = {"a": {"b": 2}}
@@ -614,7 +630,7 @@ class TestSailUiForm(unittest.TestCase):
         return test_form
 
     def _setup_action_response_with_ui(self, file_name: str = "form_content_response.json") -> None:
-        action = self.task_set.appian.actions.get_action("Create a Case", False)
+        action = self.task_set.appian.tempo_navigator.navigate_to_actions_and_get_info().get_action_info("Create a Case", False)
         resp_json = read_mock_file(file_name)
         self.custom_locust.set_response(action['formHref'], 200, resp_json)
 
@@ -896,6 +912,248 @@ class TestSailUiForm(unittest.TestCase):
 
         with self.assertRaisesRegex(Exception, "Invalid index: '-1'. Please enter a positive number"):
             sail_form.click_record_link_by_index(index=-1)
+
+    def setup_action_response_with_ui(self, file_name: str = "form_content_response.json") -> None:
+        action = self.task_set.appian.tempo_navigator.navigate_to_actions_and_get_info().get_action_info("Create a Case", False)
+        resp_json = read_mock_file(file_name)
+        self.custom_locust.set_response(action['formHref'], 200, resp_json)
+
+    def test_actions_form_example_success(self) -> None:
+        # output of get_page of a form (SAIL)
+        self.setup_action_response_with_ui()
+        self.custom_locust.set_response('/suite/rest/a/model/latest/228/form',
+                                        200,
+                                        '{"context": "12345","links": [{"href": "https://instance.host.net/suite/form","rel": "update","title": "Update", \
+                                        "type": "application/vnd.appian.tv.ui+json; c=2; t=START_FORM","method": "POST"}], "ui": {"#t": "UiComponentsDelta","modifiedComponents": []}}')
+        sail_form: SailUiForm = self.task_set.appian.visitor.visit_action(
+            "Create a Case", False)
+
+        label = 'Title'
+        value = "Look at me, I am filling out a form"
+        button_label = 'Submit'
+        latest_form = sail_form.fill_text_field(label, value).click(button_label)
+
+        resp = latest_form.get_latest_state()
+        self.assertEqual("12345", resp['context'])
+
+    def test_actions_form_example_activity_chained(self) -> None:
+        action = self.task_set.appian.tempo_navigator.navigate_to_actions_and_get_info().get_action_info("Create a Case", False)
+        resp_json = read_mock_file("form_content_response.json")
+
+        self.custom_locust.set_response(action['formHref'], 200, '{"mobileEnabled": "false", "empty": "true", "formType": "START_FORM"}')
+        self.custom_locust.set_response(action['initiateActionHref'], 200, resp_json)
+        self.custom_locust.set_response(
+            '/suite/rest/a/model/latest/228/form',
+            200,
+            '{"context": "12345","links": [{"href": "https://instance.host.net/suite/form","rel": "update","title": "Update", \
+            "type": "application/vnd.appian.tv.ui+json; c=2; t=START_FORM","method": "POST"}], "ui": {"#t": "UiComponentsDelta","modifiedComponents": []}}')
+        sail_form: SailUiForm = self.task_set.appian.visitor.visit_action("Create a Case")
+
+        label = 'Title'
+        value = "Look at me, I am filling out a form"
+        button_label = 'Submit'
+        latest_form = sail_form.fill_text_field(label, value).click(button_label)
+
+        resp = latest_form.get_latest_state()
+        self.assertEqual("12345", resp['context'])
+
+    def test_actions_form_example_missing_field(self) -> None:
+        self.setup_action_response_with_ui()
+        sail_form: SailUiForm = self.task_set.appian.visitor.visit_action(
+            "Create a Case", False)
+
+        value = "Look at me, I am filling out a form"
+        label = "missingText"
+        with self.assertRaises(ComponentNotFoundException) as context:
+            sail_form.fill_text_field(label, value)
+        self.assertEqual(
+            context.exception.args[0], f"No components with label 'missingText' found on page")
+
+        button_label = 'press me'
+        with self.assertRaises(ComponentNotFoundException) as context:
+            sail_form.click(button_label)
+        self.assertEqual(
+            context.exception.args[0], f"No components with label '{button_label}' found on page")
+
+    def test_actions_form_example_bad_response(self) -> None:
+        self.setup_action_response_with_ui()
+        sail_form: SailUiForm = self.task_set.appian.visitor.visit_action(
+            "Create a Case", False)
+
+        self.custom_locust.set_response(
+            '/suite/rest/a/model/latest/228/form', 200, 'null')
+
+        value = "Look at me, I am filling out a form"
+        label = "Title"
+        with self.assertRaises(Exception) as context:
+            sail_form.fill_text_field(label, value)
+        self.assertEqual(
+            context.exception.args[0], f"No response returned when trying to update the field with 'label' = 'Title' at index '1'")
+
+        button_label = 'Submit'
+        with self.assertRaises(Exception) as context:
+            sail_form.click(button_label)
+        self.assertEqual(
+            context.exception.args[0], f"No response returned when trying to click button with label '{button_label}'")
+
+    def test_actions_form_dropdown_errors(self) -> None:
+        self.setup_action_response_with_ui('dropdown_test_ui.json')
+
+        sail_form: SailUiForm = self.task_set.appian.visitor.visit_action(
+            "Create a Case", False)
+
+        dropdown_label = "missing dropdown"
+        with self.assertRaises(ComponentNotFoundException) as context:
+            sail_form.select_dropdown_item(dropdown_label, 'some choice')
+        self.assertEqual(
+            context.exception.args[0], f"No components with label '{dropdown_label}' found on page")
+
+        dropdown_label = "Name"
+        with self.assertRaises(InvalidComponentException):
+            sail_form.select_dropdown_item(dropdown_label, 'some choice')
+
+        dropdown_label = "Customer Type"
+        with self.assertRaises(ChoiceNotFoundException):
+            sail_form.select_dropdown_item(dropdown_label, 'some missing choice')
+
+    @patch('appian_locust.SailUiForm._get_update_url_for_reeval', return_value="/mocked/re-eval/url")
+    @patch('appian_locust.uiform._Interactor.send_dropdown_update')
+    def test_actions_form_dropdown_success(self, mock_send_dropdown_update: MagicMock,
+                                           mock_get_update_url_for_reeval: MagicMock) -> None:
+        self.setup_action_response_with_ui('dropdown_test_ui.json')
+
+        sail_form: SailUiForm = self.task_set.appian.visitor.visit_action(
+            "Create a Case", False)
+        initial_state = sail_form.get_latest_state()
+
+        dropdown_label = "Customer Type"
+        sail_form.select_dropdown_item(dropdown_label, 'Buy Side Asset Manager')
+
+        mock_get_update_url_for_reeval.assert_called_with(sail_form.get_latest_state())
+        mock_send_dropdown_update.assert_called_once()
+        args, kwargs = mock_send_dropdown_update.call_args
+        self.assertEqual(args[0], "/mocked/re-eval/url")
+        self.assertIsNone(kwargs["url_stub"])
+        self.assertNotEqual(sail_form.get_latest_state(), initial_state)
+
+    @patch('appian_locust.SailUiForm._get_update_url_for_reeval', return_value="/mocked/re-eval/url")
+    @patch('appian_locust.uiform._Interactor.send_dropdown_update')
+    def test_actions_form_record_list_dropdown_success(self, mock_send_dropdown_update: MagicMock,
+                                                       mock_get_update_url_for_reeval: MagicMock) -> None:
+        # 'dropdown_test_record_list_ui.json' contains a 'sail-application-url' field
+        self.setup_action_response_with_ui('dropdown_test_record_list_ui.json')
+
+        sail_form: SailUiForm = self.task_set.appian.visitor.visit_action(
+            "Create a Case", False)
+        initial_state = sail_form.get_latest_state()
+
+        dropdown_label = "Customer Type"
+        sail_form.select_dropdown_item(dropdown_label, 'Buy Side Asset Manager')
+
+        mock_get_update_url_for_reeval.assert_called_with(sail_form.get_latest_state())
+        mock_send_dropdown_update.assert_called_once()
+        args, kwargs = mock_send_dropdown_update.call_args
+        self.assertEqual(args[0], "/mocked/re-eval/url")
+        self.assertEqual(kwargs["url_stub"], "url_stub123")
+        self.assertNotEqual(sail_form.get_latest_state(), initial_state)
+
+    @patch('appian_locust.uiform._Interactor.send_multiple_dropdown_update')
+    def test_multiple_dropdown_not_found(self, mock_send_multiple_dropdown_update: MagicMock) -> None:
+        self.setup_action_response_with_ui('dropdown_test_ui.json')
+        sail_form: SailUiForm = self.task_set.appian.visitor.visit_action(
+            "Create a Case", False)
+
+        dropdown_label = "Regions wrong label"
+        with self.assertRaises(ComponentNotFoundException) as context:
+            sail_form.select_multi_dropdown_item(dropdown_label, ["Asia"])
+        self.assertEqual(
+            context.exception.args[0], f"No components with label '{dropdown_label}' found on page")
+
+        dropdown_label = "Regions"
+        sail_form.select_multi_dropdown_item(dropdown_label, ["Asia"])
+        mock_send_multiple_dropdown_update.assert_called_once()
+        args, kwargs = mock_send_multiple_dropdown_update.call_args
+
+    @patch('appian_locust.uiform.find_component_by_attribute_in_dict')
+    @patch('appian_locust.uiform._Interactor.select_radio_button')
+    def test_actions_form_radio_button_by_label_success(self, mock_select_radio_button: MagicMock,
+                                                        mock_find_component_by_label: MagicMock) -> None:
+        self.setup_action_response_with_ui('dropdown_test_ui.json')
+
+        sail_form: SailUiForm = self.task_set.appian.visitor.visit_action(
+            "Create a Case", False)
+        state1 = sail_form.get_latest_state()
+
+        button_label = "test-radio-button"
+        sail_form.select_radio_button_by_test_label(button_label, 1)
+
+        button_label = "Qualified Institutional Buyer"
+        sail_form.select_radio_button_by_label(button_label, 1)
+
+        args, kwargs = mock_find_component_by_label.call_args_list[0]
+        self.assertEqual('testLabel', args[0])
+
+        args_next_call, kwargs_next_call = mock_find_component_by_label.call_args_list[1]
+        self.assertEqual('label', args_next_call[0])
+        self.assertEqual(2, len(mock_select_radio_button.call_args_list))
+
+    def test_actions_form_radio_button_by_label_error(self) -> None:
+        self.setup_action_response_with_ui('dropdown_test_ui.json')
+
+        sail_form: SailUiForm = self.task_set.appian.visitor.visit_action(
+            "Create a Case", False)
+
+        button_label = "missing button"
+        with self.assertRaises(ComponentNotFoundException) as context:
+            sail_form.select_radio_button_by_test_label(button_label, 1)
+        self.assertEqual(
+            context.exception.args[0], f"No components with testLabel '{button_label}' found on page")
+
+        with self.assertRaises(ComponentNotFoundException) as context:
+            sail_form.select_radio_button_by_label(button_label, 1)
+        self.assertEqual(
+            context.exception.args[0], f"No components with label '{button_label}' found on page")
+
+    @patch('appian_locust.uiform.find_component_by_index_in_dict')
+    @patch('appian_locust.uiform._Interactor.select_radio_button')
+    def test_actions_form_radio_button_by_index_success(self, mock_select_radio_button: MagicMock,
+                                                        mock_find_component_by_index: MagicMock) -> None:
+        self.setup_action_response_with_ui('dropdown_test_ui.json')
+        sail_form: SailUiForm = self.task_set.appian.visitor.visit_action(
+            "Create a Case", False)
+        initial_state = sail_form.get_latest_state()
+        button_index = 1
+        sail_form.select_radio_button_by_index(button_index, 1)
+
+        mock_select_radio_button.assert_called_once()
+        mock_find_component_by_index.assert_called_with('RadioButtonField', button_index, initial_state)
+        self.assertNotEqual(sail_form.get_latest_state(), initial_state)
+
+    def test_actions_form_radio_button_by_index_error(self) -> None:
+        self.setup_action_response_with_ui('dropdown_test_ui.json')
+
+        sail_form: SailUiForm = self.task_set.appian.visitor.visit_action(
+            "Create a Case", False)
+
+        index_too_low = -1
+        with self.assertRaises(Exception) as context:
+            sail_form.select_radio_button_by_index(index_too_low, 1)
+        self.assertEqual(
+            context.exception.args[0], f"Invalid index: '{index_too_low}'. Please enter a positive number")
+
+        index_too_high = 4
+        with self.assertRaises(Exception) as context:
+            sail_form.select_radio_button_by_index(index_too_high, 1)
+        self.assertEqual(
+            context.exception.args[0],
+            f"Index: '{index_too_high}' out of range"
+        )
+
+        index_invalid = "bad index"
+        with self.assertRaises(Exception) as context:
+            sail_form.select_radio_button_by_index(index_invalid, 1)
+        self.assertEqual(
+            context.exception.args[0], f"'<' not supported between instances of 'str' and 'int'")
 
 
 if __name__ == '__main__':
