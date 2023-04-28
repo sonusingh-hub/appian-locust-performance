@@ -42,8 +42,6 @@ class TestActions(unittest.TestCase):
         all_actions = self.actions_interactor.get_all()
         self.assertTrue(len(list(all_actions.keys())) > 0)
 
-
-
     def test_actions_get(self) -> None:
         response_mock = unittest.mock.Mock(return_value=json.loads(self.actions))
         response = Response()
