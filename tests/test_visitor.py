@@ -8,6 +8,7 @@ from .mock_client import CustomLocust
 from .mock_reader import read_mock_file
 from appian_locust import AppianTaskSet, SailUiForm, ApplicationUiForm, DesignUiForm, DesignObjectUiForm, RecordListUiForm, RecordInstanceUiForm
 from appian_locust.helper import ENV
+from appian_locust._admin import ADMIN_URI_PATH
 from appian_locust._tasks import _Tasks
 from appian_locust._reports import REPORTS_INTERFACE_PATH
 from appian_locust._records import RECORDS_INTERFACE_PATH
@@ -221,7 +222,7 @@ class TestVisitor(unittest.TestCase):
         self.assertEqual(type(sail_form), DesignObjectUiForm)
         self.assertEqual(0, len(ENV.stats.errors))
 
-    @unittest.mock.patch('appian_locust.records_helper.find_component_by_attribute_in_dict', return_value={'children': None})
+    @patch('appian_locust.records_helper.find_component_by_attribute_in_dict', return_value={'children': None})
     def test_records_form_no_embedded_summary(self, find_component_by_attribute_in_dict_function: Any) -> None:
         with self.assertRaises(Exception) as context:
             self.task_set.appian.visitor.visit_record_instance(
@@ -255,7 +256,7 @@ class TestVisitor(unittest.TestCase):
         self.assertEqual(
             context.exception.args[0], f"There is no record type with name {record_type} in the system under test")
 
-    @unittest.mock.patch('appian_locust.records_helper.find_component_by_attribute_in_dict', return_value={'children': [json.dumps({"a": "b"})]})
+    @patch('appian_locust.records_helper.find_component_by_attribute_in_dict', return_value={'children': [json.dumps({"a": "b"})]})
     def test_records_form_example_success(self, find_component_by_attribute_in_dict_function: Any) -> None:
         sail_form = self.task_set.appian.visitor.visit_record_instance(
             "Commits",
@@ -358,6 +359,25 @@ class TestVisitor(unittest.TestCase):
         self.setup_action_response_no_ui()
         action = self.task_set.appian.visitor.visit_action("Create a Case", False).get_latest_state()
         self.assertIsInstance(action, dict)
+
+    def test_visit_admin_success(self) -> None:
+        sail_form = self.task_set.appian.visitor.visit_admin()
+        self.assertTrue(isinstance(sail_form, SailUiForm))
+
+    def test_visit_admin_failure(self) -> None:
+        ENV.stats.clear_all()
+        self.custom_locust.set_response(ADMIN_URI_PATH, 400, "")
+        with self.assertRaises(Exception) as context:
+            sail_form = self.task_set.appian.visitor.visit_admin()
+        # Two errors will be logged, one at the get_page request level, and one at the visit
+        self.assertEqual(2, len(ENV.stats.errors))
+
+        # Assert error structure
+        error: stats.StatsError = list(ENV.stats.errors.values())[1]
+        self.assertEqual('DESC: No description', error.method)
+        self.assertEqual('LOCATION: _admin.py/fetch_admin_json()', error.name)
+        self.assertEqual('EXCEPTION: 400 Client Error: None for uri: /suite/rest/a/applications/latest/app/admin Username: fake_user', error.error)
+        self.assertEqual(1, error.occurrences)
 
 
 if __name__ == '__main__':

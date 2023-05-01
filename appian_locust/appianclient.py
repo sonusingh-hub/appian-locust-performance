@@ -10,7 +10,6 @@ from locust.clients import HttpSession
 from requests import Response
 
 from . import logger
-from ._admin import Admin
 from ._feature_flag import FeatureFlag
 from ._feature_toggle_helper import (get_client_feature_toggles,
                                      override_default_feature_flags,
@@ -147,7 +146,6 @@ class AppianClient:
         self.host = _trim_trailing_slash(host)
         self._interactor = _Interactor(self.client, self.host, portals_mode=portals_mode)
 
-        self._admin = Admin(self.interactor)
         self.visitor = Visitor(self.interactor)
         self.site_helper = SiteHelper(self.interactor)
         self.metadata_provider = AppianMetadataProvider(self.interactor)
@@ -169,15 +167,6 @@ class AppianClient:
         See :doc:`_interactor <appian_locust._interactor>`
         """
         return self._interactor
-
-    @property
-    def admin(self) -> Admin:
-        """
-        API for interacting with the Admin Console
-
-        See :doc:`_actions <appian_locust._admin>`
-        """
-        return self._admin
 
     def login(self, auth: Optional[list] = None, check_login: bool = True) -> Tuple[HttpSession, Response]:
         return self.interactor.login(auth, check_login=check_login)
