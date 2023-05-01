@@ -6,7 +6,7 @@ from typing import Any
 from locust import TaskSet, Locust, stats
 from .mock_client import CustomLocust
 from .mock_reader import read_mock_file
-from appian_locust import AppianTaskSet, SailUiForm, ApplicationUiForm, DesignUiForm, DesignObjectUiForm, RecordListUiForm, RecordInstanceUiForm
+from appian_locust import AppianTaskSet, SailUiForm, ApplicationUiForm, DesignUiForm, DesignObjectUiForm, RecordListUiForm, RecordInstanceUiForm, DesignObjectType
 from appian_locust.helper import ENV
 from appian_locust._admin import ADMIN_URI_PATH
 from appian_locust._tasks import _Tasks
@@ -17,6 +17,8 @@ from appian_locust._actions import ACTIONS_ALL_PATH, ACTIONS_INTERFACE_PATH, ACT
 
 class TestVisitor(unittest.TestCase):
     design_landing_page = read_mock_file("design_landing_page.json")
+    application_page = read_mock_file("design_app_landing_page.json")
+    interface_page = read_mock_file("interface_resp.json")
     task_feed_resp = read_mock_file("tasks_response.json")
     task_feed_with_next = read_mock_file("tasks_response_with_next.json")
     record_types = read_mock_file("record_types_response.json")
@@ -207,10 +209,22 @@ class TestVisitor(unittest.TestCase):
     def test_visit_application(self) -> None:
         app_id = "thisIsAnAppId"
         self.custom_locust.set_response(
-            f"/suite/rest/a/applications/latest/app/design/app/{ app_id }", 200, read_mock_file("design_app_landing_page.json"))
+            f"/suite/rest/a/applications/latest/app/design/app/{ app_id }", 200, self.application_page)
         ENV.stats.clear_all()
-        sail_form = self.task_set.appian.visitor.visit_application(app_id)
+        sail_form = self.task_set.appian.visitor.visit_application_by_id(app_id)
         self.assertEqual(type(sail_form), ApplicationUiForm)
+        self.assertEqual(0, len(ENV.stats.errors))
+
+    def test_visit_application_by_name(self) -> None:
+        app_name = "SOAP Test App"
+        app_id = "AADgJqdggACYugHvkAHvkAAAXgk"
+        self.custom_locust.enqueue_response(200, self.design_landing_page)  # First request to "/suite/rest/a/applications/latest/app/design", returns base design page
+        self.custom_locust.enqueue_response(200, self.design_landing_page)  # Second request to "/suite/rest/a/applications/latest/app/design", this is the search
+        self.custom_locust.enqueue_response(200, self.application_page)    # Final request to "/suite/rest/a/applications/latest/app/design", this is for clicking on application link
+        ENV.stats.clear_all()
+        sail_form = self.task_set.appian.visitor.visit_application_by_name(app_name)
+        self.assertEqual(type(sail_form), ApplicationUiForm)
+        self.assertEqual(sail_form.get_latest_state()["_cId"], json.loads(self.application_page)["_cId"])
         self.assertEqual(0, len(ENV.stats.errors))
 
     def test_visit_design_object(self) -> None:
@@ -218,8 +232,22 @@ class TestVisitor(unittest.TestCase):
         self.custom_locust.set_response(
             f"/suite/rest/a/applications/latest/app/design/{ design_object_id }", 200, self.design_landing_page)
         ENV.stats.clear_all()
-        sail_form = self.task_set.appian.visitor.visit_design_object(design_object_id)
+        sail_form = self.task_set.appian.visitor.visit_design_object_by_id(design_object_id)
         self.assertEqual(type(sail_form), DesignObjectUiForm)
+        self.assertEqual(0, len(ENV.stats.errors))
+
+    def test_visit_design_object_by_name(self) -> None:
+        self.custom_locust.enqueue_response(200, self.application_page)                             # Navigate to /design
+        self.custom_locust.enqueue_response(200, read_mock_file("empty_design_objects.json"))       # Click on objects
+        self.custom_locust.enqueue_response(200, read_mock_file("design_objects.json"))             # Filter to Interfaces
+        self.custom_locust.enqueue_response(200, read_mock_file("design_objects.json"))             # Search for "FTA_"
+        design_object_id = "lIBvbWpmCW-DXb2Ymh0Z0BoA4mWVpvJiz89VdsTcjtGkRoZgOr6ytR1w9IzvBtl4UqC4SkzwXbxvgAnqiJbQX0k4x_-Dh8FA0svqT6RsalzjxaP"
+        self.custom_locust.set_response(
+            f"/suite/rest/a/applications/latest/app/design/{ design_object_id }", 200, self.interface_page)
+        ENV.stats.clear_all()
+        design_form = self.task_set.appian.visitor.visit_design_object_by_name("FTA_", DesignObjectType.INTERFACE)
+        self.assertEqual(type(design_form), DesignObjectUiForm)
+        self.assertEqual(design_form.get_latest_state()["_cId"], json.loads(self.interface_page)["_cId"])
         self.assertEqual(0, len(ENV.stats.errors))
 
     @patch('appian_locust.records_helper.find_component_by_attribute_in_dict', return_value={'children': None})

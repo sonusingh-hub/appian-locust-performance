@@ -17,7 +17,7 @@ from ._interactor import _Interactor
 from ._locust_error_handler import raises_locust_error
 from ._task_opener import _TaskOpener
 from ._ui_reconciler import UiReconciler
-from .exceptions import ComponentNotFoundException, InvalidComponentException, ChoiceNotFoundException
+from .exceptions import InvalidComponentException, ChoiceNotFoundException
 from .helper import (extract_all_by_label, find_component_by_attribute_and_index_in_dict,
                      find_component_by_attribute_in_dict, find_component_by_index_in_dict,
                      find_component_by_label_and_type_dict, find_component_by_type_and_attribute_and_index_in_dict)
@@ -69,7 +69,7 @@ class SailUiForm:
         # Cache data types on opening new form
         self._interactor.datatype_cache.cache(self._state)
 
-    def get_latest_state(self) -> Optional[Dict[str, Any]]:
+    def get_latest_state(self) -> Dict[str, Any]:
         """
         Provides a deep copy of latest state of UI form.
 
@@ -77,17 +77,6 @@ class SailUiForm:
 
         """
         return deepcopy(self._state)
-
-    def get_latest_form(self) -> 'SailUiForm':
-        """
-        Latest ui form
-
-        Returns (dict): The ui form with its current ui
-
-        """
-        warnings.warn("The method 'get_latest_form' is deprecated, "
-                      "ui is now updated on each call, you can just chain methods without calling `get_latest_form`")
-        return self
 
     def __str__(self) -> str:
         return f"self_state={json.dumps(self._state,indent=4)}"
@@ -1324,7 +1313,17 @@ class SailUiForm:
         """
         context_label = locust_request_label or f"{self.breadcrumb}.CardChoice.SelectByLabel.{label}"
         label = "cardChoiceField-" + label
-        return self.select_radio_button_by_test_label(label, index, context_label)
+        component = find_component_by_attribute_in_dict(
+            'testLabel', label, self._state)
+
+        reeval_url = self._get_update_url_for_reeval(self._state)
+        new_value = component["identifiers"][index - 1]
+        new_state = self._interactor.click_generic_element(
+            reeval_url, component, self.context, self.uuid, new_value=new_value, label=context_label)
+        if not new_state:
+            raise Exception(
+                f"No response returned when trying to select card choice field with testLabel '{label}'")
+        return self._reconcile_state(new_state)
 
     @raises_locust_error
     def select_radio_button_by_test_label(self, test_label: str, index: int, locust_request_label: str = "") -> 'SailUiForm':

@@ -3,9 +3,6 @@ from appian_locust.helper import ENV
 from .mock_client import CustomLocust
 from .mock_reader import read_mock_file
 from appian_locust import AppianTaskSet
-from appian_locust.uiform import (ComponentNotFoundException,
-                                  ChoiceNotFoundException, InvalidComponentException,
-                                  SailUiForm)
 
 import os
 import unittest

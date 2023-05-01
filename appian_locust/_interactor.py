@@ -137,7 +137,6 @@ class _Interactor:
         Returns: Json response of post operation
 
         """
-
         if headers is None:
             headers = self.setup_sail_headers()
 
@@ -1172,15 +1171,14 @@ class _Interactor:
         )
         return resp.json()
 
-    def click_expression_editor_toolbar_button(self, button_action: str, post_url: str, editor_component: Dict[str, Any], context: Dict[str, Any], uuid: str,
-                                               new_value: Dict[str, Any], label: Optional[str] = None) -> Dict[str, Any]:
+    def click_generic_element(self, post_url: str, component: Dict[str, Any], context: Dict[str, Any], uuid: str,
+                              new_value: Dict[str, Any], label: Optional[str] = None) -> Dict[str, Any]:
         """
-            Calls the post operation to click on a button in the toolbar for the ExpressionEditorWidget
+            Calls the post operation to click on a generic element
 
             Args:
-                button_action: action name for expression editor toolbar
                 post_url: the url (not including the host and domain) to post to
-                editor_component: the JSON code for the expression editor component
+                component: the JSON code for the component
                 context: the Sail context parsed from the json response
                 uuid: the uuid parsed from the json response
                 new_value: value for the payload
@@ -1190,13 +1188,13 @@ class _Interactor:
 
         """
         payload = save_builder() \
-            .component(editor_component) \
+            .component(component) \
             .context(context) \
             .uuid(uuid) \
             .value(new_value) \
             .build()
 
-        locust_label = label or f'Click \'{button_action}\' Expression Editor Widget Button'
+        locust_label = label or "ClickElement"
 
         resp = self.post_page(
             self.host + post_url, payload=payload, label=locust_label
@@ -1238,7 +1236,9 @@ class _Interactor:
             }
         }
 
-        return self.click_expression_editor_toolbar_button(launchVQD_action, post_url, editor_component, context, uuid, new_value)
+        locust_label = label or f'Click \'{launchVQD_action}\' Expression Editor Widget Button'
+
+        return self.click_generic_element(post_url=post_url, component=editor_component, context=context, uuid=uuid, new_value=new_value, label=locust_label)
 
 
 class DataTypeCache(object):

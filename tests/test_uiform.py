@@ -9,10 +9,10 @@ from appian_locust.helper import (ENV, find_component_by_attribute_in_dict,
                                   find_component_by_index_in_dict,
                                   find_component_by_label_and_type_dict)
 from appian_locust.uiform import (PROCESS_TASK_LINK_TYPE,
-                                  ComponentNotFoundException,
                                   InvalidComponentException,
                                   ChoiceNotFoundException)
 from locust import TaskSet, User
+from appian_locust.exceptions import ComponentNotFoundException
 from requests.exceptions import HTTPError
 
 from .mock_client import CustomLocust
@@ -174,7 +174,7 @@ class TestSailUiForm(unittest.TestCase):
 
         self.custom_locust.set_response("/suite/rest/a/applications/latest/app/design/deployments",
                                         200, deployment_outgoing_tab_response)
-        outgoing_tab_form = deployments_sail_form.get_latest_form().click_tab_by_label("Outgoing", "deployment-secondary-tabs")
+        outgoing_tab_form = deployments_sail_form.click_tab_by_label("Outgoing", "deployment-secondary-tabs")
 
         component = find_component_by_attribute_in_dict("label", "OneApp", outgoing_tab_form.get_latest_state())
         self.assertEqual("OneApp", component.get('label'))
@@ -190,7 +190,7 @@ class TestSailUiForm(unittest.TestCase):
                                         200, deployment_tab_response)
         deployments_sail_form = design_sail_form.click("Deployments")
         with self.assertRaisesRegex(Exception, "Cannot click a tab with label: 'DoesNotExistLabel' inside the TabButtonGroup component"):
-            deployments_sail_form.get_latest_form().click_tab_by_label("DoesNotExistLabel", "deployment-secondary-tabs")
+            deployments_sail_form.click_tab_by_label("DoesNotExistLabel", "deployment-secondary-tabs")
 
     def test_fill_text_field(self) -> None:
         report_body = read_mock_file("text_fields_same_label.json")
@@ -592,7 +592,7 @@ class TestSailUiForm(unittest.TestCase):
         self.assertEqual(args[3], test_uuid)
         self.assertEqual(kwargs["context_label"], self.locust_label)
 
-    @patch('appian_locust._interactor._Interactor.select_radio_button')
+    @patch('appian_locust._interactor._Interactor.click_generic_element')
     def test_card_choice_field_select_by_label(self, mock_radio_select_component: MagicMock) -> None:
         uri = "/suite/rest/a/sites/latest/test01/pages/test01/interface"
         test_form = SailUiForm(self.task_set.appian.interactor,
@@ -611,7 +611,7 @@ class TestSailUiForm(unittest.TestCase):
         self.assertEqual(args[1], component)
         self.assertEqual(args[2], test_context)
         self.assertEqual(args[3], test_uuid)
-        self.assertEqual(kwargs["context_label"], self.locust_label)
+        self.assertEqual(kwargs["label"], self.locust_label)
 
     def test_click_card_layout_by_index_no_link(self) -> None:
         test_form = SailUiForm(self.task_set.appian.interactor, json.loads(self.spl_response))

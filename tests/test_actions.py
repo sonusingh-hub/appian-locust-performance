@@ -2,8 +2,8 @@ from locust import TaskSet, Locust
 from .mock_client import CustomLocust
 from .mock_reader import read_mock_file, read_mock_file_as_dict
 from appian_locust import AppianTaskSet, SailUiForm
-from appian_locust.uiform import (ComponentNotFoundException,
-                                  ChoiceNotFoundException, InvalidComponentException)
+from appian_locust.uiform import (ChoiceNotFoundException, InvalidComponentException)
+from appian_locust.exceptions import ComponentNotFoundException
 
 import os
 import unittest

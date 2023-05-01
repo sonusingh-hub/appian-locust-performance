@@ -1,7 +1,10 @@
+from typing import Optional
+
 from appian_locust.record_uiform import RecordInstanceUiForm
 from .application_uiform import ApplicationUiForm
 from .design_object_uiform import DesignObjectUiForm
 from .design_uiform import DesignUiForm
+from .design_object_type import DesignObjectType
 from .record_list_uiform import RecordListUiForm
 from .uiform import SailUiForm
 from ._actions import _Actions
@@ -63,15 +66,72 @@ class Visitor:
         return SailUiForm(self.__interactor, self.__reports.fetch_report_json(report_name, exact_match), breadcrumb=breadcrumb)
 
     def visit_design(self) -> DesignUiForm:
+        """
+        Navigate to /design
+        Returns (DesignUiForm): UiForm representing /design
+
+        """
         return DesignUiForm(self.__interactor, self.__design.fetch_design_json(), breadcrumb="Design.ApplicationList.SailUi")
 
-    def visit_application(self, application_id: str) -> ApplicationUiForm:
+    def visit_application_by_id(self, application_id: str) -> ApplicationUiForm:
+        """
+        Visit an application by its opaque id
+
+        Args:
+            application_id (str): The opaque id of the application
+
+        Returns (ApplicationUiForm): UiForm representing design application page
+
+        """
         breadcrumb = f"Design.SelectedApplication.{application_id}.SailUi"
         return ApplicationUiForm(self.__interactor, self.__design.fetch_application_json(application_id), breadcrumb)
 
-    def visit_design_object(self, opaque_id: str) -> DesignObjectUiForm:
+    def visit_application_by_name(self, application_name: str, application_prefix: Optional[str] = None) -> ApplicationUiForm:
+        """
+        Visit an application by name
+
+        Args:
+            application_name (str): The name of the application
+            application_prefix (str, optional): The prefix of the application. Required if the application has a prefix.
+
+        Returns (ApplicationUiForm): UiForm representing design application page
+
+        """
+        design_uiForm = self.visit_design()
+        design_uiForm.search_applications(application_name)
+        if application_prefix:
+            application_name = f"{application_name} ({application_prefix})"
+        application_uiform = design_uiForm.click_application(application_name)
+        return application_uiform
+
+    def visit_design_object_by_id(self, opaque_id: str) -> DesignObjectUiForm:
+        """
+        Visit a design object by its opaque id
+        Args:
+            opaque_id (str): opaque id of the design object
+
+        Returns (DesignObjectUiForm): UiForm representing design object
+
+        """
         breadcrumb = "Design.SelectedObject." + opaque_id[0:10] + ".SailUi"
         return DesignObjectUiForm(self.__interactor, self.__design.fetch_design_object_json(opaque_id), breadcrumb)
+
+    def visit_design_object_by_name(self, object_name: str, object_type: DesignObjectType) -> DesignObjectUiForm:
+        """
+        Visit a design object by its name and type
+        Args:
+            object_name (str): The name of the design object
+            object_type (DesignObjectType): The type of the design object
+
+        Returns:
+
+        """
+        designUiForm: DesignUiForm = self.visit_design()
+        designUiForm.select_nav_card_by_index(nav_group_label="leftNavbar", is_test_label=True, index=1)
+        designUiForm.check_checkbox_by_test_label(test_label="object-type-checkbox", indices=[object_type.value])
+        designUiForm.search_objects(object_name)
+        design_object_opaque_id = self.__design.find_design_object_opaque_id_in_grid(object_name, designUiForm.get_latest_state())
+        return self.visit_design_object_by_id(design_object_opaque_id)
 
     def visit_record_instance(self, record_type: str = "", record_name: str = "", view_url_stub: str = "", exact_match: bool = False, summary_view: bool = True) -> RecordInstanceUiForm:
         """

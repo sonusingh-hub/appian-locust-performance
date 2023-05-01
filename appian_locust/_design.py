@@ -1,9 +1,10 @@
+from enum import Enum
 from typing import Any, Dict, Optional
 
 from ._interactor import _Interactor
 from ._locust_error_handler import raises_locust_error
 from ._save_request_builder import save_builder
-from .helper import find_component_by_type_and_attribute_and_index_in_dict, find_component_by_type_and_attribute_and_index_in_dict
+from .helper import find_component_by_type_and_attribute_and_index_in_dict, find_component_by_type_and_attribute_and_index_in_dict, find_component_by_attribute_in_dict
 from .uiform import SailUiForm
 
 DESIGN_URI_PATH: str = "/suite/rest/a/applications/latest/app/design"
@@ -98,19 +99,35 @@ class _Design:
             }
         }
 
-        payload = save_builder() \
-            .component(expression_editor_component) \
-            .context(context) \
-            .uuid(uuid) \
-            .value(new_value) \
-            .build()
-
         locust_label = label or f'Click \'{button_action}\' Expression Editor Widget Button'
+        return self.interactor.click_generic_element(post_url, expression_editor_component, context, uuid, new_value, locust_label)
 
-        resp = self.interactor.post_page(
-            post_url, payload=payload, label=locust_label
-        )
-        return resp.json()
+    def search_design_grid(self, search_str: str, reeval_url: str,
+                           state: Dict[str, Any], context: Dict[str, Any], uuid: str, locust_label: str = "Design.Search") -> Dict[str, Any]:
+        """
+        Search a grid in /design
+        Args:
+            search_str (str): string to search
+            reeval_url (str): url to send request to
+            state (str): current state of UI, which contains the search bar
+            context (str): current context
+            uuid (str): UUID of search component
+            locust_label (str): label to associate request with
+
+        Returns:
+
+        """
+        search_component = find_component_by_attribute_in_dict(attribute="#t", value="SearchBoxWidget",
+                                                               component_tree=state)
+        search_component["#t"] = "TextWidget"
+        return self.interactor.click_generic_element(
+            reeval_url, search_component, context, uuid, new_value={"#t": "Text", "#v": search_str},
+            label=locust_label)
+
+    def find_design_object_opaque_id_in_grid(self, design_object_name: str, current_state: Dict[str, Any]) -> str:
+        grid_component = self.find_design_grid(current_state)
+        link_component = find_component_by_attribute_in_dict('testLabel', design_object_name, grid_component, throw_attribute_exception=True)
+        return link_component.get("uri").split('/')[-1]
 
     def _create_object(self, ui_form: SailUiForm, link_name: str, object_name: str) -> 'SailUiForm':
         return ui_form.click(link_name)\

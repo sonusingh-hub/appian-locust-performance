@@ -27,7 +27,7 @@ class TestApplicationUiform(unittest.TestCase):
     def test_click_application(self) -> None:
         app_landing_page = read_mock_file("design_app_landing_page.json")
         self.custom_locust.set_response("/suite/rest/a/applications/latest/app/design/app/yh4Z0_7aQfhi2FgIUOqaca_4Vlp", 200, app_landing_page)
-        application = self.task_set.appian.visitor.visit_application("yh4Z0_7aQfhi2FgIUOqaca_4Vlp")
+        application = self.task_set.appian.visitor.visit_application_by_id("yh4Z0_7aQfhi2FgIUOqaca_4Vlp")
         result_state = '{"ase": "ase"}'
         self.custom_locust.set_response(
             "/suite/rest/a/applications/latest/app/design/lIBKSzmcS2f-JBIoXdpEpcXkuLVVXxoykWGSNEqB-oPAfjLayGXYe7CkjVo53babGjVtBl2x-96-oRsUrFC3i3bZm3cF0kG7wwaG-9H6213zpNl", 200, result_state)
