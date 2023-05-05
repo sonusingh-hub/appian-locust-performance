@@ -16,7 +16,6 @@ from ._feature_toggle_helper import (get_client_feature_toggles,
                                      set_mobile_feature_flags)
 from ._interactor import _Interactor
 from ._locust_error_handler import log_locust_error
-from .appian_metadata_provider import AppianMetadataProvider
 from .exceptions import MissingConfigurationException
 from .tempo_navigator import TempoNavigator
 from .visitor import Visitor
@@ -148,7 +147,6 @@ class AppianClient:
 
         self.visitor = Visitor(self.interactor)
         self.site_helper = SiteHelper(self.interactor)
-        self.metadata_provider = AppianMetadataProvider(self.interactor)
         self.tempo_navigator = TempoNavigator(self.interactor)
 
         # Adding a few session specific attributes to self.client to that it can be carried and handled by session
