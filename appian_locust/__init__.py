@@ -14,7 +14,7 @@ from .records_info import RecordsInfo
 from .tasks_info import TasksInfo
 from .tempo_navigator import TempoNavigator
 from .exceptions import *
-from .siteHelper import SiteHelper
+from .site_helper import SiteHelper
 import locust.stats
 
 locust.stats.CONSOLE_STATS_INTERVAL_SEC = 10

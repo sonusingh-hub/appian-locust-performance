@@ -19,7 +19,7 @@ from ._locust_error_handler import log_locust_error
 from .exceptions import MissingConfigurationException
 from .tempo_navigator import TempoNavigator
 from .visitor import Visitor
-from .siteHelper import SiteHelper
+from .site_helper import SiteHelper
 
 log = logger.getLogger(__name__)
 
