@@ -28,6 +28,15 @@ class loadDriverUtils:
         self.c = default_config
 
     def load_config(self, config_file: str = "./config.json") -> dict:
+        """
+        Load a json configuration file into a dictionary
+        Args:
+            config_file: Location where config file can be found
+
+        Returns (dict): Dictionary containing configuration. Will also be stored in
+                        loadDriverUtils.c
+
+        """
         if os.path.exists(config_file):
             self.c = json.load(open(config_file))
             return self.c

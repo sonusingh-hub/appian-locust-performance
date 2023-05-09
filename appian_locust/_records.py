@@ -9,8 +9,8 @@ from appian_locust import logger
 
 from ._base import _Base
 from ._interactor import _Interactor
-from .records_helper import (get_all_records_from_json,
-                             get_all_record_types_from_json, get_records_from_json_by_column)
+from ._records_helper import (get_all_records_from_json,
+                              get_all_record_types_from_json, get_records_from_json_by_column)
 from ._locust_error_handler import log_locust_error
 
 log = logger.getLogger(__name__)

@@ -3,7 +3,7 @@ from typing import Any, Dict, Tuple, Optional, Generator, Callable
 
 from locust.clients import HttpSession
 
-from ._feature_flag import FeatureFlag
+from .feature_flag import FeatureFlag
 from ._interactor import _Interactor
 from ._locust_error_handler import test_response_for_error
 from .logger import getLogger

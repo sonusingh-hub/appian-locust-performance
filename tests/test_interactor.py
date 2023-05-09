@@ -390,12 +390,3 @@ class TestInteractor(unittest.TestCase):
                               'documentId': {'#t': 'CollaborationDocument', 'id': doc_id},
                               'extension': 'none', 'fileSizeBytes': 0},
                              document_update['#v'][i])
-
-    def test_launch_query_editor(self) -> None:
-        component = find_component_by_attribute_in_dict("testLabel", "expression-editor",
-                                                        json.loads(self.site_with_expression_editor))
-
-        self.custom_locust.set_response("", 200, "{}")
-        output = self.task_set.appian.interactor.launch_query_editor(
-            "", component, {}, "", "a!queryRecordType()")
-        self.assertEqual(output, dict())

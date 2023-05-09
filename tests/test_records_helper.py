@@ -3,8 +3,8 @@ import time
 import unittest
 from typing import List
 
-from appian_locust.records_helper import (get_url_stub_from_record_list_url_path,
-                                          get_url_stub_from_record_list_post_request_url)
+from appian_locust._records_helper import (get_url_stub_from_record_list_url_path,
+                                           get_url_stub_from_record_list_post_request_url)
 
 
 class TestHelper(unittest.TestCase):

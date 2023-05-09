@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 import json
 
 from typing import Any
@@ -12,7 +12,7 @@ from appian_locust._admin import ADMIN_URI_PATH
 from appian_locust._tasks import _Tasks
 from appian_locust._reports import REPORTS_INTERFACE_PATH
 from appian_locust._records import RECORDS_INTERFACE_PATH
-from appian_locust._actions import ACTIONS_ALL_PATH, ACTIONS_INTERFACE_PATH, ACTIONS_FEED_PATH
+from appian_locust._actions import ACTIONS_INTERFACE_PATH, ACTIONS_FEED_PATH
 
 
 class TestVisitor(unittest.TestCase):
@@ -250,7 +250,7 @@ class TestVisitor(unittest.TestCase):
         self.assertEqual(design_form.get_latest_state()["_cId"], json.loads(self.interface_page)["_cId"])
         self.assertEqual(0, len(ENV.stats.errors))
 
-    @patch('appian_locust.records_helper.find_component_by_attribute_in_dict', return_value={'children': None})
+    @patch('appian_locust._records_helper.find_component_by_attribute_in_dict', return_value={'children': None})
     def test_records_form_no_embedded_summary(self, find_component_by_attribute_in_dict_function: Any) -> None:
         with self.assertRaises(Exception) as context:
             self.task_set.appian.visitor.visit_record_instance(
@@ -284,7 +284,7 @@ class TestVisitor(unittest.TestCase):
         self.assertEqual(
             context.exception.args[0], f"There is no record type with name {record_type} in the system under test")
 
-    @patch('appian_locust.records_helper.find_component_by_attribute_in_dict', return_value={'children': [json.dumps({"a": "b"})]})
+    @patch('appian_locust._records_helper.find_component_by_attribute_in_dict', return_value={'children': [json.dumps({"a": "b"})]})
     def test_records_form_example_success(self, find_component_by_attribute_in_dict_function: Any) -> None:
         sail_form = self.task_set.appian.visitor.visit_record_instance(
             "Commits",

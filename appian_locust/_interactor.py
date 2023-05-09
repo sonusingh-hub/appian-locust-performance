@@ -15,7 +15,7 @@ from ._locust_error_handler import log_locust_error, test_response_for_error
 from ._save_request_builder import save_builder
 from .exceptions import BadCredentialsException, MissingCsrfTokenException, ComponentNotFoundException
 from .helper import find_component_by_attribute_in_dict, get_username
-from .records_helper import get_url_stub_from_record_list_post_request_url
+from ._records_helper import get_url_stub_from_record_list_post_request_url
 
 log = logger.getLogger(__name__)
 
@@ -1200,45 +1200,6 @@ class _Interactor:
             self.host + post_url, payload=payload, label=locust_label
         )
         return resp.json()
-
-    def launch_query_editor(self, post_url: str, editor_component: Dict[str, Any],
-                            context: Dict[str, Any], uuid: str, expr: str, label: Optional[str] = None) -> Dict[str, Any]:
-        """
-            Calls the post operation to click on the LaunchVQD button in the toolbar for the ExpressionEditorWidget.
-            This will launch the query editor with the provided expression.
-
-            Args:
-                post_url: the url (not including the host and domain) to post to
-                editor_component: the JSON code for the expression editor component
-                context: the Sail context parsed from the json response
-                uuid: the uuid parsed from the json response
-                expr: expression in the expression editor
-                label: the label to be displayed by locust for this action
-
-            Returns: the response of post operation as json
-
-        """
-        launchVQD_action = "LaunchVQD"
-
-        new_value = {
-            "#t": "Dictionary",
-            "#v": {
-                "actionType": launchVQD_action,
-                "hasMatchingBracketError": False,
-                "launchOrigin": "toolbarButton",
-                "queryFnType": "queryRecordType",
-                "queryFnStartIndex": 0,
-                "queryFnEndIndex": len(expr),
-                "value": {
-                    "#t": "Text",
-                    "#v": expr
-                }
-            }
-        }
-
-        locust_label = label or f'Click \'{launchVQD_action}\' Expression Editor Widget Button'
-
-        return self.click_generic_element(post_url=post_url, component=editor_component, context=context, uuid=uuid, new_value=new_value, label=locust_label)
 
 
 class DataTypeCache(object):
