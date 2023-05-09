@@ -1,8 +1,7 @@
-_grid_interactor
+uiform
 ===================================
 
-.. automodule:: appian_locust._grid_interactor
+.. automodule:: appian_locust.uiform
    :members:
    :undoc-members:
    :show-inheritance:
-   :private-members:

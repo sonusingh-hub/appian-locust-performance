@@ -1,8 +1,7 @@
-_actions
+loadDriverUtils
 ===============
 
-.. automodule:: appian_locust._actions
+.. automodule:: appian_locust.loadDriverUtils
    :members:
    :undoc-members:
    :show-inheritance:
-   :private-members:

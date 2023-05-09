@@ -160,8 +160,6 @@ class AppianClient:
     def interactor(self) -> _Interactor:
         """
         Interactor that can be used to make lower level requests against Appian
-
-        See :doc:`_interactor <appian_locust._interactor>`
         """
         return self._interactor
 
@@ -293,8 +291,8 @@ class AppianTaskSet(TaskSet):
     def override_default_flags(self, flags_to_override: List[FeatureFlag]) -> None:
         """
         `override_default_flags` gets the flag mask to set all of the flags to true given
-        a list of flag enums from :doc:`FeatureFlag <appian_locust.feature_flag.py>` and overrides the current feature
-        flag extended value to set these flags to true.
+        a list of flag enums and overrides the current feature flag extended value to set
+        these flags to true.
         """
         def flags_to_override_generator() -> Generator[FeatureFlag, None, None]:
             yield from flags_to_override

@@ -1,4 +1,4 @@
-locust==1.0.2
-sphinx_rtd_theme==0.4.2
-sphinx==3.3.1
+locust==2.15.1
+sphinx_rtd_theme==1.2.0
+sphinx==6.2.1
 Jinja2==3.0.3

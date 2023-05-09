@@ -16,29 +16,6 @@ Getting Started
     quick_start
     what_is_appian_locust
 
-Using Locust
-------------
-
-.. toctree::
-    :maxdepth: 2
-
-    installation
-    basic_usage
-    how_to_run_locust
-    appian_locust_records_example
-    appian_locust_multiple_users_example
-
-Advanced Usage
----------------
-
-.. toctree::
-    :maxdepth: 2
-
-    debugging
-    advanced_examples
-    limitations
-    contributing
-
 API
 -----------
 
@@ -46,6 +23,19 @@ API
     :maxdepth: 4
 
     appian_locust
+
+Using Locust
+------------
+
+.. toctree::
+    :maxdepth: 2
+
+    how_to_write_locust_tests
+    how_to_run_locust
+    examples
+    debugging
+    limitations
+    contributing
 
 Indices and tables
 ==================

@@ -1,10 +1,10 @@
-#####################
-Locust Guide
-#####################
+##########################
+How to Write Locust Tests
+##########################
 
 Before running Locust, we'll outline some top-level concepts and what a "locustfile" is.
 
-TaskSet
+Using TaskSet
 ********************************************
 
 To define a task, annotate a python function with the @task annotation from the Locust library:
@@ -36,7 +36,7 @@ These tasks are composed within a class called a TaskSet, which can be unordered
 
 These together form a locustfile. You can see an example file `here <https://gitlab.com/appian-oss/appian-locust/-/blob/master/examples/example_locustfile.py>`_.
 
-SequentialTaskSet
+Using SequentialTaskSet
 ********************************************
 A SequentialTaskSet is a TaskSet whose tasks will be executed in the order that they are declared. It is possible to nest SequentialTaskSets within a TaskSet and vice versa.
 
@@ -67,7 +67,7 @@ A SequentialTaskSet is a TaskSet whose tasks will be executed in the order that 
 - `WAIT_TIME` passed into @repeat decorator will make sure there is set amount of time between the repetitions of a particular task.
 - Taks which do not have the @repeat decorator will only execute one during their turn.
 
-HttpUser
+Create Locust User
 ********************************************
 
 And lastly, you supply a "Locust", or a representation of a single user that will interact with the system. At runtime you can decide how many users and how fast they should spin up.
@@ -81,7 +81,7 @@ And lastly, you supply a "Locust", or a representation of a single user that wil
 
 See :ref:`ways_of_running_locust` to see how to run a locust file.
 
-A note on config_utils
+Loading the Config
 ********************************************
 
 These two lines look for a ``config.json`` file at the location from which the script is run (not where the locustfile is).
@@ -114,7 +114,7 @@ A minimal `config.json` looks like:
         ]
     }
 
-A note on Locust Environments
+Locust Environment Properties
 ********************************************
 
 As of Locust 1.0.0, properties of a particular Locust run have been moved into the environment framework.
