@@ -19,6 +19,11 @@ from .helper import format_label
 
 
 class Visitor:
+    """
+    Class for visiting various types of pages in an Appian Instance. Each method will return a SailUiForm which will allow
+    interacting with the visited page.
+    """
+
     def __init__(self, interactor: _Interactor):
         self.__interactor = interactor
         self.__tasks = _Tasks(self.__interactor)

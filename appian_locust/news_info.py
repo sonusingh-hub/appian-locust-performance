@@ -5,6 +5,9 @@ from ._news import _News
 
 
 class NewsInfo:
+    """
+    Class which provides metadata about news entries from the Tempo News tab
+    """
 
     def __init__(self, interactor: _Interactor):
         self.__news = _News(interactor)

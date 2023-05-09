@@ -34,18 +34,18 @@ def format_label(label: str, delimiter: Optional[str] = None, index: int = 0) ->
     return label.replace(" ", "_")
 
 
-def extract(obj: Any, key: str, vals: List[Any]) -> Generator:
+def _extract(obj: Any, key: str, vals: List[Any]) -> Generator:
     """Recursively search for values of key in JSON tree."""
     if isinstance(obj, dict):
         for k, v in obj.items():
             if isinstance(v, (dict, list)):
-                yield from extract(v, key, vals)
+                yield from _extract(v, key, vals)
             elif k == key and v in vals:
                 yield obj
 
     elif isinstance(obj, list):
         for item in obj:
-            yield from extract(item, key, vals)
+            yield from _extract(item, key, vals)
 
 
 def extract_values(obj: Dict[str, Any], key: str, val: Any) -> List[Dict[str, Any]]:
@@ -61,7 +61,7 @@ def extract_values(obj: Dict[str, Any], key: str, val: Any) -> List[Dict[str, An
         list of matched key-value pairs
 
     """
-    return list(extract(obj, key, [val]))
+    return list(_extract(obj, key, [val]))
 
 
 def extract_values_multiple_key_values(obj: Dict[str, Any], key: str, vals: List[Any]) -> List[Dict[str, Any]]:
@@ -77,10 +77,10 @@ def extract_values_multiple_key_values(obj: Dict[str, Any], key: str, vals: List
         list of matched key-value pairs
 
     """
-    return list(extract(obj, key, vals))
+    return list(_extract(obj, key, vals))
 
 
-def extract_item_by_label(obj: Union[dict, list], label: str) -> Generator:
+def _extract_item_by_label(obj: Union[dict, list], label: str) -> Generator:
     """
     Recursively search for all fields with a matching label in JSON tree.
     And return as a generator
@@ -89,15 +89,23 @@ def extract_item_by_label(obj: Union[dict, list], label: str) -> Generator:
         for k, v in obj.items():
             if k == label:
                 yield v
-            yield from extract_item_by_label(v, label)
+            yield from _extract_item_by_label(v, label)
     elif isinstance(obj, list):
         for v in obj:
-            yield from extract_item_by_label(v, label)
+            yield from _extract_item_by_label(v, label)
 
 
 def extract_all_by_label(obj: Union[dict, list], label: str) -> list:
-    """Recursively search for all fields with a matching label in JSON tree."""
-    return [elem for elem in extract_item_by_label(obj, label)]
+    """
+    Recursively search for all fields with a matching label in JSON tree.
+    Args:
+        obj: The json tree to search for fields in
+        label: The label used to identify elements we want to return
+
+    Returns (list): A list of all elements in obj that match label
+
+    """
+    return [elem for elem in _extract_item_by_label(obj, label)]
 
 
 def get_random_item(list_of_items: List[Any], exclude: List[Any] = []) -> Any:
@@ -404,6 +412,14 @@ def repeat(num_times: int = 2, wait_time: float = 0.0) -> Callable:
 
 
 def get_username(auth: list) -> str:
+    """
+    Returns the username from an auth list
+    Args:
+        auth: Appian Locust authorization list
+
+    Returns (str): Username from auth list
+
+    """
     if auth and len(auth) >= 1 and auth[0]:
         return auth[0]
     else:

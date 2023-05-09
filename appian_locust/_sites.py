@@ -10,8 +10,8 @@ from ._base import _Base
 from ._interactor import _Interactor
 from ._news import NEWS_NAV_PATH
 from .helper import extract_values, format_label
-from .records_helper import (get_all_records_from_json,
-                             get_record_summary_view_response)
+from ._records_helper import (get_all_records_from_json,
+                              get_record_summary_view_response)
 from .uiform import SailUiForm
 
 log = logger.getLogger(__name__)

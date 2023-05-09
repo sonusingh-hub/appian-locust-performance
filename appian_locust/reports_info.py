@@ -4,6 +4,9 @@ from ._reports import _Reports
 
 
 class ReportsInfo:
+    """
+    Class which provides metadata about available reports from the Tempo Reports tab
+    """
 
     def __init__(self, reports: _Reports):
         self.__reports = reports

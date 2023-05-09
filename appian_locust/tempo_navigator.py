@@ -13,6 +13,9 @@ from ._tasks import _Tasks
 
 
 class TempoNavigator:
+    """
+    Class for navigating to the various tabs on tempo, and returning objects which can provide metadata about those tabs
+    """
 
     def __init__(self, interactor: _Interactor):
         self.__interactor = interactor

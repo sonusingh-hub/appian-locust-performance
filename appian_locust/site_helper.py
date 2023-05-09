@@ -5,6 +5,10 @@ from ._interactor import _Interactor
 
 
 class SiteHelper:
+    """
+    Class for providing the ability to perform activities that do not require a UI interaction to perform
+    """
+
     def __init__(self, interactor: _Interactor):
         self.__interactor = interactor
         self.__actions = _Actions(self.__interactor)

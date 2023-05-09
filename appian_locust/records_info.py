@@ -4,6 +4,9 @@ from ._records import _Records
 
 
 class RecordsInfo():
+    """
+    Class which provides metadata about available record types from the Tempo Records tab
+    """
 
     def __init__(self, records: _Records):
         self.__records = records

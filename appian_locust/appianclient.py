@@ -1,4 +1,3 @@
-from http import server
 import os
 import re
 import urllib.parse
@@ -10,7 +9,7 @@ from locust.clients import HttpSession
 from requests import Response
 
 from . import logger
-from ._feature_flag import FeatureFlag
+from .feature_flag import FeatureFlag
 from ._feature_toggle_helper import (get_client_feature_toggles,
                                      override_default_feature_flags,
                                      set_mobile_feature_flags)
@@ -145,9 +144,9 @@ class AppianClient:
         self.host = _trim_trailing_slash(host)
         self._interactor = _Interactor(self.client, self.host, portals_mode=portals_mode)
 
-        self.visitor = Visitor(self.interactor)
-        self.site_helper = SiteHelper(self.interactor)
-        self.tempo_navigator = TempoNavigator(self.interactor)
+        self.visitor = Visitor(self._interactor)
+        self.site_helper = SiteHelper(self._interactor)
+        self.tempo_navigator = TempoNavigator(self._interactor)
 
         # Adding a few session specific attributes to self.client to that it can be carried and handled by session
         # in case of having multiple sessions in the future.
@@ -222,7 +221,7 @@ class AppianTaskSet(TaskSet):
             if hasattr(self.parent, "base_path_override") else ""
         self._appian = AppianClient(self.client, self.host, base_path_override=base_path_override, portals_mode=portals_mode)
         if not portals_mode:
-            self.auth = self.determine_auth()
+            self.auth = self._determine_auth()
             resp = self.appian.login(self.auth)
             test = r'\\\\\\/suite\\\\\\/rest\\\\\\/a\\\\\\/sites\\\\\\/latest\\\\\\/D6JMim\\\\\\/page\\\\\\/(.+)\\\\\\'
             m = re.search(test, resp[1].text)
@@ -237,7 +236,7 @@ class AppianTaskSet(TaskSet):
 
         self.appian.get_client_feature_toggles()
 
-    def determine_auth(self) -> List[str]:
+    def _determine_auth(self) -> List[str]:
         """
         Determines what Appian username/password will be used on simulated logins. Auth will be determined
         using the following rules:
@@ -293,23 +292,14 @@ class AppianTaskSet(TaskSet):
 
     def override_default_flags(self, flags_to_override: List[FeatureFlag]) -> None:
         """
-        API for overriding default feature flags.
-
-        See :doc:`override_default_flags <appian_locust._feature_toggle_helper>`
+        `override_default_flags` gets the flag mask to set all of the flags to true given
+        a list of flag enums from :doc:`FeatureFlag <appian_locust.feature_flag.py>` and overrides the current feature
+        flag extended value to set these flags to true.
         """
         def flags_to_override_generator() -> Generator[FeatureFlag, None, None]:
             yield from flags_to_override
-        self.override_default_flags_generator(flags_to_override_generator)
-
-    def override_default_flags_generator(self, flags_to_override: Callable[[], Generator[FeatureFlag, None, None]]) -> None:
-        """
-        API for overriding default feature flags.
-        Usage of generator provides memory performance improvements.
-
-        See :doc:`override_default_flags <appian_locust._feature_toggle_helper>`
-        """
         try:
-            override_default_feature_flags(self.appian.interactor, flags_to_override)
+            override_default_feature_flags(self.appian.interactor, flags_to_override_generator)
         except Exception as e:
             log_locust_error(e, error_desc="Override Default Flags Error")
             raise e
@@ -317,8 +307,6 @@ class AppianTaskSet(TaskSet):
     def declare_device_as_mobile(self) -> None:
         """
         API for designating a device as mobile to spoof running on a mobile device.
-
-        See :doc:`declare_device_as_mobile <appian_locust._feature_toggle_helper>`
         """
         try:
             set_mobile_feature_flags(self.appian.interactor)
@@ -332,8 +320,6 @@ class AppianTaskSet(TaskSet):
         API for designating a device as desktop to emulate running on a computer device.
         This is done by default, so only use this method when running a mix of mobile and
         desktop tests.
-
-        See :doc:`declare_device_as_mobile <appian_locust._feature_toggle_helper>`
         """
         try:
             self.appian.interactor.set_user_agent_to_desktop()
@@ -343,5 +329,10 @@ class AppianTaskSet(TaskSet):
 
 
 class AppianTaskSequence(SequentialTaskSet, AppianTaskSet):
+    """
+    Appian Locust SequentialTaskSet. Provides functionality of Locust's SequentialTaskSet and Handles creation of basic
+    objects like``self.appian`` and actions like ``login`` and ``logout``
+    """
+
     def __init__(self, parent: SequentialTaskSet) -> None:
         super(AppianTaskSequence, self).__init__(parent)

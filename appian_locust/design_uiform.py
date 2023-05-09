@@ -47,6 +47,16 @@ class DesignUiForm(SailUiForm):
         return ApplicationUiForm(self._interactor, self._state, self.breadcrumb)
 
     def import_application(self, app_file_path: str, customization_file_path: Optional[str] = None, inspect_and_import: bool = False) -> None:
+        """
+        Import an application into the Appian instance.
+        Args:
+            app_file_path: Local path to the application zip file
+            customization_file_path: Local path to customization file
+            inspect_and_import: Set to true if Appian Locust should "Inspect" before importing
+
+        Returns: None
+
+        """
         # Open the import modal
         self.click_button("Import")
 
@@ -82,7 +92,7 @@ class DesignUiForm(SailUiForm):
         """
         new_state = self.__design.search_design_grid(
             search_str, self._get_update_url_for_reeval(self._state), self._state, self.context, self.uuid,
-            f"{self.breadcrumb}.ApplicationSearch"
+            locust_label if locust_label else f"{self.breadcrumb}.ApplicationSearch"
         )
         self._reconcile_state(new_state)
         return self
@@ -99,7 +109,7 @@ class DesignUiForm(SailUiForm):
         """
         new_state = self.__design.search_design_grid(
             search_str, self._get_update_url_for_reeval(self._state), self._state, self.context, self.uuid,
-            f"{self.breadcrumb}.ObjectSearch"
+            locust_label if locust_label else f"{self.breadcrumb}.ObjectSearch"
         )
         self._reconcile_state(new_state)
         return self

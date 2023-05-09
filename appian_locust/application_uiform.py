@@ -15,6 +15,15 @@ class ApplicationUiForm(SailUiForm):
 
     @raises_locust_error
     def click_design_object(self, design_object_name: str) -> DesignObjectUiForm:
+        """
+        Click on a design object in the design object grid. The current view of the grid must contain the object you wish
+        to click.
+        Args:
+            design_object_name: The name of the design object to click on
+
+        Returns (DesignObjectUiForm): UiForm representing UI of design object
+
+        """
         opaque_id = self.__design.find_design_object_opaque_id_in_grid(design_object_name, self._state)
         breadcrumb = "Design.SelectedObject." + opaque_id[0:10] + ".SailUi"
         return DesignObjectUiForm(self._interactor, self.__design.fetch_design_object_json(opaque_id), breadcrumb)

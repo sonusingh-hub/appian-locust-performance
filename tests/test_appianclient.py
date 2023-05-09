@@ -55,7 +55,7 @@ class TestAppianBase(unittest.TestCase):
             setattr(self.parent_task_set, "credentials", bad_creds)
 
             # When
-            auth = self.task_set.determine_auth()
+            auth = self.task_set._determine_auth()
 
             # Then
             self.assertEqual(["a", "b"], auth)
@@ -66,10 +66,10 @@ class TestAppianBase(unittest.TestCase):
         setattr(self.parent_task_set, "credentials", [["aa", "bb"], ["c", "d"]])
 
         # When the first hit is done
-        auth1 = self.task_set.determine_auth()
-        auth2 = self.task_set.determine_auth()
-        auth3 = self.task_set.determine_auth()
-        auth4 = self.task_set.determine_auth()
+        auth1 = self.task_set._determine_auth()
+        auth2 = self.task_set._determine_auth()
+        auth3 = self.task_set._determine_auth()
+        auth4 = self.task_set._determine_auth()
 
         # Then
         self.assertEqual(["aa", "bb"], auth1)  # Pop is FIFO
@@ -82,10 +82,10 @@ class TestAppianBase(unittest.TestCase):
         setattr(self.parent_task_set, "credentials", [["aa", "bb"], ["c", "d"]])
 
         # When the first hit is done
-        auth1 = self.task_set.determine_auth()
-        auth2 = self.task_set.determine_auth()
-        auth3 = self.task_set.determine_auth()
-        auth4 = self.task_set.determine_auth()
+        auth1 = self.task_set._determine_auth()
+        auth2 = self.task_set._determine_auth()
+        auth3 = self.task_set._determine_auth()
+        auth4 = self.task_set._determine_auth()
 
         # Then
         self.assertEqual(["aa", "bb"], auth1)  # Pop is FIFO

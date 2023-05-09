@@ -2,11 +2,14 @@ from typing import Any, Dict
 from urllib.parse import quote
 
 from ._interactor import _Interactor
-from .records_helper import get_all_records_from_json
+from ._records_helper import get_all_records_from_json
 from .uiform import SailUiForm
 
 
 class RecordListUiForm(SailUiForm):
+    """
+    UiForm representing a Record List from Tempo Records
+    """
 
     def __init__(self, interactor: _Interactor, state: Dict[str, Any], breadcrumb: str = "RecordListUi"):
         super().__init__(interactor, state, breadcrumb)
@@ -17,9 +20,11 @@ class RecordListUiForm(SailUiForm):
         which makes the same request when typing something in the search box and reloading the page.
         More interactions (with the filtered list) can be performed on the returned SailUiForm Object.
 
-        Note: This is different from how an end user interacts with the SearchBox. In that case you would type something in the box
-        and when you would unfocus from the box a reevaluation happens and then you click the 'Search' button which returns the filtered
-        results.
+        Note: This function does not require unfocusing from the search box as you would in the UI.
+
+        Args:
+            search_term(str, optional): Term to filter records list to
+            locust_label (str, optional): label to associate request with
 
         Examples:
 
