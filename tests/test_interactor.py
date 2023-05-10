@@ -45,7 +45,7 @@ class TestInteractor(unittest.TestCase):
         self.setUpWithPath()
 
     def test_get_primary_button_payload(self) -> None:
-        output = self.task_set.appian.interactor.get_primary_button_payload(
+        output = self.task_set.appian._interactor.get_primary_button_payload(
             json.loads(self.form_content))
         self.assertIsInstance(output, dict)
 
@@ -56,7 +56,7 @@ class TestInteractor(unittest.TestCase):
         expected_requests.append(("get", "/suite/?signin=native"))
         expected_requests.append(("post", "/suite/auth?appian_environment=tempo"))
         # When
-        self.task_set.appian.interactor.get_page("/suite/whatever")
+        self.task_set.appian._interactor.get_page("/suite/whatever")
         # Then
         self.assertEqual(expected_requests, self.custom_locust.get_request_list_as_method_path_tuple())
 
@@ -68,7 +68,7 @@ class TestInteractor(unittest.TestCase):
         self.custom_locust.set_response("/suite/whatever", 200, '', cookies=cookies)
         self.custom_locust.set_response("/suite/", 200, '', cookies=cookies)
         # When
-        self.task_set.appian.interactor.get_page("/suite/whatever")
+        self.task_set.appian._interactor.get_page("/suite/whatever")
         # Then
         self.assertEqual(expected_requests, self.custom_locust.get_request_list_as_method_path_tuple())
 
@@ -82,7 +82,7 @@ class TestInteractor(unittest.TestCase):
                                         cookies={'fake': 'fakeVal'})  # No appiancsrf cookie returned
         # When
         try:
-            self.task_set.appian.interactor.get_page("/suite/500err")
+            self.task_set.appian._interactor.get_page("/suite/500err")
         # Then
         except Exception as e:
             self.assertEqual(expected_requests, self.custom_locust.get_request_list_as_method_path_tuple())
@@ -97,7 +97,7 @@ class TestInteractor(unittest.TestCase):
         self.custom_locust.set_response("/ae/whatever", 200, '', cookies=cookies)
         self.custom_locust.set_response("/ae/", 200, '', cookies=cookies)
         # When
-        self.task_set.appian.interactor.get_page("/suite/whatever")
+        self.task_set.appian._interactor.get_page("/suite/whatever")
         # Then
         self.assertEqual(expected_requests, self.custom_locust.get_request_list_as_method_path_tuple())
 
@@ -116,7 +116,7 @@ class TestInteractor(unittest.TestCase):
 
         # When
         try:
-            self.task_set.appian.interactor.get_page("/suite/500err")
+            self.task_set.appian._interactor.get_page("/suite/500err")
         # Then
         except Exception as e:
             self.assertEqual(expected_requests, self.custom_locust.get_request_list_as_method_path_tuple())
@@ -130,7 +130,7 @@ class TestInteractor(unittest.TestCase):
             200,
             "{}")
 
-        output = self.task_set.appian.interactor.click_record_link(
+        output = self.task_set.appian._interactor.click_record_link(
             "/suite/sites/record/some_long_record_id/view/summary", record_link, {}, "")
         self.assertEqual(output, dict())
 
@@ -139,9 +139,9 @@ class TestInteractor(unittest.TestCase):
                                                           json.loads(self.form_content_2))
 
         mock = unittest.mock.Mock()
-        setattr(self.task_set.appian.interactor, 'get_page', mock)
+        setattr(self.task_set.appian._interactor, 'get_page', mock)
 
-        self.task_set.appian.interactor.click_record_link(
+        self.task_set.appian._interactor.click_record_link(
             "/suite/sites/records/page/db/record/some-record-ref/view/summary", record_link, {}, "")
 
         mock.assert_called_once()
@@ -156,9 +156,9 @@ class TestInteractor(unittest.TestCase):
         record_link = find_component_by_attribute_in_dict("testLabel", "RecordLinkTestLabel", json.loads(ui))
 
         mock = unittest.mock.Mock()
-        setattr(self.task_set.appian.interactor, 'get_page', mock)
+        setattr(self.task_set.appian._interactor, 'get_page', mock)
 
-        self.task_set.appian.interactor.click_record_link(
+        self.task_set.appian._interactor.click_record_link(
             "/suite/rest/a/sites/latest/vendor-management/pages/opportunities/interface", record_link, {}, "")
         mock.assert_called_once()
 
@@ -171,9 +171,9 @@ class TestInteractor(unittest.TestCase):
                                                           json.loads(self.form_content_3))
 
         mock = unittest.mock.Mock()
-        setattr(self.task_set.appian.interactor, 'get_page', mock)
+        setattr(self.task_set.appian._interactor, 'get_page', mock)
 
-        self.task_set.appian.interactor.click_record_link(
+        self.task_set.appian._interactor.click_record_link(
             "/suite/sites/textcolumns/page/500", record_link, {}, "")
 
         mock.assert_called_once()
@@ -189,8 +189,8 @@ class TestInteractor(unittest.TestCase):
 
         mock = unittest.mock.Mock()
 
-        setattr(self.task_set.appian.interactor, 'get_page', mock)
-        self.task_set.appian.interactor.click_record_link(
+        setattr(self.task_set.appian._interactor, 'get_page', mock)
+        self.task_set.appian._interactor.click_record_link(
             "/suite/tempo/reports/view/oxy4ed", record_link, {}, "")
 
         mock.assert_called_once()
@@ -203,7 +203,7 @@ class TestInteractor(unittest.TestCase):
     def test_click_record_link_error(self) -> None:
         record_link = {"fake_component": "fake_attributes"}
         with self.assertRaises(Exception):
-            self.task_set.appian.interactor.click_record_link(
+            self.task_set.appian._interactor.click_record_link(
                 "", record_link, {}, "")
 
     def start_process_link_test_helper(self, is_mobile: bool = False) -> None:
@@ -215,9 +215,9 @@ class TestInteractor(unittest.TestCase):
         site_name = "covid-19-response-management"
         page_name = "home"
 
-        setattr(self.task_set.appian.interactor, 'post_page', mock)
-        self.task_set.appian.interactor.click_start_process_link(spl_component, process_model_opaque_id, cache_key,
-                                                                 site_name, page_name, is_mobile)
+        setattr(self.task_set.appian._interactor, 'post_page', mock)
+        self.task_set.appian._interactor.click_start_process_link(spl_component, process_model_opaque_id, cache_key,
+                                                                  site_name, page_name, is_mobile)
 
         mock.assert_called_once()
         if not is_mobile:
@@ -236,21 +236,21 @@ class TestInteractor(unittest.TestCase):
         record_link = find_component_by_attribute_in_dict("label", "Profile",
                                                           json.loads(self.form_content_2))
         with self.assertRaises(Exception):
-            self.task_set.appian.interactor.click_record_link(
+            self.task_set.appian._interactor.click_record_link(
                 "fake_uri", record_link, {}, "")
 
     def test_click_dynamic_link(self) -> None:
         dyn_link = find_component_by_attribute_in_dict("label", "Settings",
                                                        json.loads(self.form_content_2))
         self.custom_locust.set_response("", 200, "{}")
-        output = self.task_set.appian.interactor.click_link(
+        output = self.task_set.appian._interactor.click_link(
             "", dyn_link, {}, "")
         self.assertEqual(output, dict())
 
     def test_click_dynamic_link_error(self) -> None:
         dyn_link = {"fake_component": "fake_attributes"}
         with self.assertRaises(KeyError):
-            self.task_set.appian.interactor.click_link(
+            self.task_set.appian._interactor.click_link(
                 "", dyn_link, {}, "")
 
     def test_click_nested_dynamic_link(self) -> None:
@@ -258,7 +258,7 @@ class TestInteractor(unittest.TestCase):
                                                        "I need to update my Account details",
                                                        json.loads(self.nested_dynamic_link_json))
         self.custom_locust.set_response("", 200, "{}")
-        output = self.task_set.appian.interactor.click_link(
+        output = self.task_set.appian._interactor.click_link(
             "", dyn_link, {}, "")
         self.assertEqual(output, dict())
 
@@ -267,60 +267,60 @@ class TestInteractor(unittest.TestCase):
                                                          json.loads(self.form_content))
 
         self.custom_locust.set_response("", 200, "{}")
-        output = self.task_set.appian.interactor.fill_textfield(
+        output = self.task_set.appian._interactor.fill_textfield(
             "", text_title, "something", {}, "", "")
         self.assertEqual(output, dict())
 
     def test_post_page(self) -> None:
         self.custom_locust.set_response("", 200, "{}")
-        output = self.task_set.appian.interactor.post_page(
+        output = self.task_set.appian._interactor.post_page(
             "", payload={}, headers=None, label=None)
         self.assertEqual(output.json(), dict())
 
     def test_get_webapi(self) -> None:
         self.custom_locust.set_response(
             "?query=val", 200, '{"query": "result"}')
-        output = self.task_set.appian.interactor.get_webapi(
+        output = self.task_set.appian._interactor.get_webapi(
             "", queryparameters={"query": "val"})
         self.assertEqual('{"query": "result"}', output.text)
 
     def test_change_user_to_mobile(self) -> None:
         # Given
-        default_header = self.task_set.appian.interactor.setup_request_headers()
+        default_header = self.task_set.appian._interactor.setup_request_headers()
         self.assertEqual(default_header["User-Agent"], self.default_user_agent)
 
         # When
-        self.task_set.appian.interactor.set_user_agent_to_mobile()
-        new_header = self.task_set.appian.interactor.setup_request_headers()
+        self.task_set.appian._interactor.set_user_agent_to_mobile()
+        new_header = self.task_set.appian._interactor.setup_request_headers()
         self.assertNotEqual(new_header, default_header)
         self.assertEqual(new_header["User-Agent"], self.mobile_user_agent)
 
     def test_change_default_user_to_desktop(self) -> None:
         # Given
-        default_header = self.task_set.appian.interactor.setup_request_headers()
+        default_header = self.task_set.appian._interactor.setup_request_headers()
         self.assertEqual(default_header["User-Agent"], self.default_user_agent)
 
         # When
-        self.task_set.appian.interactor.set_user_agent_to_desktop()
-        new_header = self.task_set.appian.interactor.setup_request_headers()
+        self.task_set.appian._interactor.set_user_agent_to_desktop()
+        new_header = self.task_set.appian._interactor.setup_request_headers()
 
         # Then
         self.assertEqual(new_header, default_header)
 
     def test_change_mobile_user_to_desktop(self) -> None:
         # Given
-        default_header = self.task_set.appian.interactor.setup_request_headers()
+        default_header = self.task_set.appian._interactor.setup_request_headers()
         self.assertEqual(default_header["User-Agent"], self.default_user_agent)
 
         # Switch to mobile
-        self.task_set.appian.interactor.set_user_agent_to_mobile()
-        new_header = self.task_set.appian.interactor.setup_request_headers()
+        self.task_set.appian._interactor.set_user_agent_to_mobile()
+        new_header = self.task_set.appian._interactor.setup_request_headers()
         self.assertNotEqual(new_header, default_header)
         self.assertEqual(new_header["User-Agent"], self.mobile_user_agent)
 
         # Switch back to desktop
-        self.task_set.appian.interactor.set_user_agent_to_desktop()
-        new_header = self.task_set.appian.interactor.setup_request_headers()
+        self.task_set.appian._interactor.set_user_agent_to_desktop()
+        new_header = self.task_set.appian._interactor.setup_request_headers()
 
         # Then
         self.assertEqual(new_header, default_header)
@@ -329,7 +329,7 @@ class TestInteractor(unittest.TestCase):
         component = find_component_by_index_in_dict("SearchBoxWidget", 1, json.loads(self.site_with_record_search_button))
 
         self.custom_locust.set_response("", 200, "{}")
-        output = self.task_set.appian.interactor.click_record_search_button("", component, {}, "my_uuid", "")
+        output = self.task_set.appian._interactor.click_record_search_button("", component, {}, "my_uuid", "")
         self.assertEqual(output, dict())
 
     def test_login_retry(self) -> None:
@@ -358,15 +358,15 @@ class TestInteractor(unittest.TestCase):
         bad_value = 'abc'
         with self.assertRaisesRegex(Exception,
                                     f"Bad document id or list of document ids: {bad_value}"):
-            self.task_set.appian.interactor.upload_document_to_field('fake-url', {}, {}, 'uuid', 'abc')  # type: ignore
+            self.task_set.appian._interactor.upload_document_to_field('fake-url', {}, {}, 'uuid', 'abc')  # type: ignore
 
     def test_upload_document_to_field_doc_id(self) -> None:
         doc_id = 1
         upload_field = {'saveInto': 'abc', '_cId': '1123'}
 
         self.custom_locust.set_response("/doc-url/", 200, '{}')
-        self.task_set.appian.interactor.upload_document_to_field('/doc-url/',
-                                                                 upload_field, {}, 'uuid', doc_id)
+        self.task_set.appian._interactor.upload_document_to_field('/doc-url/',
+                                                                  upload_field, {}, 'uuid', doc_id)
 
         # This indexing is ridiculous, but we don't care about the rest
         last_request_body = json.loads(self.custom_locust.get_request_list().pop()['data'])
@@ -378,8 +378,8 @@ class TestInteractor(unittest.TestCase):
         upload_field = {'saveInto': 'abc', '_cId': '1123'}
 
         self.custom_locust.set_response("/doc-url/", 200, '{}')
-        self.task_set.appian.interactor.upload_document_to_field('/doc-url/',
-                                                                 upload_field, {}, 'uuid', doc_ids)
+        self.task_set.appian._interactor.upload_document_to_field('/doc-url/',
+                                                                  upload_field, {}, 'uuid', doc_ids)
 
         # This indexing is ridiculous, but we don't care about the rest
         last_request_body = json.loads(self.custom_locust.get_request_list().pop()['data'])

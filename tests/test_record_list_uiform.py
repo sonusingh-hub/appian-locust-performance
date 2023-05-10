@@ -36,7 +36,7 @@ class TestRecordListUiForm(unittest.TestCase):
     @patch('appian_locust._interactor._Interactor.get_page')
     def test_filter_records_using_searchbox(self, mock_get_page: MagicMock) -> None:
         uri = '/suite/rest/a/sites/latest/D6JMim/pages/records/recordType/commit'
-        record_type_list_form = RecordListUiForm(self.task_set.appian.interactor, json.loads(read_mock_file("records_response.json")))
+        record_type_list_form = RecordListUiForm(self.task_set.appian._interactor, json.loads(read_mock_file("records_response.json")))
         record_type_list_form.filter_records_using_searchbox("Actions Page")
 
         mock_get_page.assert_called_once()

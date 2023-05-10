@@ -187,12 +187,12 @@ class TestAppianBase(unittest.TestCase):
                                               base_path_override=base_path_override)
 
         # Then constructed and passed through
-        self.assertEqual(client.interactor.host, host)
-        self.assertTrue(client.interactor.record_mode)
-        self.assertEqual(client.interactor.client.base_path_override, base_path_override)
+        self.assertEqual(client._interactor.host, host)
+        self.assertTrue(client._interactor.record_mode)
+        self.assertEqual(client._interactor.client.base_path_override, base_path_override)
 
         # Test assembling request works without runtime error
-        client.interactor.client.request('GET', '/some-path')
+        client._interactor.client.request('GET', '/some-path')
 
     def test_procedurally_generate_credentials(self) -> None:
         # Given
