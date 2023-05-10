@@ -53,7 +53,7 @@ class FeatureToggleHelperTest(unittest.TestCase):
         self.custom_locust.set_response("/suite/sites", 200, "abc")
 
         # When
-        uri = feature_toggle_helper._get_javascript_uri(self.task_set.appian.interactor, {})
+        uri = feature_toggle_helper._get_javascript_uri(self.task_set.appian._interactor, {})
 
         # Then
         self.assertEqual(uri, None)
@@ -63,7 +63,7 @@ class FeatureToggleHelperTest(unittest.TestCase):
         self.custom_locust.set_response("/suite/sites", 200, self.html_snippet)
 
         # When
-        uri = feature_toggle_helper._get_javascript_uri(self.task_set.appian.interactor, {})
+        uri = feature_toggle_helper._get_javascript_uri(self.task_set.appian._interactor, {})
 
         # Then
         self.assertEqual(uri, self.relative_uri)
@@ -73,7 +73,7 @@ class FeatureToggleHelperTest(unittest.TestCase):
         self.custom_locust.set_response("/suite/sites", 200, self.cloud_html_snippet)
 
         # When
-        uri = feature_toggle_helper._get_javascript_uri(self.task_set.appian.interactor, {})
+        uri = feature_toggle_helper._get_javascript_uri(self.task_set.appian._interactor, {})
 
         # Then
         self.assertEqual(uri, self.web_asset_url)
@@ -173,7 +173,7 @@ class FeatureToggleHelperTest(unittest.TestCase):
 
         # When
         flag, flag_extended = feature_toggle_helper.get_client_feature_toggles(
-            self.task_set.appian.interactor,
+            self.task_set.appian._interactor,
             self.task_set.appian.client
         )
 
@@ -188,7 +188,7 @@ class FeatureToggleHelperTest(unittest.TestCase):
         # When and Then
         with self.assertRaisesRegex(Exception, "Could not find script uri to retrieve client feature"):
             feature_toggle_helper.get_client_feature_toggles(
-                self.task_set.appian.interactor,
+                self.task_set.appian._interactor,
                 self.task_set.appian.client
             )
 
@@ -201,7 +201,7 @@ class FeatureToggleHelperTest(unittest.TestCase):
         # When and Then
         with self.assertRaisesRegex(Exception, "Could not find flag string within uri /suite/tempo/ui"):
             feature_toggle_helper.get_client_feature_toggles(
-                self.task_set.appian.interactor,
+                self.task_set.appian._interactor,
                 self.task_set.appian.client
             )
 
@@ -273,15 +273,15 @@ class FeatureToggleHelperTest(unittest.TestCase):
 
     def override_default_flags_runner(self, flags: Callable[[], Generator[FeatureFlag, None, None]], expected_featured_flag_extended: str,  expected_feature_flag: str) -> None:
         # Given a snippet of the sites page
-        self.task_set.appian.interactor.client.feature_flag_extended = "149dc1fffceebc"
-        self.task_set.appian.interactor.client.feature_flag = "7ffceebc"
+        self.task_set.appian._interactor.client.feature_flag_extended = "149dc1fffceebc"
+        self.task_set.appian._interactor.client.feature_flag = "7ffceebc"
 
         # When
-        feature_toggle_helper.override_default_feature_flags(self.task_set.appian.interactor, flags)
+        feature_toggle_helper.override_default_feature_flags(self.task_set.appian._interactor, flags)
 
         # Then
-        self.assertEqual(self.task_set.appian.interactor.client.feature_flag_extended, expected_featured_flag_extended)
-        self.assertEqual(self.task_set.appian.interactor.client.feature_flag, expected_feature_flag)
+        self.assertEqual(self.task_set.appian._interactor.client.feature_flag_extended, expected_featured_flag_extended)
+        self.assertEqual(self.task_set.appian._interactor.client.feature_flag, expected_feature_flag)
 
     def test_override_default_flags_no_flags(self) -> None:
         # Given a snippet of the sites page

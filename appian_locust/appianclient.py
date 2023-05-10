@@ -145,9 +145,9 @@ class AppianClient:
         self.host = _trim_trailing_slash(host)
         self._interactor = _Interactor(self.client, self.host, portals_mode=portals_mode)
 
-        self.visitor = Visitor(self._interactor)
-        self.site_helper = SiteHelper(self._interactor)
-        self.tempo_navigator = TempoNavigator(self._interactor)
+        self._visitor = Visitor(self._interactor)
+        self._site_helper = SiteHelper(self._interactor)
+        self._tempo_navigator = TempoNavigator(self._interactor)
 
         # Adding a few session specific attributes to self.client to that it can be carried and handled by session
         # in case of having multiple sessions in the future.
@@ -158,14 +158,28 @@ class AppianClient:
         setattr(self.client, "base_path_override", base_path_override)
 
     @property
-    def interactor(self) -> _Interactor:
+    def visitor(self) -> Visitor:
         """
-        Interactor that can be used to make lower level requests against Appian
+        Visitor that can be used to navigate to different types of pages in an Appian instance
         """
-        return self._interactor
+        return self._visitor
+
+    @property
+    def tempo_navigator(self) -> TempoNavigator:
+        """
+        Tempo Navigator that can be used to fetch objects which can provide metadata about Tempo Tabs
+        """
+        return self._tempo_navigator
+
+    @property
+    def site_helper(self) -> SiteHelper:
+        """
+        SiteHelper used for interactions that do not require a UI
+        """
+        return self._site_helper
 
     def login(self, auth: Optional[list] = None, check_login: bool = True) -> Tuple[HttpSession, Response]:
-        return self.interactor.login(auth, check_login=check_login)
+        return self._interactor.login(auth, check_login=check_login)
 
     def logout(self) -> None:
         """
@@ -177,18 +191,18 @@ class AppianClient:
             + urllib.parse.quote(self.host + "/suite/tempo/")
         )
 
-        headers = self.interactor.setup_request_headers(logout_uri)
+        headers = self._interactor.setup_request_headers(logout_uri)
         if hasattr(greenlet.getcurrent(), "minimal_ident"):
-            log.info(f"Logging out user {self.interactor.auth[0]} from greenlet id {greenlet.getcurrent().minimal_ident}")
+            log.info(f"Logging out user {self._interactor.auth[0]} from greenlet id {greenlet.getcurrent().minimal_ident}")
         else:
-            log.info(f"Logging out user {self.interactor.auth[0]} from {greenlet.getcurrent()}")
-        self.interactor.post_page(logout_uri, headers=headers, label="Logout.LoadUi", check_login=False)
+            log.info(f"Logging out user {self._interactor.auth[0]} from {greenlet.getcurrent()}")
+        self._interactor.post_page(logout_uri, headers=headers, label="Logout.LoadUi", check_login=False)
         self.client.cookies.clear()
 
     def get_client_feature_toggles(self) -> None:
         try:
             self.client.feature_flag, self.client.feature_flag_extended = ("7ffceebc", "1bff7f49dc1fffceebc") if self.portals_mode else (
-                get_client_feature_toggles(self.interactor, self.client)
+                get_client_feature_toggles(self._interactor, self.client)
             )
         except Exception as e:
             log_locust_error(e, error_desc="Client Feature Toggles Error")
@@ -230,10 +244,10 @@ class AppianTaskSet(TaskSet):
             m = re.search(test, resp[1].text)
             if m is None or m.group(1) == 'news':
                 # old way
-                self.appian.interactor.url_pattern_version = 0
+                self.appian._interactor.url_pattern_version = 0
             elif m.group(1) == 'p.news':
                 # new way
-                self.appian.interactor.url_pattern_version = 1
+                self.appian._interactor.url_pattern_version = 1
             else:
                 log.error("appian-locust could not determine appian interaction url pattern.  Please upgrade to the latest version.")
 
@@ -302,7 +316,7 @@ class AppianTaskSet(TaskSet):
         def flags_to_override_generator() -> Generator[FeatureFlag, None, None]:
             yield from flags_to_override
         try:
-            override_default_feature_flags(self.appian.interactor, flags_to_override_generator)
+            override_default_feature_flags(self.appian._interactor, flags_to_override_generator)
         except Exception as e:
             log_locust_error(e, error_desc="Override Default Flags Error")
             raise e
@@ -312,8 +326,8 @@ class AppianTaskSet(TaskSet):
         API for designating a device as mobile to spoof running on a mobile device.
         """
         try:
-            set_mobile_feature_flags(self.appian.interactor)
-            self.appian.interactor.set_user_agent_to_mobile()
+            set_mobile_feature_flags(self.appian._interactor)
+            self.appian._interactor.set_user_agent_to_mobile()
         except Exception as e:
             log_locust_error(e, error_desc="Override Default Flags Error")
             raise e
@@ -325,7 +339,7 @@ class AppianTaskSet(TaskSet):
         desktop tests.
         """
         try:
-            self.appian.interactor.set_user_agent_to_desktop()
+            self.appian._interactor.set_user_agent_to_desktop()
         except Exception as e:
             log_locust_error(e, error_desc="Error setting device as desktop")
             raise e

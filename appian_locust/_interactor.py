@@ -67,7 +67,7 @@ class _Interactor:
 
         Examples:
 
-            >>> self.appian.interactor.setup_request_headers()
+            >>> self.appian._interactor.setup_request_headers()
         """
 
         uri = uri if uri is not None else self.host
@@ -284,14 +284,14 @@ class _Interactor:
 
         To set custom headers
 
-        >>> headers = self.appian.interactor.setup_request_headers()
+        >>> headers = self.appian._interactor.setup_request_headers()
         ... headers['Is-Admin'] = 'true'
-        ... self.appian.interactor.get_webapi('/suite/webapi/headers', headers=headers)
+        ... self.appian._interactor.get_webapi('/suite/webapi/headers', headers=headers)
 
         To set custom query parameters
 
         >>> params = {'age': 5, 'start-date': '10-05-2020'}
-        ... self.appian.interactor.get_webapi('/suite/webapi/query', queryparameters=params)
+        ... self.appian._interactor.get_webapi('/suite/webapi/query', queryparameters=params)
         """
         querystring = []
         for k, v in queryparameters.items():
