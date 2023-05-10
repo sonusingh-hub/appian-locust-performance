@@ -125,32 +125,3 @@ Troubleshooting
   * Add ``self.appian.interactor.record_mode = True`` to your ``AppianTaskSet`` subclass.  Files will be placed in ``/record_responses`` where the runner is executed.
 
 .. quick_start-inclusion-end-do-not-remove
-
-.. contrib-inclusion-begin-do-not-remove
-
-********************
-Contributing
-********************
-
-* Read and agree to our `Contributing Policy <https://gitlab.com/appian-oss/appian-locust/-/blob/master/CONTRIBUTING>`__
-* Fork the `appian-locust <https://gitlab.com/appian-oss/appian-locust>`__ repository
-* Make any desired changes to python files, etc.
-* Commit changes and push to your fork
-* Make a merge request to the upstream fork
-
-To test changes
------------------
-In any test-implementation repo where you use appian-locust, change the following (assuming you're using a ``Pipfile``)
-
-.. code-block:: python
-
-    appian-locust = {path="../appian-locust", editable=true}
-
-**NOTE** The path above assumes appian-locust is checked out locally, hence we can use a relative directory path.
-
-And run ``pipenv install --skip-lock`` to allow you to use a local version of appian-locust
-without recreating the lock file. However, remember to use a lock file in your test-implementation repo.
-
-Now you can test your changes as you normally would.
-
-.. contrib-inclusion-end-do-not-remove

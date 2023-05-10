@@ -12,6 +12,10 @@
 #
 import os
 import sys
+import re
+import itertools
+from pathlib import Path
+from textwrap import dedent
 sys.path.insert(0, os.path.abspath('../../..'))
 
 
@@ -42,7 +46,7 @@ html_favicon = 'favicon-32x32.png'
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
 
-autodoc_default_flags = ['members', 'undoc-members', 'inherited-members', 'show-inheritance']
+autodoc_default_flags = ['members', 'private-members', 'undoc-members', 'inherited-members', 'show-inheritance']
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -50,3 +54,39 @@ autodoc_default_flags = ['members', 'undoc-members', 'inherited-members', 'show-
 # a list of builtin themes.
 #
 html_theme = 'sphinx_rtd_theme'
+
+# Iterate through appian-locust classes to generate a list of exposed and internal APIs
+appian_locust_dir = '../..'
+exposed_dir = Path('./_build/exposed')
+internal_dir = Path('./_build/internal')
+exposed_dir.mkdir(parents=True, exist_ok=True)
+internal_dir.mkdir(parents=True, exist_ok=True)
+
+def write_automodule(name: str, folder: Path, show_private: bool = False) -> None:
+    with open(f'{folder}/{name}.rst', 'w') as stream:
+        stream.write(dedent(f"""\
+            {name}
+            {''.join(itertools.repeat('=', len(name)))}
+
+            .. automodule:: appian_locust.{name}
+                :members:
+                :undoc-members:
+                :show-inheritance:
+                {':private-members:' if show_private else ''}
+        """))
+
+for f in os.listdir(appian_locust_dir):
+    match = re.match('^([^_].+)\.py$', f)
+    if match:
+        write_automodule(
+            name=match.group(1),
+            folder=exposed_dir,
+        )
+        continue
+    match = re.match('^(_[^_].+)\.py$', f)
+    if match:
+        write_automodule(
+            name=match.group(1),
+            folder=internal_dir,
+            show_private=True,
+        )

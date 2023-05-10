@@ -6,7 +6,8 @@ from ._interactor import _Interactor
 
 class SiteHelper:
     """
-    Class for providing the ability to perform activities that do not require a UI interaction to perform
+    Class for providing the ability to perform activities that do not require a UI interaction
+    to perform. For example, triggering an action without a startform.
     """
 
     def __init__(self, interactor: _Interactor):

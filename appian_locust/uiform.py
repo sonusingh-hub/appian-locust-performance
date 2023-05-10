@@ -43,7 +43,8 @@ class ClientMode(enum.Enum):
 class SailUiForm:
     def __init__(self, interactor: _Interactor, state: Dict[str, Any], breadcrumb: str = "SailUi"):
         """
-        UIForm Class used to interact with a SAIL form used in an action, record, etc..
+        Appian rendered UI that provides page interactivity. ``SailUiForm`` is a base class that is abstracted
+        by specific Appian form types to handle requirements or provide metadata unique to that page.
 
         Args:
             base: Action, Record, etc.. interactor object

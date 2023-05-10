@@ -3,8 +3,8 @@ Limitations
 ################
 
 .. include:: ../../../README.rst
-  :start-after: disclaimer-inclusion-begin-do-not-remove
-  :end-before: disclaimer-inclusion-end-do-not-remove
+    :start-after: disclaimer-inclusion-begin-do-not-remove
+    :end-before: disclaimer-inclusion-end-do-not-remove
 
 Currently *unsupported* Appian Interactions
 ********************************************

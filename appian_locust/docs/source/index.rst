@@ -20,7 +20,7 @@ API
 -----------
 
 .. toctree::
-    :maxdepth: 4
+    :maxdepth: 2
 
     appian_locust
 
