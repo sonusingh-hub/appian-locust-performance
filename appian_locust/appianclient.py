@@ -145,9 +145,9 @@ class AppianClient:
         self.host = _trim_trailing_slash(host)
         self._interactor = _Interactor(self.client, self.host, portals_mode=portals_mode)
 
-        self.visitor = Visitor(self._interactor)
-        self.site_helper = SiteHelper(self._interactor)
-        self.tempo_navigator = TempoNavigator(self._interactor)
+        self._visitor = Visitor(self._interactor)
+        self._site_helper = SiteHelper(self._interactor)
+        self._tempo_navigator = TempoNavigator(self._interactor)
 
         # Adding a few session specific attributes to self.client to that it can be carried and handled by session
         # in case of having multiple sessions in the future.
@@ -156,6 +156,27 @@ class AppianClient:
 
         # Used for sites where /suite is not in the URL, i.e. local builds
         setattr(self.client, "base_path_override", base_path_override)
+
+    @property
+    def visitor(self) -> Visitor:
+        """
+        Visitor that can be used to navigate to different types of pages in an Appian instance
+        """
+        return self._visitor
+
+    @property
+    def tempo_navigator(self) -> TempoNavigator:
+        """
+        Tempo Navigator that can be used to fetch objects which can provide metadata about Tempo Tabs
+        """
+        return self._tempo_navigator
+
+    @property
+    def site_helper(self) -> SiteHelper:
+        """
+        SiteHelper used for interactions that do not require a UI
+        """
+        return self._site_helper
 
     def login(self, auth: Optional[list] = None, check_login: bool = True) -> Tuple[HttpSession, Response]:
         return self._interactor.login(auth, check_login=check_login)
