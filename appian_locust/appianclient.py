@@ -1,3 +1,4 @@
+import greenlet
 import os
 import re
 import urllib.parse
@@ -179,7 +180,11 @@ class AppianClient:
         )
 
         headers = self.interactor.setup_request_headers(logout_uri)
-        self.interactor.get_page(logout_uri, headers=headers, label="Logout.LoadUi", check_login=False)
+        if hasattr(greenlet.getcurrent(), "minimal_ident"):
+            log.info(f"Logging out user {self.interactor.auth[0]} from greenlet id {greenlet.getcurrent().minimal_ident}")
+        else:
+            log.info(f"Logging out user {self.interactor.auth[0]} from {greenlet.getcurrent()}")
+        self.interactor.post_page(logout_uri, headers=headers, label="Logout.LoadUi", check_login=False)
         self.client.cookies.clear()
 
     def get_client_feature_toggles(self) -> None:
