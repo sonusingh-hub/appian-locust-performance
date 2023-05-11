@@ -26,7 +26,7 @@ RECORD_PATH = "recorded_responses"
 
 
 class _Interactor:
-    def __init__(self, session: HttpSession, host: str, portals_mode: bool = False) -> None:
+    def __init__(self, session: HttpSession, host: str, portals_mode: bool = False, request_timeout: int = 300) -> None:
         """
         Class that represents interactions with the UI and Appian system
         If you want to record all requests made, you can set the record_mode attribute
@@ -38,6 +38,7 @@ class _Interactor:
             session: Locust session/client object
             host (str): Host URL inherited from subclass to conform with Mypy standards
             portals_mode (bool): Set to true if attempting to connect to a portals site
+            request_timeout (int): time in seconds after which requests initiated by the Interactor should time out
         """
         self.client = session
         self.host = host
@@ -46,6 +47,7 @@ class _Interactor:
         self.user_agent = ""
         self.portals_mode = portals_mode
         self.url_pattern_version = 0
+        self.__request_timeout = request_timeout
         # Set to default as desktop request.
         self.set_user_agent_to_desktop()
 
@@ -151,7 +153,7 @@ class _Interactor:
         else:
             log_locust_error(Exception("Cannot POST a payload that is not of type dict or string"))
             sys.exit(1)
-        with self.client.post(uri, data=post_payload, headers=headers, timeout=60, name=label, files=files,
+        with self.client.post(uri, data=post_payload, headers=headers, timeout=self.__request_timeout, name=label, files=files,
                               catch_response=True) as resp:  # type: ResponseContextManager
             try:
                 test_response_for_error(resp, uri, raise_error=check_login, username=username)
@@ -259,7 +261,7 @@ class _Interactor:
         uri = self.replace_base_path_if_appropriate(uri)
         if headers is not None:
             kwargs['headers'] = headers
-            kwargs['timeout'] = 60
+            kwargs['timeout'] = self.__request_timeout
         with self.client.get(uri, **kwargs) as resp:  # type: ResponseContextManager
             if check_login and not self.portals_mode:
                 self.check_login(resp)

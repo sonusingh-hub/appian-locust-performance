@@ -21,13 +21,14 @@ default_config = {
 }
 
 log = logger.getLogger(__name__)
+DEFAULT_CONFIG_PATH = "./config.json"
 
 
 class loadDriverUtils:
     def __init__(self) -> None:
         self.c = default_config
 
-    def load_config(self, config_file: str = "./config.json") -> dict:
+    def load_config(self, config_file: str = DEFAULT_CONFIG_PATH) -> dict:
         """
         Load a json configuration file into a dictionary
         Args:
