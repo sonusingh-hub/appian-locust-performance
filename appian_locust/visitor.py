@@ -1,6 +1,7 @@
 from typing import Optional
 
 from appian_locust.record_uiform import RecordInstanceUiForm
+from ._portals import _Portals
 from .application_uiform import ApplicationUiForm
 from .design_object_uiform import DesignObjectUiForm
 from .design_uiform import DesignUiForm
@@ -33,6 +34,7 @@ class Visitor:
         self.__sites = _Sites(self.__interactor)
         self.__actions = _Actions(self.__interactor)
         self.__admin = _Admin(self.__interactor)
+        self.__portals = _Portals(self.__interactor)
 
     def visit_task(self, task_name: str, exact_match: bool = True, locust_request_label: str = "") -> SailUiForm:
         """
@@ -268,3 +270,36 @@ class Visitor:
         label = locust_request_label or f'Actions.GetUi.{action_key}'
         form_json = self.__actions.fetch_action_json(action_name, exact_match, label)
         return SailUiForm(self.__interactor, form_json, breadcrumb=label)
+
+    def visit_portal_page(self, portal_unique_identifier: str, portal_page_unique_identifier: str) -> SailUiForm:
+        """
+        Navigate to portal's page by url and returns the corresponding SailUiForm to interact with
+
+        Args:
+            portal_unique_identifier (str): portal web address unique identifier
+            portal_page_unique_identifier (str): web address unique identifier for specific page in portal
+
+        Returns: SailUiForm
+
+        Examples:
+
+            If we have portal up and running with 2 pages with title "page1" and "page2", we can
+            visit any portal page with help of this method.
+
+            In order to visit "page1" with url (in browser: https://mysite.appian-internal.com/performance-testing/page/page1),
+            we would use
+
+            >>> self.appian.visitor.visit_portal_page("performance-testing", "page1")
+
+            In order to visit "page2" with url (in browser: https://mysite.appian-internal.com/performance-testing/page/page2),
+            we would use
+
+            >>> self.appian.visitor.visit_portal_page("performance-testing", "page2")
+
+        Note: sometimes when portal has just 1 page (for example page with title 'page1').
+        appian use only "https://mysite.appian-internal.com/performance-testing" (in browser)
+        instead of https://mysite.appian-internal.com/performance-testing/page/page1 . although it still works.
+        """
+        form_json = self.__portals.fetch_page_json(portal_unique_identifier, portal_page_unique_identifier)
+        breadcrumb = f"Portals.{_Portals.get_full_url(portal_unique_identifier, portal_page_unique_identifier)}.SailUi"
+        return SailUiForm(self.__interactor, form_json, breadcrumb=breadcrumb)

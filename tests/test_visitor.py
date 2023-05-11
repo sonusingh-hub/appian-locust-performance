@@ -407,6 +407,23 @@ class TestVisitor(unittest.TestCase):
         self.assertEqual('EXCEPTION: 400 Client Error: None for uri: /suite/rest/a/applications/latest/app/admin Username: fake_user', error.error)
         self.assertEqual(1, error.occurrences)
 
+    def test_visit_portal_verify_return_type(self) -> None:
+        portal_page_form = self.task_set.appian.visitor.visit_portal_page("performance-test", "one")
+        self.assertTrue(isinstance(portal_page_form, SailUiForm))
+
+    def test_visit_portal_verify_returned_form_state(self) -> None:
+        portal_page_dummy_response = f'{{"portals": "hello"}}'
+        self.custom_locust.set_response("/performance-test/_/ui/page/one",
+                                        200,
+                                        portal_page_dummy_response)
+        portal_page_form = self.task_set.appian.visitor.visit_portal_page("performance-test", "one")
+        self.assertDictEqual(portal_page_form.get_latest_state(), json.loads(portal_page_dummy_response))
+
+    def test_visit_portal_page_verify_label(self) -> None:
+        expected_label = "Portals./performance-test/_/ui/page/one.SailUi"
+        portal_page_form = self.task_set.appian.visitor.visit_portal_page("performance-test", "one")
+        self.assertEqual(portal_page_form.breadcrumb, expected_label)
+
 
 if __name__ == '__main__':
     unittest.main()
