@@ -2,16 +2,6 @@ Public API
 ----------
 
 .. toctree::
-   :glob:
+    :glob:
 
-   api/*
-
-.. toctree::
-   :maxdepth: 2
-
-   utils.rst
-
-.. toctree::
-   :maxdepth: 2
-
-   types.rst
+    _build/exposed/*

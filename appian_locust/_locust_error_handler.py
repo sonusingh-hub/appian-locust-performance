@@ -64,6 +64,7 @@ def test_response_for_error(resp: ResponseContextManager, uri: str = 'No URI Spe
     Example (Returns a HTTP 500 error):
 
     .. code-block:: python
+
       username = 'admin'
       uri = 'https://httpbin.org/status/500'
       with self.client.get(uri) as resp:
