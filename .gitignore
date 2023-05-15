@@ -115,3 +115,6 @@ config.json
 pyproject.toml
 .vscode
 recorded_responses/
+
+# generated doc api rst files
+_api

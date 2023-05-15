@@ -4,4 +4,4 @@
     :maxdepth: 1
     :glob:
 
-    _build/internal/*
+    _api/internal/*
