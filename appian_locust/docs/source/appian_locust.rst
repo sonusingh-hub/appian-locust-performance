@@ -4,4 +4,4 @@ Public API
 .. toctree::
     :glob:
 
-    _build/exposed/*
+    _api/exposed/*

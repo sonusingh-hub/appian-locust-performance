@@ -57,8 +57,8 @@ html_theme = 'sphinx_rtd_theme'
 
 # Iterate through appian-locust classes to generate a list of exposed and internal APIs
 appian_locust_dir = '../..'
-exposed_dir = Path('./_build/exposed')
-internal_dir = Path('./_build/internal')
+exposed_dir = Path('./_api/exposed')
+internal_dir = Path('./_api/internal')
 exposed_dir.mkdir(parents=True, exist_ok=True)
 internal_dir.mkdir(parents=True, exist_ok=True)
 
