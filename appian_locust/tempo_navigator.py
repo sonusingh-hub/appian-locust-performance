@@ -1,4 +1,3 @@
-from ._interactor import _Interactor
 from .news_info import NewsInfo
 from .actions_info import ActionsInfo
 from .records_info import RecordsInfo

@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from ._reports import _Reports
 
@@ -11,7 +11,7 @@ class ReportsInfo:
     def __init__(self, reports: _Reports):
         self.__reports = reports
 
-    def get_all_available_reports(self) -> Dict[str, Any]:
+    def get_all_available_reports(self, search_string: Optional[str] = None) -> Dict[str, Any]:
         """
         Retrieves all the available "reports" and associated metadata from "Appian-Tempo-Reports"
 
@@ -22,7 +22,7 @@ class ReportsInfo:
             >>> reports_info.get_all_available_reports()
 
         """
-        return self.__reports.get_all()
+        return self.__reports.get_all(search_string=search_string)
 
     def get_report_info(self, report_name: str, exact_match: bool = True) -> Dict[str, Any]:
         """
