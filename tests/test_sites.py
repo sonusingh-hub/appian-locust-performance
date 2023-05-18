@@ -1,7 +1,7 @@
 from locust import TaskSet, Locust
 from .mock_client import CustomLocust
 from .mock_reader import read_mock_file
-from requests import Response
+from requests.exceptions import HTTPError
 from appian_locust import AppianTaskSet
 from appian_locust._interactor import _Interactor
 from appian_locust._sites import _Sites, SiteNotFoundException, PageNotFoundException, PageType
@@ -90,7 +90,8 @@ class TestSites(unittest.TestCase):
     def test_navigate_to_tab_error_cases(self) -> None:
         site_name = "abc"
         self.set_sites_json(site_name)
-        with self.assertRaises(SiteNotFoundException):
+        self.custom_locust.set_response(f"/suite/rest/a/sites/latest/other_site/nav", 404, "no site found")
+        with self.assertRaises(HTTPError):
             self.sites_interactor.fetch_site_tab_json("other_site", "123")
         with self.assertRaises(PageNotFoundException):
             self.sites_interactor.fetch_site_tab_json(site_name, "123")

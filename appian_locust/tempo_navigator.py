@@ -2,12 +2,14 @@ from .news_info import NewsInfo
 from .actions_info import ActionsInfo
 from .records_info import RecordsInfo
 from .reports_info import ReportsInfo
+from .sites_info import SitesInfo
 from .tasks_info import TasksInfo
 from ._actions import _Actions
 from ._interactor import _Interactor
 from ._locust_error_handler import log_locust_error
 from ._records import _Records
 from ._reports import _Reports
+from ._sites import _Sites
 from ._tasks import _Tasks
 
 
@@ -22,6 +24,7 @@ class TempoNavigator:
         self.__tasks = _Tasks(self.__interactor)
         self.__reports = _Reports(self.__interactor)
         self.__records = _Records(self.__interactor)
+        self.__sites = _Sites(self.__interactor)
 
     def navigate_to_news_and_get_info(self) -> NewsInfo:
         """
@@ -57,3 +60,9 @@ class TempoNavigator:
         Navigate to the reports tab in Tempo and gather information about available reports
         """
         return ReportsInfo(self.__reports)
+
+    def get_sites_info(self) -> SitesInfo:
+        """
+        Get Site metadata object
+        """
+        return SitesInfo(self.__sites)

@@ -5,7 +5,7 @@ from ._tasks import _Tasks
 
 class TasksInfo:
     """
-    Class which provides metadata about available reports from the Tempo Tasks tab
+    Class which provides metadata about available tasks from the Tempo Tasks tab
     """
 
     def __init__(self, tasks: _Tasks):
