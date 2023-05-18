@@ -1,18 +1,14 @@
 import enum
-import json
 import random
 from typing import Any, Dict, List, Union, Optional
-
-from requests import Response
 
 from . import logger
 from ._base import _Base
 from ._interactor import _Interactor
 from ._news import NEWS_NAV_PATH
 from .helper import extract_values, format_label
-from ._records_helper import (get_all_records_from_json,
-                              get_record_summary_view_response)
-from .uiform import SailUiForm
+from ._records_helper import get_all_records_from_json
+from .site_objects import Site, Page
 
 log = logger.getLogger(__name__)
 
@@ -121,7 +117,7 @@ class _Sites(_Base):
                 self.get_site_data_by_site_name(site_url_stub)
         return self._sites
 
-    def get_site_data_by_site_name(self, site_name: str) -> Union['Site', None]:
+    def get_site_data_by_site_name(self, site_name: str) -> Site:
         """
         Gets site data from just the site url stub
 
@@ -141,8 +137,7 @@ class _Sites(_Base):
 
         # Invalid case
         if not display_name:
-            log.error(f"JSON response for navigating to site '{site_name}' was invalid")
-            return None
+            raise InvalidSiteException(f"JSON response for navigating to site '{site_name}' was invalid")
 
         pages_names = self.get_page_names_from_ui(initial_nav_json)
         site = self._get_and_memoize_site_data(site_name, display_name, pages_names)
@@ -243,34 +238,5 @@ class PageNotFoundException(Exception):
     pass
 
 
-class Site:
-    """
-    Class representing a single site, as well as its pages
-    """
-
-    def __init__(self, name: str, display_name: str, pages: Dict[str, 'Page']):
-        self.name = name
-        self.display_name = display_name
-        self.pages = pages
-
-    def __str__(self) -> str:
-        return f"Site(name={self.name},pages=[{self.pages}])"
-
-    def __repr__(self) -> str:
-        return self.__str__()
-
-
-class Page:
-    """
-    Class representing a single Page within a site
-    """
-
-    def __init__(self, page_name: str, page_type: 'PageType') -> None:
-        self.page_name = page_name
-        self.page_type = page_type
-
-    def __str__(self) -> str:
-        return f"Page(name={self.page_name},type={self.page_type})"
-
-    def __repr__(self) -> str:
-        return self.__str__()
+class InvalidSiteException(Exception):
+    pass
