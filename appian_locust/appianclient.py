@@ -263,9 +263,10 @@ class AppianTaskSet(TaskSet):
                                     portals_mode=portals_mode, config_path=config_path)
         if not portals_mode:
             self.auth = self._determine_auth()
-            resp = self.appian.login(self.auth)
+            self.appian.login(self.auth)
+            resp = self.appian._interactor.get_page(uri=self.host + "/suite/tempo/news")
             test = r'\\\\\\/suite\\\\\\/rest\\\\\\/a\\\\\\/sites\\\\\\/latest\\\\\\/D6JMim\\\\\\/page\\\\\\/(.+)\\\\\\'
-            m = re.search(test, resp[1].text)
+            m = re.search(test, resp.text)
             if m is None or m.group(1) == 'news':
                 # old way
                 self.appian._interactor.url_pattern_version = 0
