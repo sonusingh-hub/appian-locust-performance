@@ -7,13 +7,14 @@ from .design_object_uiform import DesignObjectUiForm
 from .design_uiform import DesignUiForm
 from .design_object_type import DesignObjectType
 from .record_list_uiform import RecordListUiForm
+from .site_objects import PageType
 from .uiform import SailUiForm
 from ._actions import _Actions
 from ._design import _Design
 from ._interactor import _Interactor
 from ._records import _Records
 from ._reports import _Reports
-from ._sites import _Sites, PageType
+from ._sites import _Sites
 from ._admin import _Admin
 from ._tasks import _Tasks
 from .helper import format_label

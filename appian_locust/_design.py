@@ -1,13 +1,24 @@
-from enum import Enum
 from typing import Any, Dict, Optional
 
 from ._interactor import _Interactor
 from ._locust_error_handler import raises_locust_error
-from ._save_request_builder import save_builder
-from .helper import find_component_by_type_and_attribute_and_index_in_dict, find_component_by_type_and_attribute_and_index_in_dict, find_component_by_attribute_in_dict
+from .design_object import DesignObject
+from .helper import find_component_by_label_and_type_dict, find_component_by_type_and_attribute_and_index_in_dict, find_component_by_attribute_in_dict
 from .uiform import SailUiForm
 
 DESIGN_URI_PATH: str = "/suite/rest/a/applications/latest/app/design"
+
+
+def get_available_design_objects(state: Dict[str, Any]) -> Dict[str, DesignObject]:
+    name_column = find_component_by_label_and_type_dict(type="GridFieldColumn", attribute="label", value="Name",
+                                                        component_tree=state)
+    design_objects = {}
+    for element in name_column["data"]:
+        link = element["contents"]["items"][0]["item"]["value"]["values"][0]["link"]
+        name = link["testLabel"]
+        uri_split = link["uri"].split("/")
+        design_objects[name] = DesignObject(name, uri_split[len(uri_split) - 1])
+    return design_objects
 
 
 class _Design:
@@ -129,7 +140,7 @@ class _Design:
         link_component = find_component_by_attribute_in_dict('testLabel', design_object_name, grid_component, throw_attribute_exception=True)
         return link_component.get("uri").split('/')[-1]
 
-    def _create_object(self, ui_form: SailUiForm, link_name: str, object_name: str) -> 'SailUiForm':
+    def create_object(self, ui_form: SailUiForm, link_name: str, object_name: str) -> 'SailUiForm':
         return ui_form.click(link_name)\
             .fill_text_field('Name', object_name)\
             .click('Create')\

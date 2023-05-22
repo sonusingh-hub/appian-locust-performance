@@ -62,6 +62,7 @@ internal_dir = Path('./_api/internal')
 exposed_dir.mkdir(parents=True, exist_ok=True)
 internal_dir.mkdir(parents=True, exist_ok=True)
 
+
 def write_automodule(name: str, folder: Path, show_private: bool = False) -> None:
     with open(f'{folder}/{name}.rst', 'w') as stream:
         stream.write(dedent(f"""\
@@ -74,6 +75,7 @@ def write_automodule(name: str, folder: Path, show_private: bool = False) -> Non
                 :show-inheritance:
                 {':private-members:' if show_private else ''}
         """))
+
 
 for f in os.listdir(appian_locust_dir):
     match = re.match('^([^_].+)\.py$', f)

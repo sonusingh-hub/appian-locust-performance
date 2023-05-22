@@ -1,4 +1,5 @@
 from typing import Dict
+from enum import Enum
 
 
 class Site:
@@ -32,3 +33,10 @@ class Page:
 
     def __repr__(self) -> str:
         return self.__str__()
+
+
+class PageType(Enum):
+    ACTION: str = "action"
+    REPORT: str = "report"
+    RECORD: str = "recordType"
+    INTERFACE: str = "interface"
