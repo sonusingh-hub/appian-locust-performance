@@ -1,11 +1,13 @@
 from typing import Any, Dict, Optional
 
 from . import logger
-from ._design import _Design
+from ._design import _Design, get_available_design_objects
 from ._interactor import _Interactor
 from ._locust_error_handler import raises_locust_error
+from .application import Application
 from .application_uiform import ApplicationUiForm
-from .helper import find_component_by_attribute_in_dict
+from .design_object import DesignObject
+from .helper import find_component_by_attribute_in_dict, find_component_by_label_and_type_dict
 from .uiform import SailUiForm
 
 log = logger.getLogger(__name__)
@@ -42,7 +44,7 @@ class DesignUiForm(SailUiForm):
         Returns: The SAIL UI Form
 
         """
-        app_form = self.__design._create_object(self, link_name='New Application', object_name=application_name)
+        app_form = self.__design.create_object(self, link_name='New Application', object_name=application_name)
         app_form.breadcrumb = f"Design.SelectedApplicationByName.{application_name}"
         return ApplicationUiForm(self._interactor, self._state, self.breadcrumb)
 
@@ -113,3 +115,27 @@ class DesignUiForm(SailUiForm):
         )
         self._reconcile_state(new_state)
         return self
+
+    def get_available_applications(self) -> Dict[str, Application]:
+        """
+            Retrieve all available applications in /design. Must be on page with application list
+
+            Returns (dict): Dictionary mapping application names to Application
+        """
+        grid_field = self.__design.find_design_grid(self._state)
+        applications = {}
+        name_column = grid_field["columns"][0]
+        num_applications = len(name_column["data"])
+        for idx in range(num_applications):
+            app_name = name_column["data"][idx]
+            href_split = name_column["links"][idx]["href"].split("/")
+            applications[app_name] = Application(app_name, href_split[len(href_split) - 1])
+        return applications
+
+    def get_available_design_objects(self) -> Dict[str, DesignObject]:
+        """
+            Retrieve all available design objects in the application. Must be on page with design object list
+
+            Returns (dict): Dictionary mapping design object names to DesignObject
+        """
+        return get_available_design_objects(self._state)

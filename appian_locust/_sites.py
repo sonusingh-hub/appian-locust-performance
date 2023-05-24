@@ -8,7 +8,7 @@ from ._interactor import _Interactor
 from ._news import NEWS_NAV_PATH
 from .helper import extract_values, format_label
 from ._records_helper import get_all_records_from_json
-from .site_objects import Site, Page
+from .site_objects import Site, Page, PageType
 
 log = logger.getLogger(__name__)
 
@@ -221,13 +221,6 @@ class _Sites(_Base):
         headers = self.interactor.setup_sail_headers()
         headers["Accept"] = "application/vnd.appian.tv.ui+json"
         return headers
-
-
-class PageType(enum.Enum):
-    ACTION: str = "action"
-    REPORT: str = "report"
-    RECORD: str = "recordType"
-    INTERFACE: str = "interface"
 
 
 class SiteNotFoundException(Exception):
