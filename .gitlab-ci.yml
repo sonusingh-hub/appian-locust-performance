@@ -1,59 +1,59 @@
-# image: python:3.10
-# include:
-#   - template: Dependency-Scanning.gitlab-ci.yml
-#   - template: Security/SAST.gitlab-ci.yml
+ image: python:3.10
+ include:
+   - template: Dependency-Scanning.gitlab-ci.yml
+   - template: Security/SAST.gitlab-ci.yml
 
-# stages:
-#   - validate
-#   - test
-#   - release
+ stages:
+   - validate
+   - test
+   - release
 
-# workflow:
-#   rules: &run_on_branch_and_master
-#     - if: '$CI_PIPELINE_SOURCE != "merge_request_event"'
-#       when: always
-#     - when: never
+ workflow:
+   rules: &run_on_branch_and_master
+     - if: '$CI_PIPELINE_SOURCE != "merge_request_event"'
+       when: always
+     - when: never
 
-# gemnasium-python-dependency_scanning:
-#   stage: test
-#   rules: *run_on_branch_and_master
-#   variables:
-#     DS_REMEDIATE: "false"
-#     DS_DEFAULT_ANALYZERS: "gemnasium-python"
-#   allow_failure: true
-#   artifacts:
-#     public: false
-#     when: on_failure
-#     paths:
-#       - gl-dependency-scanning-report.json
-#     reports:
-#       dependency_scanning: gl-dependency-scanning-report.json
+ gemnasium-python-dependency_scanning:
+   stage: test
+   rules: *run_on_branch_and_master
+   variables:
+     DS_REMEDIATE: "false"
+     DS_DEFAULT_ANALYZERS: "gemnasium-python"
+   allow_failure: true
+   artifacts:
+     public: false
+     when: on_failure
+     paths:
+       - gl-dependency-scanning-report.json
+     reports:
+       dependency_scanning: gl-dependency-scanning-report.json
 
-# Run Unit Tests:
-#   stage: validate
-#   script:
-#     - python3 -m pip install -U pipenv
-#     - pipenv install --dev --ignore-pipfile
-#     - bin/verify.sh
+ Run Unit Tests:
+   stage: validate
+   script:
+     - python3 -m pip install -U pipenv
+     - pipenv install --dev --ignore-pipfile
+     - bin/verify.sh
 
-# Build Candidate Docs:
-#   stage: validate
-#   artifacts:
-#     expose_as: 'Candidate Documentation'
-#     paths:
-#       - 'appian_locust/docs/build/html/'
-#     expire_in: 30 days
-#   script:
-#     - cd appian_locust/docs
-#     - python3 -m pip install -r requirements.txt
-#     - make html
+ Build Candidate Docs:
+   stage: validate
+   artifacts:
+     expose_as: 'Candidate Documentation'
+     paths:
+       - 'appian_locust/docs/build/html/'
+     expire_in: 30 days
+   script:
+     - cd appian_locust/docs
+     - python3 -m pip install -r requirements.txt
+     - make html
 
-# Release appian-locust to Pypi:
-#   stage: release
-#   rules:
-#     - if: '$CI_COMMIT_TAG != null && $CI_PROJECT_NAMESPACE =~ /^appian-oss.*/'
-#   before_script:
-#     - bin/writeTagToVersionFile.sh
-#   script:
-#     - echo "Publishing appian-locust Python Package to Pypi"
-#     - bin/releaseLib.sh
+ Release appian-locust to Pypi:
+   stage: release
+   rules:
+     - if: '$CI_COMMIT_TAG != null && $CI_PROJECT_NAMESPACE =~ /^appian-oss.*/'
+   before_script:
+     - bin/writeTagToVersionFile.sh
+   script:
+     - echo "Publishing appian-locust Python Package to Pypi"
+     - bin/releaseLib.sh
