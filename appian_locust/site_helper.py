@@ -1,4 +1,5 @@
 from requests.models import Response
+from typing import Optional
 
 from ._actions import _Actions
 from ._interactor import _Interactor
@@ -34,3 +35,19 @@ class SiteHelper:
 
         """
         return self.__actions.start_action(action_name, skip_design_call, exact_match)
+
+    def fetch_content(self, opaque_id: str, locust_request_label: Optional[str]) -> Response:
+        """
+        Fetch a content element, such as an image
+        Args:
+            opaque_id: The opaque id of the content to download
+            locust_request_label: label to associate request with
+
+        Returns: Response object containing information of downloaded content
+
+        """
+        locust_request_label = locust_request_label or f"Site.DownloadContent.{opaque_id}"
+        uri = f"/suite/rest/a/content/latest/{opaque_id}/o"
+        headers = self.__interactor.setup_content_headers()
+        return self.__interactor.get_page(
+            uri=uri, headers=headers, label=locust_request_label)
