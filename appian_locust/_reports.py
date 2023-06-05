@@ -134,13 +134,14 @@ class _Reports(_Base):
                 report_name, exact_match)))
         return current_report
 
-    def fetch_report_json(self, report_name: str, exact_match: bool = True) -> Dict[str, Any]:
+    def fetch_report_json(self, report_name: str, exact_match: bool = True, locust_request_label: Optional[str] = None) -> Dict[str, Any]:
         """
         This function calls the API for the specific report to get its "form" data
 
         Args:
             report_name (str): Name of the report to be called.
             exact_match (bool, optional): Should report name match exactly or to be partial match. Default : True
+            locust_request_label (str, optional): Label locust should associate this request with
 
         Returns (dict): Response of report's Get UI call in dictionary
 
@@ -164,9 +165,12 @@ class _Reports(_Base):
         if self.interactor.url_pattern_version == 1:
             uri += "p."
         uri += REPORTS_NAV_PATH[1] + REPORTS_NAV_PATH[2]
-        label = "Reports.Nav." + format_label(report_name, "::", 0)
-        self.interactor.get_page(uri=uri, headers=headers, label=label)  # report request
-        label = "Reports.GetUi." + format_label(report_name, "::", 0)
+        if locust_request_label:
+            nav_label = f"{locust_request_label}.Nav"
+        else:
+            nav_label = "Reports.Nav." + format_label(report_name, "::", 0)
+        self.interactor.get_page(uri=uri, headers=headers, label=nav_label)  # report request
+        label = locust_request_label or "Reports.GetUi." + format_label(report_name, "::", 0)
         resp = self.interactor.get_page(uri=form_uri, headers=headers, label=label)
         test_response_for_error(resp)
         resp.raise_for_status()

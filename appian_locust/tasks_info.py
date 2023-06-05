@@ -11,9 +11,12 @@ class TasksInfo:
     def __init__(self, tasks: _Tasks):
         self.__tasks = tasks
 
-    def get_all_available_tasks(self) -> Dict[str, Any]:
+    def get_all_available_tasks(self, locust_request_label: str = "Tasks.MainMenu.GetAllAvailable") -> Dict[str, Any]:
         """
         Retrieves all the available "tasks" and associated metadata from "Appian-Tempo-Tasks"
+
+        Args:
+            locust_request_label (str): Label locust should associate with the request
 
         Returns (dict): List of tasks and associated metadata
 
@@ -22,7 +25,7 @@ class TasksInfo:
             >>> tasks_info.get_all_available_tasks()
 
         """
-        return self.__tasks.get_all()
+        return self.__tasks.get_all(locust_request_label=locust_request_label)
 
     def get_task_info(self, task_name: str, exact_match: bool = True) -> Dict[str, Any]:
         """

@@ -46,6 +46,7 @@ class TestRecordUiform(unittest.TestCase):
             "/suite/rest/a/sites/latest/D6JMim/page/records/record/lQB0K7YxC0UQ2Fhx4pmY1F49C_MjItD4hbtRdKDmOo6V3MOBxI47ipGa_bJKZf86CLtvOCp1cfX-sa2O9hp6WTKZpbGo5MxRaaTwMkcYMeDl8kN8Hg/view/summary",
             200,
             self.record_summary_view)
+        self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/page/records/nav", 200, self.records_nav)
 
     def tearDown(self) -> None:
         self.task_set.on_stop()

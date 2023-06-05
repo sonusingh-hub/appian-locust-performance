@@ -49,7 +49,7 @@ class _News(_Base):
         """
         if search_string:
             uri = NEWS_SEARCH_PATH + search_string
-            label = "News.Search." + search_string
+            label = locust_request_label or "News.Search." + search_string
         else:
             uri = NEWS_FEED_PATH
             label = locust_request_label or "News.Feed"

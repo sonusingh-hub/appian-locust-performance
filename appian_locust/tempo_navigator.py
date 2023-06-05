@@ -6,7 +6,7 @@ from .sites_info import SitesInfo
 from .tasks_info import TasksInfo
 from ._actions import _Actions
 from ._interactor import _Interactor
-from ._locust_error_handler import log_locust_error
+from ._news import _News
 from ._records import _Records
 from ._reports import _Reports
 from ._sites import _Sites
@@ -18,29 +18,26 @@ class TempoNavigator:
     Used for navigating the primary tabs on tempo to provide metadata on the content available for interaction.
     """
 
-    def __init__(self, interactor: _Interactor):
+    def __init__(self, interactor: _Interactor, tasks: _Tasks, reports: _Reports, actions: _Actions, records: _Records,
+                 sites: _Sites):
         self.__interactor = interactor
-        self.__actions = _Actions(self.__interactor)
-        self.__tasks = _Tasks(self.__interactor)
-        self.__reports = _Reports(self.__interactor)
-        self.__records = _Records(self.__interactor)
-        self.__sites = _Sites(self.__interactor)
+        self.__tasks = tasks
+        self.__reports = reports
+        self.__records = records
+        self.__sites = sites
+        self.__actions = actions
+        self.__news = _News(interactor)
 
     def navigate_to_news_and_get_info(self) -> NewsInfo:
         """
         Navigate to the News tab in Tempo and gather information about available news entries
         """
-        return NewsInfo(self.__interactor)
+        return NewsInfo(self.__news)
 
     def navigate_to_records_and_get_info(self) -> RecordsInfo:
         """
         Navigate to the records tab in Tempo and gather information about available record types
         """
-        try:
-            self.__records.get_records_interface(locust_request_label="Visit.Records.Tempo")
-            self.__records.get_records_nav(locust_request_label="Visit.Records.Tempo")
-        except Exception as e:
-            log_locust_error(e, error_desc="Response Error", raise_error=False)
         return RecordsInfo(records=self.__records)
 
     def navigate_to_actions_and_get_info(self) -> ActionsInfo:

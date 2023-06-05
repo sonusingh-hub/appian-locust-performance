@@ -58,13 +58,14 @@ class _Actions(_Base):
         resp = self.interactor.get_page(uri, headers, f'{locust_request_label}.Nav')
         return resp.json()
 
-    def get_actions_feed(self, locust_request_label: str = "Actions.Feed") -> Dict[str, Any]:
+    def get_actions_feed(self, locust_request_label: str = "Actions") -> Dict[str, Any]:
         uri = self.interactor.host + ACTIONS_FEED_PATH
         headers = self.interactor.setup_feed_headers()
-        resp = self.interactor.get_page(uri, headers, locust_request_label)
+        resp = self.interactor.get_page(uri, headers, f'{locust_request_label}.Feed')
         return resp.json()
 
-    def get_all(self, search_string: Optional[str] = None, locust_request_label: str = "Actions") -> Dict[str, Any]:
+    def get_all(self, search_string: Optional[str] = None,
+                locust_request_label: str = "Actions.MainMenu.AvailableActions") -> Dict[str, Any]:
         """
         Retrieves all the available "actions" and associated metadata from "Appian-Tempo-Actions"
 
@@ -88,7 +89,7 @@ class _Actions(_Base):
         headers = self.interactor.setup_request_headers(self.interactor.host + ACTIONS_ALL_PATH)
 
         resp = self.interactor.get_page(
-            self.interactor.host + ACTIONS_ALL_PATH, headers=headers, label="Actions.MainMenu.AvailableActions"
+            self.interactor.host + ACTIONS_ALL_PATH, headers=headers, label=locust_request_label
         )
         self._actions = dict()
         error_key_string = "ERROR::"

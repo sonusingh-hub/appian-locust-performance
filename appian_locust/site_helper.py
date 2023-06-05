@@ -11,9 +11,9 @@ class SiteHelper:
     to perform. For example, triggering an action without a startform.
     """
 
-    def __init__(self, interactor: _Interactor):
+    def __init__(self, interactor: _Interactor, actions: _Actions):
         self.__interactor = interactor
-        self.__actions = _Actions(self.__interactor)
+        self.__actions = actions
 
     def start_action(self, action_name: str, skip_design_call: bool = False,
                      exact_match: bool = False) -> Response:
