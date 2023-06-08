@@ -26,14 +26,15 @@ class Visitor:
     interactions with the visited page.
     """
 
-    def __init__(self, interactor: _Interactor):
+    def __init__(self, interactor: _Interactor, tasks: _Tasks, reports: _Reports, actions: _Actions, records: _Records,
+                 sites: _Sites):
         self.__interactor = interactor
-        self.__tasks = _Tasks(self.__interactor)
-        self.__reports = _Reports(self.__interactor)
+        self.__tasks = tasks
+        self.__reports = reports
+        self.__records = records
+        self.__sites = sites
+        self.__actions = actions
         self.__design = _Design(self.__interactor)
-        self.__records = _Records(self.__interactor)
-        self.__sites = _Sites(self.__interactor)
-        self.__actions = _Actions(self.__interactor)
         self.__admin = _Admin(self.__interactor)
         self.__portals = _Portals(self.__interactor)
 
@@ -59,19 +60,21 @@ class Visitor:
             breadcrumb = locust_request_label
         return SailUiForm(self.__interactor, self.__tasks.get_task_form_json(task_name=task_title, locust_request_label=breadcrumb, exact_match=False), breadcrumb=breadcrumb)
 
-    def visit_report(self, report_name: str, exact_match: bool = True) -> 'SailUiForm':
+    def visit_report(self, report_name: str, exact_match: bool = True, locust_request_label: Optional[str] = None) -> 'SailUiForm':
         """
         Navigate to a report and return a SailUiForm for that report's UI
 
         Args:
             report_name (str): Name of the report to be called.
             exact_match (bool, optional): Should report name match exactly or to be partial match. Default : True
+            locust_request_label (str, optional): Label locust should associate this request with
 
         Returns (SailUiForm): Response of report's Get UI call in SailUiForm
 
         """
         breadcrumb = f'Reports.SailUi.{format_label(report_name, "::", 0)}'
-        return SailUiForm(self.__interactor, self.__reports.fetch_report_json(report_name, exact_match), breadcrumb=breadcrumb)
+        locust_request_label = locust_request_label or f"Visit.Report.{report_name}"
+        return SailUiForm(self.__interactor, self.__reports.fetch_report_json(report_name, exact_match, locust_request_label=locust_request_label), breadcrumb=breadcrumb)
 
     def visit_design(self) -> DesignUiForm:
         """
@@ -141,7 +144,9 @@ class Visitor:
         design_object_opaque_id = self.__design.find_design_object_opaque_id_in_grid(object_name, designUiForm.get_latest_state())
         return self.visit_design_object_by_id(design_object_opaque_id)
 
-    def visit_record_instance(self, record_type: str = "", record_name: str = "", view_url_stub: str = "", exact_match: bool = False, summary_view: bool = True) -> RecordInstanceUiForm:
+    def visit_record_instance(self, record_type: str = "", record_name: str = "", view_url_stub: str = "",
+                              exact_match: bool = False, summary_view: bool = True,
+                              locust_request_label: Optional[str] = None) -> RecordInstanceUiForm:
         """
         Navigate to a specific record and return a RecordUiForm
 
@@ -151,25 +156,33 @@ class Visitor:
             view_url_stub (str, optional): page/tab to be visited in the record. If not specified, "summary" dashboard will be selected.
             exact_match (bool, optional): Should record type and record name matched exactly as it is or partial match.
             summary_view (bool, optional): Should the Record UI be returned in Summary View, if false will return Header View
+            locust_request_label (str, optional): Label locust should associate this request with
 
         Returns (RecordUiForm): The UI for the record instance
 
         """
-        form_json = self.__records.visit_record_instance(record_type, record_name, view_url_stub=view_url_stub, exact_match=exact_match)
+        self.__records.get_records_nav(locust_request_label=locust_request_label)
+        form_json = self.__records.visit_record_instance(record_type, record_name, view_url_stub=view_url_stub,
+                                                         exact_match=exact_match, locust_request_label=locust_request_label)
         breadcrumb = f'Records.{record_type}.{format_label(record_name, "::", 0)}.SailUi'
         return RecordInstanceUiForm(self.__interactor, form_json, summary_view=summary_view, breadcrumb=breadcrumb)
 
-    def visit_record_type(self, record_type: str = "", exact_match: bool = False, is_mobile: bool = False) -> RecordListUiForm:
+    def visit_record_type(self, record_type: str = "", exact_match: bool = False, is_mobile: bool = False,
+                          locust_request_label: Optional[str] = None) -> RecordListUiForm:
         """
         This function calls the API for the specific record type and returns a SAIL form representing the list of records for that record type.
 
         Args:
             record_type (str): Record Type Name. If not specified, a random record type will be selected.
             exact_match (bool, optional): Should record type and record name matched exactly as it is or partial match.
+            is_mobile (bool, optional): If this is a mobile record
+            locust_request_label (str, optional): Label locust should associate this request with
 
         Returns (SailUiForm): UI representing list of records for that record type
         """
-        form_json = self.__records.visit_record_type(record_type, exact_match=exact_match, is_mobile=is_mobile)
+        self.__records.get_records_nav(locust_request_label=locust_request_label)
+        form_json = self.__records.visit_record_type(record_type, exact_match=exact_match, is_mobile=is_mobile,
+                                                     locust_request_label=locust_request_label)
         breadcrumb = f'Records.{record_type}.RecordListUi'
         return RecordListUiForm(self.__interactor, form_json, breadcrumb=breadcrumb)
 

@@ -1,8 +1,8 @@
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 from urllib.parse import quote
 
 from ._interactor import _Interactor
-from ._records_helper import get_all_records_from_json
+from ._records_helper import get_all_records_from_json, get_records_from_json_by_column
 from .uiform import SailUiForm
 
 
@@ -39,6 +39,30 @@ class RecordListUiForm(SailUiForm):
         response = self._interactor.get_page(uri=search_uri, headers=headers, label=context_label)
         return RecordListUiForm(self._interactor, response.json(), breadcrumb=context_label)
 
-    def get_visible_record_instances(self) -> Dict[str, Any]:
-        record_instances, _ = get_all_records_from_json(self._state)
+    def clear_records_search_filters(self) -> 'RecordListUiForm':
+        """
+        Clear any search filters on the records list
+
+        Returns: Unfiltered RecordsListUiForm
+        """
+        context_label = f"{self.breadcrumb}.RecordType.ClearFilters"
+        clear_uri = self.form_url
+
+        headers = self._interactor.setup_sail_headers()
+        response = self._interactor.get_page(uri=clear_uri, headers=headers, label=context_label)
+        return RecordListUiForm(self._interactor, response.json(), breadcrumb=context_label)
+
+    def get_visible_record_instances(self, column_index: Optional[int] = None) -> Dict[str, Any]:
+        """
+        Retrieve information about all visible records on the page.
+        Args:
+            column_index: Which column to retrieve record information for. If no column is selected, every record link
+                          in the UI will be retrieved
+
+        Returns: Dictionary with record instance information
+        """
+        if column_index is not None:
+            record_instances, _ = get_records_from_json_by_column(self._state, column_index)
+        else:
+            record_instances, _ = get_all_records_from_json(self._state)
         return record_instances

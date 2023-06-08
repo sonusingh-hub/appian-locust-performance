@@ -43,13 +43,13 @@ class _Records(_Base):
         self._records: Dict[str, Any] = dict()
         self._errors: int = 0
 
-    def get_records_interface(self, locust_request_label: str = "Records") -> Dict[str, Any]:
+    def get_records_interface(self, locust_request_label: Optional[str] = "Records") -> Dict[str, Any]:
         uri = self.interactor.host + RECORDS_INTERFACE_PATH
         headers = self.interactor.setup_sail_headers()
         resp = self.interactor.get_page(uri, headers, f'{locust_request_label}.Interface')
         return resp.json()
 
-    def get_records_nav(self, locust_request_label: str = "Records") -> Dict[str, Any]:
+    def get_records_nav(self, locust_request_label: Optional[str] = "Records") -> Dict[str, Any]:
         uri = self.interactor.host + RECORDS_NAV_PATH[0]
         if self.interactor.url_pattern_version == 1:
             uri += "p."
@@ -97,8 +97,6 @@ class _Records(_Base):
         json_response = self.fetch_all_records_json(locust_request_label)
 
         self._record_types = get_all_record_types_from_json(json_response)
-        for title in self._record_types.keys():
-            self._records[title] = dict()
 
         return self._record_types
 
@@ -127,6 +125,7 @@ class _Records(_Base):
 
             >>> self.appian.records.get_all_records_of_record_type("record_type_name")
         """
+        self._records[record_type] = dict()
 
         json_response = self._record_type_list_request(record_type, search_string=search_string)
 
@@ -232,7 +231,7 @@ class _Records(_Base):
             raise Exception(f"There is no record type with name {record_type} in the system under test (Exact match = {exact_match})")
         return current_record_type
 
-    def visit_record_instance(self, record_type: str = "", record_name: str = "", view_url_stub: str = "", exact_match: bool = True, locust_request_label: str = "") -> Dict[str, Any]:
+    def visit_record_instance(self, record_type: str = "", record_name: str = "", view_url_stub: str = "", exact_match: bool = True, locust_request_label: Optional[str] = None) -> Dict[str, Any]:
         """
         This function calls the API for the specific record view/instance to get its response data.
 
@@ -295,7 +294,7 @@ class _Records(_Base):
     # Alias for the above function to allow backwards compatability
     visit = visit_record_instance
 
-    def visit_record_type(self, record_type: str = "", exact_match: bool = True, is_mobile: bool = False) -> Dict[str, Any]:
+    def visit_record_type(self, record_type: str = "", exact_match: bool = True, is_mobile: bool = False, locust_request_label: Optional[str] = None) -> Dict[str, Any]:
         """
         Navigate into desired record type and retrieve all metadata for associated list of record views.
 
@@ -314,7 +313,9 @@ class _Records(_Base):
         if not record_type:
             record_type = self._get_random_record_type()
 
-        return self._record_type_list_request(record_type, is_mobile=is_mobile)
+        locust_request_label = locust_request_label or f'Records.{record_type}.ListView'
+
+        return self._record_type_list_request(record_type, is_mobile=is_mobile, locust_request_label=locust_request_label)
 
     # ----- Private Functions ----- #
 
@@ -334,12 +335,14 @@ class _Records(_Base):
             self.get_all()
         return random.choice(list(self._records.keys()))
 
-    def _record_type_list_request(self, record_type: str, is_mobile: bool = False, search_string: Optional[str] = None) -> Dict[str, Any]:
+    def _record_type_list_request(self, record_type: str, is_mobile: bool = False, search_string: Optional[str] = None,
+                                  locust_request_label: Optional[str] = None) -> Dict[str, Any]:
         if record_type not in self._record_types:
             raise Exception(f"There is no record type with name {record_type} in the system under test")
         record_type_component = self._record_types[record_type]
         record_type_url_stub = record_type_component['link']['value']['urlstub']
-        return self.fetch_record_type_json(record_type_url_stub, is_mobile, search_string, f"Records.{record_type}")
+        locust_request_label = locust_request_label or f"Records.{record_type}"
+        return self.fetch_record_type_json(record_type_url_stub, is_mobile, search_string, locust_request_label)
 
     def fetch_record_type_json(self, record_type_url_stub: str, is_mobile: bool = False, search_string: Optional[str] = None, label: Optional[str] = None) -> Dict[str, Any]:
         if not label:

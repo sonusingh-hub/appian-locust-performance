@@ -8,9 +8,12 @@ class ActionsInfo:
     def __init__(self, actions: _Actions):
         self.__actions = actions
 
-    def get_all_available_actions(self) -> Dict[str, Any]:
+    def get_all_available_actions(self, locust_request_label_breadcrumb: str = "Actions.MainMenu.AvailableActions") -> Dict[str, Any]:
         """
         Retrieves all the available "actions" and associated metadata from "Appian-Tempo-Actions"
+
+        Args:
+            locust_request_label_breadcrumb (str): Base label used for each of the multiple requests made by this method
 
         Returns (dict): List of actions and associated metadata
 
@@ -19,7 +22,7 @@ class ActionsInfo:
             >>> actions_info.get_all_available_actions()
 
         """
-        return self.__actions.get_all()
+        return self.__actions.get_all(locust_request_label=locust_request_label_breadcrumb)
 
     def get_action_info(self, action_name: str, exact_match: bool = False) -> Dict[str, Any]:
         """
