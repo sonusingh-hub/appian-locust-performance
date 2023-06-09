@@ -52,3 +52,10 @@ class TestSiteHelper(unittest.TestCase):
         self.task_set.appian.site_helper.start_action(
             self.action_under_test,
             True)
+
+    def test_get_webapi(self) -> None:
+        self.custom_locust.set_response(
+            "?query=val", 200, '{"query": "result"}')
+        output = self.task_set.appian.site_helper.get_webapi(
+            "", query_parameters={"query": "val"})
+        self.assertEqual('{"query": "result"}', output.text)

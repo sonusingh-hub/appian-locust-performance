@@ -277,13 +277,6 @@ class TestInteractor(unittest.TestCase):
             "", payload={}, headers=None, label=None)
         self.assertEqual(output.json(), dict())
 
-    def test_get_webapi(self) -> None:
-        self.custom_locust.set_response(
-            "?query=val", 200, '{"query": "result"}')
-        output = self.task_set.appian._interactor.get_webapi(
-            "", queryparameters={"query": "val"})
-        self.assertEqual('{"query": "result"}', output.text)
-
     def test_change_user_to_mobile(self) -> None:
         # Given
         default_header = self.task_set.appian._interactor.setup_request_headers()
