@@ -270,46 +270,15 @@ class _Interactor:
                 self.write_response_to_lib_folder(label, resp)
             return resp
 
-    def get_webapi(self, uri: str, headers: Optional[Dict[str, Any]] = None, label: Optional[str] = None,
-                   queryparameters: Dict[str, Any] = {}) -> Response:
-        """
-        Same as ``get_page``. Additionally it accepts the query parameter to add query parameter while running "GET" operation
-        Args:
-            uri: API URI to be called
-            headers: header for the REST API Call
-            label: the label to be displayed by locust
-            queryparameters: Queries/Filters
-
-        Returns: Json response of GET operation
-
-        To set custom headers
-
-        >>> headers = self.appian._interactor.setup_request_headers()
-        ... headers['Is-Admin'] = 'true'
-        ... self.appian._interactor.get_webapi('/suite/webapi/headers', headers=headers)
-
-        To set custom query parameters
-
-        >>> params = {'age': 5, 'start-date': '10-05-2020'}
-        ... self.appian._interactor.get_webapi('/suite/webapi/query', queryparameters=params)
-        """
-        querystring = []
-        for k, v in queryparameters.items():
-            querystring.append("{}={}".format(k, v))
-
-        uri += "?" + "&".join(querystring)
-        resp = self.get_page(uri, headers=headers, label=label)
-        return resp
-
     def upload_document_to_server(self, file_path: str, is_encrypted: bool = False) -> int:
-        '''
+        """
         Uploads a document to the server, so that it can be used in upload fields
         Args:
             uri: API URI to be called
             file_path: Path to the file to be uploaded
 
         Returns: Document Id that can be used for upload fields
-        ''',
+        """
 
         # Override default headers to avoid sending SAIL headers here
         headers = self.setup_request_headers()
