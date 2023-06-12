@@ -30,7 +30,7 @@ class NewsInfo:
         """
         return self.__news.get_all(search_string=search_string, locust_request_label=locust_request_label)
 
-    def get_news(self, news_name: str, exact_match: bool = True, search_string: Optional[str] = None) -> Dict[str, Any]:
+    def get_news_entry(self, news_name: str, exact_match: bool = True, search_string: Optional[str] = None) -> Dict[str, Any]:
         """
         Get the information about specific news by name.
 
@@ -54,30 +54,6 @@ class NewsInfo:
 
         """
         return self.__news.get_news(news_name, exact_match, search_string)
-
-    def visit_news_entry(self, news_name: str, exact_match: bool = True, search_string: Optional[str] = None) -> Tuple:
-        """
-        This function simulates navigating to a single entry in the ui. There are two parts to navigating to a
-        news entry: navigating to the view and getting the news entry's feed.
-
-        Args:
-            news_name (str): Name of the news entry to be called
-            exact_match (bool, optional): Should news name match exactly or to be partial match. Default : True
-            search_string (str, optional): results will be filtered based on the search string.
-
-        Returns (Tuple): Response codes for the view navigation and getting the feed entry
-
-        Examples:
-
-            If full name of news is known,
-
-            >>> news_info.visit_news_entry("news_name")
-
-            If only partial name is known,
-
-            >>> news_info.visit_news_entry("news_n", exact_match=False)
-        """
-        return self.__news.visit_news_entry(news_name, exact_match, search_string)
 
     def get_news_entry_related_records(self, news_name: str, exact_match: bool = True,
                                        search_string: Optional[str] = None,
