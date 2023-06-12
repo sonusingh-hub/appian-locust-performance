@@ -1,6 +1,6 @@
 from typing import Any, Dict
 
-from ._actions import _Actions
+from .._actions import _Actions
 
 
 class ActionsInfo:

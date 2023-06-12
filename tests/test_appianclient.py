@@ -3,13 +3,15 @@ import unittest
 from unittest.mock import Mock, patch
 
 # Testing various imports rerouted
-from appian_locust import AppianClient, AppianTaskSet, logger
+from appian_locust import (AppianClient,
+                           AppianTaskSet,
+                           BadCredentialsException,
+                           MissingConfigurationException,
+                           MissingCsrfTokenException)
+from appian_locust.utilities import logger
 from appian_locust.appianclient import (appian_client_without_locust,
                                         procedurally_generate_credentials,
                                         setup_distributed_creds)
-from appian_locust.exceptions import (BadCredentialsException,
-                                      MissingConfigurationException,
-                                      MissingCsrfTokenException)
 from locust import Locust, TaskSet
 
 from .mock_client import CustomLocust, MockClient, SampleAppianTaskSequence
@@ -164,7 +166,7 @@ class TestAppianBase(unittest.TestCase):
 
         # When
         client, resp = appian_client.login(["a", "1"])
-        appian_client.tempo_navigator.navigate_to_actions_and_get_info().get_all_available_actions()
+        appian_client.actions_info.get_all_available_actions()
 
         # Then
         self.assertEqual(200, resp.status_code)

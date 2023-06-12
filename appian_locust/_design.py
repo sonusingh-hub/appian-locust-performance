@@ -2,8 +2,8 @@ from typing import Any, Dict, Optional
 
 from ._interactor import _Interactor
 from ._locust_error_handler import raises_locust_error
-from .design_object import DesignObject
-from .helper import find_component_by_label_and_type_dict, find_component_by_type_and_attribute_and_index_in_dict, find_component_by_attribute_in_dict
+from .objects import DesignObject
+from .utilities.helper import find_component_by_label_and_type_dict, find_component_by_type_and_attribute_and_index_in_dict, find_component_by_attribute_in_dict
 from .uiform import SailUiForm
 
 DESIGN_URI_PATH: str = "/suite/rest/a/applications/latest/app/design"

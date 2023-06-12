@@ -2,7 +2,7 @@ import json
 import os
 from .mock_client import CustomLocust, SampleAppianTaskSequence
 from .mock_reader import read_mock_file
-import appian_locust.helper as helper
+import appian_locust.utilities.helper as helper
 
 import unittest
 

@@ -6,7 +6,7 @@ from locust.clients import HttpSession
 from .feature_flag import FeatureFlag
 from ._interactor import _Interactor
 from ._locust_error_handler import test_response_for_error
-from .logger import getLogger
+from .utilities.logger import getLogger
 
 log = getLogger(__name__)
 

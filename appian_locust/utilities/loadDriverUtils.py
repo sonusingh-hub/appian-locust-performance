@@ -46,9 +46,3 @@ class loadDriverUtils:
             log.error("Example config:{}".format(json.dumps(default_config,
                                                             indent=2)))
             exit(1)
-
-
-utils = loadDriverUtils()
-
-# Aliased for backwards compatability
-utls = utils

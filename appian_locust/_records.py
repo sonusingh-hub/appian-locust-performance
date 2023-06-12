@@ -5,7 +5,7 @@ from urllib.parse import quote
 
 import requests
 
-from appian_locust import logger
+from .utilities import logger
 
 from ._base import _Base
 from ._interactor import _Interactor

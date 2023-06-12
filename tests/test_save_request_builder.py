@@ -5,8 +5,8 @@ from unittest.mock import Mock
 from typing import Optional
 
 from appian_locust import AppianClient, AppianTaskSet
-from appian_locust.helper import find_component_by_attribute_in_dict
-from appian_locust import logger
+from appian_locust.utilities.helper import find_component_by_attribute_in_dict
+from appian_locust.utilities import logger
 from locust import Locust, TaskSet
 from appian_locust._save_request_builder import save_builder
 

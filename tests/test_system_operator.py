@@ -8,7 +8,7 @@ from appian_locust import AppianTaskSet
 from appian_locust._actions import ACTIONS_INTERFACE_PATH, ACTIONS_FEED_PATH
 
 
-class TestSiteHelper(unittest.TestCase):
+class TestSystemOperator(unittest.TestCase):
 
     actions = read_mock_file("actions_response.json")
     actions_interface = read_mock_file("actions_interface.json")
@@ -40,22 +40,22 @@ class TestSiteHelper(unittest.TestCase):
         self.task_set.on_stop()
 
     def setup_action_response_no_ui(self) -> None:
-        action = self.task_set.appian.tempo_navigator.navigate_to_actions_and_get_info().get_action_info("Create a Case", False)
+        action = self.task_set.appian.actions_info.get_action_info("Create a Case", False)
         self.custom_locust.set_response(action['formHref'], 200, "{}")
 
     def test_actions_start(self) -> None:
         self.setup_action_response_no_ui()
-        self.task_set.appian.site_helper.start_action(
+        self.task_set.appian.system_operator.start_action(
             self.action_under_test)
 
     def test_actions_start_skip_design_call(self) -> None:
-        self.task_set.appian.site_helper.start_action(
+        self.task_set.appian.system_operator.start_action(
             self.action_under_test,
             True)
 
     def test_get_webapi(self) -> None:
         self.custom_locust.set_response(
             "?query=val", 200, '{"query": "result"}')
-        output = self.task_set.appian.site_helper.get_webapi(
+        output = self.task_set.appian.system_operator.get_webapi(
             "", query_parameters={"query": "val"})
         self.assertEqual('{"query": "result"}', output.text)

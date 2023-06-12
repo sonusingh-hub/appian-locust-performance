@@ -10,11 +10,11 @@ from typing import Any, Dict, List, Optional, Set, Tuple, Union
 from locust.clients import HttpSession, ResponseContextManager
 from requests import Response
 
-from . import logger
+from .utilities import logger
 from ._locust_error_handler import log_locust_error, test_response_for_error
 from ._save_request_builder import save_builder
 from .exceptions import BadCredentialsException, MissingCsrfTokenException, ComponentNotFoundException
-from .helper import find_component_by_attribute_in_dict, get_username
+from .utilities.helper import find_component_by_attribute_in_dict, get_username
 from ._records_helper import get_url_stub_from_record_list_post_request_url
 
 log = logger.getLogger(__name__)

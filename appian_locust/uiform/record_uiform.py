@@ -1,7 +1,7 @@
 from typing import Any, Dict
 
-from ._interactor import _Interactor
-from ._records_helper import get_record_header_response, get_record_summary_view_response
+from .._interactor import _Interactor
+from .._records_helper import get_record_header_response, get_record_summary_view_response
 from .uiform import SailUiForm
 
 

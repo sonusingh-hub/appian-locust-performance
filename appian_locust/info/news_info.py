@@ -1,8 +1,8 @@
 from requests.models import Response
 from typing import Any, Dict, Optional, Tuple
 
-from ._interactor import _Interactor
-from ._news import _News
+from .._interactor import _Interactor
+from .._news import _News
 
 
 class NewsInfo:

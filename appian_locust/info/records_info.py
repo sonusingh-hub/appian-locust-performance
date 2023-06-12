@@ -1,7 +1,7 @@
 from typing import Any, Dict
 
-from ._locust_error_handler import log_locust_error
-from ._records import _Records
+from .._locust_error_handler import log_locust_error
+from .._records import _Records
 
 
 class RecordsInfo():

@@ -1,7 +1,7 @@
 from typing import Dict
 
-from ._sites import _Sites
-from .site_objects import Site
+from .._sites import _Sites
+from ..objects import Site
 
 
 class SitesInfo:

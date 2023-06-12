@@ -2,7 +2,7 @@ import unittest
 
 import locust
 from appian_locust._locust_error_handler import log_locust_error
-from appian_locust.helper import ENV
+from appian_locust.utilities.helper import ENV
 
 
 class TestLocustErrorHandler(unittest.TestCase):

@@ -1,8 +1,8 @@
 from typing import Any, Dict, Optional
 from urllib.parse import quote
 
-from ._interactor import _Interactor
-from ._records_helper import get_all_records_from_json, get_records_from_json_by_column
+from .._interactor import _Interactor
+from .._records_helper import get_all_records_from_json, get_records_from_json_by_column
 from .uiform import SailUiForm
 
 
@@ -56,8 +56,7 @@ class RecordListUiForm(SailUiForm):
         """
         Retrieve information about all visible records on the page.
         Args:
-            column_index: Which column to retrieve record information for. If no column is selected, every record link
-                          in the UI will be retrieved
+            column_index: Which column to retrieve record information for. If no column is selected, every record link in the UI will be retrieved.
 
         Returns: Dictionary with record instance information
         """

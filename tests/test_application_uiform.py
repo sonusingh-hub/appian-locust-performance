@@ -4,7 +4,8 @@ import json
 from locust import TaskSet, Locust
 from .mock_client import CustomLocust
 from .mock_reader import read_mock_file
-from appian_locust import AppianTaskSet, DesignObjectUiForm
+from appian_locust import AppianTaskSet
+from appian_locust.uiform import DesignObjectUiForm
 
 
 class TestApplicationUiform(unittest.TestCase):

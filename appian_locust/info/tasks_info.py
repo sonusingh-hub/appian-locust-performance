@@ -1,6 +1,6 @@
 from typing import Any, Dict
 
-from ._tasks import _Tasks
+from .._tasks import _Tasks
 
 
 class TasksInfo:

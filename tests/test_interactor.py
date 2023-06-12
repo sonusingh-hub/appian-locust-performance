@@ -4,8 +4,8 @@ import unittest
 from typing import Optional
 
 from appian_locust import AppianTaskSet
-from appian_locust.helper import find_component_by_attribute_in_dict, find_component_by_index_in_dict
-from appian_locust import logger
+from appian_locust.utilities.helper import find_component_by_attribute_in_dict, find_component_by_index_in_dict
+from appian_locust.utilities import logger
 from locust import Locust, TaskSet
 
 from .mock_client import CustomLocust

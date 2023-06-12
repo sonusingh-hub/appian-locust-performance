@@ -9,9 +9,9 @@ from locust import SequentialTaskSet, TaskSet
 from locust.clients import HttpSession
 from requests import Response
 
-from . import logger
+from .utilities import logger
 from .feature_flag import FeatureFlag
-from .loadDriverUtils import utils, DEFAULT_CONFIG_PATH
+from .utilities import loadDriverUtils, DEFAULT_CONFIG_PATH
 from ._feature_toggle_helper import (get_client_feature_toggles,
                                      override_default_feature_flags,
                                      set_mobile_feature_flags)
@@ -19,13 +19,14 @@ from ._interactor import _Interactor
 from ._locust_error_handler import log_locust_error
 from .exceptions import MissingConfigurationException
 from ._actions import _Actions
+from ._news import _News
 from ._records import _Records
 from ._reports import _Reports
 from ._sites import _Sites
 from ._tasks import _Tasks
-from .tempo_navigator import TempoNavigator
 from .visitor import Visitor
-from .site_helper import SiteHelper
+from .system_operator import SystemOperator
+from .info import ActionsInfo, NewsInfo, RecordsInfo, ReportsInfo, SitesInfo, TasksInfo
 
 log = logger.getLogger(__name__)
 
@@ -107,14 +108,6 @@ def _trim_trailing_slash(host: str) -> str:
     return host[:-1] if host and host.endswith('/') else host
 
 
-class NoOpEvents():
-    def fire(self, *args: str, **kwargs: int) -> None:
-        pass
-
-    def context(self, *args: str, **kwargs: int) -> dict:
-        return {}
-
-
 def appian_client_without_locust(host: str, record_mode: bool = False, base_path_override: Optional[str] = None) -> 'AppianClient':
     """
     Returns an AppianClient that can be used without locust to make requests against a host, e.g.
@@ -155,21 +148,26 @@ class AppianClient:
 
         timeout = 300
         if os.path.exists(config_path):
-            config_timeout = utils.load_config(config_path).get('request_timeout', None)
+            config_timeout = loadDriverUtils().load_config(config_path).get('request_timeout', None)
             if config_timeout:
                 log.info(f"Overriding default timeout to {config_timeout}s")
                 timeout = config_timeout
 
         self._interactor = _Interactor(self.client, self.host, portals_mode=portals_mode, request_timeout=timeout)
-        actions = _Actions(self._interactor)
-        tasks = _Tasks(self._interactor)
-        reports = _Reports(self._interactor)
-        records = _Records(self._interactor)
-        sites = _Sites(self._interactor)
+        self._news = _News(self._interactor)
+        self._actions = _Actions(self._interactor)
+        self._tasks = _Tasks(self._interactor)
+        self._reports = _Reports(self._interactor)
+        self._records = _Records(self._interactor)
+        self._sites = _Sites(self._interactor)
 
-        self._visitor = Visitor(self._interactor, tasks, reports, actions, records, sites)
-        self._site_helper = SiteHelper(self._interactor, actions)
-        self._tempo_navigator = TempoNavigator(self._interactor, tasks, reports, actions, records, sites)
+        self._visitor = Visitor(self._interactor,
+                                self._tasks,
+                                self._reports,
+                                self._actions,
+                                self._records,
+                                self._sites)
+        self._system_operator = SystemOperator(self._interactor, self._actions)
 
         # Adding a few session specific attributes to self.client to that it can be carried and handled by session
         # in case of having multiple sessions in the future.
@@ -180,6 +178,48 @@ class AppianClient:
         setattr(self.client, "base_path_override", base_path_override)
 
     @property
+    def actions_info(self) -> ActionsInfo:
+        """
+        Navigate to actions and gather information about available actions
+        """
+        return ActionsInfo(self._actions)
+
+    @property
+    def news_info(self) -> NewsInfo:
+        """
+        Navigate to news and fetch information on news entries
+        """
+        return NewsInfo(self._news)
+
+    @property
+    def records_info(self) -> RecordsInfo:
+        """
+        Navigate to records and gather information about available records
+        """
+        return RecordsInfo(self._records)
+
+    @property
+    def reports_info(self) -> ReportsInfo:
+        """
+        Navigate to reports and gather information about available reports
+        """
+        return ReportsInfo(self._reports)
+
+    @property
+    def sites_info(self) -> SitesInfo:
+        """
+        Get Site metadata object
+        """
+        return SitesInfo(self._sites)
+
+    @property
+    def tasks_info(self) -> TasksInfo:
+        """
+        Navigate to tasks and gather information about available tasks
+        """
+        return TasksInfo(self._tasks)
+
+    @property
     def visitor(self) -> Visitor:
         """
         Visitor that can be used to navigate to different types of pages in an Appian instance
@@ -187,18 +227,11 @@ class AppianClient:
         return self._visitor
 
     @property
-    def tempo_navigator(self) -> TempoNavigator:
+    def system_operator(self) -> SystemOperator:
         """
-        Tempo Navigator that can be used to fetch objects which can provide metadata about Tempo Tabs
+        Abstraction used for system operation that do not require a UI
         """
-        return self._tempo_navigator
-
-    @property
-    def site_helper(self) -> SiteHelper:
-        """
-        SiteHelper used for interactions that do not require a UI
-        """
-        return self._site_helper
+        return self._system_operator
 
     def login(self, auth: Optional[list] = None, check_login: bool = True) -> Tuple[HttpSession, Response]:
         return self._interactor.login(auth, check_login=check_login)
@@ -378,3 +411,11 @@ class AppianTaskSequence(SequentialTaskSet, AppianTaskSet):
 
     def __init__(self, parent: SequentialTaskSet) -> None:
         super(AppianTaskSequence, self).__init__(parent)
+
+
+class NoOpEvents():
+    def fire(self, *args: str, **kwargs: int) -> None:
+        pass
+
+    def context(self, *args: str, **kwargs: int) -> dict:
+        return {}

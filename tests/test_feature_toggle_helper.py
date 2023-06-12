@@ -2,8 +2,7 @@ import unittest
 from typing import List, Generator, Callable
 
 import appian_locust._feature_toggle_helper as feature_toggle_helper
-from appian_locust import AppianTaskSet
-from appian_locust.feature_flag import FeatureFlag
+from appian_locust import AppianTaskSet, FeatureFlag
 from locust import Locust, TaskSet
 
 from .mock_client import CustomLocust

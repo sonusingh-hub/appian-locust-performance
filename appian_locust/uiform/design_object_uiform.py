@@ -1,9 +1,9 @@
 from typing import Any, Dict
 
-from ._design import _Design
-from ._interactor import _Interactor
-from ._locust_error_handler import raises_locust_error
-from .uiform import SailUiForm
+from .._design import _Design
+from .._interactor import _Interactor
+from .._locust_error_handler import raises_locust_error
+from ..uiform import SailUiForm
 
 
 class DesignObjectUiForm(SailUiForm):
