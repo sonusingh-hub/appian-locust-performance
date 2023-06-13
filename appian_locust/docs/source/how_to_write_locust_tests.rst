@@ -124,7 +124,7 @@ for initialization (which includes a reference to it) it and to store this refer
 .. code-block:: python
 
     from locust import events
-    from appian_locust.helper import ENV
+    from appian_locust.utilities.helper import ENV
 
     @events.init.add_listener
     def on_locust_init(environment, **kw):

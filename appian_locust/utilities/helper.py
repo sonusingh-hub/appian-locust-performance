@@ -2,7 +2,7 @@ import functools
 import random
 import re
 from typing import Any, Callable, Dict, Generator, List, Union, Optional
-from .exceptions import ComponentNotFoundException
+from ..exceptions import ComponentNotFoundException
 
 import gevent  # type: ignore
 from locust.env import Environment

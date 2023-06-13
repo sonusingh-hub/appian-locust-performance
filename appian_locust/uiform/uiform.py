@@ -9,22 +9,20 @@ from typing import Any, Dict, List, Union, Optional, TYPE_CHECKING
 from urllib.parse import quote, urlparse
 from copy import deepcopy
 
-from appian_locust._records_helper import _is_grid
-
-from . import logger
-from ._grid_interactor import GridInteractor
-from ._interactor import _Interactor
-from ._locust_error_handler import raises_locust_error
-from ._task_opener import _TaskOpener
-from ._ui_reconciler import UiReconciler
-from .exceptions import InvalidComponentException, ChoiceNotFoundException
-from .helper import (extract_all_by_label, find_component_by_attribute_and_index_in_dict,
+from ..utilities import logger
+from .._grid_interactor import GridInteractor
+from .._interactor import _Interactor
+from .._locust_error_handler import raises_locust_error
+from .._task_opener import _TaskOpener
+from .._ui_reconciler import UiReconciler
+from ..exceptions import InvalidComponentException, ChoiceNotFoundException
+from ..utilities.helper import (extract_all_by_label, find_component_by_attribute_and_index_in_dict,
                      find_component_by_attribute_in_dict, find_component_by_index_in_dict,
                      find_component_by_label_and_type_dict, find_component_by_type_and_attribute_and_index_in_dict)
-from ._records_helper import (get_url_stub_from_record_list_url_path)
+from .._records_helper import get_url_stub_from_record_list_url_path, _is_grid
 
 if TYPE_CHECKING:
-    from .record_uiform import RecordInstanceUiForm
+    from ..uiform import RecordInstanceUiForm
 
 KEY_UUID = "uuid"
 KEY_CONTEXT = "context"
@@ -33,11 +31,6 @@ PROCESS_TASK_LINK_TYPE = 'ProcessTaskLink'
 COMPONENTS_THAT_CAN_BE_FILLED = ["ParagraphField", "TextField", "SearchBoxWidget"]
 
 log = logger.getLogger(__name__)
-
-
-class ClientMode(enum.Enum):
-    TEMPO = 'TEMPO'
-    DESIGN = 'DESIGN'
 
 
 class SailUiForm:

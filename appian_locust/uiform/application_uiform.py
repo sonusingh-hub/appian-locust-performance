@@ -1,13 +1,11 @@
 from typing import Any, Dict, Optional
 
-from ._design import _Design, get_available_design_objects
-from ._interactor import _Interactor
-from ._locust_error_handler import raises_locust_error
-from .design_object_uiform import DesignObjectUiForm
-from .design_object import DesignObject
-from .design_object_type import DesignObjectType
-from .helper import find_component_by_label_and_type_dict
-from .uiform import SailUiForm
+from .._design import _Design, get_available_design_objects
+from .._interactor import _Interactor
+from .._locust_error_handler import raises_locust_error
+from ..uiform import DesignObjectUiForm, SailUiForm
+from ..objects import DesignObject, DesignObjectType
+from ..utilities.helper import find_component_by_label_and_type_dict
 
 
 class ApplicationUiForm(SailUiForm):

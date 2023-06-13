@@ -2,11 +2,11 @@ from typing import Any, Dict, Optional
 
 from requests.models import Response
 
-from . import logger
+from .utilities import logger
 from ._base import _Base
 from ._interactor import _Interactor
 from ._locust_error_handler import log_locust_error
-from .helper import format_label
+from .utilities.helper import format_label
 from .uiform import SailUiForm
 
 log = logger.getLogger(__name__)

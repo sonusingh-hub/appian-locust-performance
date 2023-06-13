@@ -1,5 +1,5 @@
 from locust import TaskSet, User
-from appian_locust.helper import ENV
+from appian_locust.utilities.helper import ENV
 from .mock_client import CustomLocust
 from .mock_reader import read_mock_file
 from appian_locust import AppianTaskSet

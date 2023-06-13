@@ -7,9 +7,9 @@ from locust.clients import ResponseContextManager
 from requests.exceptions import HTTPError
 from requests.models import Response
 
-from appian_locust.helper import ENV
+from .utilities.helper import ENV
 
-from . import logger
+from .utilities import logger
 
 log = logger.getLogger(__name__)
 

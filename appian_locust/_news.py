@@ -1,9 +1,9 @@
 from typing import Any, Dict, Tuple, Optional
 
-from appian_locust import logger
-from appian_locust._base import _Base
-from appian_locust._interactor import _Interactor
-from appian_locust._locust_error_handler import log_locust_error
+from .utilities import logger
+from ._base import _Base
+from ._interactor import _Interactor
+from ._locust_error_handler import log_locust_error
 
 log = logger.getLogger(__name__)
 

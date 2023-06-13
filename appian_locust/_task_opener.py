@@ -1,8 +1,8 @@
 from typing import Any, Dict, Optional
 
-from . import logger
+from .utilities import logger
 from ._interactor import _Interactor
-from .helper import find_component_by_attribute_in_dict
+from .utilities.helper import find_component_by_attribute_in_dict
 
 log = logger.getLogger(__name__)
 

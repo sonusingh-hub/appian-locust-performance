@@ -1,8 +1,8 @@
 from typing import Any, Dict, List, Optional
 
-from .helper import extract_values_multiple_key_values, find_component_by_label_and_type_dict
+from .utilities.helper import extract_values_multiple_key_values, find_component_by_label_and_type_dict
 
-from . import logger
+from .utilities import logger
 
 log = logger.getLogger(__name__)
 

@@ -1,6 +1,6 @@
 import unittest
 import json
-from appian_locust import ApplicationUiForm, DesignUiForm
+from appian_locust.uiform import ApplicationUiForm, DesignUiForm
 
 from locust import TaskSet, Locust
 from .mock_client import CustomLocust

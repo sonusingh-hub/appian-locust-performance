@@ -3,8 +3,9 @@ import unittest
 from typing import Any
 from unittest.mock import MagicMock, patch
 
-from appian_locust import AppianTaskSet, logger
-from appian_locust.record_list_uiform import RecordListUiForm
+from appian_locust import AppianTaskSet
+from appian_locust.utilities import logger
+from appian_locust.uiform import RecordListUiForm
 from locust import Locust, TaskSet
 
 from requests.exceptions import HTTPError

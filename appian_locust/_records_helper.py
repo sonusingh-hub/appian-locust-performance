@@ -2,7 +2,7 @@ import json
 from typing import Any, Dict, Tuple, Optional
 
 from ._locust_error_handler import log_locust_error
-from .helper import extract_values, find_component_by_attribute_in_dict
+from .utilities.helper import extract_values, find_component_by_attribute_in_dict
 from re import match
 
 

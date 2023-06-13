@@ -4,8 +4,9 @@ from .mock_reader import read_mock_file
 from requests.exceptions import HTTPError
 from appian_locust import AppianTaskSet
 from appian_locust._interactor import _Interactor
-from appian_locust._sites import _Sites, PageNotFoundException
-from appian_locust.site_objects import PageType
+from appian_locust._sites import _Sites
+from appian_locust.objects import PageType
+from appian_locust import PageNotFoundException
 import json
 import unittest
 

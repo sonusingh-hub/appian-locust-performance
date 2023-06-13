@@ -1,14 +1,13 @@
 from typing import Any, Dict, Optional
 
-from . import logger
-from ._design import _Design, get_available_design_objects
-from ._interactor import _Interactor
-from ._locust_error_handler import raises_locust_error
-from .application import Application
-from .application_uiform import ApplicationUiForm
-from .design_object import DesignObject
-from .helper import find_component_by_attribute_in_dict, find_component_by_label_and_type_dict
-from .uiform import SailUiForm
+from ..utilities import logger
+from .._design import _Design, get_available_design_objects
+from .._interactor import _Interactor
+from .._locust_error_handler import raises_locust_error
+from ..objects import Application, DesignObject
+from ..uiform import ApplicationUiForm, SailUiForm
+from ..objects import DesignObject
+from ..utilities.helper import find_component_by_attribute_in_dict, find_component_by_label_and_type_dict
 
 log = logger.getLogger(__name__)
 

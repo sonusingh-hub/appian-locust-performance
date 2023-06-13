@@ -1,23 +1,17 @@
 from typing import Optional
 
-from appian_locust.record_uiform import RecordInstanceUiForm
-from ._portals import _Portals
-from .application_uiform import ApplicationUiForm
-from .design_object_uiform import DesignObjectUiForm
-from .design_uiform import DesignUiForm
-from .design_object_type import DesignObjectType
-from .record_list_uiform import RecordListUiForm
-from .site_objects import PageType
-from .uiform import SailUiForm
 from ._actions import _Actions
 from ._design import _Design
 from ._interactor import _Interactor
+from ._portals import _Portals
 from ._records import _Records
 from ._reports import _Reports
 from ._sites import _Sites
 from ._admin import _Admin
 from ._tasks import _Tasks
-from .helper import format_label
+from .utilities.helper import format_label
+from .objects import DesignObjectType, PageType
+from .uiform import ApplicationUiForm, DesignUiForm, DesignObjectUiForm, RecordInstanceUiForm, RecordListUiForm, SailUiForm
 
 
 class Visitor:
@@ -186,7 +180,7 @@ class Visitor:
         breadcrumb = f'Records.{record_type}.RecordListUi'
         return RecordListUiForm(self.__interactor, form_json, breadcrumb=breadcrumb)
 
-    def visit_site(self, site_name: str, page_name: str) -> 'SailUiForm':
+    def visit_site(self, site_name: str, page_name: str) -> SailUiForm:
         """
         Get a SailUiForm for a Task, Report or Action
 

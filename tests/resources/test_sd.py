@@ -1,4 +1,6 @@
-from appian_locust import AppianTaskSet, SailUiForm, helper
+from appian_locust import AppianTaskSet
+from appian_locust.uiform import SailUiForm
+from appian_locust.utilities import helper
 from locust import task, HttpUser, between
 
 

@@ -25,3 +25,15 @@ class InvalidComponentException(Exception):
 
 class ChoiceNotFoundException(Exception):
     pass
+
+
+class SiteNotFoundException(Exception):
+    pass
+
+
+class PageNotFoundException(Exception):
+    pass
+
+
+class InvalidSiteException(Exception):
+    pass

@@ -56,39 +56,59 @@ autodoc_default_flags = ['members', 'private-members', 'undoc-members', 'inherit
 html_theme = 'sphinx_rtd_theme'
 
 # Iterate through appian-locust classes to generate a list of exposed and internal APIs
-appian_locust_dir = '../..'
-exposed_dir = Path('./_api/exposed')
-internal_dir = Path('./_api/internal')
-exposed_dir.mkdir(parents=True, exist_ok=True)
-internal_dir.mkdir(parents=True, exist_ok=True)
+def init_path(dir: str) -> Path:
+    path = Path(dir)
+    path.mkdir(parents=True, exist_ok=True)
+    [os.remove(f'{dir}/{f}') for f in os.listdir(dir)]
+    return path
 
-
-def write_automodule(name: str, folder: Path, show_private: bool = False) -> None:
-    with open(f'{folder}/{name}.rst', 'w') as stream:
-        stream.write(dedent(f"""\
-            {name}
-            {''.join(itertools.repeat('=', len(name)))}
-
-            .. automodule:: appian_locust.{name}
+def write_automodule(
+    subdir: str,
+    module_name: str,
+    output: Path,
+    show_private: bool = False
+) -> None:
+    subdir_name = f'{subdir.split("/")[-1]}{"_private" if show_private else ""}'
+    output_file = f'{output}/{subdir_name}.rst'
+    if not os.path.exists(output_file):
+        with open(output_file, 'w') as stream:
+            stream.write(dedent(f"""\
+                {''.join(itertools.repeat('=', len(subdir_name)))}
+                {subdir_name}
+                {''.join(itertools.repeat('=', len(subdir_name)))}
+            """))
+    with open(output_file, 'a') as stream:
+        stream.write(dedent(f"""
+            .. automodule:: {subdir.replace('/', '.')}.{module_name}
                 :members:
                 :undoc-members:
                 :show-inheritance:
                 {':private-members:' if show_private else ''}
         """))
 
+appian_locust_dir = os.path.abspath(f'{os.path.dirname(__file__)}/../..')
+exposed_dir = init_path('./_api/exposed')
+internal_dir = init_path('./_api/internal')
 
-for f in os.listdir(appian_locust_dir):
-    match = re.match('^([^_].+)\.py$', f)
-    if match:
-        write_automodule(
-            name=match.group(1),
-            folder=exposed_dir,
-        )
+for subdir, dirs, files in os.walk(appian_locust_dir):
+    appian_locust_subdir = subdir.split('appian-locust/')[-1]
+    parent_dir = appian_locust_subdir.split('/')[-1]
+    if re.match('^__.+', parent_dir) or 'docs' in subdir:
         continue
-    match = re.match('^(_[^_].+)\.py$', f)
-    if match:
-        write_automodule(
-            name=match.group(1),
-            folder=internal_dir,
-            show_private=True,
-        )
+    for f in files:
+        match = re.match('^([^_].+)\.py$', f)
+        if match:
+            write_automodule(
+                output=exposed_dir,
+                module_name=match.group(1),
+                subdir=appian_locust_subdir,
+            )
+            continue
+        match = re.match('^(_[^_].+)\.py$', f)
+        if match:
+            write_automodule(
+                output=internal_dir,
+                module_name=match.group(1),
+                subdir=appian_locust_subdir,
+                show_private=True,
+            )

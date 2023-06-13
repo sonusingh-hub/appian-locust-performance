@@ -4,15 +4,15 @@ import unittest
 from typing import Any, List, Optional
 from unittest.mock import MagicMock, call, patch
 
-from appian_locust import AppianTaskSet, SailUiForm, RecordInstanceUiForm
-from appian_locust.helper import (ENV, find_component_by_attribute_in_dict,
-                                  find_component_by_index_in_dict,
-                                  find_component_by_label_and_type_dict)
+from appian_locust import AppianTaskSet, ComponentNotFoundException
+from appian_locust.uiform import SailUiForm, RecordInstanceUiForm
+from appian_locust.utilities.helper import (ENV, find_component_by_attribute_in_dict,
+                                            find_component_by_index_in_dict,
+                                            find_component_by_label_and_type_dict)
 from appian_locust.uiform import (PROCESS_TASK_LINK_TYPE,
                                   InvalidComponentException,
                                   ChoiceNotFoundException)
 from locust import TaskSet, User
-from appian_locust.exceptions import ComponentNotFoundException
 from requests.exceptions import HTTPError
 
 from .mock_client import CustomLocust
@@ -450,7 +450,7 @@ class TestSailUiForm(unittest.TestCase):
             sail_form = SailUiForm(self.task_set.appian._interactor, ui)
             sail_form.upload_documents_to_multiple_file_upload_field(label, ['fake_file'])
 
-    @patch('appian_locust.SailUiForm.upload_documents_to_multiple_file_upload_field')
+    @patch('appian_locust.uiform.SailUiForm.upload_documents_to_multiple_file_upload_field')
     def test_single_to_multi_upload_document(self, mock_upload_documents_to_multiple_file_upload_field: MagicMock) -> None:
         ui = json.loads(self.file_upload_initial)
         label = 'File Upload 5'
@@ -461,8 +461,8 @@ class TestSailUiForm(unittest.TestCase):
         self.assertEqual(args[1], ['fake_file'])
 
     @patch('os.path.exists', return_value=True)
-    @patch('appian_locust.uiform._Interactor.upload_document_to_field')
-    @patch('appian_locust.uiform._Interactor.upload_document_to_server')
+    @patch('appian_locust._interactor._Interactor.upload_document_to_field')
+    @patch('appian_locust._interactor._Interactor.upload_document_to_server')
     def test_single_to_multi_upload_document_to_server(self, mock_upload_document_to_server: MagicMock,
                                                        mock_upload_document_to_field: MagicMock,
                                                        mock_os_path_exists: MagicMock) -> None:
@@ -475,7 +475,7 @@ class TestSailUiForm(unittest.TestCase):
         mock_upload_document_to_server.assert_called_once_with('fake_file', is_encrypted=False)
         mock_upload_document_to_field.assert_called_once()
 
-    @patch('appian_locust.SailUiForm.upload_document_to_upload_field')
+    @patch('appian_locust.uiform.SailUiForm.upload_document_to_upload_field')
     def test_multi_to_single_upload_document(self, mock_upload_document_to_upload_field: MagicMock) -> None:
         ui = json.loads(self.file_upload_initial)
         label = 'File Upload 4'
@@ -630,7 +630,7 @@ class TestSailUiForm(unittest.TestCase):
         return test_form
 
     def _setup_action_response_with_ui(self, file_name: str = "form_content_response.json") -> None:
-        action = self.task_set.appian.tempo_navigator.navigate_to_actions_and_get_info().get_action_info("Create a Case", False)
+        action = self.task_set.appian.actions_info.get_action_info("Create a Case", False)
         resp_json = read_mock_file(file_name)
         self.custom_locust.set_response(action['formHref'], 200, resp_json)
 
@@ -828,7 +828,7 @@ class TestSailUiForm(unittest.TestCase):
 
         sail_form.click_record_search_button_by_index()
 
-    @patch('appian_locust.record_uiform.RecordInstanceUiForm')
+    @patch('appian_locust.uiform.record_uiform.RecordInstanceUiForm')
     @patch('appian_locust._interactor._Interactor.click_record_link')
     def test_click_record_link(self, mock_click_rl: MagicMock, mock_summary_view: MagicMock) -> None:
         report_body = read_mock_file("nested_dynamic_link_response.json")
@@ -841,7 +841,7 @@ class TestSailUiForm(unittest.TestCase):
 
         self.assertEqual(args[1]['recordIdentifier'], '74')
 
-    @patch('appian_locust.record_uiform.RecordInstanceUiForm')
+    @patch('appian_locust.uiform.record_uiform.RecordInstanceUiForm')
     @patch('appian_locust._interactor._Interactor.click_record_link')
     def test_click_record_view_link(self, mock_click_rl: MagicMock, mock_summary_view: MagicMock) -> None:
         report_body = read_mock_file("nested_dynamic_link_response.json")
@@ -854,7 +854,7 @@ class TestSailUiForm(unittest.TestCase):
 
         self.assertEqual(args[1]['recordIdentifier'], '101')
 
-    @patch('appian_locust.record_uiform.RecordInstanceUiForm')
+    @patch('appian_locust.uiform.record_uiform.RecordInstanceUiForm')
     @patch('appian_locust._interactor._Interactor.click_record_link')
     def test_click_record_link_by_index(self, mock_click_rl: MagicMock, mock_summary_view: MagicMock) -> None:
         report_body = read_mock_file("nested_dynamic_link_response.json")
@@ -867,7 +867,7 @@ class TestSailUiForm(unittest.TestCase):
 
         self.assertEqual(args[1]['recordIdentifier'], '22')
 
-    @patch('appian_locust.record_uiform.RecordInstanceUiForm')
+    @patch('appian_locust.uiform.record_uiform.RecordInstanceUiForm')
     @patch('appian_locust._interactor._Interactor.click_record_link')
     def test_click_record_link_by_attribute_and_index(self, mock_click_rl: MagicMock, mock_summary_view: MagicMock) -> None:
         report_body = read_mock_file("nested_dynamic_link_response.json")
@@ -914,7 +914,7 @@ class TestSailUiForm(unittest.TestCase):
             sail_form.click_record_link_by_index(index=-1)
 
     def setup_action_response_with_ui(self, file_name: str = "form_content_response.json") -> None:
-        action = self.task_set.appian.tempo_navigator.navigate_to_actions_and_get_info().get_action_info("Create a Case", False)
+        action = self.task_set.appian.actions_info.get_action_info("Create a Case", False)
         resp_json = read_mock_file(file_name)
         self.custom_locust.set_response(action['formHref'], 200, resp_json)
 
@@ -937,7 +937,7 @@ class TestSailUiForm(unittest.TestCase):
         self.assertEqual("12345", resp['context'])
 
     def test_actions_form_example_activity_chained(self) -> None:
-        action = self.task_set.appian.tempo_navigator.navigate_to_actions_and_get_info().get_action_info("Create a Case", False)
+        action = self.task_set.appian.actions_info.get_action_info("Create a Case", False)
         resp_json = read_mock_file("form_content_response.json")
 
         self.custom_locust.set_response(action['formHref'], 200, '{"mobileEnabled": "false", "empty": "true", "formType": "START_FORM"}')
@@ -1016,8 +1016,8 @@ class TestSailUiForm(unittest.TestCase):
         with self.assertRaises(ChoiceNotFoundException):
             sail_form.select_dropdown_item(dropdown_label, 'some missing choice')
 
-    @patch('appian_locust.SailUiForm._get_update_url_for_reeval', return_value="/mocked/re-eval/url")
-    @patch('appian_locust.uiform._Interactor.send_dropdown_update')
+    @patch('appian_locust.uiform.SailUiForm._get_update_url_for_reeval', return_value="/mocked/re-eval/url")
+    @patch('appian_locust._interactor._Interactor.send_dropdown_update')
     def test_actions_form_dropdown_success(self, mock_send_dropdown_update: MagicMock,
                                            mock_get_update_url_for_reeval: MagicMock) -> None:
         self.setup_action_response_with_ui('dropdown_test_ui.json')
@@ -1036,8 +1036,8 @@ class TestSailUiForm(unittest.TestCase):
         self.assertIsNone(kwargs["url_stub"])
         self.assertNotEqual(sail_form.get_latest_state(), initial_state)
 
-    @patch('appian_locust.SailUiForm._get_update_url_for_reeval', return_value="/mocked/re-eval/url")
-    @patch('appian_locust.uiform._Interactor.send_dropdown_update')
+    @patch('appian_locust.uiform.SailUiForm._get_update_url_for_reeval', return_value="/mocked/re-eval/url")
+    @patch('appian_locust._interactor._Interactor.send_dropdown_update')
     def test_actions_form_record_list_dropdown_success(self, mock_send_dropdown_update: MagicMock,
                                                        mock_get_update_url_for_reeval: MagicMock) -> None:
         # 'dropdown_test_record_list_ui.json' contains a 'sail-application-url' field
@@ -1057,7 +1057,7 @@ class TestSailUiForm(unittest.TestCase):
         self.assertEqual(kwargs["url_stub"], "url_stub123")
         self.assertNotEqual(sail_form.get_latest_state(), initial_state)
 
-    @patch('appian_locust.uiform._Interactor.send_multiple_dropdown_update')
+    @patch('appian_locust._interactor._Interactor.send_multiple_dropdown_update')
     def test_multiple_dropdown_not_found(self, mock_send_multiple_dropdown_update: MagicMock) -> None:
         self.setup_action_response_with_ui('dropdown_test_ui.json')
         sail_form: SailUiForm = self.task_set.appian.visitor.visit_action(
@@ -1074,8 +1074,8 @@ class TestSailUiForm(unittest.TestCase):
         mock_send_multiple_dropdown_update.assert_called_once()
         args, kwargs = mock_send_multiple_dropdown_update.call_args
 
-    @patch('appian_locust.uiform.find_component_by_attribute_in_dict')
-    @patch('appian_locust.uiform._Interactor.select_radio_button')
+    @patch('appian_locust.uiform.uiform.find_component_by_attribute_in_dict')
+    @patch('appian_locust._interactor._Interactor.select_radio_button')
     def test_actions_form_radio_button_by_label_success(self, mock_select_radio_button: MagicMock,
                                                         mock_find_component_by_label: MagicMock) -> None:
         self.setup_action_response_with_ui('dropdown_test_ui.json')
@@ -1114,8 +1114,8 @@ class TestSailUiForm(unittest.TestCase):
         self.assertEqual(
             context.exception.args[0], f"No components with label '{button_label}' found on page")
 
-    @patch('appian_locust.uiform.find_component_by_index_in_dict')
-    @patch('appian_locust.uiform._Interactor.select_radio_button')
+    @patch('appian_locust.uiform.uiform.find_component_by_index_in_dict')
+    @patch('appian_locust._interactor._Interactor.select_radio_button')
     def test_actions_form_radio_button_by_index_success(self, mock_select_radio_button: MagicMock,
                                                         mock_find_component_by_index: MagicMock) -> None:
         self.setup_action_response_with_ui('dropdown_test_ui.json')

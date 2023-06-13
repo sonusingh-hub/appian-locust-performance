@@ -4,11 +4,11 @@ import unittest
 import sys
 from typing import List
 
-from appian_locust.helper import (find_component_by_attribute_in_dict,
-                                  find_component_by_label_and_type_dict,
-                                  find_component_by_attribute_and_index_in_dict,
-                                  find_component_by_index_in_dict,
-                                  repeat)
+from appian_locust.utilities.helper import (find_component_by_attribute_in_dict,
+                                            find_component_by_label_and_type_dict,
+                                            find_component_by_attribute_and_index_in_dict,
+                                            find_component_by_index_in_dict,
+                                            repeat)
 
 from .mock_reader import read_mock_file
 

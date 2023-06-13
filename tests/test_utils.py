@@ -1,4 +1,4 @@
-from appian_locust import loadDriverUtils
+from appian_locust.utilities import loadDriverUtils
 import os
 import unittest
 
@@ -6,7 +6,7 @@ import unittest
 class TestUtils(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.util = loadDriverUtils.utils
+        self.util = loadDriverUtils()
 
     def test_loadconfig(self) -> None:
         dir_path = os.path.dirname(os.path.realpath(__file__))

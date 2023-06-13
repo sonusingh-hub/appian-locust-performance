@@ -3,7 +3,7 @@ import unittest
 from typing import Any
 from unittest import mock
 
-from appian_locust import logger
+from appian_locust.utilities import logger
 from appian_locust.uiform import SailUiForm
 from appian_locust._interactor import _Interactor
 from appian_locust._records import _Records

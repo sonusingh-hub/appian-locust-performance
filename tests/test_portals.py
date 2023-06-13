@@ -5,7 +5,7 @@ from unittest import mock
 from requests import Response
 from requests.exceptions import HTTPError
 
-from appian_locust import logger
+from appian_locust.utilities import logger
 from appian_locust._interactor import _Interactor
 from appian_locust._portals import _Portals
 

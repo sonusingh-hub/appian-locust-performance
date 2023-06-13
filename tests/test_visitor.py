@@ -6,8 +6,10 @@ from typing import Any
 from locust import TaskSet, Locust, stats
 from .mock_client import CustomLocust
 from .mock_reader import read_mock_file
-from appian_locust import AppianTaskSet, SailUiForm, ApplicationUiForm, DesignUiForm, DesignObjectUiForm, RecordListUiForm, RecordInstanceUiForm, DesignObjectType
-from appian_locust.helper import ENV
+from appian_locust import AppianTaskSet
+from appian_locust.uiform import SailUiForm, ApplicationUiForm, DesignUiForm, DesignObjectUiForm, RecordListUiForm, RecordInstanceUiForm
+from appian_locust.objects import DesignObjectType
+from appian_locust.utilities.helper import ENV
 from appian_locust._admin import ADMIN_URI_PATH
 from appian_locust._tasks import _Tasks
 from appian_locust._reports import REPORTS_INTERFACE_PATH
@@ -380,7 +382,7 @@ class TestVisitor(unittest.TestCase):
         self.assertEqual(expected_url, ui_form.form_url)
 
     def setup_action_response_no_ui(self) -> None:
-        action = self.task_set.appian.tempo_navigator.navigate_to_actions_and_get_info().get_action_info("Create a Case", False)
+        action = self.task_set.appian.actions_info.get_action_info("Create a Case", False)
         self.custom_locust.set_response(action['formHref'], 200, "{}")
 
     def test_actions_visit(self) -> None:

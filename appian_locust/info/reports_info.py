@@ -1,6 +1,6 @@
 from typing import Any, Dict, Optional
 
-from ._reports import _Reports
+from .._reports import _Reports
 
 
 class ReportsInfo:
