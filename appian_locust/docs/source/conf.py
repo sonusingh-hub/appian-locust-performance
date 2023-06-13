@@ -96,7 +96,7 @@ for subdir, dirs, files in os.walk(appian_locust_dir):
         raise Exception('Unable to locate appian_locust subfolder...')
     appian_locust_subdir = match.group(1)
     parent_dir = appian_locust_subdir.split('/')[-1]
-    if re.match('^__.+', parent_dir) or 'docs' in subdir:
+    if re.match('^__.+', parent_dir) or 'docs' in appian_locust_subdir:
         continue
     for f in files:
         match = re.match('^([^_].+)\.py$', f)
