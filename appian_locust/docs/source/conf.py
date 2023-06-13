@@ -91,7 +91,10 @@ exposed_dir = init_path('./_api/exposed')
 internal_dir = init_path('./_api/internal')
 
 for subdir, dirs, files in os.walk(appian_locust_dir):
-    appian_locust_subdir = subdir.split('appian-locust/')[-1]
+    match = re.match('.*/(appian_locust.*)', subdir)
+    if not match:
+        raise Exception('Unable to locate appian_locust subfolder...')
+    appian_locust_subdir = match.group(1)
     parent_dir = appian_locust_subdir.split('/')[-1]
     if re.match('^__.+', parent_dir) or 'docs' in subdir:
         continue
