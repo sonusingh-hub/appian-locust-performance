@@ -64,7 +64,7 @@ If using ``pipenv``, simply start from the following ``Pipfile``:
 You can use example file provided in this repository `example_config.json <https://gitlab.com/appian-oss/appian-locust/-/blob/master/examples/example_config.json>`_:
 
 - Set ``host_address`` to the address of your Appian instance.
-- In ``auth``, specify the username and password of the user account to use.
+- In ``auth``, specify the username and password of the user account to use. Note: This user must be able to access Tempo.
 
 .. code-block:: json
 

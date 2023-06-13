@@ -11,6 +11,7 @@ from requests import Response
 
 from . import logger
 from .feature_flag import FeatureFlag
+from .loadDriverUtils import utils, DEFAULT_CONFIG_PATH
 from ._feature_toggle_helper import (get_client_feature_toggles,
                                      override_default_feature_flags,
                                      set_mobile_feature_flags)
@@ -133,7 +134,8 @@ def appian_client_without_locust(host: str, record_mode: bool = False, base_path
 
 
 class AppianClient:
-    def __init__(self, session: HttpSession, host: str, base_path_override: Optional[str] = None, portals_mode: bool = False) -> None:
+    def __init__(self, session: HttpSession, host: str, base_path_override: Optional[str] = None, portals_mode: bool = False,
+                 config_path: str = DEFAULT_CONFIG_PATH) -> None:
         """
         Appian client class contains all the required functions to interact with Tempo.
 
@@ -143,12 +145,22 @@ class AppianClient:
         Args:
             session: Locust session/client object
             host (str): Host URL
+            base_path_override (str): override for sites where /suite is not the base path
+            config_path (str): path to configuration file
 
         """
         self.client = session
         self.portals_mode = portals_mode
         self.host = _trim_trailing_slash(host)
-        self._interactor = _Interactor(self.client, self.host, portals_mode=portals_mode)
+
+        timeout = 300
+        if os.path.exists(config_path):
+            config_timeout = utils.load_config(config_path).get('request_timeout', None)
+            if config_timeout:
+                log.info(f"Overriding default timeout to {config_timeout}s")
+                timeout = config_timeout
+
+        self._interactor = _Interactor(self.client, self.host, portals_mode=portals_mode, request_timeout=timeout)
         actions = _Actions(self._interactor)
         tasks = _Tasks(self._interactor)
         reports = _Reports(self._interactor)
@@ -233,7 +245,7 @@ class AppianTaskSet(TaskSet):
         # A set of datatypes cached. Used to populate "X-Appian-Cached-Datatypes" header field
         self.cached_datatype: set = set()
 
-    def on_start(self, portals_mode: bool = False) -> None:
+    def on_start(self, portals_mode: bool = False, config_path: str = DEFAULT_CONFIG_PATH) -> None:
         """
         Overloaded function of Locust's default on_start.
 
@@ -241,17 +253,20 @@ class AppianTaskSet(TaskSet):
 
         Args:
             portals_mode (bool): set to True if connecting to portals site
+            config_path (str): path to configuration file
         """
         self.portals_mode = portals_mode
         self.workerId = str(uuid.uuid4())
         base_path_override = self.parent.base_path_override \
             if hasattr(self.parent, "base_path_override") else ""
-        self._appian = AppianClient(self.client, self.host, base_path_override=base_path_override, portals_mode=portals_mode)
+        self._appian = AppianClient(self.client, self.host, base_path_override=base_path_override,
+                                    portals_mode=portals_mode, config_path=config_path)
         if not portals_mode:
             self.auth = self._determine_auth()
-            resp = self.appian.login(self.auth)
+            self.appian.login(self.auth)
+            resp = self.appian._interactor.get_page(uri=self.host + "/suite/tempo/news")
             test = r'\\\\\\/suite\\\\\\/rest\\\\\\/a\\\\\\/sites\\\\\\/latest\\\\\\/D6JMim\\\\\\/page\\\\\\/(.+)\\\\\\'
-            m = re.search(test, resp[1].text)
+            m = re.search(test, resp.text)
             if m is None or m.group(1) == 'news':
                 # old way
                 self.appian._interactor.url_pattern_version = 0
