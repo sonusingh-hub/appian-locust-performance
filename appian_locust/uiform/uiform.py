@@ -17,8 +17,8 @@ from .._task_opener import _TaskOpener
 from .._ui_reconciler import UiReconciler
 from ..exceptions import InvalidComponentException, ChoiceNotFoundException
 from ..utilities.helper import (extract_all_by_label, find_component_by_attribute_and_index_in_dict,
-                     find_component_by_attribute_in_dict, find_component_by_index_in_dict,
-                     find_component_by_label_and_type_dict, find_component_by_type_and_attribute_and_index_in_dict)
+                                find_component_by_attribute_in_dict, find_component_by_index_in_dict,
+                                find_component_by_label_and_type_dict, find_component_by_type_and_attribute_and_index_in_dict)
 from .._records_helper import get_url_stub_from_record_list_url_path, _is_grid
 
 if TYPE_CHECKING:

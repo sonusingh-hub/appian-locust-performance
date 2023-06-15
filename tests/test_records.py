@@ -92,7 +92,8 @@ class TestRecords(unittest.TestCase):
         self.assertTrue(self.record_interactor._errors == 1)
 
     def test_records_get_all_mobile(self) -> None:
-        all_records = self.record_interactor.get_all_mobile()
+        mobile_record_interactor = _Records(self.interactor, is_mobile_client=True)
+        all_records = self.record_interactor.get_all()
         self.assertIsInstance(all_records, dict)
 
     def test_records_get_by_type(self) -> None:
@@ -138,10 +139,11 @@ class TestRecords(unittest.TestCase):
     def test_records_get_by_type_mobile(self) -> None:
         # Given
         record_type = 'Commits'
-        self.record_interactor.get_all_record_types()
+        mobile_record_interactor = _Records(self.interactor, is_mobile_client=True)
+        mobile_record_interactor.get_all_record_types()
 
         # When
-        all_records = self.record_interactor.get_all_records_of_record_type_mobile(record_type)
+        all_records = mobile_record_interactor.get_all_records_of_record_type(record_type)
 
         # Then
         self.assertIsInstance(all_records, dict)
@@ -216,7 +218,7 @@ class TestRecords(unittest.TestCase):
 
     def test_record_types_visit(self) -> None:
         output_json = self.record_interactor.visit_record_type(
-            "Commits", exact_match=False)
+            "Commits")
         self.assertIsInstance(output_json, dict)
 
     def test_record_type_visit_random_success(self) -> None:

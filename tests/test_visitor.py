@@ -267,12 +267,11 @@ class TestVisitor(unittest.TestCase):
     def test_record_types_form_example_success(self) -> None:
         sail_form = self.task_set.appian.visitor.visit_record_type(
             "Commits",
-            exact_match=False
         )
         self.assertTrue(isinstance(sail_form, RecordListUiForm))
 
     def test_record_type_random_form_example_success(self) -> None:
-        sail_form = self.task_set.appian.visitor.visit_record_type(exact_match=False)
+        sail_form = self.task_set.appian.visitor.visit_record_type()
         self.assertTrue(isinstance(sail_form, RecordListUiForm))
 
     def test_record_type_form_incorrect_type(self) -> None:
@@ -281,7 +280,6 @@ class TestVisitor(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             self.task_set.appian.visitor.visit_record_type(
                 record_type,
-                exact_match
             )
         self.assertEqual(
             context.exception.args[0], f"There is no record type with name {record_type} in the system under test")

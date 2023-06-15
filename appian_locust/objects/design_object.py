@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class DesignObjectType(Enum):
     DATA_TYPE = 5
     DECISION = 6
@@ -9,6 +10,7 @@ class DesignObjectType(Enum):
     RECORD_TYPE = 17
     SITE = 19
     WEB_API = 20
+
 
 class DesignObject:
     """

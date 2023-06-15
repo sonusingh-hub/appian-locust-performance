@@ -24,7 +24,7 @@ RECORD_VIEW_PATH = ["/suite/rest/a/sites/latest/", "/page/records/record/", "/vi
 
 
 class _Records(_Base):
-    def __init__(self, interactor: _Interactor) -> None:
+    def __init__(self, interactor: _Interactor, is_mobile_client: bool = False) -> None:
         """
         Records class wrapping list of possible activities can be performed with Appian-Tempo-Records.
 
@@ -35,6 +35,7 @@ class _Records(_Base):
         Args:
             session: Locust session/client object
             host (str): Host URL
+            is_mobile_client(bool): If we are running from a mobile client
         """
         self.interactor = interactor
 
@@ -42,6 +43,7 @@ class _Records(_Base):
         self._record_types: Dict[str, Any] = dict()
         self._records: Dict[str, Any] = dict()
         self._errors: int = 0
+        self._is_mobile_client = is_mobile_client
 
     def get_records_interface(self, locust_request_label: Optional[str] = "Records") -> Dict[str, Any]:
         uri = self.interactor.host + RECORDS_INTERFACE_PATH
@@ -127,50 +129,13 @@ class _Records(_Base):
         """
         self._records[record_type] = dict()
 
-        json_response = self._record_type_list_request(record_type, search_string=search_string)
+        json_response = self._record_type_list_request(record_type, search_string=search_string, is_mobile=self._is_mobile_client)
 
         if column_index is not None:
             self._records[record_type], self._errors = get_records_from_json_by_column(json_response, column_index)
         else:
             self._records[record_type], self._errors = get_all_records_from_json(json_response)
 
-        return self._records
-
-    def get_all_records_of_record_type_mobile(self, record_type: str, search_string: Optional[str] = None) -> Dict[str, Any]:
-        """
-        Retrieves all the available "records" for the given record type for a mobile device.
-
-        Todo: Partial match functionality is not yet implemented
-
-        Returns (dict): List of records and associated metadata
-
-        Examples:
-
-            >>> self.appian.records.get_all_records_of_record_type_mobile("record_type_name")
-        """
-        json_response = self._record_type_list_request(record_type, is_mobile=True, search_string=search_string)
-
-        self._records[record_type], self._errors = get_all_records_from_json(json_response)
-
-        return self._records
-
-    def get_all_mobile(self, search_string: Optional[str] = None) -> Dict[str, Any]:
-        """
-        Retrieves all available "records types" and "records" and associated metadata from "Appian-Tempo-Records"
-
-        Note: All the retrieved data about record types and records is stored in the private variables
-        self._record_types and self._records respectively
-
-        Returns (dict): List of records and associated metadata
-        """
-
-        if search_string:
-            # Format search string to be compatible with URLs
-            search_string = quote(search_string)
-
-        self.get_all_record_types()
-        for record_type in self._record_types:
-            self.get_all_records_of_record_type_mobile(record_type, search_string=search_string)
         return self._records
 
     def fetch_record_instance(self, record_type: str, record_name: str, exact_match: bool = True) -> Dict[str, Any]:
@@ -294,7 +259,7 @@ class _Records(_Base):
     # Alias for the above function to allow backwards compatability
     visit = visit_record_instance
 
-    def visit_record_type(self, record_type: str = "", exact_match: bool = True, is_mobile: bool = False, locust_request_label: Optional[str] = None) -> Dict[str, Any]:
+    def visit_record_type(self, record_type: str = "", locust_request_label: Optional[str] = None) -> Dict[str, Any]:
         """
         Navigate into desired record type and retrieve all metadata for associated list of record views.
 
@@ -315,7 +280,7 @@ class _Records(_Base):
 
         locust_request_label = locust_request_label or f'Records.{record_type}.ListView'
 
-        return self._record_type_list_request(record_type, is_mobile=is_mobile, locust_request_label=locust_request_label)
+        return self._record_type_list_request(record_type, is_mobile=self._is_mobile_client, locust_request_label=locust_request_label)
 
     # ----- Private Functions ----- #
 

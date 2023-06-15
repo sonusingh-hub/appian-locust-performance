@@ -3,6 +3,8 @@ from ..exceptions import MissingConfigurationException
 
 # Can be called during an initalization event of a locust test to
 # procedurally generate Appian credentials
+
+
 def procedurally_generate_credentials(CONFIG: dict) -> None:
     """
     Helper method that can be used to procedurally generate a set of Appian user credentials

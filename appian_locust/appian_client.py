@@ -26,7 +26,7 @@ log = logger.getLogger(__name__)
 
 class AppianClient:
     def __init__(self, session: HttpSession, host: str, base_path_override: Optional[str] = None, portals_mode: bool = False,
-                 config_path: str = DEFAULT_CONFIG_PATH) -> None:
+                 config_path: str = DEFAULT_CONFIG_PATH, is_mobile_client: bool = False) -> None:
         """
         Appian client class contains all the required functions to interact with Tempo.
 
@@ -38,6 +38,7 @@ class AppianClient:
             host (str): Host URL
             base_path_override (str): override for sites where /suite is not the base path
             config_path (str): path to configuration file
+            is_mobile_client(bool): set to True if client should act as mobile
 
         """
         self.client = session
@@ -56,7 +57,7 @@ class AppianClient:
         self._actions = _Actions(self._interactor)
         self._tasks = _Tasks(self._interactor)
         self._reports = _Reports(self._interactor)
-        self._records = _Records(self._interactor)
+        self._records = _Records(self._interactor, is_mobile_client=is_mobile_client)
         self._sites = _Sites(self._interactor)
 
         self._visitor = Visitor(self._interactor,
@@ -174,7 +175,8 @@ def _trim_trailing_slash(host: str) -> str:
     return host[:-1] if host and host.endswith('/') else host
 
 
-def appian_client_without_locust(host: str, record_mode: bool = False, base_path_override: Optional[str] = None) -> 'AppianClient':
+def appian_client_without_locust(host: str, record_mode: bool = False,
+                                 base_path_override: Optional[str] = None) -> 'AppianClient':
     """
     Returns an AppianClient that can be used without locust to make requests against a host, e.g.
 
