@@ -23,6 +23,7 @@ from .info import ActionsInfo, NewsInfo, RecordsInfo, ReportsInfo, SitesInfo, Ta
 
 log = logger.getLogger(__name__)
 
+
 class AppianClient:
     def __init__(self, session: HttpSession, host: str, base_path_override: Optional[str] = None, portals_mode: bool = False,
                  config_path: str = DEFAULT_CONFIG_PATH) -> None:
@@ -189,4 +190,3 @@ def appian_client_without_locust(host: str, record_mode: bool = False, base_path
     if record_mode:
         setattr(inner_client, 'record_mode', True)
     return AppianClient(inner_client, host=host, base_path_override=base_path_override)
-

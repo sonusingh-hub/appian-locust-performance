@@ -16,6 +16,7 @@ from ._locust_error_handler import log_locust_error
 
 log = logger.getLogger(__name__)
 
+
 class AppianTaskSet(TaskSet):
     def __init__(self, parent: TaskSet) -> None:
         """

@@ -98,6 +98,7 @@ for subdir, dirs, files in os.walk(appian_locust_dir):
     parent_dir = appian_locust_subdir.split('/')[-1]
     if re.match('^__.+', parent_dir) or 'docs' in appian_locust_subdir:
         continue
+    files.sort()
     for f in files:
         match = re.match('^([^_].+)\.py$', f)
         if match:
