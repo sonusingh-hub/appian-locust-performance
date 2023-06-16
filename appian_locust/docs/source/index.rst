@@ -14,6 +14,7 @@ Getting Started
     :maxdepth: 2
 
     quick_start
+    release_notes
     what_is_appian_locust
 
 API
