@@ -7,11 +7,9 @@ from appian_locust import (AppianClient,
                            AppianTaskSet,
                            BadCredentialsException,
                            MissingConfigurationException,
-                           MissingCsrfTokenException)
-from appian_locust.utilities import logger
-from appian_locust.appianclient import (appian_client_without_locust,
-                                        procedurally_generate_credentials,
-                                        setup_distributed_creds)
+                           MissingCsrfTokenException,
+                           appian_client_without_locust)
+from appian_locust.utilities import logger, setup_distributed_creds, procedurally_generate_credentials
 from locust import Locust, TaskSet
 
 from .mock_client import CustomLocust, MockClient, SampleAppianTaskSequence
