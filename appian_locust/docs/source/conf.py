@@ -56,11 +56,14 @@ autodoc_default_flags = ['members', 'private-members', 'undoc-members', 'inherit
 html_theme = 'sphinx_rtd_theme'
 
 # Iterate through appian-locust classes to generate a list of exposed and internal APIs
+
+
 def init_path(dir: str) -> Path:
     path = Path(dir)
     path.mkdir(parents=True, exist_ok=True)
     [os.remove(f'{dir}/{f}') for f in os.listdir(dir)]
     return path
+
 
 def write_automodule(
     subdir: str,
@@ -85,6 +88,7 @@ def write_automodule(
                 :show-inheritance:
                 {':private-members:' if show_private else ''}
         """))
+
 
 appian_locust_dir = os.path.abspath(f'{os.path.dirname(__file__)}/../..')
 exposed_dir = init_path('./_api/exposed')

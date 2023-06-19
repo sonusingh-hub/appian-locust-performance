@@ -161,22 +161,19 @@ class Visitor:
         breadcrumb = f'Records.{record_type}.{format_label(record_name, "::", 0)}.SailUi'
         return RecordInstanceUiForm(self.__interactor, form_json, summary_view=summary_view, breadcrumb=breadcrumb)
 
-    def visit_record_type(self, record_type: str = "", exact_match: bool = False, is_mobile: bool = False,
+    def visit_record_type(self, record_type: str = "",
                           locust_request_label: Optional[str] = None) -> RecordListUiForm:
         """
         This function calls the API for the specific record type and returns a SAIL form representing the list of records for that record type.
 
         Args:
             record_type (str): Record Type Name. If not specified, a random record type will be selected.
-            exact_match (bool, optional): Should record type and record name matched exactly as it is or partial match.
-            is_mobile (bool, optional): If this is a mobile record
             locust_request_label (str, optional): Label locust should associate this request with
 
         Returns (SailUiForm): UI representing list of records for that record type
         """
         self.__records.get_records_nav(locust_request_label=locust_request_label)
-        form_json = self.__records.visit_record_type(record_type, exact_match=exact_match, is_mobile=is_mobile,
-                                                     locust_request_label=locust_request_label)
+        form_json = self.__records.visit_record_type(record_type, locust_request_label=locust_request_label)
         breadcrumb = f'Records.{record_type}.RecordListUi'
         return RecordListUiForm(self.__interactor, form_json, breadcrumb=breadcrumb)
 

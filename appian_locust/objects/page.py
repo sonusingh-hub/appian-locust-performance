@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class PageType(Enum):
     ACTION: str = "action"
     REPORT: str = "report"

@@ -31,7 +31,7 @@ class AppianTaskSet(TaskSet):
         # A set of datatypes cached. Used to populate "X-Appian-Cached-Datatypes" header field
         self.cached_datatype: set = set()
 
-    def on_start(self, portals_mode: bool = False, config_path: str = DEFAULT_CONFIG_PATH) -> None:
+    def on_start(self, portals_mode: bool = False, config_path: str = DEFAULT_CONFIG_PATH, is_mobile_client: bool = False) -> None:
         """
         Overloaded function of Locust's default on_start.
 
@@ -40,13 +40,14 @@ class AppianTaskSet(TaskSet):
         Args:
             portals_mode (bool): set to True if connecting to portals site
             config_path (str): path to configuration file
+            is_mobile_client (bool): set to True if client should act as mobile
         """
         self.portals_mode = portals_mode
         self.workerId = str(uuid.uuid4())
         base_path_override = self.parent.base_path_override \
             if hasattr(self.parent, "base_path_override") else ""
         self._appian = AppianClient(self.client, self.host, base_path_override=base_path_override,
-                                    portals_mode=portals_mode, config_path=config_path)
+                                    portals_mode=portals_mode, config_path=config_path, is_mobile_client=is_mobile_client)
         if not portals_mode:
             self.auth = self._determine_auth()
             self.appian.login(self.auth)
@@ -78,7 +79,7 @@ class AppianTaskSet(TaskSet):
         repeatedly for all remaining logings.
 
         In distributed mode, if only "credentials" key exists, each load driver will use last pair of credentials in the subset
-        assigned to it via the utilities.setup_distributed_creds method.
+        assigned to it via the setup_distributed_creds method.
 
         For example, if there are 3 pairs of credentials and 5 users per driver:
             Load driver 1 user 1 will take credential pair 1
@@ -130,29 +131,6 @@ class AppianTaskSet(TaskSet):
             override_default_feature_flags(self.appian._interactor, flags_to_override_generator)
         except Exception as e:
             log_locust_error(e, error_desc="Override Default Flags Error")
-            raise e
-
-    def declare_device_as_mobile(self) -> None:
-        """
-        API for designating a device as mobile to spoof running on a mobile device.
-        """
-        try:
-            set_mobile_feature_flags(self.appian._interactor)
-            self.appian._interactor.set_user_agent_to_mobile()
-        except Exception as e:
-            log_locust_error(e, error_desc="Override Default Flags Error")
-            raise e
-
-    def declare_device_as_desktop(self) -> None:
-        """
-        API for designating a device as desktop to emulate running on a computer device.
-        This is done by default, so only use this method when running a mix of mobile and
-        desktop tests.
-        """
-        try:
-            self.appian._interactor.set_user_agent_to_desktop()
-        except Exception as e:
-            log_locust_error(e, error_desc="Error setting device as desktop")
             raise e
 
 
