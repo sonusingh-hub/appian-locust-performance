@@ -185,6 +185,8 @@ def appian_client_without_locust(host: str, record_mode: bool = False,
     >>> client.get_client_feature_toggles()
 
     This can be used for debugging/ making CLI style requests, instead of load testing
+    You MUST call client.get_client_feature_toggles() to correctly finish initializing the client.
+
     Returns:
         AppianClient: an Appian client that can be used
     """
