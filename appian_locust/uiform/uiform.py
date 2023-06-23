@@ -29,6 +29,7 @@ KEY_CONTEXT = "context"
 START_PROCESS_LINK_TYPE = 'StartProcessLink'
 PROCESS_TASK_LINK_TYPE = 'ProcessTaskLink'
 COMPONENTS_THAT_CAN_BE_FILLED = ["ParagraphField", "TextField", "SearchBoxWidget"]
+TEMPO_SITE_STUB = "D6JMim"
 
 log = logger.getLogger(__name__)
 
@@ -413,7 +414,7 @@ class SailUiForm:
         link_component = component.get('link')
         locust_label = locust_request_label or f"{self.breadcrumb}.ClickCardLayout.Index.{index}"
         if link_component["#t"] == "StartProcessLink":
-            site_name = link_component["siteUrlStub"] or "D6JMim"
+            site_name = link_component["siteUrlStub"] or TEMPO_SITE_STUB
             page_name = link_component["sitePageUrlStub"]
             new_state = self._click_start_process_link(site_name, page_name, False, link_component, locust_request_label=locust_label)
         else:
@@ -512,15 +513,13 @@ class SailUiForm:
         return RecordInstanceUiForm(self._interactor, new_state)
 
     @raises_locust_error
-    def click_start_process_link(self, label: str, site_name: str, page_name: str, is_mobile: bool = False, locust_request_label: str = "") -> 'SailUiForm':
+    def click_start_process_link(self, label: str, is_mobile: bool = False, locust_request_label: str = "") -> 'SailUiForm':
         """
         Clicks a start process link on the form by label
         If no link is found, throws a ComponentNotFoundException
 
         Args:
             label(str): Label of the link
-            site_name(str): Name of the site (i.e. the Sites feature)
-            page_name(str): Name of the page within the site
 
         Keyword Args:
             is_mobile(bool): Boolean to use the mobile form of the request
@@ -534,6 +533,8 @@ class SailUiForm:
         """
 
         component = find_component_by_label_and_type_dict('label', label, START_PROCESS_LINK_TYPE, self._state)
+        site_name = component["siteUrlStub"]
+        page_name = component["sitePageUrlStub"]
 
         locust_label = locust_request_label or f"{self.breadcrumb}.ClickStartProcessLink.{label}"
         new_state = self._click_start_process_link(site_name, page_name, is_mobile, component, locust_request_label=locust_label)
@@ -602,7 +603,7 @@ class SailUiForm:
             link_type = link_component.get('#t')
 
         if link_type == START_PROCESS_LINK_TYPE:
-            site_name = link_component["siteUrlStub"] or "D6JMim"
+            site_name = link_component["siteUrlStub"] or TEMPO_SITE_STUB
             page_name = link_component["sitePageUrlStub"]
             new_state = self._click_start_process_link(site_name, page_name, False, link_component, locust_request_label=locust_label)
         elif link_type == PROCESS_TASK_LINK_TYPE:
