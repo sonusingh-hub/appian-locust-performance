@@ -35,7 +35,7 @@ Please see the `Contributing <contributing.html>`__ section and feel free to rea
 Quick Start Guide
 ********************
 
-This is a quick guide to getting up and running with the appian-locust library. You will need Python 3.7+ installed on your machine before proceeding.
+This is a quick guide to getting up and running with the appian-locust library. You will need Python 3.10+ installed on your machine before proceeding.
 
 Setup
 ------------

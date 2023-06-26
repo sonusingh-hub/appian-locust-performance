@@ -7,35 +7,34 @@ Appian Locust Library documentation
     * **appian-locust** is a tool for load and performance testing Appian. It is a wrapper around the `Locust <https://docs.locust.io/en/stable/>`__ load driving framework to enable driving load against Appian instance.
     * `View/contribute on gitlab <https://gitlab.com/appian-oss/appian-locust>`__
 
-Getting Started
----------------
-
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
+    :caption: Getting Started
 
-    quick_start
-    release_notes
     what_is_appian_locust
-
-API
------------
+    quick_start
 
 .. toctree::
-    :maxdepth: 2
-
-    appian_locust
-
-Using Locust
-------------
-
-.. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
+    :caption: Writing tests
 
     how_to_write_locust_tests
-    how_to_run_locust
     examples
+
+.. toctree::
+    :maxdepth: 1
+    :caption: How to run tests
+
+    how_to_run_locust
     debugging
     limitations
+
+.. toctree::
+    :maxdepth: 1
+    :caption: Development References
+
+    release_notes
+    api
     contributing
 
 Indices and tables

@@ -1,6 +1,6 @@
-##########################
-How to Write Locust Tests
-##########################
+###################################
+Set Up your Appian Locust Test File
+###################################
 
 Before running Locust, we'll outline some top-level concepts and what a "locustfile" is.
 

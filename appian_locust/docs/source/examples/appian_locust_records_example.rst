@@ -54,5 +54,5 @@ For example: If there are two tasks with weights 3 and 6 then second task will h
 - By calling super().on_start() inside the on_start() function of the locust test you get access to the appian client which allows
   you to call *self.appian.visitor, self.appian.system_operator* etc. These properties allow us to navigate to a specific
   object or access metadata about available objects.
-- Functions like *visit_XYZ()* access the actual appian object and return its SAIL form as an instance of :ref:`uiform`.
+- Functions like *visit_XYZ()* access the actual appian object and return its SAIL form as an instance of :mod:`~appian_locust.uiform`.
   This class contains methods that helps you interact with the UI.
