@@ -1,7 +1,3 @@
 .. include:: ../../../CONTRIBUTING.rst
 
-.. toctree::
-    :maxdepth: 1
-    :glob:
-
-    _api/internal/*
+.. include:: _api/core/_appian_locust.rst

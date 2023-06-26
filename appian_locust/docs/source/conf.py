@@ -36,15 +36,12 @@ release = 'latest'
 # ones.
 extensions = ['sphinx.ext.napoleon', 'sphinx.ext.autosectionlabel']
 
-# Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
-
 html_favicon = 'favicon-32x32.png'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = []
+exclude_patterns = ['_api/core']
 
 autodoc_default_flags = ['members', 'private-members', 'undoc-members', 'inherited-members', 'show-inheritance']
 
@@ -64,25 +61,35 @@ def init_path(dir: str) -> Path:
     [os.remove(f'{dir}/{f}') for f in os.listdir(dir)]
     return path
 
+def get_project_subdir_array(subdir: str) -> [str]:
+    match = re.match('.*/(appian_locust.*)', subdir)
+    if not match:
+        raise Exception('Unable to locate appian_locust subfolder...')
+    return match.group(1).split('/')
+
+def insert_header(header: str, output_file: str):
+    with open(output_file, 'w') as stream:
+        stream.write(dedent(f"""\
+            {''.join(itertools.repeat('=', len(header)))}
+            {header}
+            {''.join(itertools.repeat('=', len(header)))}
+        """))
 
 def write_automodule(
-    subdir: str,
+    subdir_array: [str],
     module_name: str,
-    output: Path,
+    output_dir: Path,
     show_private: bool = False
 ) -> None:
-    subdir_name = f'{subdir.split("/")[-1]}{"_private" if show_private else ""}'
-    output_file = f'{output}/{subdir_name}.rst'
-    if not os.path.exists(output_file):
-        with open(output_file, 'w') as stream:
-            stream.write(dedent(f"""\
-                {''.join(itertools.repeat('=', len(subdir_name)))}
-                {subdir_name}
-                {''.join(itertools.repeat('=', len(subdir_name)))}
-            """))
+    is_submodule = len(subdir_array) > 1
+    file_name = f'{"_" if show_private else ""}{subdir_array[-1]}.rst'
+    output_file = f'{output_dir}/{"modules" if is_submodule else "core"}/{file_name}'
+    if not os.path.exists(output_file) and is_submodule:
+        header = f"**{subdir_array[-1].capitalize()} module**"
+        insert_header(header, output_file)
     with open(output_file, 'a') as stream:
         stream.write(dedent(f"""
-            .. automodule:: {subdir.replace('/', '.')}.{module_name}
+            .. automodule:: {'.'.join(subdir_array)}.{module_name}
                 :members:
                 :undoc-members:
                 :show-inheritance:
@@ -91,32 +98,21 @@ def write_automodule(
 
 
 appian_locust_dir = os.path.abspath(f'{os.path.dirname(__file__)}/../..')
-exposed_dir = init_path('./_api/exposed')
-internal_dir = init_path('./_api/internal')
+init_path('./_api/modules')
+init_path('./_api/core')
+api_dir = Path('./_api')
 
 for subdir, dirs, files in os.walk(appian_locust_dir):
-    match = re.match('.*/(appian_locust.*)', subdir)
-    if not match:
-        raise Exception('Unable to locate appian_locust subfolder...')
-    appian_locust_subdir = match.group(1)
-    parent_dir = appian_locust_subdir.split('/')[-1]
-    if re.match('^__.+', parent_dir) or 'docs' in appian_locust_subdir:
+    appian_locust_subdir = get_project_subdir_array(subdir)
+    if 'docs' in appian_locust_subdir:
         continue
     files.sort()
     for f in files:
-        match = re.match('^([^_].+)\.py$', f)
+        match = re.match('^((_?)[^_].+)\.py$', f)
         if match:
             write_automodule(
-                output=exposed_dir,
+                output_dir=api_dir,
+                subdir_array=appian_locust_subdir,
                 module_name=match.group(1),
-                subdir=appian_locust_subdir,
-            )
-            continue
-        match = re.match('^(_[^_].+)\.py$', f)
-        if match:
-            write_automodule(
-                output=internal_dir,
-                module_name=match.group(1),
-                subdir=appian_locust_subdir,
-                show_private=True,
+                show_private=bool(match.group(2)),
             )
