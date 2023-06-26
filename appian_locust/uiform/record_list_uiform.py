@@ -3,7 +3,8 @@ from urllib.parse import quote
 
 from .._interactor import _Interactor
 from .._records_helper import get_all_records_from_json, get_records_from_json_by_column
-from .uiform import SailUiForm
+from ..utilities.helper import find_component_by_label_and_type_dict
+from .uiform import SailUiForm, START_PROCESS_LINK_TYPE
 
 
 class RecordListUiForm(SailUiForm):
@@ -65,3 +66,27 @@ class RecordListUiForm(SailUiForm):
         else:
             record_instances, _ = get_all_records_from_json(self._state)
         return record_instances
+
+    def click_record_list_action(self, label: str, locust_request_label: Optional[str] = None) -> 'RecordListUiForm':
+        """
+        Click on an action in a record list
+        Args:
+            label: The label of the record list action to click
+            locust_request_label: The label locust should associate with this request
+
+        Returns: UiForm with action clicked
+
+        """
+        component = find_component_by_label_and_type_dict('label', label, START_PROCESS_LINK_TYPE, self._state)
+        process_model_uuid = component.get("pmUuid", "")
+        cache_key = component.get("cacheKey", "")
+        if not process_model_uuid:
+            raise Exception(f"Record List Action component does not have process model UUID set.")
+        elif not cache_key:
+            raise Exception(f"Record List Action component does not have cache key set.")
+
+        locust_request_label = locust_request_label or f"RecordListUiform.ClickAction.{label}"
+        new_state = self._interactor.click_record_list_action(component=component, process_model_uuid=process_model_uuid,
+                                                              cache_key=cache_key, locust_request_label=locust_request_label)
+        self._reconcile_state(new_state)
+        return self

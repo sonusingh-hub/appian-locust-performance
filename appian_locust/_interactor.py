@@ -425,6 +425,8 @@ class _Interactor:
 
         Returns: the response of get Start Process Link operation as json
         '''
+        if self.url_pattern_version == 1:
+            page_name = f"p.{page_name}"
         if is_mobile:
             spl_link_url = f"/suite/rest/a/model/latest/startProcess/{process_model_opaque_id}?cacheKey={cache_key}"
         else:
@@ -481,6 +483,17 @@ class _Interactor:
                 )
             else:
                 return json_response
+        return resp.json()
+
+    def click_record_list_action(self, component: Dict[str, Any], process_model_uuid: str,
+                                 cache_key: str, locust_request_label: Optional[str] = None) -> Dict[str, Any]:
+        record_list_action_url = f"/suite/rest/a/model/latest/{process_model_uuid}/forminternal?cacheKey={cache_key}"
+
+        headers = self.setup_sail_headers()
+        locust_label = locust_request_label or "Clicking RecordListAction: " + component["label"]
+        resp = self.post_page(
+            self.host + record_list_action_url, payload={}, headers=headers, label=locust_label
+        )
         return resp.json()
 
     # COMPONENT RELATED METHODS
