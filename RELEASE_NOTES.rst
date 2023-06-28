@@ -29,4 +29,6 @@ Breaking Changes
         from appian_locust.utilities import loadDriverUtils
         utls = loadDriverUtils()
 
+For a more comprehensive list of changes in Appian Locust 2.0, see the :ref:`v2_upgrade` document.
+
 .. release-notes-latest-inclusion-end-do-not-remove
