@@ -169,3 +169,16 @@ class GridInteractor:
             if selected:
                 save_data['selected'] = selected
         return save_data
+
+    def find_rich_text_grid_link_component(self, grid: Dict[str, Any], column_name: str, row_index: int) -> Optional[Dict[str, Any]]:
+        for column in grid["columns"]:
+            if column["label"] == column_name:
+                row = column["data"][row_index]
+                return row["value"]["values"][0]["values"][0]["link"]
+        return None
+
+    def find_plaintext_grid_link_component(self, grid: Dict[str, Any], column_name: str, row_index: int) -> Optional[Dict[str, Any]]:
+        for column in grid["columns"]:
+            if column["label"] == column_name:
+                return column["links"][row_index]
+        return None

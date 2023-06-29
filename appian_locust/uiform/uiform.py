@@ -11,7 +11,7 @@ from copy import deepcopy
 
 from ..utilities import logger
 from .._grid_interactor import GridInteractor
-from .._interactor import _Interactor
+from .._interactor import _Interactor, TEMPO_SITE_STUB
 from .._locust_error_handler import raises_locust_error
 from .._task_opener import _TaskOpener
 from .._ui_reconciler import UiReconciler
@@ -29,7 +29,6 @@ KEY_CONTEXT = "context"
 START_PROCESS_LINK_TYPE = 'StartProcessLink'
 PROCESS_TASK_LINK_TYPE = 'ProcessTaskLink'
 COMPONENTS_THAT_CAN_BE_FILLED = ["ParagraphField", "TextField", "SearchBoxWidget"]
-TEMPO_SITE_STUB = "D6JMim"
 
 log = logger.getLogger(__name__)
 
@@ -470,7 +469,7 @@ class SailUiForm:
 
         NOTE: This method returns a NEW RecordInstanceUiForm object, so you must save its return value into a new variable, like so:
 
-            >>> record_uiform = other_uiform.click_record_link_by_attribute_and_index(...)
+            >>> record_uiform = other_uiform.click_record_link(...)
 
         Returns (RecordUiForm): The record form (feed) for the linked record.
 
@@ -509,7 +508,7 @@ class SailUiForm:
 
         NOTE: This method returns a NEW RecordInstanceUiForm object, so you must save its return value into a new variable, like so:
 
-            >>> record_uiform = other_uiform.click_record_link_by_attribute_and_index(...)
+            >>> record_uiform = other_uiform.click_record_view_link(...)
 
         Returns (SailUiForm): The record form (feed) for the linked record.
 
@@ -623,7 +622,7 @@ class SailUiForm:
             task_id = link_component.get('opaqueTaskId')
             if not task_id:
                 raise Exception(f"No task id found for task with name '{task_name}'")
-            site_name = link_component.get("siteUrlStub") or "D6JMim"
+            site_name = link_component.get("siteUrlStub") or TEMPO_SITE_STUB
             page_name = link_component.get("sitePageUrlStub")
             headers = {
                 'X-Site-UrlStub': site_name,
@@ -1300,6 +1299,145 @@ class SailUiForm:
         new_state = self._interactor.update_grid_from_sail_form(reeval_url, grid, new_grid_save,
                                                                 self.context, self.uuid, context_label=context_label)
         return self._reconcile_state(new_state)
+
+    @raises_locust_error
+    def click_grid_rich_text_link(self, column_name: str, row_index: int, grid_label: Optional[str] = None, grid_index: Optional[int] = None, locust_request_label: str = "") -> 'SailUiForm':
+        """
+        Click on a link in a grid with RichText values
+
+        Either a label or an index is required, indices are useful if there is no title for the grid
+
+        Args:
+            column_name (str): The name of the column the link is in
+            row_index (int): The row in the column to click on, 0 indexed
+            grid_label (str): The label of the grid, if index is not supplied
+            grid_index (str): the index of the grid, if label is not supplied
+            locust_request_label (str, optional): The label locust should associate this request with
+
+        Returns (SailUiForm): The latest state of the UiForm
+
+        """
+        grid = self.grid_interactor.find_grid_by_label_or_index(self._state, label=grid_label, index=grid_index)
+
+        if not grid_label:
+            grid_label = self.grid_interactor.format_grid_display_label(grid)
+        locust_request_label = locust_request_label or f"{self.breadcrumb}.Grid.Click.{grid_label}.{column_name}.{row_index}"
+
+        link_component = self.grid_interactor.find_rich_text_grid_link_component(grid=grid, column_name=column_name, row_index=row_index)
+        if not link_component:
+            raise Exception(f"Column with name {column_name} not found in grid with identifier {grid_label or grid_index}")
+
+        new_state = self._dispatch_click(component=link_component, locust_label=locust_request_label)
+        return self._reconcile_state(new_state)
+
+    @raises_locust_error
+    def click_grid_rich_text_record_link(self, column_name: str, row_index: int, grid_label: Optional[str] = None,
+                                         grid_index: Optional[int] = None, locust_request_label: str = "") -> 'RecordInstanceUiForm':
+        """
+        Click on a Record link in a grid with RichText values
+
+        Either a label or an index is required, indices are useful if there is no title for the grid
+
+        NOTE: This method returns a NEW RecordInstanceUiForm object, so you must save its return value into a new variable, like so:
+
+            >>> record_uiform = other_uiform.click_grid_rich_text_record_link(...)
+
+        Args:
+            column_name (str): The name of the column the link is in
+            row_index (int): The row in the column to click on, 0 indexed
+            grid_label (str): The label of the grid, if index is not supplied
+            grid_index (str): the index of the grid, if label is not supplied
+            locust_request_label (str, optional): The label locust should associate this request with
+
+        Returns (SailUiForm): The latest state of the UiForm
+
+        """
+        grid = self.grid_interactor.find_grid_by_label_or_index(self._state, label=grid_label, index=grid_index)
+
+        if not grid_label:
+            grid_label = self.grid_interactor.format_grid_display_label(grid)
+        locust_request_label = locust_request_label or f"{self.breadcrumb}.Grid.Click.{grid_label}.{column_name}.{row_index}"
+
+        link_component = self.grid_interactor.find_rich_text_grid_link_component(grid=grid, column_name=column_name,
+                                                                                 row_index=row_index)
+        if not link_component:
+            raise Exception(f"Column with name {column_name} not found in grid with identifier {grid_label or grid_index}")
+
+        new_state = self._interactor.click_record_link(self.form_url, link_component, self.context, self.uuid,
+                                                       locust_label=locust_request_label)
+
+        from .record_uiform import RecordInstanceUiForm
+        return RecordInstanceUiForm(self._interactor, new_state)
+
+    @raises_locust_error
+    def click_grid_plaintext_link(self, column_name: str, row_index: int, grid_label: Optional[str] = None,
+                                  grid_index: Optional[int] = None, locust_request_label: str = "") -> 'SailUiForm':
+        """
+        Click on a link in a grid with plaintext values
+
+        Either a label or an index is required, indices are useful if there is no title for the grid
+
+        Args:
+            column_name (str): The name of the column the link is in
+            row_index (int): The row in the column to click on, 0 indexed
+            grid_label (str): The label of the grid, if index is not supplied
+            grid_index (str): the index of the grid, if label is not supplied
+            locust_request_label (str, optional): The label locust should associate this request with
+
+        Returns (SailUiForm): The latest state of the UiForm
+
+        """
+        grid = self.grid_interactor.find_grid_by_label_or_index(self._state, label=grid_label, index=grid_index)
+
+        if not grid_label:
+            grid_label = self.grid_interactor.format_grid_display_label(grid)
+        locust_request_label = locust_request_label or f"{self.breadcrumb}.Grid.Click.{grid_label}.{column_name}.{row_index}"
+
+        link_component = self.grid_interactor.find_plaintext_grid_link_component(grid=grid, column_name=column_name, row_index=row_index)
+        if not link_component:
+            raise Exception(f"Column with name {column_name} not found in grid with identifier {grid_label or grid_index}")
+
+        new_state = self._dispatch_click(component=link_component, locust_label=locust_request_label)
+        return self._reconcile_state(new_state)
+
+    @raises_locust_error
+    def click_grid_plaintext_record_link(self, column_name: str, row_index: int, grid_label: Optional[str] = None,
+                                         grid_index: Optional[int] = None, locust_request_label: str = "") -> 'RecordInstanceUiForm':
+        """
+        Click on a Record link in a grid with plaintext values
+
+        Either a label or an index is required, indices are useful if there is no title for the grid
+
+        NOTE: This method returns a NEW RecordInstanceUiForm object, so you must save its return value into a new variable, like so:
+
+            >>> record_uiform = other_uiform.click_grid_plaintext_record_link(...)
+
+        Args:
+            column_name (str): The name of the column the link is in
+            row_index (int): The row in the column to click on, 0 indexed
+            grid_label (str): The label of the grid, if index is not supplied
+            grid_index (str): the index of the grid, if label is not supplied
+            locust_request_label (str, optional): The label locust should associate this request with
+
+        Returns (SailUiForm): The latest state of the UiForm
+
+        """
+        grid = self.grid_interactor.find_grid_by_label_or_index(self._state, label=grid_label, index=grid_index)
+
+        if not grid_label:
+            grid_label = self.grid_interactor.format_grid_display_label(grid)
+        locust_request_label = locust_request_label or f"{self.breadcrumb}.Grid.Click.{grid_label}.{column_name}.{row_index}"
+
+        link_component = self.grid_interactor.find_plaintext_grid_link_component(grid=grid, column_name=column_name,
+                                                                                 row_index=row_index)
+        if not link_component:
+            raise Exception(f"Column with name {column_name} not found in grid with identifier {grid_label or grid_index}")
+
+        new_state = self._interactor.click_record_link(self.form_url, link_component, self.context, self.uuid,
+                                                       locust_label=locust_request_label)
+
+        from .record_uiform import RecordInstanceUiForm
+        return RecordInstanceUiForm(self._interactor, new_state)
 
     @raises_locust_error
     def select_card_choice_field_by_label(self, label: str, index: int, locust_request_label: str = "") -> 'SailUiForm':

@@ -23,6 +23,7 @@ log = logger.getLogger(__name__)
 
 
 RECORD_PATH = "recorded_responses"
+TEMPO_SITE_STUB = "D6JMim"
 
 
 class _Interactor:
@@ -377,8 +378,11 @@ class _Interactor:
             else:
                 e = Exception("Unexpected record link URL - couldn't find page name after /pages/")
                 log_locust_error(e, raise_error=True)
-            page_type = get_url.split('/')[-1]
-            parse_pattern = page_name + "/" + page_type
+
+            parse_pattern = page_name
+            if TEMPO_SITE_STUB not in get_url:
+                page_type = get_url.split('/')[-1]
+                parse_pattern = parse_pattern + "/" + page_type
             url_prefix_index = get_url.index(parse_pattern) + len(page_name)
             # record_link_url = get_url[:get_url.index(parse_pattern) + len(page_name)].replace("/pages/",
             record_link_url = get_url[:url_prefix_index].replace("/pages/",

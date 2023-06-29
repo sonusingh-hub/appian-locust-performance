@@ -1,6 +1,7 @@
 from appian_locust import AppianTaskSet
 from locust import HttpUser, task
 
+
 class RecordsTaskSet(AppianTaskSet):
 
     @task
@@ -20,7 +21,6 @@ class RecordsTaskSet(AppianTaskSet):
 
         # Create Employee!
         record_list_uiform.click_button(label="Create")
-
 
 
 class UserActor(HttpUser):
