@@ -37,6 +37,7 @@ release = 'latest'
 extensions = ['sphinx.ext.napoleon', 'sphinx.ext.autosectionlabel']
 
 html_favicon = 'favicon-32x32.png'
+html_static_path = ['_static']
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -51,6 +52,9 @@ autodoc_default_flags = ['members', 'private-members', 'undoc-members', 'inherit
 # a list of builtin themes.
 #
 html_theme = 'sphinx_rtd_theme'
+
+def setup(app):
+    app.add_css_file("custom_style.css")
 
 # Iterate through appian-locust classes to generate a list of exposed and internal APIs
 

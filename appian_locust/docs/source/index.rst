@@ -35,6 +35,7 @@ Appian Locust Library documentation
     :caption: Development References
 
     release_notes
+    migration_guides/v2_upgrade
     api
     contributing
 
