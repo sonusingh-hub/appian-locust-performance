@@ -1,135 +1,104 @@
-###################################
-Set Up your Appian Locust Test File
-###################################
+.. _how_to_write_locust_tests:
 
-Before running Locust, we'll outline some top-level concepts and what a "locustfile" is.
+##########################
+How to Write a Locust Test
+##########################
 
-Using TaskSet
+The majority of the work involved in writing Appian Locust tests is around creating `Locust Tasks <https://docs.locust.io/en/stable/tasksets.html>`_. Each Task represents a workflow for a virtual Locust user to execute.
+This section will go over how to get started writing tasks and introduce the two core Appian Locust concepts: the :class:`.Visitor` class and the :class:`.SailUiForm` class.
+
+Sample Workflow
 ********************************************
 
-To define a task, annotate a python function with the @task annotation from the Locust library:
+For this workflow, we will use the **Employee Record Type** found in the Appian `documentation <https://docs.appian.com/suite/help/23.2/Records_Tutorial.html>`_.
+We will implement a Locust Task that will create a new Employee record. The specific workflow will be as follows:
+
+1. Navigate to the Employee Record List
+2. Click the "New Employee" button
+3. Fill in the  First Name, Last Name, Department, Title, and Phone Number fields
+4. Click the "Create" button
+
+Appian Navigation - Visitor
+********************************************
+
+The first step in most workflows is to navigate our user to an interface to interact with. All navigation in Appian Locust can be accomplished via the :class:`.Visitor`.
+Any kind of Appian interface, including Sites, Records, Reports, Portals and others can be navigated to via the Visitor, and the Visitor will return a :class:`.SailUiForm` which
+can be used to interact with that interface.
+
+In our case, we want to navigate to a Record Type list. In Appian Locust, that would look like the following:
 
 .. code-block:: python
 
     @task
-    def get_front_page(self):
-        self.client.get('/')
+    def create_new_employee(self):
+        # Navigate to Employee Record List
+        record_list_uiform = self.appian.visitor.visit_record_type(record_type="Employees")
 
-
-These tasks are composed within a class called a TaskSet, which can be unordered (once again, a TaskSet) or ordered (TaskSequence).
-
-.. code-block:: python
-
-    class LoginTask(AppianTaskSet):
-        def on_start(self):
-            pass
-
-        @task
-        def get_front_page(self):
-            self.client.get('/')
-
-        @task
-        def get_help_page(self):
-            self.client.get('/help')
-
-
-
-These together form a locustfile. You can see an example file `here <https://gitlab.com/appian-oss/appian-locust/-/blob/master/examples/example_locustfile.py>`_.
-
-Using SequentialTaskSet
-********************************************
-A SequentialTaskSet is a TaskSet whose tasks will be executed in the order that they are declared. It is possible to nest SequentialTaskSets within a TaskSet and vice versa.
-
-.. code-block:: python
-
-    class OrderedEndToEndTaskSequence(AppianTaskSequence):
-        @task
-        def nav_to_random_site(self):
-            pass
-
-        @task
-        @repeat(5, WAIT_TIME)
-        def nav_to_specific_site(self):
-            pass
-
-        @task
-        @repeat(10, WAIT_TIME)
-        def increment_iteration_counter(self):
-            if self.iterations >= max_iterations:
-                logger.info(f"Stopping the Locust runner")
-                ENV.runner.quit()
-            else:
-                logger.info(f"Incrementing the iteration set counter")
-                self.iterations += 1
-
-- A Locust-spawned user will repeatedly execute tasks in the order and with the frequency specified by `@repeat` annotation. In this case test will have to be stopped
-  manually by the dev based on some condition. Usually it can be based on a set number of iterations as shown by the example above.
-- `WAIT_TIME` passed into @repeat decorator will make sure there is set amount of time between the repetitions of a particular task.
-- Taks which do not have the @repeat decorator will only execute one during their turn.
-
-Create Locust User
+UI Interactions - SailUiForm
 ********************************************
 
-And lastly, you supply a "Locust", or a representation of a single user that will interact with the system. At runtime you can decide how many users and how fast they should spin up.
+Now that we have navigated to the Employee Record List, we need to execute the workflow steps that will create the new Employee.
+As briefly touched on above, all navigations done via the Visitor return a :class:`.SailUiForm` which is capable of performing interactions with a UI.
+SailUiForm supports :meth:`filling in text fields <appian_locust.uiform.uiform.SailUiForm.fill_text_field>`,
+:meth:`clicking buttons <appian_locust.uiform.uiform.SailUiForm.click_button>` and more.
+
+In our specific case, because we navigated to a Record list, our visitor returned a subclass of the SailUiForm: the :class:`.RecordListUiForm`. Some types of
+interfaces in Appian have a specific subclass that will support additional functionality catered to the kind of interface it represents. The RecordListUiForm will enable us to click
+on the Record List Action which is unique to Record Lists via :meth:`click_record_list_action <appian_locust.uiform.record_list_uiform.RecordListUiForm.click_record_list_action>`, like so:
 
 .. code-block:: python
 
-    class UserActor(HttpUser):
-        wait_time = between(0.5, 0.5)
-        tasks = [LoginTask]
-        host = "https://my-site.appiancloud.com"
+    @task
+    def create_new_employee(self):
+        # Navigate to Employee Record List
+        record_list_uiform = self.appian.visitor.visit_record_type(record_type="Employees")
 
-See :ref:`ways_of_running_locust` to see how to run a locust file.
+        # Click on "New Employee" Record List Action
+        record_list_uiform.click_record_list_action(label="New Employee")
 
-Loading the Config
-********************************************
+As shown above, in many cases the only thing required to interact with a UI element is the label associated with that element.
 
-These two lines look for a ``config.json`` file at the location from which the script is run (not where the locustfile is).
-
-.. code-block:: python
-
-    from appian_locust.loadDriverUtils import utls
-
-    utls.load_config()
-
-
-This takes the content of the ``config.json`` file and places it into a variable as `utls.c`.
-This allows us to access configurations required for logging in inside the class that extends HttpUser:
+At this point in the workflow, the dialog to create a new employee has been launched. Now we can use the various other interactions
+supported by the base SailUiForm class which are available on all of its subclasses to fill out the new Employee's information:
 
 .. code-block:: python
 
-    config = utls.c
-    auth = utls.c['auth']
+    @task
+    def create_new_employee(self):
+        # Navigate to Employee Record List
+        record_list_uiform = self.appian.visitor.visit_record_type(record_type="Employees")
 
+        # Click on "New Employee" Record List Action
+        record_list_uiform.click_record_list_action(label="New Employee")
 
-A minimal `config.json` looks like:
+        # Fill in new Employee information
+        record_list_uiform.fill_text_field(label="First Name", value="Sample")
+        record_list_uiform.fill_text_field(label="Last Name", value="User")
+        record_list_uiform.fill_text_field(label="Department", value="Engineering")
+        record_list_uiform.fill_text_field(label="Title", value="Senior Software Engineer")
+        record_list_uiform.fill_text_field(label="Phone Number", value="(703) 442-8844")
 
-.. code-block:: json
-
-    {
-        "host_address": "site-name.appiancloud.com",
-        "auth": [
-            "user.name",
-            "password"
-        ]
-    }
-
-Locust Environment Properties
-********************************************
-
-As of Locust 1.0.0, properties of a particular Locust run have been moved into the environment framework.
-The best way to get a reference to this environment is to register a listener
-for initialization (which includes a reference to it) it and to store this reference:
+Now all we need to do is click the "Create" button, and our new Employee will be created!
 
 .. code-block:: python
 
-    from locust import events
-    from appian_locust.utilities.helper import ENV
+    @task
+    def create_new_employee(self):
+        # Navigate to Employee Record List
+        record_list_uiform = self.appian.visitor.visit_record_type(record_type="Employees")
 
-    @events.init.add_listener
-    def on_locust_init(environment, **kw):
-        global ENV
-        ENV = environment
+        # Click on "New Employee" Record List Action
+        record_list_uiform.click_record_list_action(label="New Employee")
 
-    def end_test():
-        ENV.runner.quit()
+        # Fill in new Employee information
+        record_list_uiform.fill_text_field(label="First Name", value="Sample")
+        record_list_uiform.fill_text_field(label="Last Name", value="User")
+        record_list_uiform.fill_text_field(label="Department", value="Engineering")
+        record_list_uiform.fill_text_field(label="Title", value="Senior Software Engineer")
+        record_list_uiform.fill_text_field(label="Phone Number", value="(703) 442-8844")
+
+        # Create Employee!
+        record_list_uiform.click_button(label="Create")
+
+If you run a locust test with the task above, you should be able to check the Employee record list and see the "Sample User" employees that the virtual Locust user just made!
+You can see a full version of a locust test including the task we just wrote `here <https://gitlab.com/appian-oss/appian-locust/-/tree/appian-locust-v2/examples/example_create_employee_record.py>`_.

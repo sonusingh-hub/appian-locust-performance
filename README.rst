@@ -32,7 +32,7 @@ Please see the `Contributing <contributing.html>`__ section and feel free to rea
 .. quick_start-inclusion-begin-do-not-remove
 
 ********************
-Quick Start Guide
+Quick Installation Guide
 ********************
 
 This is a quick guide to getting up and running with the appian-locust library. You will need Python 3.10+ installed on your machine before proceeding.
@@ -76,7 +76,7 @@ You can use example file provided in this repository `example_config.json <https
         ]
     }
 
-3. Run the sample test `example_locustfile.py <https://gitlab.com/appian-oss/appian-locust/-/blob/master/examples/example_locustfile.py>`_.
+3. Run the sample test `example_locustfile.py <https://gitlab.com/appian-oss/appian-locust/-/blob/appian-locust-v2/examples/example_locustfile.py>`_.
 
 .. code-block:: bash
 

@@ -13,12 +13,13 @@ Appian Locust Library documentation
 
     what_is_appian_locust
     quick_start
+    how_to_write_locust_tests
 
 .. toctree::
     :maxdepth: 1
     :caption: Writing tests
 
-    how_to_write_locust_tests
+    setup_appian_locust_test_file
     examples
 
 .. toctree::
