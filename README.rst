@@ -17,7 +17,7 @@ Appian Locust capabilities
 .. what_is_appian_locust-inclusion-end-do-not-remove
 
 
-For full documentation, visit the `docs page <https://appian-locust.readthedocs.io/en/latest/>`__
+For full documentation, visit the `docs page <https://appian-locust.readthedocs.io/en/latest/>`__.
 
 .. disclaimer-inclusion-begin-do-not-remove
 

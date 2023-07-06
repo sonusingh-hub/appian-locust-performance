@@ -433,6 +433,10 @@ class SailUiForm:
         If no attribute is provided, the index'th record link is selected from all record links in the form
         Otherwise throws a ComponentNotFoundException
 
+        NOTE: This method returns a NEW RecordInstanceUiForm object, so you must save its return value into a new variable, like so:
+
+            >>> record_uiform = other_uiform.click_record_link_by_attribute_and_index(...)
+
         Keyword Args:
             attribute(str): Attribute to check for 'attribute_value' (default: "")
             attribute_value(str): Attribute value of record link to click (default: "")
@@ -463,6 +467,10 @@ class SailUiForm:
 
         Keyword Args:
             locust_request_label(str): Label used to identify the request for locust statistics
+
+        NOTE: This method returns a NEW RecordInstanceUiForm object, so you must save its return value into a new variable, like so:
+
+            >>> record_uiform = other_uiform.click_record_link_by_attribute_and_index(...)
 
         Returns (RecordUiForm): The record form (feed) for the linked record.
 
@@ -498,6 +506,10 @@ class SailUiForm:
 
         Keyword Args:
             locust_request_label(str): Label used to identify the request for locust statistics
+
+        NOTE: This method returns a NEW RecordInstanceUiForm object, so you must save its return value into a new variable, like so:
+
+            >>> record_uiform = other_uiform.click_record_link_by_attribute_and_index(...)
 
         Returns (SailUiForm): The record form (feed) for the linked record.
 

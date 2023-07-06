@@ -216,6 +216,9 @@ class Visitor:
             site_name(str): Site where the page exists
             page_name(str): Page to navigate to
 
+        NOTE: The actual Type of the Site Page MUST be "Record List", this will not work for sites that are of other page types,
+              such as an Interface with a record grid.
+
         Returns: SailUiForm
 
         Example:
@@ -237,6 +240,9 @@ class Visitor:
         Args:
             site_name: Site Url stub
             page_name: Page Url stub
+
+        NOTE: The actual Type of the Site Page MUST be "Record List", this will not work for sites that are of other page types,
+              such as an Interface with a record grid.
 
         Returns: RecordInstanceUiForm
         """
