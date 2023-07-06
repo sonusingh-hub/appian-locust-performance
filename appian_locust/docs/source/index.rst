@@ -17,18 +17,18 @@ Appian Locust Library documentation
 
 .. toctree::
     :maxdepth: 1
-    :caption: Writing tests
-
-    advanced_appian_locust_usage
-    examples
-
-.. toctree::
-    :maxdepth: 1
-    :caption: How to run tests
+    :caption: How to Run Tests
 
     how_to_run_locust
     debugging
     limitations
+
+.. toctree::
+    :maxdepth: 1
+    :caption: Advanced Concepts
+
+    advanced_appian_locust_usage
+    advanced_tests
 
 .. toctree::
     :maxdepth: 1
