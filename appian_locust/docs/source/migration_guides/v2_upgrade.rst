@@ -12,8 +12,8 @@ The _Actions class is no longer available. You may migrate any functionality usi
    :widths: 20 40 40
    :header-rows: 1
 
-   * - Method in V1
-     - Method in V2
+   * - Method in 1.x
+     - Method in 2.x
      - Example Usage
    * - get_actions_interface
      - Not available anymore. Handled internally by the framework whenever it is necessary, so any calls to this can be removed without replacement.
@@ -45,8 +45,8 @@ The _Admin class is no longer available. You may migrate any functionality using
    :widths: 20 40 40
    :header-rows: 1
 
-   * - Method in V1
-     - Method in V2
+   * - Method in 1.x
+     - Method in 2.x
      - Example Usage
    * - visit
      - We can do the same operation by calling “visit_admin” method in visitor.py
@@ -60,8 +60,8 @@ The _Design class is no longer available. You may migrate any functionality usin
    :widths: 20 40 40
    :header-rows: 1
 
-   * - Method in V1
-     - Method in V2
+   * - Method in 1.x
+     - Method in 2.x
      - Example Usage
    * - visit
      - We can do the same operation by calling “visit_design” method in visitor.py
@@ -93,8 +93,8 @@ The _News class is no longer available. You may migrate any functionality using 
    :widths: 20 40 40
    :header-rows: 1
 
-   * - Method in V1
-     - Method in V2
+   * - Method in 1.x
+     - Method in 2.x
      - Example Usage
    * - get_all
      - We can do the same operation by calling the “get_all_available_entries” method in news_info.py.
@@ -120,8 +120,8 @@ The _Records class is no longer available. You may migrate any functionality usi
    :widths: 20 40 40
    :header-rows: 1
 
-   * - Method in V1
-     - Method in V2
+   * - Method in 1.x
+     - Method in 2.x
      - Example Usage
    * - visit_record_instance_and_get_feed_form
      - Not available. Call “visit_record_instance” method in visitor.py instead.
@@ -180,8 +180,8 @@ The _Reports class is no longer available. You may migrate any functionality usi
    :widths: 20 40 40
    :header-rows: 1
 
-   * - Method in V1
-     - Method in V2
+   * - Method in 1.x
+     - Method in 2.x
      - Example Usage
    * - get_reports_interface
      - Not available anymore. Handled internally by the framework whenever it is necessary, so any calls to this can be removed without replacement.
@@ -210,8 +210,8 @@ The _Tasks class is no longer available. You may migrate any functionality using
    :widths: 20 40 40
    :header-rows: 1
 
-   * - Method in V1
-     - Method in V2
+   * - Method in 1.x
+     - Method in 2.x
      - Example Usage
    * - get_all
      - We can do the same operation by calling “get_all_available_tasks” method in tasks_info.py
@@ -237,8 +237,8 @@ The _Sites class is no longer available. You may migrate any functionality using
    :widths: 20 40 40
    :header-rows: 1
 
-   * - Method in V1
-     - Method in V2
+   * - Method in 1.x
+     - Method in 2.x
      - Example Usage
    * - navigate_to_tab
      - Not available. Instead call “visit_site” in visitor.py
@@ -273,8 +273,8 @@ The _app_importer module is no longer available. You may migrate any functionali
    :widths: 20 40 40
    :header-rows: 1
 
-   * - Method in V1
-     - Method in V2
+   * - Method in 1.x
+     - Method in 2.x
      - Example Usage
    * - import_app
      - Available on DesignUiForm.py as “import_application”
@@ -289,8 +289,8 @@ The following methods in SailUiForm have removed or modified:
    :widths: 20 40 40
    :header-rows: 1
 
-   * - Method in V1
-     - Method in V2
+   * - Method in 1.x
+     - Method in 2.x
      - Example Usage
    * - get_record_header_form
      - Available on RecordInstanceUiForm.py as “get_header_view”

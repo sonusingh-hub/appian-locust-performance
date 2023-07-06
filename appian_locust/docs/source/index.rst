@@ -19,7 +19,7 @@ Appian Locust Library documentation
     :maxdepth: 1
     :caption: Writing tests
 
-    setup_appian_locust_test_file
+    advanced_appian_locust_usage
     examples
 
 .. toctree::

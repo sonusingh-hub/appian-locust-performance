@@ -31,9 +31,9 @@ Please see the `Contributing <contributing.html>`__ section and feel free to rea
 
 .. quick_start-inclusion-begin-do-not-remove
 
-********************
+************************
 Quick Installation Guide
-********************
+************************
 
 This is a quick guide to getting up and running with the appian-locust library. You will need Python 3.10+ installed on your machine before proceeding.
 
@@ -60,32 +60,16 @@ If using ``pipenv``, simply start from the following ``Pipfile``:
     [pipenv]
     allow_prereleases = true
 
-2. Configure your test to point at the Appian instance you will be using.
-You can use example file provided in this repository `example_config.json <https://gitlab.com/appian-oss/appian-locust/-/blob/master/examples/example_config.json>`_:
-
-- Set ``host_address`` to the address of your Appian instance.
-- In ``auth``, specify the username and password of the user account to use. Note: This user must be able to access Tempo.
-
-.. code-block:: json
-
-    {
-        "host_address": "site-name.appiancloud.com",
-        "auth": [
-            "user.name",
-            "password"
-        ]
-    }
-
-3. Run the sample test `example_locustfile.py <https://gitlab.com/appian-oss/appian-locust/-/blob/appian-locust-v2/examples/example_locustfile.py>`_.
+2. Run the sample test `example_locustfile.py <https://gitlab.com/appian-oss/appian-locust/-/blob/appian-locust-v2/examples/example_locustfile.py>`_.
 
 .. code-block:: bash
 
-    locust -f example_locustfile.py -u 1 -t 60 --headless
+    locust -f example_locustfile.py
 
-If everything is set up correctly, you should start to see output from the load test reporting results. This should run for 60 seconds and end with a summary report of the results.
+If everything is set up correctly, you should see a link to the `Locust web interface <https://docs.locust.io/en/stable/quickstart.html#locust-s-web-interface>`_, which you can use to start test runs and view results.
 
-* For more examples of different site interactions, see the ``example_*.py`` files included in this repository.
-* For more in-depth information about the test library, see the rest of this documentation.
+* For more information about how to build the workflow for your locust test, see the `How to Write a Locust Test <how_to_write_locust_tests.html>`__ section.
+* For more information on running locust tests, see the `How to Run Locust <how_to_run_locust.html>`__ section.
 
 Build from source
 ----------------------
@@ -114,14 +98,14 @@ Troubleshooting
 ----------------
 * **"Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known"**
 
-  * check that ``host_address`` is specified correctly in `example_config.json <https://gitlab.com/appian-oss/appian-locust/-/blob/master/examples/example_config.json>`_.
+  * check that ``host_address`` is specified correctly in your locust test file.
 
 * **"Login unsuccessful, no multipart cookie found...make sure credentials are correct"**
 
-  * check that `auth` specifies a valid username and password combination for the site you're testing on in `example_config.json <https://gitlab.com/appian-oss/appian-locust/-/blob/master/examples/example_config.json>`_.
+  * check that `auth` specifies a valid username and password combination for the site you're testing on in your locust test file.
 
 * **"General request and response debugging"**
 
-  * Add ``self.appian.interactor.record_mode = True`` to your ``AppianTaskSet`` subclass.  Files will be placed in ``/record_responses`` where the runner is executed.
+  * Add ``self.client.record_mode = True`` to your ``HttpUser`` subclass.  Files will be placed in ``/record_responses`` where the runner is executed.
 
 .. quick_start-inclusion-end-do-not-remove

@@ -7,8 +7,8 @@ How to Run Locust
 Once you have the library installed, you can simply follow the output from running ``locust -h`` to run your test.
 Note that if you don't specify a locustfile with ``-f FILE_NAME``, locust will look for a file called locustfile in the current directory by default.
 
-Command Line Flow (recommended)
-************************************
+Command Line Flow
+*****************
 
 If you’re running Locust somewhere where there is no web ui, or you don’t want to bother with the web flow, I tend to run Locust like so:
 
