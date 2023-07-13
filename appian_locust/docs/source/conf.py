@@ -53,6 +53,7 @@ autodoc_default_flags = ['members', 'private-members', 'undoc-members', 'inherit
 #
 html_theme = 'sphinx_rtd_theme'
 
+
 def setup(app):
     app.add_css_file("custom_style.css")
 
@@ -65,11 +66,13 @@ def init_path(dir: str) -> Path:
     [os.remove(f'{dir}/{f}') for f in os.listdir(dir)]
     return path
 
+
 def get_project_subdir_array(subdir: str) -> [str]:
     match = re.match('.*/(appian_locust.*)', subdir)
     if not match:
         raise Exception('Unable to locate appian_locust subfolder...')
     return match.group(1).split('/')
+
 
 def insert_header(header: str, output_file: str):
     with open(output_file, 'w') as stream:
@@ -78,6 +81,7 @@ def insert_header(header: str, output_file: str):
             {header}
             {''.join(itertools.repeat('=', len(header)))}
         """))
+
 
 def write_automodule(
     subdir_array: [str],

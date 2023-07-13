@@ -1155,6 +1155,25 @@ class TestSailUiForm(unittest.TestCase):
         self.assertEqual(
             context.exception.args[0], f"'<' not supported between instances of 'str' and 'int'")
 
+    def test_click_grid_rich_text_link(self) -> None:
+        report_body = read_mock_file("rich_text_grid_field.json")
+        self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
+        sail_form = self.task_set.appian.visitor.visit_report(self.report_name, exact_match=False)
+
+        good_response = '{"success":"Yes"}'
+        self.custom_locust.set_response("/suite/rest/a/sites/latest/process-hq/pages/home/interface", 200, good_response)
+        sail_form.click_grid_rich_text_link(grid_label="Processes", row_index=0, column_name="Name")
+
+    def test_click_grid_plaintext_link(self) -> None:
+        report_body = read_mock_file("plaintext_grid_field.json")
+        self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
+        sail_form = self.task_set.appian.visitor.visit_report(self.report_name, exact_match=False)
+
+        self.custom_locust.set_response(
+            "/suite/rest/a/sites/latest/D6JMim/page/reports/record/lIBHer_bdD8Emw8hLLETeiApBrxq-qoA49oyo6ZbfRANWNchnXIC8_QQLHMvQo3q8_3W_uY-NIUjTsvBQt9hzZiRJbsXbp75nXNb4s_IQMGZzxV/view/summary",
+            200, read_mock_file("record_summary_view_response.json"))
+        sail_form.click_grid_plaintext_record_link(grid_index=0, row_index=0, column_name="Customer")
+
 
 if __name__ == '__main__':
     unittest.main()
