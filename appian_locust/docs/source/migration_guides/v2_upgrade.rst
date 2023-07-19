@@ -329,7 +329,7 @@ Import Changes
 
    * - Class/Module
      - Import in V1
-     - Import in V1
+     - Import in V2
    * - helper
      - from appian_locust.helper import *
      - from appian_locust.utilities.helper import *
