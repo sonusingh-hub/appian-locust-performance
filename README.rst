@@ -60,7 +60,7 @@ If using ``pipenv``, simply start from the following ``Pipfile``:
     [pipenv]
     allow_prereleases = true
 
-2. Run the sample test `example_locustfile.py <https://gitlab.com/appian-oss/appian-locust/-/blob/appian-locust-v2/examples/example_locustfile.py>`_.
+2. Run the sample test `example_locustfile.py <https://gitlab.com/appian-oss/appian-locust/-/blob/main/examples/example_locustfile.py>`_.
 
 .. code-block:: bash
 
