@@ -313,7 +313,8 @@ class _Interactor:
         Writes to a recorded_responses folder from wherever you run locust
         """
         cleaned_label = label.replace("/", "|") if label else "response"
-        file_name = cleaned_label + " " + str(datetime.now())
+        # Windows does not support : in filenames
+        file_name = cleaned_label + " " + str(datetime.now()).replace(":", ".")
         file_ending = ".json"
         if not os.path.exists(RECORD_PATH):
             os.mkdir(RECORD_PATH)
