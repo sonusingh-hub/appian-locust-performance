@@ -21,7 +21,7 @@ SAIL Navigation
 _________________________________
 
 
-Appian interfaces are built with `SAIL <https://docs.appian.com/suite/help/20.3/SAIL_Design.html>`__.
+Appian interfaces are built with `SAIL <https://docs.appian.com/suite/help/latest/SAIL_Design.html>`__.
 It's a RESTful contract that controls state between the browser/mobile clients and the server.
 
 All SAIL-based interactions require updating a server-side context (or in a stateless mode, passing that context back and forth).

@@ -35,7 +35,7 @@ Please see the `Contributing <contributing.html>`__ section and feel free to rea
 Quick Installation Guide
 ************************
 
-This is a quick guide to getting up and running with the appian-locust library. You will need Python 3.10+ installed on your machine before proceeding.
+This is a quick guide to getting up and running with the appian-locust library. You will need Python 3.10 installed on your machine before proceeding.
 
 Setup
 ------------
@@ -60,7 +60,7 @@ If using ``pipenv``, simply start from the following ``Pipfile``:
     [pipenv]
     allow_prereleases = true
 
-2. Run the sample test `example_locustfile.py <https://gitlab.com/appian-oss/appian-locust/-/blob/main/examples/example_locustfile.py>`_.
+2. Download the sample test `example_locustfile.py <https://gitlab.com/appian-oss/appian-locust/-/blob/main/examples/example_locustfile.py>`_ from the Appian Locust repo and run it.
 
 .. code-block:: bash
 
