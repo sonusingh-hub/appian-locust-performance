@@ -383,3 +383,7 @@ class TestInteractor(unittest.TestCase):
                               'documentId': {'#t': 'CollaborationDocument', 'id': doc_id},
                               'extension': 'none', 'fileSizeBytes': 0},
                              document_update['#v'][i])
+
+    def test_clean_filename(self) -> None:
+        cleaned_str = self.task_set.appian._interactor._clean_filename("\\<>:\"/|?*")
+        self.assertEqual(cleaned_str, ".........")

@@ -4,7 +4,7 @@ import sys
 import time
 import urllib.parse
 from datetime import date, datetime
-from re import match, search
+from re import match, search, sub
 from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 from locust.clients import HttpSession, ResponseContextManager
@@ -312,7 +312,7 @@ class _Interactor:
 
         Writes to a recorded_responses folder from wherever you run locust
         """
-        cleaned_label = label.replace("/", "|") if label else "response"
+        cleaned_label = self._clean_filename(label) if label else "response"
         # Windows does not support : in filenames
         file_name = cleaned_label + " " + str(datetime.now()).replace(":", ".")
         file_ending = ".json"
@@ -326,12 +326,16 @@ class _Interactor:
                 with open(proposed_request_file_name, 'wb') as req_bytes_file:
                     req_bytes_file.write(body)
             elif isinstance(body, str):
-                with open(proposed_request_file_name, 'w') as req_str_file:
+                with open(proposed_request_file_name, 'w', encoding="utf-8") as req_str_file:
                     req_str_file.write(body)
-        with open(proposed_response_file_name, 'w') as resp_text_file:
+        with open(proposed_response_file_name, 'w', encoding="utf-8") as resp_text_file:
             resp_text_file.write(response.text)
         if 'X-Trace-Id' in response.headers:
             log.info(cleaned_label + ' | X-Trace-Id: ' + response.headers['X-Trace-Id'])
+
+    @staticmethod
+    def _clean_filename(label: str) -> str:
+        return sub(r'[!<>:\/"\\|?*]', lambda replace_with_null: ".", label)
 
     def click_record_link(self, get_url: str, component: Dict[str, Any], context: Dict[str, Any],
                           label: Optional[str] = None, headers: Optional[Dict[str, Any]] = None, locust_label: str = "") -> Dict[str, Any]:
