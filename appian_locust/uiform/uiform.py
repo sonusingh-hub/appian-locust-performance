@@ -745,26 +745,44 @@ class SailUiForm:
         component = find_component_by_attribute_in_dict(
             attribute_to_find, label, self._state)
 
-        choices: list = component.get('choices')
-        if not choices:
-            raise InvalidComponentException(f"No choices found for component {label}, is the component a Dropdown?")
-        if not isinstance(choice_label, list) and choice_label not in choices:
-            raise ChoiceNotFoundException(f"Choice {choice_label} not found for component {label}, valid choices were {choices}")
-
-        index = choices.index(choice_label) + 1  # Appian is _sigh_ one indexed
-        locust_label = locust_request_label or f'{self.breadcrumb}.SelectDropdownWithLabel.{label}'
+        locust_label = locust_request_label or f'{self.breadcrumb}.Dropdown.SelectByLabel.{label}'
         reeval_url = self._get_update_url_for_reeval(self._state)
+        exception_label = f"label {label}"
 
-        # Opting to use this field, rather than self.form_url, because 'sail-application-url' is the same between web and mobile
-        url = self._state.get('sail-application-url')
-        # url_stub should only be populated if the page is a record list
-        url_stub = get_url_stub_from_record_list_url_path(url)
+        new_state = self._interactor.construct_and_send_dropdown_update(
+            component, choice_label, self.context, self._state, self.uuid, locust_label, exception_label, reeval_url)
 
-        new_state = self._interactor.send_dropdown_update(
-            reeval_url, component, self.context, self.uuid, index=index, label=locust_label, url_stub=url_stub)
-        if not new_state:
-            raise Exception(
-                f"No response returned when trying to click button with label '{label}'")
+        return self._reconcile_state(new_state)
+
+    @raises_locust_error
+    def select_dropdown_item_by_index(self, index: int, choice_label: str, locust_request_label: str = "") -> 'SailUiForm':
+        """
+        Selects a dropdown item on the form by index (1-based)
+        If no dropdown found, throws a NotFoundException
+        If no element found, throws a ChoiceNotFoundException
+
+        Args:
+            index(int): index(int): Index of the dropdown to select
+            choice_label(str): Label of the dropdown item to select
+
+        Keyword Args:
+            locust_request_label(str): Label used to identify the request for locust statistics
+
+        Returns (SailUiForm): The latest state of the UiForm
+
+        Examples:
+
+            >>> form.select_dropdown_item_by_index(1, 'My First Choice')
+
+        """
+        component = find_component_by_index_in_dict(
+            'DropdownField', index, self._state)
+        locust_label = locust_request_label or f'{self.breadcrumb}.Dropdown.SelectByIndex.{index}'
+        reeval_url = self._get_update_url_for_reeval(self._state)
+        exception_label = f"index {index}"
+
+        new_state = self._interactor.construct_and_send_dropdown_update(
+            component, choice_label, self.context, self._state, self.uuid, locust_label, exception_label, reeval_url)
 
         return self._reconcile_state(new_state)
 
@@ -794,26 +812,44 @@ class SailUiForm:
         attribute_to_find = 'testLabel' if is_test_label else 'label'
         component = find_component_by_attribute_in_dict(
             attribute_to_find, label, self._state)
-
-        choices: list = component.get('choices')
-        if not choices:
-            raise InvalidComponentException(f"No choices found for component {label}, is the component a Dropdown?")
-        if not isinstance(choice_label, list) and choice_label not in choices:
-            raise ChoiceNotFoundException(f"Choice {choice_label} not found for component {label}, valid choices were {choices}")
-        index_multi = [choices.index(current_label) + 1 for current_label in choice_label]  # Appian is _sigh_ one indexed
-        locust_label = locust_request_label or f'{self.breadcrumb}.SelectMultupleDropdownWithLabel.{choice_label}'
+        locust_label = locust_request_label or f'{self.breadcrumb}.MultipleDropdown.SelectByLabel.{choice_label}'
+        exception_label = f"label {label}"
         reeval_url = self._get_update_url_for_reeval(self._state)
 
-        # Opting to use this field, rather than self.form_url, because 'sail-application-url' is the same between web and mobile
-        url = self._state.get('sail-application-url')
-        # url_stub should only be populated if the page is a record list
-        url_stub = get_url_stub_from_record_list_url_path(url)
+        new_state = self._interactor.construct_and_send_multiple_dropdown_update(
+            component, choice_label, self.context, self._state, self.uuid, locust_label, exception_label, reeval_url)
 
-        new_state = self._interactor.send_multiple_dropdown_update(
-            reeval_url, component, self.context, self.uuid, index=index_multi, label=locust_label, url_stub=url_stub)
-        if not new_state:
-            raise Exception(
-                f"No response returned when trying to click button with label '{label}'")
+        return self._reconcile_state(new_state)
+
+    @raises_locust_error
+    def select_multi_dropdown_item_by_index(self, index: int, choice_label: List[str], locust_request_label: str = "") -> 'SailUiForm':
+        """
+        Selects a multiple dropdown item on the form by index by index (1-based)
+        If no multiple dropdown found, throws a NotFoundException
+        If no element found, throws a ChoiceNotFoundException
+
+        Args:
+            index(int): Index of the multiple dropdown to select
+            choice_label([str]): Label(s) of the multiple dropdown item to select
+
+        Keyword Args:
+            locust_request_label(str): Label used to identify the request for locust statistics
+
+        Returns (SailUiForm): The latest state of the UiForm
+
+        Examples:
+
+            >>> form.select_multi_dropdown_item_by_index(2, ['My First Choice','My Second Choice'])
+
+        """
+        component = find_component_by_index_in_dict(
+            'MultipleDropdownField', index, self._state)
+        locust_label = locust_request_label or f'{self.breadcrumb}.MultipleDropdown.SelectByIndex.{choice_label}'
+        exception_label = f"index {index}"
+        reeval_url = self._get_update_url_for_reeval(self._state)
+
+        new_state = self._interactor.construct_and_send_multiple_dropdown_update(
+            component, choice_label, self.context, self._state, self.uuid, locust_label, exception_label, reeval_url)
 
         return self._reconcile_state(new_state)
 

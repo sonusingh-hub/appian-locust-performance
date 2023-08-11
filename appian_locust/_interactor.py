@@ -13,9 +13,10 @@ from requests import Response
 from .utilities import logger
 from ._locust_error_handler import log_locust_error, test_response_for_error
 from ._save_request_builder import save_builder
-from .exceptions import BadCredentialsException, MissingCsrfTokenException, ComponentNotFoundException
+from .exceptions import (BadCredentialsException, MissingCsrfTokenException, ComponentNotFoundException,
+                         InvalidComponentException, ChoiceNotFoundException)
 from .utilities.helper import find_component_by_attribute_in_dict, get_username
-from ._records_helper import get_url_stub_from_record_list_post_request_url
+from ._records_helper import get_url_stub_from_record_list_post_request_url, get_url_stub_from_record_list_url_path
 
 log = logger.getLogger(__name__)
 
@@ -583,6 +584,44 @@ class _Interactor:
         )
         return resp.json()
 
+    def construct_and_send_dropdown_update(self, component: Any, choice_label: str, context: Dict[str, Any], state: Dict[str, Any],
+                                           uuid: str, context_label: str, exception_label: str, reeval_url: str) -> Dict[str, Any]:
+        '''
+            Calls the post operation to send an update to a dropdown
+
+            Args:
+                component: the dropdown component to update
+                choice_label: Label of the dropdown
+                context: the Sail context parsed from the json response
+                state: the Sail state parsed from the json response
+                uuid: the uuid parsed from the json response
+                context_label: the label to be displayed by locust for this action
+                exception_label: information about the dropdown component to be displayed if there is an exception
+                reeval_url: URL for "rel"="update", which is used to do other interactions on the form
+
+            Returns: the response of post operation as json
+        '''
+        choices: list = component.get('choices')
+        if not choices:
+            raise InvalidComponentException(f"No choices found for dropdown with {exception_label}, is the component a Dropdown?")
+        if not isinstance(choice_label, list) and choice_label not in choices:
+            raise ChoiceNotFoundException(f"Choice {choice_label} not found for dropdown with {exception_label}, valid choices were {choices}")
+
+        index = choices.index(choice_label) + 1  # Appian is _sigh_ one indexed
+
+        # Opting to use this field, rather than self.form_url, because 'sail-application-url' is the same between web and mobile
+        url = state.get('sail-application-url')
+        # url_stub should only be populated if the page is a record list
+        url_stub = get_url_stub_from_record_list_url_path(url)
+
+        new_state = self.send_dropdown_update(
+            reeval_url, component, context, uuid, index=index, label=context_label, url_stub=url_stub)
+        if not new_state:
+            raise Exception(
+                f"No response returned when trying to select dropdown with '{exception_label}'")
+
+        return new_state
+
     def send_multiple_dropdown_update(self, post_url: str, multi_dropdown: Dict[str, Any], context: Dict[str, Any],
                                       uuid: str, index: List[int], label: Optional[str] = None, url_stub: Optional[str] = None) -> Dict[str, Any]:
         '''
@@ -620,6 +659,45 @@ class _Interactor:
             self.host + post_url, payload=payload, label=locust_label
         )
         return resp.json()
+
+    def construct_and_send_multiple_dropdown_update(self, component: Any, choice_label: List[str],
+                                                    context: Dict[str, Any], state: Dict[str, Any],
+                                                    uuid: str, context_label: str, exception_label: str,
+                                                    reeval_url: str) -> Dict[str, Any]:
+        '''
+            Calls the post operation to send an update to a multiple dropdown
+
+            Args:
+                component: the multiple dropdown component to update
+                choice_label:  Label(s) of the multiple dropdown item to select
+                context: the Sail context parsed from the json response
+                state: the Sail state parsed from the json response
+                uuid: the uuid parsed from the json response
+                context_label: the label to be displayed by locust for this action
+                exception_label: information about the multiple dropdown component to be displayed if there is an exception
+                reeval_url: URL for "rel"="update", which is used to do other interactions on the form
+
+            Returns: the response of post operation as json
+        '''
+        choices: list = component.get('choices')
+        if not choices:
+            raise InvalidComponentException(f"No choices found for multiple dropdown with {exception_label}, is the component a Multiple Dropdown?")
+        if isinstance(choice_label, list) and any(item not in choices for item in choice_label):
+            raise ChoiceNotFoundException(f"Choice {choice_label} not found for multiple dropdown with {exception_label}, valid choices were {choices}")
+        index_multi = [choices.index(current_label) + 1 for current_label in choice_label]  # Appian is _sigh_ one indexed
+
+        # Opting to use this field, rather than self.form_url, because 'sail-application-url' is the same between web and mobile
+        url = state.get('sail-application-url')
+        # url_stub should only be populated if the page is a record list
+        url_stub = get_url_stub_from_record_list_url_path(url)
+
+        new_state = self.send_multiple_dropdown_update(
+            reeval_url, component, context, uuid, index=index_multi, label=context_label, url_stub=url_stub)
+        if not new_state:
+            raise Exception(
+                f"No response returned when trying to select multiple dropdown with '{exception_label}'")
+
+        return new_state
 
     def get_primary_button_payload(self, page_content_in_json: Dict[str, Any]) -> Dict[str, Any]:
         """
