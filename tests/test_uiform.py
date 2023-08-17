@@ -1016,6 +1016,22 @@ class TestSailUiForm(unittest.TestCase):
         with self.assertRaises(ChoiceNotFoundException):
             sail_form.select_dropdown_item(dropdown_label, 'some missing choice')
 
+    def test_actions_form_dropdown_by_index_errors(self) -> None:
+        self.setup_action_response_with_ui('dropdown_test_ui.json')
+
+        sail_form: SailUiForm = self.task_set.appian.visitor.visit_action(
+            "Create a Case", False)
+
+        dropdown_index = 3
+        with self.assertRaises(Exception) as context:
+            sail_form.select_dropdown_item_by_index(dropdown_index, 'some choice')
+        self.assertEqual(
+            context.exception.args[0], f"Index: '{str(dropdown_index)}' out of range")
+
+        dropdown_index = 1
+        with self.assertRaises(ChoiceNotFoundException):
+            sail_form.select_dropdown_item_by_index(dropdown_index, 'some missing choice')
+
     @patch('appian_locust.uiform.SailUiForm._get_update_url_for_reeval', return_value="/mocked/re-eval/url")
     @patch('appian_locust._interactor._Interactor.send_dropdown_update')
     def test_actions_form_dropdown_success(self, mock_send_dropdown_update: MagicMock,
@@ -1028,6 +1044,26 @@ class TestSailUiForm(unittest.TestCase):
 
         dropdown_label = "Customer Type"
         sail_form.select_dropdown_item(dropdown_label, 'Buy Side Asset Manager')
+
+        mock_get_update_url_for_reeval.assert_called_with(sail_form.get_latest_state())
+        mock_send_dropdown_update.assert_called_once()
+        args, kwargs = mock_send_dropdown_update.call_args
+        self.assertEqual(args[0], "/mocked/re-eval/url")
+        self.assertIsNone(kwargs["url_stub"])
+        self.assertNotEqual(sail_form.get_latest_state(), initial_state)
+
+    @patch('appian_locust.uiform.SailUiForm._get_update_url_for_reeval', return_value="/mocked/re-eval/url")
+    @patch('appian_locust._interactor._Interactor.send_dropdown_update')
+    def test_actions_form_dropdown_by_index_success(self, mock_send_dropdown_update: MagicMock,
+                                                    mock_get_update_url_for_reeval: MagicMock) -> None:
+        self.setup_action_response_with_ui('dropdown_test_ui.json')
+
+        sail_form: SailUiForm = self.task_set.appian.visitor.visit_action(
+            "Create a Case", False)
+        initial_state = sail_form.get_latest_state()
+
+        dropdown_index = 1
+        sail_form.select_dropdown_item_by_index(dropdown_index, 'Buy Side Asset Manager')
 
         mock_get_update_url_for_reeval.assert_called_with(sail_form.get_latest_state())
         mock_send_dropdown_update.assert_called_once()
@@ -1057,6 +1093,46 @@ class TestSailUiForm(unittest.TestCase):
         self.assertEqual(kwargs["url_stub"], "url_stub123")
         self.assertNotEqual(sail_form.get_latest_state(), initial_state)
 
+    @patch('appian_locust.uiform.SailUiForm._get_update_url_for_reeval', return_value="/mocked/re-eval/url")
+    @patch('appian_locust._interactor._Interactor.send_multiple_dropdown_update')
+    def test_actions_form_multiple_dropdown_success(self, mock_send_multiple_dropdown_update: MagicMock,
+                                                    mock_get_update_url_for_reeval: MagicMock) -> None:
+        self.setup_action_response_with_ui('dropdown_test_ui.json')
+
+        sail_form: SailUiForm = self.task_set.appian.visitor.visit_action(
+            "Create a Case", False)
+        initial_state = sail_form.get_latest_state()
+
+        dropdown_label = "Regions"
+        sail_form.select_multi_dropdown_item(dropdown_label, ["Asia", "Europe and Americas"])
+
+        mock_get_update_url_for_reeval.assert_called_with(sail_form.get_latest_state())
+        mock_send_multiple_dropdown_update.assert_called_once()
+        args, kwargs = mock_send_multiple_dropdown_update.call_args
+        self.assertEqual(args[0], "/mocked/re-eval/url")
+        self.assertIsNone(kwargs["url_stub"])
+        self.assertNotEqual(sail_form.get_latest_state(), initial_state)
+
+    @patch('appian_locust.uiform.SailUiForm._get_update_url_for_reeval', return_value="/mocked/re-eval/url")
+    @patch('appian_locust._interactor._Interactor.send_multiple_dropdown_update')
+    def test_actions_form_multiple_dropdown_by_index_success(self, mock_send_multiple_dropdown_update: MagicMock,
+                                                             mock_get_update_url_for_reeval: MagicMock) -> None:
+        self.setup_action_response_with_ui('dropdown_test_ui.json')
+
+        sail_form: SailUiForm = self.task_set.appian.visitor.visit_action(
+            "Create a Case", False)
+        initial_state = sail_form.get_latest_state()
+
+        dropdown_index = 1
+        sail_form.select_multi_dropdown_item_by_index(dropdown_index, ["Asia", "Europe and Americas"])
+
+        mock_get_update_url_for_reeval.assert_called_with(sail_form.get_latest_state())
+        mock_send_multiple_dropdown_update.assert_called_once()
+        args, kwargs = mock_send_multiple_dropdown_update.call_args
+        self.assertEqual(args[0], "/mocked/re-eval/url")
+        self.assertIsNone(kwargs["url_stub"])
+        self.assertNotEqual(sail_form.get_latest_state(), initial_state)
+
     @patch('appian_locust._interactor._Interactor.send_multiple_dropdown_update')
     def test_multiple_dropdown_not_found(self, mock_send_multiple_dropdown_update: MagicMock) -> None:
         self.setup_action_response_with_ui('dropdown_test_ui.json')
@@ -1071,6 +1147,26 @@ class TestSailUiForm(unittest.TestCase):
 
         dropdown_label = "Regions"
         sail_form.select_multi_dropdown_item(dropdown_label, ["Asia"])
+        mock_send_multiple_dropdown_update.assert_called_once()
+        args, kwargs = mock_send_multiple_dropdown_update.call_args
+
+    @patch('appian_locust._interactor._Interactor.send_multiple_dropdown_update')
+    def test_multiple_dropdown_by_index_not_found(self, mock_send_multiple_dropdown_update: MagicMock) -> None:
+        self.setup_action_response_with_ui('dropdown_test_ui.json')
+        sail_form: SailUiForm = self.task_set.appian.visitor.visit_action(
+            "Create a Case", False)
+
+        dropdown_index = 2
+        with self.assertRaises(Exception) as context:
+            sail_form.select_multi_dropdown_item_by_index(dropdown_index, ["Asia"])
+        self.assertEqual(
+            context.exception.args[0], f"Index: '{str(dropdown_index)}' out of range")
+
+        dropdown_index = 1
+        with self.assertRaises(ChoiceNotFoundException):
+            sail_form.select_multi_dropdown_item_by_index(dropdown_index, ['Asia', 'some missing choice'])
+
+        sail_form.select_multi_dropdown_item_by_index(dropdown_index, ["Asia"])
         mock_send_multiple_dropdown_update.assert_called_once()
         args, kwargs = mock_send_multiple_dropdown_update.call_args
 
