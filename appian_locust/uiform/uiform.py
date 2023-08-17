@@ -824,7 +824,7 @@ class SailUiForm:
     @raises_locust_error
     def select_multi_dropdown_item_by_index(self, index: int, choice_label: List[str], locust_request_label: str = "") -> 'SailUiForm':
         """
-        Selects a multiple dropdown item on the form by index by index (1-based)
+        Selects a multiple dropdown item on the form by index (1-based)
         If no multiple dropdown found, throws a NotFoundException
         If no element found, throws a ChoiceNotFoundException
 
