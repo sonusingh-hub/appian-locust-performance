@@ -1,4 +1,5 @@
 from typing import Any, Dict, Tuple, Optional
+from requests.models import Response
 
 from .utilities import logger
 from ._base import _Base
@@ -191,3 +192,6 @@ class _News(_Base):
 
     def search(self, search_string: str = "*") -> Dict[str, Any]:
         return self.get_all(search_string)
+
+    def fetch_news_entry_record_tags(self, news_entry_id: str, locust_request_label: str) -> Response:
+        return self.interactor.get_page(uri=f"/suite/rest/a/record/latest/recordtags/{news_entry_id}/0/10", label=locust_request_label)
