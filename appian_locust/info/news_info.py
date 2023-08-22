@@ -1,7 +1,6 @@
 from requests.models import Response
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Optional
 
-from .._interactor import _Interactor
 from .._news import _News
 
 
@@ -75,3 +74,16 @@ class NewsInfo:
             if 'newsRelatedRecords' in link['href']:
                 return self.__news.interactor.get_page(link['href'], label=locust_request_label)
         return None
+
+    def get_news_entry_record_tags(self, news_name: str, locust_request_label: Optional[str] = None) -> Optional[Response]:
+        """
+        Get the record tags associated with a news entry
+        Args:
+            news_name (str): News entry ID
+            locust_request_label (str, optional): Label locust should associate with the request for record tags
+
+        Returns:
+
+        """
+        locust_request_label = locust_request_label or f"News.Entry.{news_name}.RecordTags"
+        return self.__news.fetch_news_entry_record_tags(news_entry_id=news_name, locust_request_label=locust_request_label)
