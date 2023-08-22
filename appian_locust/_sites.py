@@ -40,13 +40,14 @@ class _Sites(_Base):
         self._sites: Dict[str, Site] = {}
         self._sites_records: Dict[str, Dict[str, Any]] = {}
 
-    def fetch_site_tab_json(self, site_name: str, page_name: str) -> Dict[str, Any]:
+    def fetch_site_tab_json(self, site_name: str, page_name: str, locust_request_label: Optional[str] = None) -> Dict[str, Any]:
         """
         Navigates to a site page, either a record, action or report.
 
         Args:
             site_name: Site Url stub
             page_name: Page Url stub
+            locust_request_label (str, optional): Label locust should associate this request with
 
         Returns: Response of report/action/record
         """
@@ -60,12 +61,14 @@ class _Sites(_Base):
         else:
             base_path += f"{page_name}"
         base_path += SITES_NAV_PATH[2]
-        self.interactor.get_page(base_path, headers=headers, label=f"Sites.{site_name}.{page_name}.Nav")
+
+        locust_label = locust_request_label or f"Sites.{site_name}.{page_name}"
+        self.interactor.get_page(base_path, headers=headers, label=f"{locust_label}.Nav")
         base_path = f"{SITES_PAGE_PATH[0]}{site_name}{SITES_PAGE_PATH[1]}{page_name}{SITES_PAGE_PATH[2]}{page_type}"
-        resp = self.interactor.get_page(base_path, headers=headers, label=f"Sites.{site_name}.{page_name}.Ui")
+        resp = self.interactor.get_page(base_path, headers=headers, label=f"{locust_label}.Ui")
         return resp.json()
 
-    def fetch_site_tab_record_json(self, site_name: str, page_name: str) -> Dict[str, Any]:
+    def fetch_site_tab_record_json(self, site_name: str, page_name: str, locust_request_label: Optional[str] = None) -> Dict[str, Any]:
         """
         Navigate to a recordList page on a site, then grab a random page from that site
 
@@ -75,6 +78,7 @@ class _Sites(_Base):
         Args:
             site_name: Site Url stub
             page_name: Page Url stub
+            locust_request_label (str, optional): Label locust should associate this request with
 
         Returns: Response of report/action, or in the case of a record, response of record object
         """
@@ -89,7 +93,7 @@ class _Sites(_Base):
         if not records:
             raise Exception(f"No records found for site={site_name}, page={page_name}")
         record_key = random.choice(list(self._sites_records[page_name]))
-        label = f"Sites.{site_name}.{page_name}." + format_label(record_key, "::", 0)[:30]
+        label = locust_request_label or f"Sites.{site_name}.{page_name}." + format_label(record_key, "::", 0)[:30]
         record_id = record_key.split("::")[1]
         record_resp = self.interactor.get_page(
             f"/suite/sites/{site_name}/page/{page_name}/nav",

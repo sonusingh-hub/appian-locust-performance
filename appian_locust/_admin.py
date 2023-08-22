@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from ._interactor import _Interactor
 from ._locust_error_handler import raises_locust_error
@@ -11,7 +11,7 @@ class _Admin:
         self.interactor = interactor
 
     @raises_locust_error
-    def fetch_admin_json(self) -> Dict[str, Any]:
+    def fetch_admin_json(self, locust_request_label: Optional[str] = None) -> Dict[str, Any]:
         """
         Navigates to /admin
 
@@ -20,7 +20,7 @@ class _Admin:
         # Navigate to Admin Console
         headers = self.interactor.setup_sail_headers()
         headers['X-Client-Mode'] = 'ADMIN'
-        label = "Admin.MainMenu"
+        label = locust_request_label or "Admin.MainMenu"
         response = self.interactor.get_page(ADMIN_URI_PATH, headers=headers, label=label)
         response.raise_for_status()
         return response.json()

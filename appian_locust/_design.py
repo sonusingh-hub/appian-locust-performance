@@ -26,7 +26,7 @@ class _Design:
         self.interactor = interactor
 
     @raises_locust_error
-    def fetch_design_json(self) -> Dict[str, Any]:
+    def fetch_design_json(self, locust_request_label: Optional[str] = None) -> Dict[str, Any]:
         """
         Fetches the JSON of /design UI
 
@@ -39,13 +39,13 @@ class _Design:
         """
         headers = self.interactor.setup_sail_headers()
         headers['X-Client-Mode'] = 'DESIGN'
-        label = "Design.ApplicationList"
+        label = locust_request_label or "Design.ApplicationList"
         response = self.interactor.get_page(DESIGN_URI_PATH, headers=headers, label=label)
         response.raise_for_status()
         return response.json()
 
     @raises_locust_error
-    def fetch_application_json(self, app_id: str) -> Dict[str, Any]:
+    def fetch_application_json(self, app_id: str, locust_request_label: Optional[str] = None) -> Dict[str, Any]:
         """
         Fetches the JSON of the UI for a specific application within the /design environment
 
@@ -59,13 +59,13 @@ class _Design:
         application_uri = f"{DESIGN_URI_PATH}/app/{app_id}"
         headers = self.interactor.setup_sail_headers()
         headers['X-Client-Mode'] = 'DESIGN'
-        label = f"Design.SelectedApplication.{app_id}"
+        label = locust_request_label or f"Design.SelectedApplication.{app_id}"
         response = self.interactor.get_page(application_uri, headers=headers, label=label)
         response.raise_for_status()
         return response.json()
 
     @raises_locust_error
-    def fetch_design_object_json(self, opaque_id: str) -> Dict[str, Any]:
+    def fetch_design_object_json(self, opaque_id: str, locust_request_label: Optional[str] = None) -> Dict[str, Any]:
         """
         Fetches the JSON of the UI for a specific object within the /design environment
 
@@ -79,7 +79,7 @@ class _Design:
         headers = self.interactor.setup_sail_headers()
         headers['X-Client-Mode'] = 'DESIGN'
         uri = DESIGN_URI_PATH + '/' + opaque_id
-        label = "Design.SelectedObject." + opaque_id[0:10]
+        label = locust_request_label or "Design.SelectedObject." + opaque_id[0:10]
         response = self.interactor.get_page(uri, headers=headers, label=label)
         response.raise_for_status()
         return response.json()

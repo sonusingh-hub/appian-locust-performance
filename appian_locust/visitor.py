@@ -32,7 +32,7 @@ class Visitor:
         self.__admin = _Admin(self.__interactor)
         self.__portals = _Portals(self.__interactor)
 
-    def visit_task(self, task_name: str, exact_match: bool = True, locust_request_label: str = "") -> SailUiForm:
+    def visit_task(self, task_name: str, exact_match: bool = True, locust_request_label: Optional[str] = None) -> SailUiForm:
         """
         Gets the SailUiForm given a task name
 
@@ -70,34 +70,39 @@ class Visitor:
         locust_request_label = locust_request_label or f"Visit.Report.{report_name}"
         return SailUiForm(self.__interactor, self.__reports.fetch_report_json(report_name, exact_match, locust_request_label=locust_request_label), breadcrumb=breadcrumb)
 
-    def visit_design(self) -> DesignUiForm:
+    def visit_design(self, locust_request_label: Optional[str] = None) -> DesignUiForm:
         """
         Navigate to /design
+        Args:
+            locust_request_label (str, optional): label to be used within locust
+
         Returns (DesignUiForm): UiForm representing /design
 
         """
-        return DesignUiForm(self.__interactor, self.__design.fetch_design_json(), breadcrumb="Design.ApplicationList.SailUi")
+        return DesignUiForm(self.__interactor, self.__design.fetch_design_json(locust_request_label), breadcrumb="Design.ApplicationList.SailUi")
 
-    def visit_application_by_id(self, application_id: str) -> ApplicationUiForm:
+    def visit_application_by_id(self, application_id: str, locust_request_label: Optional[str] = None) -> ApplicationUiForm:
         """
         Visit an application by its opaque id
 
         Args:
             application_id (str): The opaque id of the application
+            locust_request_label (str, optional): label to be used within locust
 
         Returns (ApplicationUiForm): UiForm representing design application page
 
         """
         breadcrumb = f"Design.SelectedApplication.{application_id}.SailUi"
-        return ApplicationUiForm(self.__interactor, self.__design.fetch_application_json(application_id), breadcrumb)
+        return ApplicationUiForm(self.__interactor, self.__design.fetch_application_json(application_id, locust_request_label), breadcrumb)
 
-    def visit_application_by_name(self, application_name: str, application_prefix: Optional[str] = None) -> ApplicationUiForm:
+    def visit_application_by_name(self, application_name: str, application_prefix: Optional[str] = None, locust_request_label: Optional[str] = None) -> ApplicationUiForm:
         """
         Visit an application by name
 
         Args:
             application_name (str): The name of the application
             application_prefix (str, optional): The prefix of the application. Required if the application has a prefix.
+            locust_request_label (str, optional): label to be used within locust
 
         Returns (ApplicationUiForm): UiForm representing design application page
 
@@ -106,27 +111,29 @@ class Visitor:
         design_uiForm.search_applications(application_name)
         if application_prefix:
             application_name = f"{application_name} ({application_prefix})"
-        application_uiform = design_uiForm.click_application(application_name)
+        application_uiform = design_uiForm.click_application(application_name, locust_request_label)
         return application_uiform
 
-    def visit_design_object_by_id(self, opaque_id: str) -> DesignObjectUiForm:
+    def visit_design_object_by_id(self, opaque_id: str, locust_request_label: Optional[str] = None) -> DesignObjectUiForm:
         """
         Visit a design object by its opaque id
         Args:
             opaque_id (str): opaque id of the design object
+            locust_request_label (str, optional): label to be used within locust
 
         Returns (DesignObjectUiForm): UiForm representing design object
 
         """
         breadcrumb = "Design.SelectedObject." + opaque_id[0:10] + ".SailUi"
-        return DesignObjectUiForm(self.__interactor, self.__design.fetch_design_object_json(opaque_id), breadcrumb)
+        return DesignObjectUiForm(self.__interactor, self.__design.fetch_design_object_json(opaque_id, locust_request_label), breadcrumb)
 
-    def visit_design_object_by_name(self, object_name: str, object_type: DesignObjectType) -> DesignObjectUiForm:
+    def visit_design_object_by_name(self, object_name: str, object_type: DesignObjectType, locust_request_label: Optional[str] = None) -> DesignObjectUiForm:
         """
         Visit a design object by its name and type
         Args:
             object_name (str): The name of the design object
             object_type (DesignObjectType): The type of the design object
+            locust_request_label (str, optional): label to be used within locust
 
         Returns:
 
@@ -136,7 +143,7 @@ class Visitor:
         designUiForm.check_checkbox_by_test_label(test_label="object-type-checkbox", indices=[object_type.value])
         designUiForm.search_objects(object_name)
         design_object_opaque_id = self.__design.find_design_object_opaque_id_in_grid(object_name, designUiForm.get_latest_state())
-        return self.visit_design_object_by_id(design_object_opaque_id)
+        return self.visit_design_object_by_id(design_object_opaque_id, locust_request_label)
 
     def visit_record_instance(self, record_type: str = "", record_name: str = "", view_url_stub: str = "",
                               exact_match: bool = False, summary_view: bool = True,
@@ -177,13 +184,14 @@ class Visitor:
         breadcrumb = f'Records.{record_type}.RecordListUi'
         return RecordListUiForm(self.__interactor, form_json, breadcrumb=breadcrumb)
 
-    def visit_site(self, site_name: str, page_name: str) -> SailUiForm:
+    def visit_site(self, site_name: str, page_name: str, locust_request_label: Optional[str] = None) -> SailUiForm:
         """
         Get a SailUiForm for a Task, Report or Action
 
         Args:
             site_name(str): Site where the page exists
             page_name(str): Page to navigate to
+            locust_request_label (str, optional): Label locust should associate this request with
 
         Returns: SailUiForm
 
@@ -191,30 +199,33 @@ class Visitor:
             >>> self.appian.visitor.visit_site("site_name","page_name")
 
         """
-        form_json = self.__sites.fetch_site_tab_json(site_name, page_name)
+        form_json = self.__sites.fetch_site_tab_json(site_name, page_name, locust_request_label)
 
         breadcrumb = f"Sites.{site_name}.{page_name}.SailUi"
         return SailUiForm(self.__interactor, form_json, breadcrumb=breadcrumb)
 
-    def visit_admin(self) -> SailUiForm:
+    def visit_admin(self, locust_request_label: Optional[str] = None) -> SailUiForm:
         """
         Navigates to /admin
+        Args:
+            locust_request_label (str, optional): label to be used within locust
 
         Returns: SailUiForm
 
         """
-        form_json = self.__admin.fetch_admin_json()
+        form_json = self.__admin.fetch_admin_json(locust_request_label)
 
         breadcrumb = f"Admin.MainMenu.SailUi"
         return SailUiForm(self.__interactor, form_json, breadcrumb=breadcrumb)
 
-    def visit_site_recordlist(self, site_name: str, page_name: str) -> 'RecordListUiForm':
+    def visit_site_recordlist(self, site_name: str, page_name: str, locust_request_label: Optional[str] = None) -> 'RecordListUiForm':
         """
         Get a RecordListUiForm for a record list page on a site
 
         Args:
             site_name(str): Site where the page exists
             page_name(str): Page to navigate to
+            locust_request_label (str, optional): label to be used within locust
 
         NOTE: The actual Type of the Site Page MUST be "Record List", this will not work for sites that are of other page types,
               such as an Interface with a record grid.
@@ -228,18 +239,19 @@ class Visitor:
         page_type = self.__sites.get_site_page_type(site_name, page_name)
         if page_type != PageType.RECORD:
             raise Exception(f"Page {page_name} on site {site_name} is not of type record")
-        form_json = self.__sites.fetch_site_tab_json(site_name, page_name)
+        form_json = self.__sites.fetch_site_tab_json(site_name, page_name, locust_request_label)
 
         breadcrumb = f"Sites.{site_name}.{page_name}.SailUi"
         return RecordListUiForm(self.__interactor, form_json, breadcrumb=breadcrumb)
 
-    def visit_site_recordlist_and_get_random_record_form(self, site_name: str, page_name: str) -> RecordInstanceUiForm:
+    def visit_site_recordlist_and_get_random_record_form(self, site_name: str, page_name: str, locust_request_label: Optional[str] = None) -> RecordInstanceUiForm:
         """
         Navigates to a site page that is a recordlist then clicks on a random record instance on the first page
 
         Args:
             site_name: Site Url stub
             page_name: Page Url stub
+            locust_request_label (str, optional): label to be used within locust
 
         NOTE: The actual Type of the Site Page MUST be "Record List", this will not work for sites that are of other page types,
               such as an Interface with a record grid.
@@ -247,12 +259,12 @@ class Visitor:
         Returns: RecordInstanceUiForm
         """
 
-        site_page_json_response = self.__sites.fetch_site_tab_record_json(site_name, page_name)
+        site_page_json_response = self.__sites.fetch_site_tab_record_json(site_name, page_name, locust_request_label)
         summary_view = site_page_json_response.get("feed") is not None
         breadcrumb = f"Sites.{site_name}.{page_name}.SailUi"
         return RecordInstanceUiForm(self.__interactor, site_page_json_response, summary_view=summary_view, breadcrumb=breadcrumb)
 
-    def visit_action(self, action_name: str, exact_match: bool = False, locust_request_label: str = "") -> SailUiForm:
+    def visit_action(self, action_name: str, exact_match: bool = False, locust_request_label: Optional[str] = None) -> SailUiForm:
         """
         Gets the action by name and returns the corresponding SailUiForm to interact with
 
@@ -282,13 +294,14 @@ class Visitor:
         form_json = self.__actions.fetch_action_json(action_name, exact_match, label)
         return SailUiForm(self.__interactor, form_json, breadcrumb=label)
 
-    def visit_portal_page(self, portal_unique_identifier: str, portal_page_unique_identifier: str) -> SailUiForm:
+    def visit_portal_page(self, portal_unique_identifier: str, portal_page_unique_identifier: str, locust_request_label: Optional[str] = None) -> SailUiForm:
         """
         Navigate to portal's page by url and returns the corresponding SailUiForm to interact with
 
         Args:
             portal_unique_identifier (str): portal web address unique identifier
             portal_page_unique_identifier (str): web address unique identifier for specific page in portal
+            locust_request_label (str, optional): label to be used within locust
 
         Returns: SailUiForm
 
