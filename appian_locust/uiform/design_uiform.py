@@ -19,12 +19,13 @@ class DesignUiForm(SailUiForm):
         self.__design = _Design(interactor)
 
     @raises_locust_error
-    def click_application(self, application_name: str) -> 'ApplicationUiForm':
+    def click_application(self, application_name: str, locust_request_label: Optional[str] = None) -> 'ApplicationUiForm':
         """
         Click on an application in the /design application grid. Must be on the current page to be clicked.
 
         Args:
             application_name(str): The name of the application to click on
+            locust_request_label (str, optional): label to be used within locust
 
         Returns (ApplicationUiForm): The latest state of the UiForm, representing the application clicked on
         """
@@ -32,7 +33,7 @@ class DesignUiForm(SailUiForm):
         column = find_component_by_attribute_in_dict('label', "Name", grid_component["columns"], throw_attribute_exception=True)
         for index in range(len(column["data"])):
             if column["data"][index] == application_name:
-                return ApplicationUiForm(self._interactor, self._dispatch_click(column["links"][index], "DesignGrid"), f"Application.{ application_name }.Ui")
+                return ApplicationUiForm(self._interactor, self._dispatch_click(column["links"][index], locust_request_label or "DesignGrid"), f"Application.{ application_name }.Ui")
         raise Exception(f"No Application with name { application_name } found in /design grid")
 
     @raises_locust_error

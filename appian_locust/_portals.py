@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from ._interactor import _Interactor
 from ._locust_error_handler import raises_locust_error
@@ -12,13 +12,13 @@ class _Portals:
         self.interactor = interactor
 
     @raises_locust_error
-    def fetch_page_json(self, portal_unique_identifier: str, portal_page__unique_identifier: str) -> Dict[str, Any]:
+    def fetch_page_json(self, portal_unique_identifier: str, portal_page__unique_identifier: str, locust_request_label: Optional[str] = None) -> Dict[str, Any]:
         """
         Navigates to specific portal's page
 
         Returns: The response of portal's page
         """
-        label = "Portals.Page"
+        label = locust_request_label or "Portals.Page"
         portal_uri_path = self.get_full_url(portal_unique_identifier, portal_page__unique_identifier)
         response = self.interactor.get_page(portal_uri_path, label=label, check_login=False)
         response.raise_for_status()
