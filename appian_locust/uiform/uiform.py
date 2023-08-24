@@ -1538,7 +1538,7 @@ class SailUiForm:
 
         Args:
             nav_group_label(str): Label of the navigation card group
-            index(int): Index of the element
+            index(int): Index of the element starting at 0
 
         Keyword Args:
             is_test_label (bool): If this label is a test label
