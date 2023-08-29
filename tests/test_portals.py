@@ -33,7 +33,9 @@ class TestRecords(unittest.TestCase):
         get_page_mock = unittest.mock.Mock(
             side_effect=lambda uri, label, check_login: response if uri == "/performance-test/_/ui/page/one" else ""
         )
+
         setattr(self.interactor, 'get_page', get_page_mock)
+        setattr(self.interactor, 'client', Client())
         output = self.portals_interactor.fetch_page_json("performance-test", "one")
         self.assertIsInstance(output, dict)
         self.assertDictEqual(output, self.portal_page_dummy_response)
@@ -47,6 +49,7 @@ class TestRecords(unittest.TestCase):
             side_effect=lambda uri, label, check_login: response if uri == "/performance-test/_/ui/page/one" else ""
         )
         setattr(self.interactor, 'get_page', get_page_mock)
+        setattr(self.interactor, 'client', Client())
         with self.assertRaises(HTTPError):
             self.portals_interactor.fetch_page_json("performance-test", "one")
 
@@ -54,3 +57,7 @@ class TestRecords(unittest.TestCase):
         expected_result = "/performance-test/_/ui/page/one"
         result = self.portals_interactor.get_full_url("performance-test", "one")
         self.assertEqual(result, expected_result)
+
+
+class Client:
+    base_path_override = "nothing"

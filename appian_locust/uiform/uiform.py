@@ -1011,10 +1011,11 @@ class SailUiForm:
 
         if not os.path.exists(str(file_path)):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), file_path)
-        doc_id = self._interactor.upload_document_to_server(str(file_path), is_encrypted=is_encrypted)
+        validate_extensions = component.get("validateExtension", False)
+        doc_info = self._interactor.upload_document_to_server(str(file_path), validate_extensions=validate_extensions, is_encrypted=is_encrypted)
         locust_label = locust_request_label or f"{self.breadcrumb}.FileUpload.{label}"
         new_state = self._interactor.upload_document_to_field(
-            self.form_url, component, self.context, self.uuid, doc_id=doc_id, locust_label=locust_label)
+            self.form_url, component, self.context, self.uuid, doc_info=doc_info, locust_label=locust_label)
         if not new_state:
             raise Exception(
                 f"No response returned when trying to upload file to field '{label}'")
@@ -1057,14 +1058,15 @@ class SailUiForm:
 
         is_encrypted = component.get("isEncrypted", False)
 
-        doc_ids: List[int] = []
+        doc_infos: List[Dict[str, Any]] = []
+        validate_extensions = component.get("validateExtension", False)
         for file_path in file_paths:
             if not os.path.exists(file_path):
                 raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), file_path)
-            doc_ids.append(self._interactor.upload_document_to_server(file_path, is_encrypted=is_encrypted))
+            doc_infos.append(self._interactor.upload_document_to_server(file_path, validate_extensions=validate_extensions, is_encrypted=is_encrypted))
         locust_label = locust_request_label or f"{self.breadcrumb}.MultiFileUpload.{label}"
         new_state = self._interactor.upload_document_to_field(
-            self.form_url, component, self.context, self.uuid, doc_id=doc_ids, locust_label=locust_label)
+            self.form_url, component, self.context, self.uuid, doc_info=doc_infos, locust_label=locust_label)
         if not new_state:
             raise Exception(
                 f"No response returned when trying to upload file(s) to field '{label}'")

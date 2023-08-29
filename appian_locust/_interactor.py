@@ -99,7 +99,8 @@ class _Interactor:
             "X-Atom-Content-Type": "application/html",
         }
         if self.portals_mode:
-            headers["X-client-mode"] = "SERVERLESS"
+            headers["X-Client-Mode"] = "SERVERLESS"
+            headers["Referer"] = self.host
 
         return headers
 
@@ -274,11 +275,12 @@ class _Interactor:
                 self.write_response_to_lib_folder(label, resp)
             return resp
 
-    def upload_document_to_server(self, file_path: str, is_encrypted: bool = False) -> int:
+    def upload_document_to_server(self, file_path: str, validate_extensions: bool = False, is_encrypted: bool = False) -> Dict[str, Any]:
         """
         Uploads a document to the server, so that it can be used in upload fields
         Args:
             uri: API URI to be called
+            validate_extensions: if extensions should be validated
             file_path: Path to the file to be uploaded
 
         Returns: Document Id that can be used for upload fields
@@ -290,9 +292,14 @@ class _Interactor:
             headers['encrypted'] = 'true'
         with open(file_path, 'rb') as f:
             resp_label = "Document.Upload." + os.path.basename(file_path).strip(" .")
-            files = {"file": f}
+            files = {"file": f} if self.portals_mode is False else {"fileupload": f}
+            doc_upload_uri = "/suite/api/tempo/file" if self.portals_mode is False else "/suite/docs/upload"
+            if validate_extensions:
+                doc_upload_uri += "?validateExtension=true"
+            else:
+                doc_upload_uri += "?validateExtension=false"
             response = self.post_page(
-                "/suite/api/tempo/file?validateExtension=false",
+                doc_upload_uri,
                 headers=headers,
                 label=resp_label,
                 files=files)
@@ -300,8 +307,17 @@ class _Interactor:
                 self.write_response_to_lib_folder(resp_label, response)
             else:
                 response.raise_for_status()
-            doc_id = response.json()[0]["id"]
-            return doc_id
+
+            result = {}
+            response_data = response.json()[0]
+            result["doc_id"] = response_data["id"]
+            result["name"] = response_data["name"].split(".")[0]
+            result["extension"] = response_data["name"].split(".")[1]
+            result["size"] = response_data["size"]
+            if "signature" in response_data:
+                result["signature"] = response_data["signature"]
+
+            return result
 
     def write_response_to_lib_folder(self, label: Optional[str], response: Response) -> None:
         """
@@ -938,7 +954,7 @@ class _Interactor:
         )
         return resp.json()
 
-    def _make_file_metadata(self, id: int) -> dict:
+    def _make_file_metadata(self, doc_info: Dict[str, Any]) -> dict:
         """Produces a file metadata object to use for multifile upload fields
 
         Args:
@@ -951,24 +967,24 @@ class _Interactor:
         dummy_data = {
             "clientUuid": "0",
             "loadedBytes": 0,
-            "fileSizeBytes": 0,
-            "extension": "none",
-            "name": "no name"
         }
-        return {
+        file_metadata = {
             "clientUuid": dummy_data["clientUuid"],
             "loadedBytes": dummy_data["loadedBytes"],
-            "name": dummy_data["name"],
-            "fileSizeBytes": dummy_data["fileSizeBytes"],
+            "name": doc_info["name"],
+            "fileSizeBytes": doc_info["size"],
             "documentId": {
                 "#t": "CollaborationDocument",
-                "id": id
+                "id": doc_info["doc_id"]
             },
-            "extension": dummy_data["extension"]
+            "extension": doc_info["extension"]
         }
+        if "signature" in doc_info:
+            file_metadata["signature"] = doc_info["signature"]
+        return file_metadata
 
     def upload_document_to_field(self, post_url: str, upload_field: Dict[str, Any],
-                                 context: Dict[str, Any], uuid: str, doc_id: Union[int, List[int]],
+                                 context: Dict[str, Any], uuid: str, doc_info: Union[Dict[str, Any], List[Dict[str, Any]]],
                                  locust_label: Optional[str] = None, client_mode: str = 'DESIGN') -> Dict[str, Any]:
         '''
             Calls the post operation to send an update to a upload_field to upload a document or list thereof.
@@ -988,25 +1004,26 @@ class _Interactor:
         new_value: Dict
         # This codepath will only be taken by components older than a certain version
         # all new code will fall into the list path
-        if isinstance(doc_id, int):
+        if isinstance(doc_info, Dict):
             new_value = {
                 "#t": "CollaborationDocument",
-                "id": doc_id
+                "id": doc_info["doc_id"]
             }
-        elif isinstance(doc_id, List):
+            if "signature" in doc_info:
+                new_value["signature"] = doc_info["signature"]
+        elif isinstance(doc_info, List):
             new_value = {
                 "#t": "FileMetadata?list",
-                "#v": [self._make_file_metadata(id) for id in doc_id]
+                "#v": [self._make_file_metadata(result) for result in doc_info]
             }
         else:
-            log_locust_error(Exception(f"Bad document id or list of document ids: {doc_id}"))
+            log_locust_error(Exception(f"Bad document id or list of document ids: {doc_info}"))
         payload = save_builder() \
             .component(upload_field) \
             .context(context) \
             .uuid(uuid) \
             .value(new_value) \
             .build()
-
         locust_label = locust_label or "Uploading Document to " + \
             upload_field.get("label", upload_field.get("testLabel", "Generic FileUpload"))
 

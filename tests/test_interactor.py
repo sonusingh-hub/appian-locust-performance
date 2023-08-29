@@ -354,7 +354,7 @@ class TestInteractor(unittest.TestCase):
             self.task_set.appian._interactor.upload_document_to_field('fake-url', {}, {}, 'uuid', 'abc')  # type: ignore
 
     def test_upload_document_to_field_doc_id(self) -> None:
-        doc_id = 1
+        doc_id = {"doc_id": 1, "size": "2", "name": "document", "extension": "jpeg"}
         upload_field = {'saveInto': 'abc', '_cId': '1123'}
 
         self.custom_locust.set_response("/doc-url/", 200, '{}')
@@ -367,21 +367,25 @@ class TestInteractor(unittest.TestCase):
         self.assertEqual({'#t': 'CollaborationDocument', 'id': 1}, document_update)
 
     def test_upload_document_to_field_list_of_doc_id(self) -> None:
-        doc_ids = [1, 2, 3]
+        doc_infos = [
+            {"doc_id": 1, "size": "2", "name": "document", "extension": "jpeg"},
+            {"doc_id": 2, "size": "2", "name": "document", "extension": "jpeg"},
+            {"doc_id": 3, "size": "2", "name": "document", "extension": "jpeg"}
+        ]
         upload_field = {'saveInto': 'abc', '_cId': '1123'}
 
         self.custom_locust.set_response("/doc-url/", 200, '{}')
         self.task_set.appian._interactor.upload_document_to_field('/doc-url/',
-                                                                  upload_field, {}, 'uuid', doc_ids)
+                                                                  upload_field, {}, 'uuid', doc_infos)
 
         # This indexing is ridiculous, but we don't care about the rest
         last_request_body = json.loads(self.custom_locust.get_request_list().pop()['data'])
         document_update = last_request_body['updates']['#v'][0]['value']
         self.assertEqual('FileMetadata?list', document_update['#t'])
-        for i, doc_id in enumerate(doc_ids):
-            self.assertEqual({'clientUuid': '0', 'loadedBytes': 0, 'name': 'no name',
-                              'documentId': {'#t': 'CollaborationDocument', 'id': doc_id},
-                              'extension': 'none', 'fileSizeBytes': 0},
+        for i, doc_info in enumerate(doc_infos):
+            self.assertEqual({'clientUuid': '0', 'loadedBytes': 0, 'name': 'document',
+                              'documentId': {'#t': 'CollaborationDocument', 'id': doc_info["doc_id"]},
+                              'extension': 'jpeg', 'fileSizeBytes': "2"},
                              document_update['#v'][i])
 
     def test_clean_filename(self) -> None:
