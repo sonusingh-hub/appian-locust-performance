@@ -19,6 +19,7 @@ class _Portals:
         Returns: The response of portal's page
         """
         label = locust_request_label or "Portals.Page"
+        self.interactor.client.base_path_override = f"/{portal_unique_identifier}"
         portal_uri_path = self.get_full_url(portal_unique_identifier, portal_page__unique_identifier)
         response = self.interactor.get_page(portal_uri_path, label=label, check_login=False)
         response.raise_for_status()

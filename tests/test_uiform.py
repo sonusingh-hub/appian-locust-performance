@@ -472,7 +472,7 @@ class TestSailUiForm(unittest.TestCase):
 
         sail_form.upload_document_to_upload_field(label, 'fake_file')
 
-        mock_upload_document_to_server.assert_called_once_with('fake_file', is_encrypted=False)
+        mock_upload_document_to_server.assert_called_once_with('fake_file', is_encrypted=False, validate_extensions=True)
         mock_upload_document_to_field.assert_called_once()
 
     @patch('appian_locust.uiform.SailUiForm.upload_document_to_upload_field')
