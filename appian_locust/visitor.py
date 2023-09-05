@@ -1,6 +1,7 @@
 from typing import Optional
 
 from ._actions import _Actions
+from ._data_fabric import _DataFabric
 from ._design import _Design
 from ._interactor import _Interactor
 from ._portals import _Portals
@@ -28,6 +29,7 @@ class Visitor:
         self.__records = records
         self.__sites = sites
         self.__actions = actions
+        self.__data_fabric = _DataFabric(self.__interactor)
         self.__design = _Design(self.__interactor)
         self.__admin = _Admin(self.__interactor)
         self.__portals = _Portals(self.__interactor)
@@ -80,6 +82,17 @@ class Visitor:
 
         """
         return DesignUiForm(self.__interactor, self.__design.fetch_design_json(locust_request_label), breadcrumb="Design.ApplicationList.SailUi")
+
+    def visit_data_fabric(self, locust_request_label: Optional[str] = None) -> SailUiForm:
+        """
+        Navigate to Data Fabric
+        Args:
+            locust_request_label (str, optional): label to be used within locust
+
+        Returns (SailUiForm): UiForm representing Data Fabric
+
+        """
+        return SailUiForm(self.__interactor, self.__data_fabric.fetch_data_fabric_json(locust_request_label), breadcrumb="DataFabric.SailUi")
 
     def visit_application_by_id(self, application_id: str, locust_request_label: Optional[str] = None) -> ApplicationUiForm:
         """
