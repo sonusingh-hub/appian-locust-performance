@@ -19,6 +19,7 @@ from appian_locust._actions import ACTIONS_INTERFACE_PATH, ACTIONS_FEED_PATH
 
 class TestVisitor(unittest.TestCase):
     design_landing_page = read_mock_file("design_landing_page.json")
+    data_fabric_landing_page = read_mock_file("data_fabric_landing_page.json")
     application_page = read_mock_file("design_app_landing_page.json")
     interface_page = read_mock_file("interface_resp.json")
     task_feed_resp = read_mock_file("tasks_response.json")
@@ -203,6 +204,14 @@ class TestVisitor(unittest.TestCase):
     def test_visit_design(self) -> None:
         self.custom_locust.set_response(
             "/suite/rest/a/applications/latest/app/design", 200, self.design_landing_page)
+        ENV.stats.clear_all()
+        design_form = self.task_set.appian.visitor.visit_design()
+        self.assertEqual(type(design_form), DesignUiForm)
+        self.assertEqual(0, len(ENV.stats.errors))
+
+    def test_visit_data_fabric(self) -> None:
+        self.custom_locust.set_response(
+            "/suite/rest/a/applications/latest/app/design", 200, self.data_fabric_landing_page)
         ENV.stats.clear_all()
         design_form = self.task_set.appian.visitor.visit_design()
         self.assertEqual(type(design_form), DesignUiForm)

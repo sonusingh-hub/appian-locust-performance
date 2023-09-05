@@ -1,10 +1,8 @@
 import unittest
-import json
 from requests import Response
 
 from appian_locust._design import _Design, DESIGN_URI_PATH
 from appian_locust._interactor import _Interactor
-from .mock_reader import read_mock_file
 
 integration_url = ""
 auth = ["fake_user", ""]
