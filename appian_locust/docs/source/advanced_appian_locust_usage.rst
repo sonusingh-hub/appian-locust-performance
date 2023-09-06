@@ -23,7 +23,8 @@ This allows us to access configurations required for logging in inside the class
 .. code-block:: python
 
     config = utls.c
-    auth = utls.c['auth']
+    auth = config['auth']
+    host = "https://" + config['host_address']
 
 
 A minimal `config.json` looks like:
