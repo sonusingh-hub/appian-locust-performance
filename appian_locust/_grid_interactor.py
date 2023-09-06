@@ -1,6 +1,6 @@
 from typing import Any, Dict, List, Optional
 
-from .utilities.helper import extract_values_multiple_key_values, find_component_by_label_and_type_dict
+from .utilities.helper import extract_values_multiple_key_values, find_component_by_label_and_type_dict, extract_all_by_label
 
 from .utilities import logger
 
@@ -174,7 +174,9 @@ class GridInteractor:
         for column in grid["columns"]:
             if column["label"] == column_name:
                 row = column["data"][row_index]
-                return row["value"]["values"][0]["values"][0]["link"]
+                links = extract_all_by_label(row, "link")
+                if links:
+                    return links[0]
         return None
 
     def find_plaintext_grid_link_component(self, grid: Dict[str, Any], column_name: str, row_index: int) -> Optional[Dict[str, Any]]:
