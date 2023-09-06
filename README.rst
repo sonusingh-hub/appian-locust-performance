@@ -96,6 +96,12 @@ If you're having trouble on Windows, check `here <https://github.com/locustio/lo
 
 Troubleshooting
 ----------------
+* **Do not have permissions to clone appian-locust**
+
+  * Ensure you have added you ssh key to your profile. See `here <https://docs.gitlab.com/ee/user/ssh.html#add-an-ssh-key-to-your-gitlab-account>`__ for how to do this.
+* **"locust is not available"**
+
+  * Verify that you ran ``pip install -e appian-locust``
 * **"Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known"**
 
   * check that ``host_address`` is specified correctly in your locust test file.

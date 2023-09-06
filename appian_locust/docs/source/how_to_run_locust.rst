@@ -14,7 +14,7 @@ If you’re running Locust somewhere where there is no web ui, or you don’t wa
 
 .. code-block:: bash
 
-    locust -f tests/example_locustfile.py -u 1 -r 10 -t 3600 --headless
+    locust -f examples/example_locustfile.py -u 1 -r 10 -t 3600 --headless
 
 .. _command_line_flow_args:
 
