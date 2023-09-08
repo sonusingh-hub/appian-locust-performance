@@ -3,8 +3,8 @@ from typing import Any, Dict, Optional
 from .._design import _Design, get_available_design_objects
 from .._interactor import _Interactor
 from .._locust_error_handler import raises_locust_error
-from ..uiform import DesignObjectUiForm, SailUiForm
-from ..objects import DesignObject, DesignObjectType
+from ..uiform import AISkillUiForm, DesignObjectUiForm, SailUiForm
+from ..objects import DesignObject, DesignObjectType, AISkillObjectType
 from ..utilities.helper import find_component_by_label_and_type_dict
 
 
@@ -28,6 +28,11 @@ class ApplicationUiForm(SailUiForm):
         opaque_id = self.__design.find_design_object_opaque_id_in_grid(design_object_name, self._state)
         breadcrumb = "Design.SelectedObject." + opaque_id[0:10] + ".SailUi"
         return DesignObjectUiForm(self._interactor, self.__design.fetch_design_object_json(opaque_id), breadcrumb)
+
+    @raises_locust_error
+    def create_ai_skill_object(self, ai_skill_name:str, ai_skill_type: AISkillObjectType) -> 'ApplicationUiForm':
+        self.__design.create_ai_skill_object(self, ai_skill_name=ai_skill_name, ai_skill_type=ai_skill_type)
+        return self
 
     @raises_locust_error
     def create_record_type(self, record_type_name: str) -> 'ApplicationUiForm':

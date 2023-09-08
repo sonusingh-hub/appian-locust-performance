@@ -49,7 +49,7 @@ class _Interactor:
         self.user_agent = ""
         self.portals_mode = portals_mode
         self.url_pattern_version = 0
-        self.__request_timeout = request_timeout
+        self._request_timeout = request_timeout
         # Set to default as desktop request.
         self.set_user_agent_to_desktop()
 
@@ -59,6 +59,9 @@ class _Interactor:
 
     def set_user_agent_to_mobile(self) -> None:
         self.user_agent = "AppianAndroid/20.2 (Google AOSP on IA Emulator, 9; Build 0-SNAPSHOT; AppianPhone)"
+
+    def get_interaction_host(self) -> str:
+        return self.host
 
     def setup_request_headers(self, uri: Optional[str] = None) -> dict:
         """
@@ -144,7 +147,6 @@ class _Interactor:
         """
         if headers is None:
             headers = self.setup_sail_headers()
-
         uri = self.replace_base_path_if_appropriate(uri)
         username = "No-auth User" if self.portals_mode else get_username(self.auth)
         if files:  # When a file is specified, don't send any data in the 'data' field
@@ -156,7 +158,7 @@ class _Interactor:
         else:
             log_locust_error(Exception("Cannot POST a payload that is not of type dict or string"))
             sys.exit(1)
-        with self.client.post(uri, data=post_payload, headers=headers, timeout=self.__request_timeout, name=label, files=files,
+        with self.client.post(uri, data=post_payload, headers=headers, timeout=self._request_timeout, name=label, files=files,
                               catch_response=True) as resp:  # type: ResponseContextManager
             try:
                 test_response_for_error(resp, uri, raise_error=check_login, username=username)
@@ -264,7 +266,7 @@ class _Interactor:
         uri = self.replace_base_path_if_appropriate(uri)
         if headers is not None:
             kwargs['headers'] = headers
-            kwargs['timeout'] = self.__request_timeout
+            kwargs['timeout'] = self._request_timeout
         with self.client.get(uri, **kwargs) as resp:  # type: ResponseContextManager
             if check_login and not self.portals_mode:
                 self.check_login(resp)
@@ -430,7 +432,7 @@ class _Interactor:
         locust_label = locust_label or "Clicking RecordLink: " + component["label"]
 
         resp = self.get_page(
-            self.host + record_link_url, headers=headers, label=locust_label
+            self.get_interaction_host() + record_link_url, headers=headers, label=locust_label
         )
         return resp.json()
 
@@ -461,7 +463,7 @@ class _Interactor:
         headers = self.setup_sail_headers()
         locust_label = locust_request_label or "Clicking StartProcessLink: " + component["label"]
         resp = self.post_page(
-            self.host + spl_link_url, payload={}, headers=headers, label=locust_label
+            self.get_interaction_host() + spl_link_url, payload={}, headers=headers, label=locust_label
         )
         return resp.json()
 
@@ -491,7 +493,7 @@ class _Interactor:
             headers["Accept"] = "application/vnd.appian.tv.ui+json"
             related_action_link_url = f"/suite/rest/a/record/latest/{opaque_record_id}/actionDialog/{opaque_related_action_id}"
             resp = self.get_page(
-                self.host + related_action_link_url, headers=headers, label=locust_label
+                self.get_interaction_host() + related_action_link_url, headers=headers, label=locust_label
             )
         else:
             # Mobile url not implemented
@@ -499,13 +501,13 @@ class _Interactor:
             related_action_link_url = f"/suite/rest/a/record/latest/{record_type_stub}/{opaque_record_id}/actions/{opaque_related_action_id}"
             headers = self.setup_sail_headers()
             resp = self.get_page(
-                self.host + related_action_link_url, headers=headers, label=locust_label
+                self.get_interaction_host() + related_action_link_url, headers=headers, label=locust_label
             )
             json_response = resp.json()
             if json_response.get("empty") == "true" and json_response.get("ui") is None:
                 # This means we need to make the POST call to get the UI for the form.
                 resp = self.post_page(
-                    self.host + related_action_link_url, payload={}, headers=headers, label=locust_label
+                    self.get_interaction_host() + related_action_link_url, payload={}, headers=headers, label=locust_label
                 )
             else:
                 return json_response
@@ -518,7 +520,7 @@ class _Interactor:
         headers = self.setup_sail_headers()
         locust_label = locust_request_label or "Clicking RecordListAction: " + component["label"]
         resp = self.post_page(
-            self.host + record_list_action_url, payload={}, headers=headers, label=locust_label
+            self.get_interaction_host() + record_list_action_url, payload={}, headers=headers, label=locust_label
         )
         return resp.json()
 
@@ -554,7 +556,7 @@ class _Interactor:
         locust_label = label or f'Click \'{component["label"]}\' Component'
 
         resp = self.post_page(
-            self.host + post_url, payload=payload, label=locust_label
+            self.get_interaction_host() + post_url, payload=payload, label=locust_label
         )
         return resp.json()
 
@@ -596,7 +598,7 @@ class _Interactor:
         locust_label = label or f'Select \'{dropdown["label"]}\' Dropdown'
 
         resp = self.post_page(
-            self.host + post_url, payload=payload, label=locust_label
+            self.get_interaction_host() + post_url, payload=payload, label=locust_label
         )
         return resp.json()
 
@@ -672,7 +674,7 @@ class _Interactor:
         locust_label = label or f'Select \'{multi_dropdown["label"]}\' Dropdown'
 
         resp = self.post_page(
-            self.host + post_url, payload=payload, label=locust_label
+            self.get_interaction_host() + post_url, payload=payload, label=locust_label
         )
         return resp.json()
 
@@ -763,7 +765,7 @@ class _Interactor:
         locust_label = label or f'Fill \'{text_field["label"]}\' TextField'
 
         resp = self.post_page(
-            self.host + post_url, payload=payload, label=locust_label
+            self.get_interaction_host() + post_url, payload=payload, label=locust_label
         )
         return resp.json()
 
@@ -797,7 +799,7 @@ class _Interactor:
         locust_label = label or f'Fill \'{picker_field["label"]}\' PickerField'
 
         resp = self.post_page(
-            self.host + post_url, payload=payload, label=locust_label
+            self.get_interaction_host() + post_url, payload=payload, label=locust_label
         )
         return resp.json()
 
@@ -834,7 +836,7 @@ class _Interactor:
         locust_label = label or f'Fill \'{picker_field["label"]}\' PickerField'
 
         resp = self.post_page(
-            self.host + post_url, payload=payload, label=locust_label
+            self.get_interaction_host() + post_url, payload=payload, label=locust_label
         )
         return resp.json()
 
@@ -870,7 +872,7 @@ class _Interactor:
                                                                              checkbox.get("label", "label-not-found"))
 
         resp = self.post_page(
-            self.host + post_url, payload=payload, label=locust_label
+            self.get_interaction_host() + post_url, payload=payload, label=locust_label
         )
         return resp.json()
 
@@ -918,7 +920,7 @@ class _Interactor:
         locust_label = f"Selecting tab with label: '{tab_label}' inside TabButtonGroup component"
 
         resp = self.post_page(
-            self.host + post_url, payload=payload, label=locust_label
+            self.get_interaction_host() + post_url, payload=payload, label=locust_label
         )
         return resp.json()
 
@@ -950,7 +952,7 @@ class _Interactor:
             .build()
 
         resp = self.post_page(
-            self.host + post_url, payload=payload, label=context_label
+            self.get_interaction_host() + post_url, payload=payload, label=context_label
         )
         return resp.json()
 
@@ -1030,7 +1032,7 @@ class _Interactor:
         headers = self.setup_sail_headers()
         headers['X-Client-Mode'] = client_mode
         resp = self.post_page(
-            self.host + post_url, payload=payload, headers=headers, label=locust_label
+            self.get_interaction_host() + post_url, payload=payload, headers=headers, label=locust_label
         )
         return resp.json()
 
@@ -1067,7 +1069,7 @@ class _Interactor:
         headers = self.setup_sail_headers()
 
         resp = self.post_page(
-            self.host + post_url, payload=payload, headers=headers, label=locust_label
+            self.get_interaction_host() + post_url, payload=payload, headers=headers, label=locust_label
         )
         return resp.json()
 
@@ -1105,7 +1107,7 @@ class _Interactor:
         headers = self.setup_sail_headers()
 
         resp = self.post_page(
-            self.host + post_url, payload=payload, headers=headers, label=locust_label
+            self.get_interaction_host() + post_url, payload=payload, headers=headers, label=locust_label
         )
         return resp.json()
 
@@ -1135,7 +1137,7 @@ class _Interactor:
 
         locust_label = context_label or "Updating Grid " + grid_component.get("label", "")
         resp = self.post_page(
-            self.host + post_url, payload=payload, label=locust_label
+            self.get_interaction_host() + post_url, payload=payload, label=locust_label
         )
         return resp.json()
 
@@ -1165,7 +1167,7 @@ class _Interactor:
 
         locust_label = context_label or "Updating Record Grid " + grid_component.get("label", "")
         resp = self.post_page(
-            self.host + post_url, payload=payload, label=locust_label
+            self.get_interaction_host() + post_url, payload=payload, label=locust_label
         )
         resp.raise_for_status()
         return resp.json()
@@ -1209,7 +1211,7 @@ class _Interactor:
         record_action_payload["updates"]["#v"] = [record_action_save_request, record_action_trigger_save_request]
 
         resp = self.post_page(
-            self.host + post_url, payload=record_action_payload, label=label
+            self.get_interaction_host() + post_url, payload=record_action_payload, label=label
         )
         return resp.json()
 
@@ -1255,7 +1257,7 @@ class _Interactor:
         locust_label = label or f'Click \'{component["searchButtonLabel"]}\' Component'
 
         resp = self.post_page(
-            self.host + post_url, payload=payload, label=locust_label
+            self.get_interaction_host() + post_url, payload=payload, label=locust_label
         )
         return resp.json()
 
@@ -1285,7 +1287,7 @@ class _Interactor:
         locust_label = label or "ClickElement"
 
         resp = self.post_page(
-            self.host + post_url, payload=payload, label=locust_label
+            self.get_interaction_host() + post_url, payload=payload, label=locust_label
         )
         return resp.json()
 

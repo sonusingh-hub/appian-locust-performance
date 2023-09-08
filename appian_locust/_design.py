@@ -1,10 +1,12 @@
 from typing import Any, Dict, Optional
 
 from ._interactor import _Interactor
+from ._rdo_interactor import _RDOInteractor
 from ._locust_error_handler import raises_locust_error
-from .objects import DesignObject
-from .utilities.helper import find_component_by_label_and_type_dict, find_component_by_type_and_attribute_and_index_in_dict, find_component_by_attribute_in_dict
-from .uiform import SailUiForm
+from .objects import DesignObject, AISkillObjectType
+from .utilities import find_component_by_label_and_type_dict, find_component_by_type_and_attribute_and_index_in_dict, find_component_by_attribute_in_dict
+from .uiform import SailUiForm, AISkillUiForm
+from urllib.parse import urlparse
 
 DESIGN_URI_PATH: str = "/suite/rest/a/applications/latest/app/design"
 
@@ -140,9 +142,27 @@ class _Design:
         link_component = find_component_by_attribute_in_dict('testLabel', design_object_name, grid_component, throw_attribute_exception=True)
         return link_component.get("uri").split('/')[-1]
 
-    def create_object(self, ui_form: SailUiForm, link_name: str, object_name: str) -> 'SailUiForm':
+    def create_object(self, ui_form: SailUiForm, link_name: str, object_name: str) -> SailUiForm:
         return ui_form.click(link_name)\
             .fill_text_field('Name', object_name)\
             .click('Create')\
             .assert_no_validations_present()\
             .click('Save')
+
+    def create_ai_skill_object(self, ui_form: SailUiForm, ai_skill_name: str, ai_skill_type: AISkillObjectType) -> SailUiForm:
+        resp = ui_form.click('AI Skill')
+        auth_url = resp.get_latest_state()["ui"]["contents"][0]["contents"][0]["authUrl"]
+        parsed_url = urlparse(auth_url)
+        rdo_host = parsed_url._replace(path="").geturl()
+        app_prefix = resp.get_latest_state()["ui"]["contents"][0]["contents"][0]["applicationPrefix"]
+        rdo_interactor = _RDOInteractor(interactor=self.interactor, rdo_host=rdo_host)
+        create_ai_skill_json = rdo_interactor.fetch_ai_skill_creation_dialog_json(app_prefix=app_prefix)
+        ai_skill_ui_form = AISkillUiForm(interactor=rdo_interactor, state=create_ai_skill_json)
+        ai_skill_ui_form.click_card_layout_by_index(index=ai_skill_type.value)
+        ai_skill_ui_form.fill_text_field(label="Name", value=ai_skill_name)
+        ai_skill_ui_form.assert_no_validations_present()\
+            .click_button(label="Create")
+        creation_save_dialog_ui_form = SailUiForm(interactor=self.interactor,
+                                                  state=rdo_interactor.fetch_ai_skill_creation_save_dialog_json(state=ui_form.get_latest_state(), rdo_state=ai_skill_ui_form.get_latest_state()))
+        return creation_save_dialog_ui_form.assert_no_validations_present()\
+            .click("Save", locust_request_label="AiSkill.Save")
