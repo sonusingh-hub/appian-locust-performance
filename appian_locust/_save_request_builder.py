@@ -16,7 +16,7 @@ class _SaveRequestBuilder:
         self._uuid: Optional[str] = None
         self._context: Optional[dict] = None
         self._value: Optional[Union[dict, list]] = None
-        self._record_url_stub: Optional[str] = None
+        self._identifier: Optional[Dict[str, Any]] = None
 
     def component(self, component: Dict[str, Any]) -> '_SaveRequestBuilder':
         self._component = component
@@ -34,8 +34,8 @@ class _SaveRequestBuilder:
         self._value = value
         return self
 
-    def record_url_stub(self, record_url_stub: Optional[str]) -> '_SaveRequestBuilder':
-        self._record_url_stub = record_url_stub
+    def identifier(self, identifier: Optional[Dict[str, Any]]) -> '_SaveRequestBuilder':
+        self._identifier = identifier
         return self
 
     def build(self) -> Dict[str, Any]:
@@ -77,16 +77,8 @@ class _SaveRequestBuilder:
                 ],
             },
         }
-        if self._record_url_stub:
+        if self._identifier:
             payload.update(
-                {"identifier": {
-                    "urlStub": self._record_url_stub,
-                    "siteUrlStub": "D6JMim",
-                    "pageUrlStub": "records",
-                    "view": "view",
-                    "viewData": "all",
-                    "#t": "RecordInstanceListIdentifier"
-                }
-                }
+                {"identifier": self._identifier}
             )
         return payload

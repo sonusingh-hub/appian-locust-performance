@@ -1049,7 +1049,7 @@ class TestSailUiForm(unittest.TestCase):
         mock_send_dropdown_update.assert_called_once()
         args, kwargs = mock_send_dropdown_update.call_args
         self.assertEqual(args[0], "/mocked/re-eval/url")
-        self.assertIsNone(kwargs["url_stub"])
+        self.assertIsNone(kwargs["identifier"])
         self.assertNotEqual(sail_form.get_latest_state(), initial_state)
 
     @patch('appian_locust.uiform.SailUiForm._get_update_url_for_reeval', return_value="/mocked/re-eval/url")
@@ -1069,28 +1069,7 @@ class TestSailUiForm(unittest.TestCase):
         mock_send_dropdown_update.assert_called_once()
         args, kwargs = mock_send_dropdown_update.call_args
         self.assertEqual(args[0], "/mocked/re-eval/url")
-        self.assertIsNone(kwargs["url_stub"])
-        self.assertNotEqual(sail_form.get_latest_state(), initial_state)
-
-    @patch('appian_locust.uiform.SailUiForm._get_update_url_for_reeval', return_value="/mocked/re-eval/url")
-    @patch('appian_locust._interactor._Interactor.send_dropdown_update')
-    def test_actions_form_record_list_dropdown_success(self, mock_send_dropdown_update: MagicMock,
-                                                       mock_get_update_url_for_reeval: MagicMock) -> None:
-        # 'dropdown_test_record_list_ui.json' contains a 'sail-application-url' field
-        self.setup_action_response_with_ui('dropdown_test_record_list_ui.json')
-
-        sail_form: SailUiForm = self.task_set.appian.visitor.visit_action(
-            "Create a Case", False)
-        initial_state = sail_form.get_latest_state()
-
-        dropdown_label = "Customer Type"
-        sail_form.select_dropdown_item(dropdown_label, 'Buy Side Asset Manager')
-
-        mock_get_update_url_for_reeval.assert_called_with(sail_form.get_latest_state())
-        mock_send_dropdown_update.assert_called_once()
-        args, kwargs = mock_send_dropdown_update.call_args
-        self.assertEqual(args[0], "/mocked/re-eval/url")
-        self.assertEqual(kwargs["url_stub"], "url_stub123")
+        self.assertIsNone(kwargs["identifier"])
         self.assertNotEqual(sail_form.get_latest_state(), initial_state)
 
     @patch('appian_locust.uiform.SailUiForm._get_update_url_for_reeval', return_value="/mocked/re-eval/url")
@@ -1110,7 +1089,7 @@ class TestSailUiForm(unittest.TestCase):
         mock_send_multiple_dropdown_update.assert_called_once()
         args, kwargs = mock_send_multiple_dropdown_update.call_args
         self.assertEqual(args[0], "/mocked/re-eval/url")
-        self.assertIsNone(kwargs["url_stub"])
+        self.assertIsNone(kwargs["identifier"])
         self.assertNotEqual(sail_form.get_latest_state(), initial_state)
 
     @patch('appian_locust.uiform.SailUiForm._get_update_url_for_reeval', return_value="/mocked/re-eval/url")
@@ -1130,7 +1109,7 @@ class TestSailUiForm(unittest.TestCase):
         mock_send_multiple_dropdown_update.assert_called_once()
         args, kwargs = mock_send_multiple_dropdown_update.call_args
         self.assertEqual(args[0], "/mocked/re-eval/url")
-        self.assertIsNone(kwargs["url_stub"])
+        self.assertIsNone(kwargs["identifier"])
         self.assertNotEqual(sail_form.get_latest_state(), initial_state)
 
     @patch('appian_locust._interactor._Interactor.send_multiple_dropdown_update')

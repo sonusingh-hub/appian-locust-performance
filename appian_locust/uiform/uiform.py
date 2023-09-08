@@ -750,7 +750,7 @@ class SailUiForm:
         exception_label = f"label {label}"
 
         new_state = self._interactor.construct_and_send_dropdown_update(
-            component, choice_label, self.context, self._state, self.uuid, locust_label, exception_label, reeval_url)
+            component, choice_label, self.context, self._state, self.uuid, locust_label, exception_label, reeval_url, identifier=self._get_record_list_identifier())
 
         return self._reconcile_state(new_state)
 
@@ -782,7 +782,7 @@ class SailUiForm:
         exception_label = f"index {index}"
 
         new_state = self._interactor.construct_and_send_dropdown_update(
-            component, choice_label, self.context, self._state, self.uuid, locust_label, exception_label, reeval_url)
+            component, choice_label, self.context, self._state, self.uuid, locust_label, exception_label, reeval_url, identifier=self._get_record_list_identifier())
 
         return self._reconcile_state(new_state)
 
@@ -817,7 +817,7 @@ class SailUiForm:
         reeval_url = self._get_update_url_for_reeval(self._state)
 
         new_state = self._interactor.construct_and_send_multiple_dropdown_update(
-            component, choice_label, self.context, self._state, self.uuid, locust_label, exception_label, reeval_url)
+            component, choice_label, self.context, self._state, self.uuid, locust_label, exception_label, reeval_url, identifier=self._get_record_list_identifier())
 
         return self._reconcile_state(new_state)
 
@@ -849,7 +849,7 @@ class SailUiForm:
         reeval_url = self._get_update_url_for_reeval(self._state)
 
         new_state = self._interactor.construct_and_send_multiple_dropdown_update(
-            component, choice_label, self.context, self._state, self.uuid, locust_label, exception_label, reeval_url)
+            component, choice_label, self.context, self._state, self.uuid, locust_label, exception_label, reeval_url, identifier=self._get_record_list_identifier())
 
         return self._reconcile_state(new_state)
 
@@ -1631,7 +1631,9 @@ class SailUiForm:
         component = find_component_by_attribute_in_dict(
             'label', label, self._state)
         new_state = self._interactor.interact_with_record_grid(
-            post_url=reeval_url, grid_component=component, context=self.context, uuid=self.uuid, context_label=context_label)
+            post_url=reeval_url, grid_component=component, context=self.context, uuid=self.uuid,
+            identifier=self._get_record_list_identifier(), context_label=context_label
+        )
         if not new_state:
             raise Exception(
                 f"No response returned when navigating to next page on record list '{reeval_url}'")
@@ -1750,3 +1752,7 @@ class SailUiForm:
                 reeval_url = urlparse(link_object.get("href", "")).path
                 break
         return reeval_url
+
+    def _get_record_list_identifier(self) -> Optional[Dict[str, Any]]:
+        # Base SailUiForm will not have a record_list identifier, return None
+        return None
