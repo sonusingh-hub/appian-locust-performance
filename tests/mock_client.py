@@ -65,8 +65,7 @@ class MockClient:
                 """
 
     def __init__(self) -> None:
-        self.cookies = {"JSESSIONID": "a", "__appianCsrfToken": "b",
-                        "__appianMultipartCsrfToken": "c"}
+        self.cookies = {"JSESSIONID": "a", "__appianMultipartCsrfToken": "c"}
         self.enqueue_cookies = {"JSESSIONID": "a"}
         self.request_list: List[Dict[str, Any]] = []
         self.response_dict: dict = {}
@@ -82,15 +81,19 @@ class MockClient:
         self.set_response("/ae/sites", 200, self.html_snippet.replace('/suite', '/ae'))
         self.set_response("/ae/tempo/ui/sail-client/sites-05d032ca6319b11b6fc9.cache.js",
                           200, self.js_snippet.format("5802956083228348"))
+        self.set_response("/suite/?signin=native", 200, "{}", cookies={"JSESSIONID": "a", "__appianCsrfToken": "b", "__appianMultipartCsrfToken": "c"})
+        self.set_response("/suite/auth?appian_environment=tempo", 200, "{}", cookies={"JSESSIONID": "a", "__appianMultipartCsrfToken": "c"})
 
         self.dummy_responses: Queue = Queue()
 
     def _response(self, path: str) -> 'MockResponse':
         if path in self.response_dict:
             resp = self.response_dict[path]
-            self.cookies = resp.cookies
+            self.cookies = resp.cookies.copy()
             return self.response_dict[path]
-        return self.default_response
+        else:
+            self.cookies = self.default_response.cookies.copy()
+            return self.default_response
 
     def get(self, path: str, **kwargs: Any) -> 'MockResponse':
         request_data = {'path': path, 'method': 'get', **kwargs}

@@ -36,6 +36,8 @@ class TestInteractor(unittest.TestCase):
         setattr(parent_task_set, "auth", ["", ""])
         if base_path_override:
             setattr(parent_task_set, "base_path_override", base_path_override)
+            self.custom_locust.set_response(base_path_override + "/?signin=native", 200, "{}",
+                                            cookies={"JSESSIONID": "a", "__appianCsrfToken": "b", "__appianMultipartCsrfToken": "c"})
 
         self.task_set = AppianTaskSet(parent_task_set)
 
@@ -55,6 +57,7 @@ class TestInteractor(unittest.TestCase):
         expected_requests.append(("get", "/suite/whatever"))
         expected_requests.append(("get", "/suite/?signin=native"))
         expected_requests.append(("post", "/suite/auth?appian_environment=tempo"))
+        self.custom_locust.set_response("/suite/whatever", 200, '', cookies={'__appianCsrfToken': 'abc'})
         # When
         self.task_set.appian._interactor.get_page("/suite/whatever")
         # Then
@@ -110,9 +113,7 @@ class TestInteractor(unittest.TestCase):
         expected_requests.append(("post", "/suite/auth?appian_environment=tempo"))
 
         self.custom_locust.set_response("/suite/500err", 500, '{}')
-        self.custom_locust.set_response("/suite/auth?appian_environment=tempo", 200, '')
-        self.custom_locust.set_response("/suite/?signin=native", 200, '',
-                                        cookies={'__appianCsrfToken': 'abc'})  # Default cookies when not logged in
+        self.custom_locust.set_response("/suite/", 200, '{}', cookies={'__appianCsrfToken': 'abc'})
 
         # When
         try:
