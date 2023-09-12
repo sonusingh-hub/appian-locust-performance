@@ -6,6 +6,7 @@ from .._records_helper import get_all_records_from_json, get_records_from_json_b
 from ..utilities.helper import find_component_by_label_and_type_dict
 from .uiform import SailUiForm, START_PROCESS_LINK_TYPE
 
+IDENTIFIER_CONTEXT = "identifier"
 
 class RecordListUiForm(SailUiForm):
     """
@@ -14,6 +15,7 @@ class RecordListUiForm(SailUiForm):
 
     def __init__(self, interactor: _Interactor, state: Dict[str, Any], breadcrumb: str = "RecordListUi"):
         super().__init__(interactor, state, breadcrumb)
+        self._identifier = self._state[IDENTIFIER_CONTEXT]
 
     def filter_records_using_searchbox(self, search_term: str = "", locust_request_label: str = "") -> 'RecordListUiForm':
         """
@@ -90,3 +92,6 @@ class RecordListUiForm(SailUiForm):
                                                               cache_key=cache_key, locust_request_label=locust_request_label)
         self._reconcile_state(new_state)
         return self
+
+    def _get_record_list_identifier(self) -> Optional[Dict[str, Any]]:
+        return self._identifier

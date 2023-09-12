@@ -565,7 +565,7 @@ class _Interactor:
     click_link = click_component
 
     def send_dropdown_update(self, post_url: str, dropdown: Dict[str, Any], context: Dict[str, Any],
-                             uuid: str, index: int, label: Optional[str] = None, url_stub: Optional[str] = None) -> Dict[str, Any]:
+                             uuid: str, index: int, identifier: Optional[Dict[str, Any]] = None, label: Optional[str] = None) -> Dict[str, Any]:
         '''
             Calls the post operation to send an update to a dropdown
 
@@ -575,9 +575,8 @@ class _Interactor:
                 context: the Sail context parsed from the json response
                 uuid: the uuid parsed from the json response
                 index: location of the dropdown value
+                identifier: the Record List Identifier, if made on a Record List
                 label: the label to be displayed by locust for this action
-                headers: header for the REST API call
-                url_stub: the URL stub for the page; only required to interact with user filter dropdowns on a record list
 
             Returns: the response of post operation as json
         '''
@@ -586,13 +585,12 @@ class _Interactor:
             "#v": index
         }
         # url_stub should only be populated if the page is a record list
-        url_stub = url_stub or get_url_stub_from_record_list_post_request_url(post_url)
         payload = save_builder() \
             .component(dropdown) \
             .context(context) \
             .uuid(uuid) \
             .value(new_value) \
-            .record_url_stub(url_stub) \
+            .identifier(identifier) \
             .build()
 
         locust_label = label or f'Select \'{dropdown["label"]}\' Dropdown'
@@ -603,7 +601,8 @@ class _Interactor:
         return resp.json()
 
     def construct_and_send_dropdown_update(self, component: Any, choice_label: str, context: Dict[str, Any], state: Dict[str, Any],
-                                           uuid: str, context_label: str, exception_label: str, reeval_url: str) -> Dict[str, Any]:
+                                           uuid: str, context_label: str, exception_label: str, reeval_url: str,
+                                           identifier: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         '''
             Calls the post operation to send an update to a dropdown
 
@@ -616,6 +615,7 @@ class _Interactor:
                 context_label: the label to be displayed by locust for this action
                 exception_label: information about the dropdown component to be displayed if there is an exception
                 reeval_url: URL for "rel"="update", which is used to do other interactions on the form
+                identifier: the Record List Identifier, if made on a Record List
 
             Returns: the response of post operation as json
         '''
@@ -629,11 +629,9 @@ class _Interactor:
 
         # Opting to use this field, rather than self.form_url, because 'sail-application-url' is the same between web and mobile
         url = state.get('sail-application-url')
-        # url_stub should only be populated if the page is a record list
-        url_stub = get_url_stub_from_record_list_url_path(url)
 
         new_state = self.send_dropdown_update(
-            reeval_url, component, context, uuid, index=index, label=context_label, url_stub=url_stub)
+            reeval_url, component, context, uuid, index=index, label=context_label, identifier=identifier)
         if not new_state:
             raise Exception(
                 f"No response returned when trying to select dropdown with '{exception_label}'")
@@ -641,7 +639,7 @@ class _Interactor:
         return new_state
 
     def send_multiple_dropdown_update(self, post_url: str, multi_dropdown: Dict[str, Any], context: Dict[str, Any],
-                                      uuid: str, index: List[int], label: Optional[str] = None, url_stub: Optional[str] = None) -> Dict[str, Any]:
+                                      uuid: str, index: List[int], identifier: Optional[Dict[str, Any]] = None, label: Optional[str] = None) -> Dict[str, Any]:
         '''
             Calls the post operation to send an update to a multiple dropdown
 
@@ -650,10 +648,9 @@ class _Interactor:
                 dropdown: the JSON code for the desired dropdown
                 context: the Sail context parsed from the json response
                 uuid: the uuid parsed from the json response
-                index: locations of the multiple dropdown value
+                index: locations of the multiple dropdown value\
+                identifier: the Record List Identifier, if made on a Record List
                 label: the label to be displayed by locust for this action
-                headers: header for the REST API call
-                url_stub: the URL stub for the page; only required to interact with user filter dropdowns on a record list
 
             Returns: the response of post operation as json
         '''
@@ -662,13 +659,12 @@ class _Interactor:
             "#v": index
         }
         # url_stub should only be populated if the page is a record list
-        url_stub = url_stub or get_url_stub_from_record_list_post_request_url(post_url)
         payload = save_builder() \
             .component(multi_dropdown) \
             .context(context) \
             .uuid(uuid) \
             .value(new_value) \
-            .record_url_stub(url_stub) \
+            .identifier(identifier) \
             .build()
 
         locust_label = label or f'Select \'{multi_dropdown["label"]}\' Dropdown'
@@ -681,7 +677,7 @@ class _Interactor:
     def construct_and_send_multiple_dropdown_update(self, component: Any, choice_label: List[str],
                                                     context: Dict[str, Any], state: Dict[str, Any],
                                                     uuid: str, context_label: str, exception_label: str,
-                                                    reeval_url: str) -> Dict[str, Any]:
+                                                    reeval_url: str, identifier: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         '''
             Calls the post operation to send an update to a multiple dropdown
 
@@ -694,6 +690,7 @@ class _Interactor:
                 context_label: the label to be displayed by locust for this action
                 exception_label: information about the multiple dropdown component to be displayed if there is an exception
                 reeval_url: URL for "rel"="update", which is used to do other interactions on the form
+                identifier: the Record List Identifier, if made on a Record List
 
             Returns: the response of post operation as json
         '''
@@ -710,7 +707,7 @@ class _Interactor:
         url_stub = get_url_stub_from_record_list_url_path(url)
 
         new_state = self.send_multiple_dropdown_update(
-            reeval_url, component, context, uuid, index=index_multi, label=context_label, url_stub=url_stub)
+            reeval_url, component, context, uuid, index=index_multi, label=context_label, identifier=identifier)
         if not new_state:
             raise Exception(
                 f"No response returned when trying to select multiple dropdown with '{exception_label}'")
@@ -1144,6 +1141,7 @@ class _Interactor:
     def interact_with_record_grid(self, post_url: str,
                                   grid_component: Dict[str, Any],
                                   context: Dict[str, Any], uuid: str,
+                                  identifier: Optional[Dict[str, Any]] = None,
                                   context_label: Optional[str] = None) -> Dict[str, Any]:
         """
             Calls the post operation to send a record grid update
@@ -1153,16 +1151,16 @@ class _Interactor:
                 grid_component: the JSON dict representing the grid to update
                 context: the Sail context parsed from the json response
                 uuid: the uuid parsed from the json response
+                identifier: the Record List Identifier, if made on a Record List
                 context_label: the label to be displayed by locust for this action
 
             Returns: the response of post operation as json
         """
-        url_stub = post_url.split('/')[-1]
         payload = save_builder() \
             .component(grid_component) \
             .context(context) \
             .uuid(uuid) \
-            .record_url_stub(url_stub) \
+            .identifier(identifier) \
             .build()
 
         locust_label = context_label or "Updating Record Grid " + grid_component.get("label", "")
