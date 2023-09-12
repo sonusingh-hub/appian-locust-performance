@@ -160,6 +160,7 @@ class TestAppianBase(unittest.TestCase):
         inner_client.set_response(host + ACTIONS_INTERFACE_PATH, 200, self.actions_interface)
         inner_client.set_response(host + "/suite/rest/a/sites/latest/D6JMim/page/actions/nav", 200, self.actions_nav)
         inner_client.set_response(host + ACTIONS_FEED_PATH, 200, self.actions_feed)
+        inner_client.set_response(host + "/suite/?signin=native", 200, "{}", cookies={"JSESSIONID": "a", "__appianCsrfToken": "b", "__appianMultipartCsrfToken": "c"})
         appian_client = AppianClient(inner_client, "https://my-fake-host.com")
 
         # When

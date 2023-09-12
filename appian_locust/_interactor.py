@@ -185,6 +185,9 @@ class _Interactor:
 
         uri = self.host + "/suite/"
 
+        # clear cookies, in case we have any still floating around
+        self.client.cookies.clear()
+
         # load initial page to get tokens/cookies
         token_uri = uri + '?signin=native'
         resp = self.get_page(token_uri, label="Login.LoadUi", check_login=False)
