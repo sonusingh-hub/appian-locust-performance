@@ -90,7 +90,7 @@ class _RDOInteractor(_Interactor):
         payload = {
             "initialBindings": {"flow!jwt": f"{jwt_token}", "flow!applicationPrefix": f"{app_prefix}"},
             "#t": "Map"
-             }
+        }
         return payload
 
     def ai_skill_creation_save_payload(self, state: Dict[str, Any], object_uuid: str) -> dict:
@@ -141,7 +141,28 @@ class _RDOInteractor(_Interactor):
                 break
         headers = super().setup_sail_headers()
         headers["X-client-mode"] = "DESIGN"
-        return super().post_page(uri=reeval_url, payload=payload, headers=headers).json()
+        return super().post_page(
+            uri=reeval_url,
+            payload=payload,
+            headers=headers,
+            label=locust_request_label
+        ).json()
 
-    # @raises_locust_error
-    # def fetch_ai_skill_designer_json():
+    @raises_locust_error
+    def fetch_ai_skill_designer_json(self, ai_skill_id: str, locust_request_label: Optional[str] = None) -> Dict[str, Any]:
+        locust_request_label = locust_request_label or f"Designer.AiSkill.{ai_skill_id}"
+        headers = self.setup_rdo_ui_request_headers(jwt_token=self.jwt_token, rdo_csrf_token=self.rdo_csrf_token)
+        headers["x-http-method-override"] = "PUT"
+        payload = {
+            "#t": "Map",
+            "initialBindings": {
+                "aiskill!aiSkillId": ai_skill_id,
+                "aiskill!readOnly": "false",
+            }
+        }
+        return self.post_page(
+            uri=f"{self.rdo_host}/sail-server/SYSTEM_SYSRULES_aiSkillDesigner/ui",
+            payload=payload,
+            headers=headers,
+            label=locust_request_label
+        ).json()

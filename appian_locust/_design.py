@@ -3,12 +3,15 @@ from typing import Any, Dict, Optional
 from ._interactor import _Interactor
 from ._rdo_interactor import _RDOInteractor
 from ._locust_error_handler import raises_locust_error
+from .exceptions import IncorrectDesignAccessException
 from .objects import DesignObject, AISkillObjectType
+from .objects.ai_skill import AiSkill
 from .utilities import find_component_by_label_and_type_dict, find_component_by_type_and_attribute_and_index_in_dict, find_component_by_attribute_in_dict
 from .uiform import SailUiForm, AISkillUiForm
 from urllib.parse import urlparse
 
 DESIGN_URI_PATH: str = "/suite/rest/a/applications/latest/app/design"
+AI_SKILL_INDEX: int = 1
 
 
 def get_available_design_objects(state: Dict[str, Any]) -> Dict[str, DesignObject]:
@@ -21,6 +24,16 @@ def get_available_design_objects(state: Dict[str, Any]) -> Dict[str, DesignObjec
         uri_split = link["uri"].split("/")
         design_objects[name] = DesignObject(name, uri_split[len(uri_split) - 1])
     return design_objects
+
+
+def validate_design_object_access_method(design_object_json: Dict[str, Any], object_type_to_method_dict: Dict[str, Any]) -> None:
+    potential_rdo_info = find_component_by_attribute_in_dict(attribute="testLabel",
+                                                             value="RemoteDesignObjectInterface",
+                                                             component_tree=design_object_json,
+                                                             raise_error=False)
+    if potential_rdo_info:
+        rdo_object_type = potential_rdo_info["objectType"]
+        raise IncorrectDesignAccessException(rdo_object_type, object_type_to_method_dict[rdo_object_type])
 
 
 class _Design:
@@ -85,6 +98,25 @@ class _Design:
         response = self.interactor.get_page(uri, headers=headers, label=label)
         response.raise_for_status()
         return response.json()
+
+    @raises_locust_error
+    def fetch_ai_skill_info(self, ai_skill_opaque_id: str, locust_request_label: Optional[str] = None) -> AiSkill:
+        locust_request_label = locust_request_label or f"AiSkill.Info.{ai_skill_opaque_id[0:10]}"
+        object_json = self.fetch_design_object_json(opaque_id=ai_skill_opaque_id,
+                                                    locust_request_label=f"{locust_request_label}.DesignObject")
+        object_info = find_component_by_attribute_in_dict(
+            attribute="testLabel",
+            value="RemoteDesignObjectInterface",
+            component_tree=object_json,
+            raise_error=False
+        )
+        if not object_info or object_info["objectType"] != "aiSkill":
+            raise Exception(f"Selected Design Object {ai_skill_opaque_id} was not an AI Skill")
+
+        auth_url = object_info["authUrl"]
+        parsed_url = urlparse(auth_url)
+        rdo_host = parsed_url._replace(path="").geturl()
+        return AiSkill(host_url=rdo_host, object_uuid=object_info["objectUuid"])
 
     @raises_locust_error
     def find_design_grid(self, state: Dict[str, Any]) -> Dict[str, Any]:
@@ -164,5 +196,6 @@ class _Design:
             .click_button(label="Create")
         creation_save_dialog_ui_form = SailUiForm(interactor=self.interactor,
                                                   state=rdo_interactor.fetch_ai_skill_creation_save_dialog_json(state=ui_form.get_latest_state(), rdo_state=ai_skill_ui_form.get_latest_state()))
-        return creation_save_dialog_ui_form.assert_no_validations_present()\
-            .click("Save", locust_request_label="AiSkill.Save")
+        creation_save_dialog_ui_form.assert_no_validations_present().click("Save", locust_request_label="AiSkill.Save")
+        ui_form._reconcile_state(creation_save_dialog_ui_form.get_latest_state())
+        return ui_form

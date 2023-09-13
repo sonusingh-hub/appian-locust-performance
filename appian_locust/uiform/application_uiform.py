@@ -1,11 +1,15 @@
 from typing import Any, Dict, Optional
 
-from .._design import _Design, get_available_design_objects
+from .._design import _Design, get_available_design_objects, validate_design_object_access_method
+from .._rdo_interactor import _RDOInteractor
 from .._interactor import _Interactor
 from .._locust_error_handler import raises_locust_error
 from ..uiform import AISkillUiForm, DesignObjectUiForm, SailUiForm
 from ..objects import DesignObject, DesignObjectType, AISkillObjectType
-from ..utilities.helper import find_component_by_label_and_type_dict
+
+_RDO_TYPE_TO_APPLICATION_METHOD = {
+    "aiSkill": "click_ai_skill"
+}
 
 
 class ApplicationUiForm(SailUiForm):
@@ -15,7 +19,7 @@ class ApplicationUiForm(SailUiForm):
         self.__design = _Design(interactor)
 
     @raises_locust_error
-    def click_design_object(self, design_object_name: str) -> DesignObjectUiForm:
+    def click_design_object(self, design_object_name: str, locust_request_label: Optional[str] = None) -> DesignObjectUiForm:
         """
         Click on a design object in the design object grid. The current view of the grid must contain the object you wish
         to click.
@@ -26,18 +30,47 @@ class ApplicationUiForm(SailUiForm):
 
         """
         opaque_id = self.__design.find_design_object_opaque_id_in_grid(design_object_name, self._state)
-        breadcrumb = "Design.SelectedObject." + opaque_id[0:10] + ".SailUi"
-        return DesignObjectUiForm(self._interactor, self.__design.fetch_design_object_json(opaque_id), breadcrumb)
+        locust_request_label = locust_request_label or f"Application.Object.{opaque_id[:10]}.Click"
+        breadcrumb = f"Design.SelectedObject.{opaque_id[:10]}.SailUi"
+        design_object_json = self.__design.fetch_design_object_json(opaque_id, locust_request_label=locust_request_label)
+        validate_design_object_access_method(design_object_json, _RDO_TYPE_TO_APPLICATION_METHOD)
+        return DesignObjectUiForm(self._interactor, design_object_json, breadcrumb)
 
     @raises_locust_error
-    def create_ai_skill_object(self, ai_skill_name:str, ai_skill_type: AISkillObjectType) -> 'ApplicationUiForm':
+    def click_ai_skill(self, ai_skill_name: str, locust_request_label: Optional[str] = None) -> AISkillUiForm:
+        """
+        Click on an AI Skill in the design object grid. The current view of the grid must contain the skill you wish
+        to click.
+        Args:
+            ai_skill_name: The name of the AI Skill to click on
+
+        Returns (AISkillUiForm): UiForm representing UI of AI Skill
+
+        """
+        opaque_id = self.__design.find_design_object_opaque_id_in_grid(ai_skill_name, self._state)
+        locust_request_label = locust_request_label or f"Application.AiSkill.{opaque_id[:10]}.Click"
+        ai_skill_info = self.__design.fetch_ai_skill_info(ai_skill_opaque_id=opaque_id, locust_request_label=locust_request_label)
+
+        rdo_interactor = _RDOInteractor(interactor=self._interactor, rdo_host=ai_skill_info.host_url)
+        ai_skill_json = rdo_interactor.fetch_ai_skill_designer_json(ai_skill_id=ai_skill_info.object_uuid)
+        breadcrumb = f"Design.SelectedAiSkill.{opaque_id[:10]}.SailUi"
+        return AISkillUiForm(interactor=rdo_interactor, state=ai_skill_json, breadcrumb=breadcrumb)
+
+    @raises_locust_error
+    def create_ai_skill_object(self, ai_skill_name: str, ai_skill_type: AISkillObjectType) -> 'ApplicationUiForm':
+        """
+        Creates an AI Skill with the given name
+
+        Returns: The SAIL UI Form after the record type is created
+
+        """
         self.__design.create_ai_skill_object(self, ai_skill_name=ai_skill_name, ai_skill_type=ai_skill_type)
         return self
 
     @raises_locust_error
     def create_record_type(self, record_type_name: str) -> 'ApplicationUiForm':
         """
-        Takes an application form and creates a record type with the given name
+        Creates a record type with the given name
 
         Returns: The SAIL UI Form after the record type is created
 
@@ -48,7 +81,7 @@ class ApplicationUiForm(SailUiForm):
     @raises_locust_error
     def create_report(self, report_name: str) -> 'ApplicationUiForm':
         """
-        Takes an application form and creates a report with the given name
+        Creates a report with the given name
 
         Returns: The SAIL UI Form after the report is created
 

@@ -1,10 +1,12 @@
 from typing import Optional
+from urllib.parse import urlparse
 
 from ._actions import _Actions
 from ._data_fabric import _DataFabric
-from ._design import _Design
+from ._design import _Design, AI_SKILL_INDEX, validate_design_object_access_method
 from ._interactor import _Interactor
 from ._portals import _Portals
+from ._rdo_interactor import _RDOInteractor
 from ._records import _Records
 from ._reports import _Reports
 from ._sites import _Sites
@@ -12,7 +14,19 @@ from ._admin import _Admin
 from ._tasks import _Tasks
 from .utilities.helper import format_label
 from .objects import DesignObjectType, PageType
-from .uiform import ApplicationUiForm, DesignUiForm, DesignObjectUiForm, RecordInstanceUiForm, RecordListUiForm, SailUiForm
+from .uiform import (
+    ApplicationUiForm,
+    DesignUiForm,
+    DesignObjectUiForm,
+    RecordInstanceUiForm,
+    RecordListUiForm,
+    SailUiForm,
+    AISkillUiForm
+)
+
+_RDO_TYPE_TO_VISITOR_METHOD = {
+    "aiSkill": "visit_ai_skill_by_id"
+}
 
 
 class Visitor:
@@ -138,7 +152,9 @@ class Visitor:
 
         """
         breadcrumb = "Design.SelectedObject." + opaque_id[0:10] + ".SailUi"
-        return DesignObjectUiForm(self.__interactor, self.__design.fetch_design_object_json(opaque_id, locust_request_label), breadcrumb)
+        design_object_json = self.__design.fetch_design_object_json(opaque_id, locust_request_label)
+        validate_design_object_access_method(design_object_json, _RDO_TYPE_TO_VISITOR_METHOD)
+        return DesignObjectUiForm(self.__interactor, design_object_json, breadcrumb)
 
     def visit_design_object_by_name(self, object_name: str, object_type: DesignObjectType, locust_request_label: Optional[str] = None) -> DesignObjectUiForm:
         """
@@ -148,14 +164,14 @@ class Visitor:
             object_type (DesignObjectType): The type of the design object
             locust_request_label (str, optional): label to be used within locust
 
-        Returns:
+        Returns (DesignObjectUiForm): UiForm representing design object
 
         """
-        designUiForm: DesignUiForm = self.visit_design()
-        designUiForm.select_nav_card_by_index(nav_group_label="leftNavbar", is_test_label=True, index=1)
-        designUiForm.check_checkbox_by_test_label(test_label="object-type-checkbox", indices=[object_type.value])
-        designUiForm.search_objects(object_name)
-        design_object_opaque_id = self.__design.find_design_object_opaque_id_in_grid(object_name, designUiForm.get_latest_state())
+        design_ui_form: DesignUiForm = self.visit_design()
+        design_ui_form.select_nav_card_by_index(nav_group_label="leftNavbar", is_test_label=True, index=1)
+        design_ui_form.check_checkbox_by_test_label(test_label="object-type-checkbox", indices=[object_type.value])
+        design_ui_form.search_objects(object_name)
+        design_object_opaque_id = self.__design.find_design_object_opaque_id_in_grid(object_name, design_ui_form.get_latest_state())
         return self.visit_design_object_by_id(design_object_opaque_id, locust_request_label)
 
     def visit_record_instance(self, record_type: str = "", record_name: str = "", view_url_stub: str = "",
@@ -337,6 +353,42 @@ class Visitor:
         appian use only "https://mysite.appian-internal.com/performance-testing" (in browser)
         instead of https://mysite.appian-internal.com/performance-testing/page/page1 . although it still works.
         """
-        form_json = self.__portals.fetch_page_json(portal_unique_identifier, portal_page_unique_identifier)
+        form_json = self.__portals.fetch_page_json(portal_unique_identifier, portal_page_unique_identifier, locust_request_label=locust_request_label)
         breadcrumb = f"Portals.{_Portals.get_full_url(portal_unique_identifier, portal_page_unique_identifier)}.SailUi"
         return SailUiForm(self.__interactor, form_json, breadcrumb=breadcrumb)
+
+    def visit_ai_skill_by_id(self, opaque_id: str, locust_request_label: Optional[str] = None) -> AISkillUiForm:
+        """
+        Visit an AI Skill by its opaque id
+        Args:
+            opaque_id (str): opaque id of the AI Skill
+            locust_request_label (str, optional): label to be used within locust
+
+        Returns (AISkillUiForm): UiForm representing AI Skill
+
+        """
+        locust_request_label = locust_request_label or f"Design.AiSkill.{opaque_id}"
+        ai_skill_info = self.__design.fetch_ai_skill_info(ai_skill_opaque_id=opaque_id,
+                                                          locust_request_label=locust_request_label)
+
+        rdo_interactor = _RDOInteractor(interactor=self.__interactor, rdo_host=ai_skill_info.host_url)
+        ai_skill_json = rdo_interactor.fetch_ai_skill_designer_json(ai_skill_id=ai_skill_info.object_uuid)
+        return AISkillUiForm(interactor=rdo_interactor, state=ai_skill_json, breadcrumb=locust_request_label)
+
+    def visit_ai_skill_by_name(self, ai_skill_name: str, locust_request_label: Optional[str] = None) -> AISkillUiForm:
+        """
+        Visit an AI Skill by its name
+        Args:
+            ai_skill_name (str): The name of the AI Skill
+            locust_request_label (str, optional): label to be used within locust
+
+        Returns (AISkillUiForm): UiForm representing AI Skill
+
+        """
+        design_ui_form = self.visit_design()
+        design_ui_form.select_nav_card_by_index(nav_group_label="leftNavbar", is_test_label=True, index=1)
+        design_ui_form.check_checkbox_by_test_label(test_label="object-type-checkbox", indices=[AI_SKILL_INDEX])
+        design_ui_form.search_objects(ai_skill_name)
+        design_object_opaque_id = self.__design.find_design_object_opaque_id_in_grid(ai_skill_name,
+                                                                                     design_ui_form.get_latest_state())
+        return self.visit_ai_skill_by_id(design_object_opaque_id, locust_request_label)
