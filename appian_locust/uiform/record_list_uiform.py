@@ -8,6 +8,7 @@ from .uiform import SailUiForm, START_PROCESS_LINK_TYPE
 
 IDENTIFIER_CONTEXT = "identifier"
 
+
 class RecordListUiForm(SailUiForm):
     """
     UiForm representing a Record List from Tempo Records

@@ -15,6 +15,12 @@ class MissingConfigurationException(Exception):
             f'Missing keys in configuration file, please verify that all of the following exist and are correct: {missing_keys}')
 
 
+class IncorrectDesignAccessException(Exception):
+    def __init__(self, object_type: str, correct_access_method: str) -> None:
+        super().__init__(
+            f"Selected Design Object was of type {object_type}, use {correct_access_method} method instead")
+
+
 class ComponentNotFoundException(Exception):
     pass
 

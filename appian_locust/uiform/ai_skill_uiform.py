@@ -9,4 +9,3 @@ class AISkillUiForm(SailUiForm):
     def __init__(self, interactor: _RDOInteractor, state: Dict[str, Any], breadcrumb: str = "AISkillUi"):
         rdo_interactor = interactor
         super().__init__(rdo_interactor, state, breadcrumb)
-

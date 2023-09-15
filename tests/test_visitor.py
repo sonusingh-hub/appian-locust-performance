@@ -7,6 +7,7 @@ from locust import TaskSet, Locust, stats
 from .mock_client import CustomLocust
 from .mock_reader import read_mock_file
 from appian_locust import AppianTaskSet
+from appian_locust.exceptions import IncorrectDesignAccessException
 from appian_locust.uiform import SailUiForm, ApplicationUiForm, DesignUiForm, DesignObjectUiForm, RecordListUiForm, RecordInstanceUiForm
 from appian_locust.objects import DesignObjectType
 from appian_locust.utilities.helper import ENV
@@ -15,6 +16,8 @@ from appian_locust._tasks import _Tasks
 from appian_locust._reports import REPORTS_INTERFACE_PATH
 from appian_locust._records import RECORDS_INTERFACE_PATH
 from appian_locust._actions import ACTIONS_INTERFACE_PATH, ACTIONS_FEED_PATH
+
+RDO_HOST = "https://ai-skill-server.net"
 
 
 class TestVisitor(unittest.TestCase):
@@ -38,6 +41,9 @@ class TestVisitor(unittest.TestCase):
     actions_interface = read_mock_file("actions_interface.json")
     actions_nav = read_mock_file("actions_nav.json")
     actions_feed = read_mock_file("actions_feed.json")
+    bff_token_response = read_mock_file("bff_token_response.json")
+    ai_skill_design_object_response = read_mock_file("ai_skill_design_object_response.json")
+    ai_skill_response = read_mock_file("ai_skill_response.json")
 
     def setUp(self) -> None:
         self.custom_locust = CustomLocust(Locust())
@@ -65,6 +71,9 @@ class TestVisitor(unittest.TestCase):
 
         # Setup responses for actions
         self.setUp_actions_json()
+
+        # Setup responses for AI Skills
+        self.setup_rdo_responses()
 
     def setUp_task_responses(self) -> None:
         self.custom_locust.set_response(_Tasks.INITIAL_FEED_URI, 200, self.task_feed_resp)
@@ -101,6 +110,10 @@ class TestVisitor(unittest.TestCase):
             self.record_summary_view)
         self.custom_locust.set_response(RECORDS_INTERFACE_PATH, 200, self.records_interface)
         self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/page/records/nav", 200, self.records_nav)
+
+    def setup_rdo_responses(self) -> None:
+        self.custom_locust.set_response("/suite/rfx/bff-token", 200, self.bff_token_response)
+        self.custom_locust.set_response(f"{RDO_HOST}/rdo-server/DesignObjects/InterfaceAuthentication/v1", 200, "{}")
 
     def setUp_sites_responses(self) -> None:
         page_resp_json = read_mock_file("page_resp.json")
@@ -259,6 +272,43 @@ class TestVisitor(unittest.TestCase):
         design_form = self.task_set.appian.visitor.visit_design_object_by_name("FTA_", DesignObjectType.INTERFACE)
         self.assertEqual(type(design_form), DesignObjectUiForm)
         self.assertEqual(design_form.get_latest_state()["_cId"], json.loads(self.interface_page)["_cId"])
+        self.assertEqual(0, len(ENV.stats.errors))
+
+    def test_visit_design_object_throws_ai_skill_exception(self) -> None:
+        design_object_id = "thisIsADesignObjectId"
+        self.custom_locust.set_response(
+            f"/suite/rest/a/applications/latest/app/design/{design_object_id}", 200, self.ai_skill_design_object_response)
+        ENV.stats.clear_all()
+        with self.assertRaises(IncorrectDesignAccessException) as context:
+            self.task_set.appian.visitor.visit_design_object_by_id(design_object_id)
+        self.assertEqual(
+            context.exception.args[0],
+            "Selected Design Object was of type aiSkill, use visit_ai_skill_by_id method instead")
+
+    def test_visit_ai_skill(self) -> None:
+        design_object_id = "thisIsADesignObjectId"
+        self.setup_rdo_responses()
+        self.custom_locust.set_response(
+            f"/suite/rest/a/applications/latest/app/design/{ design_object_id }", 200, self.ai_skill_design_object_response)
+        self.custom_locust.set_response(f"{RDO_HOST}/sail-server/SYSTEM_SYSRULES_aiSkillDesigner/ui", 200, "{\"this_is\": \"a_response\"}")
+        ENV.stats.clear_all()
+        ai_skill_form = self.task_set.appian.visitor.visit_ai_skill_by_id(design_object_id)
+        self.assertEqual(ai_skill_form.get_latest_state(), {"this_is": "a_response"})
+        self.assertEqual(0, len(ENV.stats.errors))
+
+    def test_visit_ai_skill_by_name(self) -> None:
+        self.custom_locust.enqueue_response(200, self.application_page)                             # Navigate to /design
+        self.custom_locust.enqueue_response(200, read_mock_file("empty_design_objects.json"))       # Click on objects
+        self.custom_locust.enqueue_response(200, read_mock_file("design_objects.json"))             # Filter to Interfaces
+        self.custom_locust.enqueue_response(200, read_mock_file("design_objects.json"))             # Search for "FTA_"
+        design_object_id = "lIBvbWpmCW-DXb2Ymh0Z0BoA4mWVpvJiz89VdsTcjtGkRoZgOr6ytR1w9IzvBtl4UqC4SkzwXbxvgAnqiJbQX0k4x_-Dh8FA0svqT6RsalzjxaP"
+        self.custom_locust.set_response(
+            f"/suite/rest/a/applications/latest/app/design/{ design_object_id }", 200, self.ai_skill_design_object_response)
+        self.custom_locust.set_response(f"{RDO_HOST}/sail-server/SYSTEM_SYSRULES_aiSkillDesigner/ui", 200,
+                                        "{\"this_is\": \"a_response\"}")
+        ENV.stats.clear_all()
+        ai_skill_form = self.task_set.appian.visitor.visit_ai_skill_by_name("FTA_")
+        self.assertEqual(ai_skill_form.get_latest_state(), {"this_is": "a_response"})
         self.assertEqual(0, len(ENV.stats.errors))
 
     @patch('appian_locust._records_helper.find_component_by_attribute_in_dict', return_value={'children': None})
