@@ -208,6 +208,8 @@ class Visitor:
 
         Returns (SailUiForm): UI representing list of records for that record type
         """
+
+        locust_request_label = locust_request_label or f'Records.{record_type}.ListView'
         self.__records.get_records_nav(locust_request_label=locust_request_label)
         form_json = self.__records.visit_record_type(record_type, locust_request_label=locust_request_label)
         breadcrumb = f'Records.{record_type}.RecordListUi'

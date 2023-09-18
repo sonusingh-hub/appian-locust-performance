@@ -25,11 +25,15 @@ class CustomLocust(User):
         tuples = [(item['method'], item['path']) for item in self.client.request_list]
         return tuples
 
-    def set_response(self, path: str, status_code: int, body: AnyStr, cookies: Optional[dict] = None,  headers: dict = {}) -> None:
+    def set_response(self, path: str, status_code: int, body: AnyStr,
+                     cookies: Optional[dict] = None,  headers: CaseInsensitiveDict = CaseInsensitiveDict({"Requested-While-Authenticated": "True"})) -> None:
+
         self.client.set_response(path, status_code, body, cookies=cookies, headers=headers)
 
-    def set_default_response(self, status_code: int, body: str) -> None:
-        self.client.set_default_response(status_code, body)
+    def set_default_response(self, status_code: int, body: str,
+                             headers: CaseInsensitiveDict = CaseInsensitiveDict({"Requested-While-Authenticated": "True"})) -> None:
+
+        self.client.set_default_response(status_code, body, headers=headers)
 
     def enqueue_response(self, status_code: int, body: str) -> None:
         self.client.enqueue_response(status_code, body)
@@ -73,6 +77,7 @@ class MockClient:
         self.default_response.status_code = 200
         self.default_response.content = str.encode("")
         self.default_response.cookies = requests.cookies.cookiejar_from_dict(self.cookies)
+        self.default_response.headers = CaseInsensitiveDict({"Requested-While-Authenticated": "True"})
 
         # For feature toggles
         self.set_response("/suite/sites", 200, self.html_snippet)
@@ -109,19 +114,27 @@ class MockClient:
             return self.dummy_responses.get()
         return self._response(path)
 
-    def enqueue_response(self, status_code: int, body: str) -> None:
-        response = self.make_response(status_code, body, cookies=self.enqueue_cookies)
+    def enqueue_response(self, status_code: int, body: str,
+                         headers: CaseInsensitiveDict = CaseInsensitiveDict({"Requested-While-Authenticated": "True"})) -> None:
+
+        response = self.make_response(status_code, body, cookies=self.enqueue_cookies, headers=headers)
         self.dummy_responses.put(response)
 
-    def set_response(self, path: str, status_code: int, body: str, cookies: Optional[dict] = None, headers: CaseInsensitiveDict = CaseInsensitiveDict(None)) -> None:
+    def set_response(self, path: str, status_code: int, body: str, cookies: Optional[dict] = None,
+                     headers: CaseInsensitiveDict = CaseInsensitiveDict({"Requested-While-Authenticated": "True"})) -> None:
+
         response = self.make_response(status_code, body, path=path, cookies=cookies, headers=headers)
         self.response_dict[path] = response
 
-    def set_default_response(self, status_code: int, body: str) -> None:
-        response = self.make_response(status_code, body)
+    def set_default_response(self, status_code: int, body: str,
+                             headers: CaseInsensitiveDict = CaseInsensitiveDict({"Requested-While-Authenticated": "True"})) -> None:
+
+        response = self.make_response(status_code, body, headers=headers)
         self.default_response = response
 
-    def make_response(self, status_code: int, body: str, path: str = "", cookies: Optional[dict] = None, headers: CaseInsensitiveDict = CaseInsensitiveDict(None)) -> 'MockResponse':
+    def make_response(self, status_code: int, body: str, path: str = "", cookies: Optional[dict] = None,
+                      headers: CaseInsensitiveDict = CaseInsensitiveDict({"Requested-While-Authenticated": "True"})) -> 'MockResponse':
+
         response = MockResponse()
         response.status_code = status_code
         content = str.encode(body)

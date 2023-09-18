@@ -160,6 +160,8 @@ class _Interactor:
             sys.exit(1)
         with self.client.post(uri, data=post_payload, headers=headers, timeout=self._request_timeout, name=label, files=files,
                               catch_response=True) as resp:  # type: ResponseContextManager
+            if check_login:
+                self.check_post_response_for_valid_auth(resp=resp)
             try:
                 test_response_for_error(resp, uri, raise_error=check_login, username=username)
             except Exception as e:
@@ -188,6 +190,11 @@ class _Interactor:
         # load initial page to get tokens/cookies
         token_uri = uri + '?signin=native'
         resp = self.get_page(token_uri, label="Login.LoadUi", check_login=False)
+
+        if "__appianCsrfToken" not in resp.cookies:
+            # If we don't get a new CSRF Token, we already have a logged in session
+            return self.client, resp
+
         log.info(f"Attempting to load page {self.replace_base_path_if_appropriate(token_uri)}")
         payload = {
             "un": self.auth[0],
@@ -241,6 +248,20 @@ class _Interactor:
             # Check login page actually returns a csrf token
             login_page_resp = self.get_page('/suite/', label="Login.LoadUi", check_login=False)
             if login_page_resp.ok and '__appianCsrfToken' in login_page_resp.cookies:
+                self.login()
+
+    def check_post_response_for_valid_auth(self, resp: ResponseContextManager) -> None:
+        """
+        Given a POST response, checks to see if we are correctly authenticated
+        Args:
+            resp: POST request response to examine
+
+        Returns: None
+        """
+        if not resp.headers.get('Requested-While-Authenticated', False):
+            ping_resp = self.get_page('/suite/cors/ping', label="Cors.Ping", check_login=False)
+            if not ping_resp.json().get("authed", True):
+                self.client.cookies.clear()
                 self.login()
 
     def get_page(self, uri: str, headers: Optional[Dict[str, Any]] = None, label: Optional[str] = None,
