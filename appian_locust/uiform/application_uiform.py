@@ -37,7 +37,7 @@ class ApplicationUiForm(SailUiForm):
         return DesignObjectUiForm(self._interactor, design_object_json, breadcrumb)
 
     @raises_locust_error
-    def click_ai_skill(self, ai_skill_name: str, locust_request_label: Optional[str] = None) -> AISkillUiForm:
+    def _click_ai_skill(self, ai_skill_name: str, locust_request_label: Optional[str] = None) -> AISkillUiForm:
         """
         Click on an AI Skill in the design object grid. The current view of the grid must contain the skill you wish
         to click.
