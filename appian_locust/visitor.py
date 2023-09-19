@@ -208,6 +208,8 @@ class Visitor:
 
         Returns (SailUiForm): UI representing list of records for that record type
         """
+
+        locust_request_label = locust_request_label or f'Records.{record_type}.ListView'
         self.__records.get_records_nav(locust_request_label=locust_request_label)
         form_json = self.__records.visit_record_type(record_type, locust_request_label=locust_request_label)
         breadcrumb = f'Records.{record_type}.RecordListUi'
@@ -357,7 +359,7 @@ class Visitor:
         breadcrumb = f"Portals.{_Portals.get_full_url(portal_unique_identifier, portal_page_unique_identifier)}.SailUi"
         return SailUiForm(self.__interactor, form_json, breadcrumb=breadcrumb)
 
-    def visit_ai_skill_by_id(self, opaque_id: str, locust_request_label: Optional[str] = None) -> AISkillUiForm:
+    def _visit_ai_skill_by_id(self, opaque_id: str, locust_request_label: Optional[str] = None) -> AISkillUiForm:
         """
         Visit an AI Skill by its opaque id
         Args:
@@ -375,7 +377,7 @@ class Visitor:
         ai_skill_json = rdo_interactor.fetch_ai_skill_designer_json(ai_skill_id=ai_skill_info.object_uuid)
         return AISkillUiForm(interactor=rdo_interactor, state=ai_skill_json, breadcrumb=locust_request_label)
 
-    def visit_ai_skill_by_name(self, ai_skill_name: str, locust_request_label: Optional[str] = None) -> AISkillUiForm:
+    def _visit_ai_skill_by_name(self, ai_skill_name: str, locust_request_label: Optional[str] = None) -> AISkillUiForm:
         """
         Visit an AI Skill by its name
         Args:
@@ -391,4 +393,4 @@ class Visitor:
         design_ui_form.search_objects(ai_skill_name)
         design_object_opaque_id = self.__design.find_design_object_opaque_id_in_grid(ai_skill_name,
                                                                                      design_ui_form.get_latest_state())
-        return self.visit_ai_skill_by_id(design_object_opaque_id, locust_request_label)
+        return self._visit_ai_skill_by_id(design_object_opaque_id, locust_request_label)

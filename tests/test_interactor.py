@@ -1,7 +1,9 @@
 import json
 import os
-import unittest
+from requests.models import CaseInsensitiveDict
 from typing import Optional
+import unittest
+from unittest.mock import MagicMock, patch
 
 from appian_locust import AppianTaskSet
 from appian_locust.utilities.helper import find_component_by_attribute_in_dict, find_component_by_index_in_dict
@@ -392,3 +394,31 @@ class TestInteractor(unittest.TestCase):
     def test_clean_filename(self) -> None:
         cleaned_str = self.task_set.appian._interactor._clean_filename("\\<>:\"/|?*")
         self.assertEqual(cleaned_str, ".........")
+
+    @patch('appian_locust._interactor._Interactor.login')
+    @patch('appian_locust._interactor._Interactor.get_page')
+    def test_bad_csrf_token(self, get_page_mock: MagicMock, login_mock: MagicMock) -> None:
+        initial_unauthed_response = self.custom_locust.client.make_response(401, "{}", headers=CaseInsensitiveDict({}))
+        cors_ping_response = self.custom_locust.client.make_response(200, "{}", "/suite/cors/ping")
+        get_page_mock.return_value = cors_ping_response
+
+        self.task_set.appian._interactor.check_post_response_for_valid_auth(initial_unauthed_response)
+
+        get_page_mock.assert_called_once()
+        positional_args, _ = get_page_mock.call_args_list[0]
+        self.assertEqual(positional_args[0], "/suite/cors/ping")
+        login_mock.assert_not_called()
+
+    @patch('appian_locust._interactor._Interactor.login')
+    @patch('appian_locust._interactor._Interactor.get_page')
+    def test_bad_jsession_id(self, get_page_mock: MagicMock, login_mock: MagicMock) -> None:
+        initial_unauthed_response = self.custom_locust.client.make_response(401, "{}", headers=CaseInsensitiveDict({}))
+        cors_ping_response = self.custom_locust.client.make_response(200, '{"authed": false}', "/suite/cors/ping")
+        get_page_mock.return_value = cors_ping_response
+
+        self.task_set.appian._interactor.check_post_response_for_valid_auth(initial_unauthed_response)
+
+        get_page_mock.assert_called_once()
+        positional_args, _ = get_page_mock.call_args_list[0]
+        self.assertEqual(positional_args[0], "/suite/cors/ping")
+        login_mock.assert_called_once()
