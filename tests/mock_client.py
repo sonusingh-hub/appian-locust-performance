@@ -69,14 +69,14 @@ class MockClient:
                 """
 
     def __init__(self) -> None:
-        self.cookies = {"JSESSIONID": "a", "__appianMultipartCsrfToken": "c"}
+        self.cookies = requests.cookies.cookiejar_from_dict({"JSESSIONID": "a", "__appianMultipartCsrfToken": "c"})
         self.enqueue_cookies = {"JSESSIONID": "a"}
         self.request_list: List[Dict[str, Any]] = []
         self.response_dict: dict = {}
         self.default_response = MockResponse()
         self.default_response.status_code = 200
         self.default_response.content = str.encode("")
-        self.default_response.cookies = requests.cookies.cookiejar_from_dict(self.cookies)
+        self.default_response.cookies = requests.cookies.cookiejar_from_dict(self.cookies.get_dict())
         self.default_response.headers = CaseInsensitiveDict({"Requested-While-Authenticated": "True"})
 
         # For feature toggles

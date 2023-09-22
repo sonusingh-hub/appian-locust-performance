@@ -100,10 +100,7 @@ class _Design:
         return response.json()
 
     @raises_locust_error
-    def fetch_ai_skill_info(self, ai_skill_opaque_id: str, locust_request_label: Optional[str] = None) -> AiSkill:
-        locust_request_label = locust_request_label or f"AiSkill.Info.{ai_skill_opaque_id[0:10]}"
-        object_json = self.fetch_design_object_json(opaque_id=ai_skill_opaque_id,
-                                                    locust_request_label=f"{locust_request_label}.DesignObject")
+    def extract_ai_skill_info(self, object_json: Dict[str, Any]) -> AiSkill:
         object_info = find_component_by_attribute_in_dict(
             attribute="testLabel",
             value="RemoteDesignObjectInterface",
@@ -111,7 +108,7 @@ class _Design:
             raise_error=False
         )
         if not object_info or object_info["objectType"] != "aiSkill":
-            raise Exception(f"Selected Design Object {ai_skill_opaque_id} was not an AI Skill")
+            raise Exception(f"Selected Design Object was not an AI Skill")
 
         auth_url = object_info["authUrl"]
         parsed_url = urlparse(auth_url)
@@ -189,7 +186,15 @@ class _Design:
         app_prefix = resp.get_latest_state()["ui"]["contents"][0]["contents"][0]["applicationPrefix"]
         rdo_interactor = _RDOInteractor(interactor=self.interactor, rdo_host=rdo_host)
         create_ai_skill_json = rdo_interactor.fetch_ai_skill_creation_dialog_json(app_prefix=app_prefix)
-        ai_skill_ui_form = AISkillUiForm(interactor=rdo_interactor, state=create_ai_skill_json)
+        # passing in a temporary id because we need one to create the uiform, but one has not been assigned to the object yet
+        ai_skill_temp_id = "temp_id"
+        ai_skill_ui_form = AISkillUiForm(
+            rdo_interactor=rdo_interactor,
+            rdo_state=create_ai_skill_json,
+            lcp_interactor=self.interactor,
+            lcp_state=ui_form.get_latest_state(),
+            ai_skill_id=ai_skill_temp_id
+        )
         ai_skill_ui_form.click_card_layout_by_index(index=ai_skill_type.value)
         ai_skill_ui_form.fill_text_field(label="Name", value=ai_skill_name)
         ai_skill_ui_form.assert_no_validations_present()\

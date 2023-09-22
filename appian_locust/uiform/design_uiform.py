@@ -7,7 +7,7 @@ from .._locust_error_handler import raises_locust_error
 from ..objects import Application, DesignObject
 from ..uiform import ApplicationUiForm, SailUiForm
 from ..objects import DesignObject
-from ..utilities.helper import find_component_by_attribute_in_dict, find_component_by_label_and_type_dict
+from ..utilities.helper import find_component_by_attribute_in_dict
 
 log = logger.getLogger(__name__)
 

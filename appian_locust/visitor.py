@@ -359,7 +359,7 @@ class Visitor:
         breadcrumb = f"Portals.{_Portals.get_full_url(portal_unique_identifier, portal_page_unique_identifier)}.SailUi"
         return SailUiForm(self.__interactor, form_json, breadcrumb=breadcrumb)
 
-    def _visit_ai_skill_by_id(self, opaque_id: str, locust_request_label: Optional[str] = None) -> AISkillUiForm:
+    def visit_ai_skill_by_id(self, opaque_id: str, locust_request_label: Optional[str] = None) -> AISkillUiForm:
         """
         Visit an AI Skill by its opaque id
         Args:
@@ -370,14 +370,21 @@ class Visitor:
 
         """
         locust_request_label = locust_request_label or f"Design.AiSkill.{opaque_id}"
-        ai_skill_info = self.__design.fetch_ai_skill_info(ai_skill_opaque_id=opaque_id,
-                                                          locust_request_label=locust_request_label)
+        object_json = self.__design.fetch_design_object_json(opaque_id=opaque_id,
+                                                             locust_request_label=f"{locust_request_label}.DesignObject")
+        ai_skill_info = self.__design.extract_ai_skill_info(object_json)
 
         rdo_interactor = _RDOInteractor(interactor=self.__interactor, rdo_host=ai_skill_info.host_url)
         ai_skill_json = rdo_interactor.fetch_ai_skill_designer_json(ai_skill_id=ai_skill_info.object_uuid)
-        return AISkillUiForm(interactor=rdo_interactor, state=ai_skill_json, breadcrumb=locust_request_label)
+        return AISkillUiForm(rdo_interactor=rdo_interactor,
+                             rdo_state=ai_skill_json,
+                             lcp_interactor=self.__interactor,
+                             lcp_state=object_json,
+                             ai_skill_id=ai_skill_info.object_uuid,
+                             breadcrumb=locust_request_label
+                             )
 
-    def _visit_ai_skill_by_name(self, ai_skill_name: str, locust_request_label: Optional[str] = None) -> AISkillUiForm:
+    def visit_ai_skill_by_name(self, ai_skill_name: str, locust_request_label: Optional[str] = None) -> AISkillUiForm:
         """
         Visit an AI Skill by its name
         Args:
@@ -393,4 +400,4 @@ class Visitor:
         design_ui_form.search_objects(ai_skill_name)
         design_object_opaque_id = self.__design.find_design_object_opaque_id_in_grid(ai_skill_name,
                                                                                      design_ui_form.get_latest_state())
-        return self._visit_ai_skill_by_id(design_object_opaque_id, locust_request_label)
+        return self.visit_ai_skill_by_id(design_object_opaque_id, locust_request_label)

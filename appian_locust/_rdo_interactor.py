@@ -1,13 +1,14 @@
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple, List
 from requests import Response
 from ._interactor import _Interactor
-from ._locust_error_handler import raises_locust_error
+from ._locust_error_handler import raises_locust_error, log_locust_error, test_response_for_error
 from ._save_request_builder import save_builder
-from .utilities.helper import find_component_by_attribute_in_dict, extract_all_by_label
-from locust.clients import HttpSession, ResponseContextManager
+from .utilities.helper import find_component_by_attribute_in_dict, extract_all_by_label, get_username, remove_type_info
+from locust.clients import ResponseContextManager
 import time
 import base64
 import json
+import sys
 
 
 class _RDOInteractor(_Interactor):
@@ -62,7 +63,7 @@ class _RDOInteractor(_Interactor):
         v1_response.raise_for_status()
         return None
 
-    def setup_rdo_ui_request_headers(self, jwt_token: str, rdo_csrf_token: str) -> dict:
+    def setup_rdo_ui_request_headers(self) -> dict:
         ui_headers = {
             "authority": f"{self.rdo_host}",
             "accept": "application/vnd.appian.tv.ui+json",
@@ -70,20 +71,28 @@ class _RDOInteractor(_Interactor):
             "accept-language": "en-US,en;q=0.9",
             "content-type": "application/vnd.appian.tv+json",
             "origin": f"{self.rdo_host}",
-            "referer": f"{self.rdo_host}/rdo-server/DesignObjects/LoadCreateDialogInterface/v1?applicationPrefix=",
-            "cookie": f"XSRF-TOKEN={rdo_csrf_token}; JWT_TOKEN={jwt_token}",
-            "x-appian-csrf-token": f"{rdo_csrf_token}",
+            "cookie": f"XSRF-TOKEN={self.rdo_csrf_token}; JWT_TOKEN={self.jwt_token}",
+            "x-appian-csrf-token": self.rdo_csrf_token,
             "x-appian-ui-state": "stateful",
-            "x-appian-features": f"{self.client.feature_flag}",
-            "x-appian-features-extended": f"{self.client.feature_flag_extended}",
+            "x-appian-features": self.client.feature_flag,
+            "x-appian-features-extended": self.client.feature_flag_extended,
             "x-appian-suppress-www-authenticate": "true",
             "x-client-mode": "SAIL_LIBRARY",
             "x-appian-user-locale": "en_US",
             "x-appian-user-timezone": "",
             "x-appian-user-calendar": "",
-            "x-appian-initial-form-factor": "PHONE"
+            "x-appian-initial-form-factor": "PHONE",
+            "x-xsrf-token": self.rdo_csrf_token
         }
         return ui_headers
+
+    def setup_mlas_file_upload_headers(self, kms_id: str) -> dict:
+        headers = self.setup_rdo_ui_request_headers()
+        headers["accept"] = "*/*"
+        headers["content-type"] = "application/pdf"
+        headers["x-amz-server-side-encryption"] = "aws:kms"
+        headers["x-amz-server-side-encryption-aws-kms-key-id"] = kms_id
+        return headers
 
     # move to fetch method if not used anywhere else by the end of RDO Epic
     def ai_skill_creation_payload(self, jwt_token: str, app_prefix: str) -> dict:
@@ -109,22 +118,96 @@ class _RDOInteractor(_Interactor):
             .build()
         return payload
 
-    def post_page(self, uri: str,
-                  payload: Any = {},
-                  headers: Optional[Dict[str, Any]] = None,
-                  label: Optional[str] = None,
-                  files: Optional[dict] = None,
-                  check_login: bool = True) -> Response:
-        if time.time() - self.last_auth_time > 25:
+    def post_page(
+            self,
+            uri: str,
+            payload: Any = {},
+            headers: Optional[Dict[str, Any]] = None,
+            label: Optional[str] = None,
+            files: Optional[dict] = None,
+            raise_error: bool = True,
+            check_login: bool = True) -> Response:
+        if time.time() - self.last_auth_time > 10:
             self.jwt_token, self.rdo_csrf_token = self.fetch_jwt_token()
             self.v1_post_request(self.jwt_token, self.rdo_csrf_token)
         if headers is None:
-            headers = self.setup_rdo_ui_request_headers(self.jwt_token, rdo_csrf_token=self.rdo_csrf_token)
-        return super().post_page(uri, payload, headers, label, files, check_login)
+            headers = self.setup_rdo_ui_request_headers()
+        return super().post_page(uri, payload, headers, label, files, raise_error, False)
+
+    def put_page(
+            self,
+            uri: str,
+            payload: Any = {},
+            headers: Optional[Dict[str, Any]] = None,
+            label: Optional[str] = None,
+            files: Optional[dict] = None,
+            raise_error: bool = True) -> Response:
+        if time.time() - self.last_auth_time > 25:
+            self.jwt_token, self.rdo_csrf_token = self.fetch_jwt_token()
+            self.v1_post_request(self.jwt_token, self.rdo_csrf_token)
+        username = get_username(self.auth)
+        if headers is None:
+            headers = self.setup_rdo_ui_request_headers()
+        if files:  # When a file is specified, don't send any data in the 'data' field
+            post_payload = None
+        elif isinstance(payload, dict):
+            post_payload = json.dumps(payload).encode()
+        elif isinstance(payload, str):
+            post_payload = payload.encode()
+        else:
+            log_locust_error(Exception("Cannot PUT a payload that is not of type dict or string"))
+        with self.client.put(
+                uri,
+                data=post_payload,
+                headers=headers,
+                timeout=self._request_timeout,
+                name=label,
+                files=files,
+                catch_response=True) as resp:  # type: ResponseContextManager
+            try:
+                test_response_for_error(resp, uri, raise_error=raise_error, username=username)
+            except Exception as e:
+                raise e
+            else:
+                if raise_error:
+                    resp.raise_for_status()
+            return resp
+
+    def patch_page(self, uri: str,
+                   payload: Any = {},
+                   headers: Optional[Dict[str, Any]] = None,
+                   label: Optional[str] = None,
+                   files: Optional[dict] = None,
+                   raise_error: bool = True) -> Response:
+        if time.time() - self.last_auth_time > 25:
+            self.jwt_token, self.rdo_csrf_token = self.fetch_jwt_token()
+            self.v1_post_request(self.jwt_token, self.rdo_csrf_token)
+        username = get_username(self.auth)
+        if headers is None:
+            headers = self.setup_rdo_ui_request_headers()
+        if files:  # When a file is specified, don't send any data in the 'data' field
+            post_payload = None
+        elif isinstance(payload, dict) or isinstance(payload, list):
+            post_payload = json.dumps(payload).encode()
+        elif isinstance(payload, str):
+            post_payload = payload.encode()
+        else:
+            log_locust_error(Exception("Cannot PATCH a payload that is not of type dict, list or string"))
+            sys.exit(1)
+        with self.client.patch(uri, data=post_payload, headers=headers, timeout=self._request_timeout, name=label, files=files,
+                               catch_response=True) as resp:  # type: ResponseContextManager
+            try:
+                test_response_for_error(resp, uri, raise_error=raise_error, username=username)
+            except Exception as e:
+                raise e
+            else:
+                if raise_error:
+                    resp.raise_for_status()
+            return resp
 
     @raises_locust_error
     def fetch_ai_skill_creation_dialog_json(self, app_prefix: str, locust_request_label: str = "AISkill.CreateDialog") -> Dict[str, Any]:
-        headers = self.setup_rdo_ui_request_headers(jwt_token=self.jwt_token, rdo_csrf_token=self.rdo_csrf_token)
+        headers = self.setup_rdo_ui_request_headers()
         headers["x-http-method-override"] = "PUT"
         payload = self.ai_skill_creation_payload(jwt_token=self.jwt_token, app_prefix=app_prefix)
         uri = f"{self.rdo_host}/sail-server/SYSTEM_SYSRULES_aiSkillCreateDialog/ui"
@@ -151,7 +234,7 @@ class _RDOInteractor(_Interactor):
     @raises_locust_error
     def fetch_ai_skill_designer_json(self, ai_skill_id: str, locust_request_label: Optional[str] = None) -> Dict[str, Any]:
         locust_request_label = locust_request_label or f"Designer.AiSkill.{ai_skill_id}"
-        headers = self.setup_rdo_ui_request_headers(jwt_token=self.jwt_token, rdo_csrf_token=self.rdo_csrf_token)
+        headers = self.setup_rdo_ui_request_headers()
         headers["x-http-method-override"] = "PUT"
         payload = {
             "#t": "Map",
@@ -166,3 +249,117 @@ class _RDOInteractor(_Interactor):
             headers=headers,
             label=locust_request_label
         ).json()
+
+    def save_ai_skill_ui_request(
+            self,
+            component: Dict[str, Any],
+            context: Dict[str, Any],
+            uuid: str,
+            value: Dict[str, Any],
+            locust_request_label: Optional[str] = None) -> Dict[str, Any]:
+        uri = f"{self.rdo_host}/sail-server/SYSTEM_SYSRULES_aiSkillDesigner/ui"
+        headers = self.setup_rdo_ui_request_headers()
+        payload = save_builder() \
+            .component(component) \
+            .context(context) \
+            .uuid(uuid) \
+            .value(value) \
+            .build()
+        label = locust_request_label or "AISkill.SaveChangesUI"
+        return self.post_page(
+            uri=uri,
+            payload=payload,
+            headers=headers,
+            label=label
+            ).json()
+
+    def persist_ai_skill_changes_to_rdo(self, ai_skill_id: str, state: Dict[str, Any], locust_request_label: Optional[str] = None) -> Dict[str, Any]:
+        uri = f"{self.rdo_host}/rdo-server/ai-skill/{ai_skill_id}"
+        headers = self.setup_rdo_ui_request_headers()
+        headers["accept"] = "*/*"
+        headers["content-type"] = "application/json"
+        action_list = extract_all_by_label(state, "actionList")[0]
+        payload = remove_type_info(action_list)
+        label = locust_request_label or "AISkill.PersistModels"
+        return self.patch_page(
+            uri=uri,
+            payload=payload,
+            headers=headers,
+            label=label
+            ).json()
+
+    def get_presigned_url(self, ai_skill_id: str, model_id: str) -> dict:
+        uri = f"{self.rdo_host}/rdo-server/ai-skill/{ai_skill_id}/doc-classification/{model_id}/actions/get-presigned-url"
+        headers = self.setup_rdo_ui_request_headers()
+        return self.post_page(uri=uri, headers=headers, label="Fetch.PresignedUrl").json()
+
+    def upload_document_to_ai_skill_server(self, file_path: str, ai_skill_id: str, model_id: str, locust_request_label: Optional[str] = None) -> Tuple[Any, int]:
+        presigned_url_resp = self.get_presigned_url(ai_skill_id=ai_skill_id, model_id=model_id)
+        uri = presigned_url_resp["presigned_url"]
+        kms_id = presigned_url_resp["headers"]["x-amz-server-side-encryption-aws-kms-key-id"]
+        data_id = presigned_url_resp["data_id"]
+        locust_request_label = locust_request_label or f"AiSkill.FileServerUpload.{data_id}"
+        headers = self.setup_mlas_file_upload_headers(kms_id=kms_id)
+        with open(file_path, 'rb') as f:
+            files = {"file": f}
+            response = self.put_page(uri=uri, headers=headers, files=files, label=locust_request_label)
+            file_size = 10  # dummy file size
+            response.raise_for_status()
+            return (data_id, file_size)
+
+    def upload_document_to_mlas_field(self, upload_field: Dict[str, Any],
+                                      context: Dict[str, Any], uuid: str, skill_id: str, file_infos: List[Dict[str, Any]], locust_label: Optional[str] = None) -> Dict[str, Any]:
+        new_value = {
+            "#t": "Map",
+            "#v": {
+                "filesState":
+                [self._make_mlas_file_metadata(file_info["file_id"], file_info["file_size"], position, file_name=file_info["file_name"]) for position, file_info in enumerate(file_infos, 1)],
+                "message": None
+            }
+        }
+        payload = save_builder() \
+            .component(upload_field) \
+            .context(context) \
+            .uuid(uuid) \
+            .value(new_value) \
+            .build()
+        locust_label = locust_label or "MLASUploadField.Upload"
+        post_url = f"{self.rdo_host}/sail-server/SYSTEM_SYSRULES_aiSkillDesigner/ui"
+        resp = self.post_page(post_url, payload=payload, label=locust_label)
+        return resp.json()
+
+    def _make_mlas_file_metadata(self, id: int, doc_size: int, position: int, file_name: str) -> dict:
+        """Produces a file metadata object to use for multifile upload fields"""
+        dummy_data = {
+            "fileName": file_name,
+            "fileSize": doc_size,
+            "createdAt": 23893457,  # dummy time
+            "uploadPosition": position,
+            "fileId": id,
+            "ignored": "false",
+            "progress": 100,
+            "validation": {
+                "duplicate": "",
+                "fileType": "",
+                "maxFileSize": "",
+                "ok": "true",
+                "isError": ""
+            },
+            "message": None
+        }
+        return {
+            "fileName": dummy_data["fileName"],
+            "fileSize": dummy_data["fileSize"],
+            "createdAt": dummy_data["createdAt"],
+            "uploadPosition": dummy_data["uploadPosition"],
+            "fileId": dummy_data["fileId"],
+            "ignored": "false",
+            "progress": 100,
+            "validation": {
+                "duplicate": "",
+                "fileType": "",
+                "maxFileSize": "",
+                "ok": "true",
+                "isError": ""
+            }
+        }

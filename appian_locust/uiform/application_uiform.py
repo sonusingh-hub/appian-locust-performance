@@ -37,7 +37,7 @@ class ApplicationUiForm(SailUiForm):
         return DesignObjectUiForm(self._interactor, design_object_json, breadcrumb)
 
     @raises_locust_error
-    def _click_ai_skill(self, ai_skill_name: str, locust_request_label: Optional[str] = None) -> AISkillUiForm:
+    def click_ai_skill(self, ai_skill_name: str, locust_request_label: Optional[str] = None) -> AISkillUiForm:
         """
         Click on an AI Skill in the design object grid. The current view of the grid must contain the skill you wish
         to click.
@@ -49,12 +49,20 @@ class ApplicationUiForm(SailUiForm):
         """
         opaque_id = self.__design.find_design_object_opaque_id_in_grid(ai_skill_name, self._state)
         locust_request_label = locust_request_label or f"Application.AiSkill.{opaque_id[:10]}.Click"
-        ai_skill_info = self.__design.fetch_ai_skill_info(ai_skill_opaque_id=opaque_id, locust_request_label=locust_request_label)
+        object_json = self.__design.fetch_design_object_json(opaque_id=opaque_id,
+                                                    locust_request_label=f"{locust_request_label}.DesignObject")
+        ai_skill_info = self.__design.extract_ai_skill_info(object_json=object_json)
 
         rdo_interactor = _RDOInteractor(interactor=self._interactor, rdo_host=ai_skill_info.host_url)
         ai_skill_json = rdo_interactor.fetch_ai_skill_designer_json(ai_skill_id=ai_skill_info.object_uuid)
         breadcrumb = f"Design.SelectedAiSkill.{opaque_id[:10]}.SailUi"
-        return AISkillUiForm(interactor=rdo_interactor, state=ai_skill_json, breadcrumb=breadcrumb)
+        return AISkillUiForm(rdo_interactor=rdo_interactor,
+                             rdo_state=ai_skill_json,
+                             lcp_interactor=self._interactor,
+                             lcp_state=self._state,
+                             ai_skill_id=ai_skill_info.object_uuid,
+                             breadcrumb=breadcrumb,
+                              )
 
     @raises_locust_error
     def create_ai_skill_object(self, ai_skill_name: str, ai_skill_type: AISkillObjectType) -> 'ApplicationUiForm':
