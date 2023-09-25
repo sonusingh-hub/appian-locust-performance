@@ -88,8 +88,7 @@ def test_response_for_error(resp: ResponseContextManager, uri: str = 'No URI Spe
         log_locust_error(
             Exception(f'MESSAGE: {e}'),
             'REQUEST:',
-            f'URI: {resp.url}',
-            raise_error=True
+            f'URI: {resp.url}'
         )
 
 
@@ -143,6 +142,6 @@ def raises_locust_error(func: Callable) -> Callable:
         except Exception as e:
             file_without_path = os.path.basename(inspect.getfile(func))
             location = f'{file_without_path}/{func.__name__}()'
-            log_locust_error(e, location=location, raise_error=True)
+            log_locust_error(e, location=location)
             return None
     return func_wrapper

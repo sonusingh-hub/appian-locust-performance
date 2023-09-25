@@ -160,7 +160,6 @@ class AppianClient:
             )
         except Exception as e:
             log_locust_error(e, error_desc="Client Feature Toggles Error")
-            raise e
 
 
 class _NoOpEvents():
