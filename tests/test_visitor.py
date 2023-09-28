@@ -292,7 +292,7 @@ class TestVisitor(unittest.TestCase):
             f"/suite/rest/a/applications/latest/app/design/{ design_object_id }", 200, self.ai_skill_design_object_response)
         self.custom_locust.set_response(f"{RDO_HOST}/sail-server/SYSTEM_SYSRULES_aiSkillDesigner/ui", 200, "{\"this_is\": \"a_response\"}")
         ENV.stats.clear_all()
-        ai_skill_form = self.task_set.appian.visitor._visit_ai_skill_by_id(design_object_id)
+        ai_skill_form = self.task_set.appian.visitor.visit_ai_skill_by_id(design_object_id)
         self.assertEqual(ai_skill_form.get_latest_state(), {"this_is": "a_response"})
         self.assertEqual(0, len(ENV.stats.errors))
 
@@ -307,7 +307,7 @@ class TestVisitor(unittest.TestCase):
         self.custom_locust.set_response(f"{RDO_HOST}/sail-server/SYSTEM_SYSRULES_aiSkillDesigner/ui", 200,
                                         "{\"this_is\": \"a_response\"}")
         ENV.stats.clear_all()
-        ai_skill_form = self.task_set.appian.visitor._visit_ai_skill_by_name("FTA_")
+        ai_skill_form = self.task_set.appian.visitor.visit_ai_skill_by_name("FTA_")
         self.assertEqual(ai_skill_form.get_latest_state(), {"this_is": "a_response"})
         self.assertEqual(0, len(ENV.stats.errors))
 

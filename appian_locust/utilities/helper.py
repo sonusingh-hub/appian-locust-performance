@@ -425,3 +425,36 @@ def get_username(auth: list) -> str:
         return auth[0]
     else:
         return ""
+
+def remove_type_info(sail_dict: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Returns a flattened dictionary with SAIL type info removed
+    Args: 
+        sail_dict:SAIL Dictionary to remove type information from
+
+    Returns (dict): Flattened dictionary
+
+    """
+    return _remove_type_info(sail_dict)
+
+def _remove_type_info(sail_dict: Any) -> Any:
+    """ Recursive function to flatten dictionary"""
+    modified_sail_dict = {}
+    if isinstance(sail_dict, list):
+        new_list = []
+        for element in sail_dict:
+            if "#v" in element:
+                new_list.append(_remove_type_info(element["#v"]))
+            else:
+                new_list.append(_remove_type_info(element))
+        return new_list
+    elif isinstance(sail_dict, dict):
+        for key, value in sail_dict.items():
+            if "#v" in value:
+                modified_sail_dict[key] = _remove_type_info(value["#v"])
+            else:
+                modified_sail_dict[key] = _remove_type_info(value)
+    else: 
+        return sail_dict
+    return modified_sail_dict
+

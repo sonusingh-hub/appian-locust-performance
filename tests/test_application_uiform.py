@@ -72,5 +72,5 @@ class TestApplicationUiform(unittest.TestCase):
         )
         self.custom_locust.set_response(f"{RDO_HOST}/sail-server/SYSTEM_SYSRULES_aiSkillDesigner/ui", 200, "{\"this_is\": \"a_response\"}")
 
-        application = application._click_ai_skill("RE_stockData")
+        application = application.click_ai_skill("RE_stockData")
         self.assertEqual(application.get_latest_state(), {"this_is": "a_response"})

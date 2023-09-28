@@ -16,7 +16,7 @@ from ._save_request_builder import save_builder
 from .exceptions import (BadCredentialsException, MissingCsrfTokenException, ComponentNotFoundException,
                          InvalidComponentException, ChoiceNotFoundException)
 from .utilities.helper import find_component_by_attribute_in_dict, get_username
-from ._records_helper import get_url_stub_from_record_list_post_request_url, get_url_stub_from_record_list_url_path
+from ._records_helper import get_url_stub_from_record_list_url_path
 
 log = logger.getLogger(__name__)
 
@@ -78,6 +78,9 @@ class _Interactor:
         """
 
         uri = uri if uri is not None else self.host
+        domain = urllib.parse.urlparse(uri).netloc
+        if not domain:
+            domain = urllib.parse.urlparse(self.host).netloc
         headers = {
             "Accept": "application/atom+json,application/json",
             "Accept-Encoding": "gzip, deflate, br",
@@ -87,13 +90,13 @@ class _Interactor:
             "Referer": uri + "/suite/tempo/",
             "X-Appian-Cached-Datatypes": self.datatype_cache.get(),
             "Cookie": "JSESSIONID={}; __appianCsrfToken={}; __appianMultipartCsrfToken={}".format(
-                self.client.cookies.get("JSESSIONID", ""),
-                self.client.cookies.get("__appianCsrfToken", ""),
-                self.client.cookies.get("__appianMultipartCsrfToken", ""),
+                self.client.cookies.get("JSESSIONID", "", domain),
+                self.client.cookies.get("__appianCsrfToken", "", domain),
+                self.client.cookies.get("__appianMultipartCsrfToken", "", domain),
             ),
             "DNT": "1",
-            "X-APPIAN-CSRF-TOKEN": self.client.cookies.get("__appianCsrfToken", ""),
-            "X-APPIAN-MP-CSRF-TOKEN": self.client.cookies.get("__appianMultipartCsrfToken", ""),
+            "X-APPIAN-CSRF-TOKEN": self.client.cookies.get("__appianCsrfToken", "", domain),
+            "X-APPIAN-MP-CSRF-TOKEN": self.client.cookies.get("__appianMultipartCsrfToken", "", domain),
             "X-Appian-Ui-State": "stateful",
             "X-Appian-Features": self.client.feature_flag,
             "X-Appian-Features-Extended": self.client.feature_flag_extended,
@@ -132,7 +135,7 @@ class _Interactor:
         return uri
 
     def post_page(self, uri: str, payload: Any = {}, headers: Optional[Dict[str, Any]] = None, label: Optional[str] = None,
-                  files: Optional[dict] = None, check_login: bool = True) -> Response:
+                  files: Optional[dict] = None, raise_error: bool = True, check_login: bool = True) -> Response:
         """
         Given a uri, executes POST request and returns response
 
@@ -157,17 +160,16 @@ class _Interactor:
             post_payload = payload.encode()
         else:
             log_locust_error(Exception("Cannot POST a payload that is not of type dict or string"))
-            sys.exit(1)
         with self.client.post(uri, data=post_payload, headers=headers, timeout=self._request_timeout, name=label, files=files,
                               catch_response=True) as resp:  # type: ResponseContextManager
             if check_login:
                 self.check_post_response_for_valid_auth(resp=resp)
             try:
-                test_response_for_error(resp, uri, raise_error=check_login, username=username)
+                test_response_for_error(resp, uri, raise_error=raise_error, username=username)
             except Exception as e:
                 raise e
             else:
-                if check_login:
+                if raise_error:
                     resp.raise_for_status()
             if self.record_mode:
                 self.write_response_to_lib_folder(label, resp)
@@ -220,7 +222,7 @@ class _Interactor:
             payload=urllib.parse.urlencode(payload),
             headers=headers,
             label="Login.SubmitAuth",
-            check_login=check_login)
+            raise_error=check_login)
         if not resp or not resp.ok:
             raise BadCredentialsException()
         elif "__appianMultipartCsrfToken" not in self.client.cookies:
