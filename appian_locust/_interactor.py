@@ -507,33 +507,24 @@ class _Interactor:
 
         Returns: the start form for the related action
         '''
-
         locust_label = locust_request_label or "Clicking RelatedActionLink: " + component["label"]
         headers = self.setup_request_headers()
-
         if open_in_a_dialog:
             # This link opens a dialog on the browser
             headers["Accept"] = "application/vnd.appian.tv.ui+json"
             related_action_link_url = f"/suite/rest/a/record/latest/{opaque_record_id}/actionDialog/{opaque_related_action_id}"
-            resp = self.get_page(
-                self.get_interaction_host() + related_action_link_url, headers=headers, label=locust_label
-            )
+            resp = self.get_page(self.get_interaction_host() + related_action_link_url, headers=headers, label=locust_label)
+            json_response = resp.json()
         else:
             # Mobile url not implemented
             # Web url:
             related_action_link_url = f"/suite/rest/a/record/latest/{record_type_stub}/{opaque_record_id}/actions/{opaque_related_action_id}"
             headers = self.setup_sail_headers()
-            resp = self.get_page(
-                self.get_interaction_host() + related_action_link_url, headers=headers, label=locust_label
-            )
+            resp = self.get_page(self.get_interaction_host() + related_action_link_url, headers=headers, label=locust_label)
             json_response = resp.json()
-            if json_response.get("empty") == "true" and json_response.get("ui") is None:
-                # This means we need to make the POST call to get the UI for the form.
-                resp = self.post_page(
-                    self.get_interaction_host() + related_action_link_url, payload={}, headers=headers, label=locust_label
-                )
-            else:
-                return json_response
+        if json_response.get("empty") == "true" and json_response.get("ui") is None:
+            # This means we need to make the POST call to get the UI for the form.
+            resp = self.post_page(self.get_interaction_host() + related_action_link_url, payload={}, headers=headers, label=locust_label)
         return resp.json()
 
     def click_record_list_action(self, component: Dict[str, Any], process_model_uuid: str,
