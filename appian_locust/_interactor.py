@@ -524,8 +524,9 @@ class _Interactor:
             json_response = resp.json()
         if json_response.get("empty") == "true" and json_response.get("ui") is None:
             # This means we need to make the POST call to get the UI for the form.
-            resp = self.post_page(self.get_interaction_host() + related_action_link_url, payload={}, headers=headers, label=locust_label)
-        return resp.json()
+            headers = self.setup_sail_headers()
+            return self.post_page(self.get_interaction_host() + related_action_link_url, payload={}, headers=headers, label=locust_label).json()
+        return json_response
 
     def click_record_list_action(self, component: Dict[str, Any], process_model_uuid: str,
                                  cache_key: str, locust_request_label: Optional[str] = None) -> Dict[str, Any]:
