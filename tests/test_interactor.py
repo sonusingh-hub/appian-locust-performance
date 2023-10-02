@@ -391,6 +391,48 @@ class TestInteractor(unittest.TestCase):
                               'extension': 'jpeg', 'fileSizeBytes': "2"},
                              document_update['#v'][i])
 
+    def test_click_related_action(self) -> None:
+        opaque_record_id = "id"
+        opaque_related_action_id = "other_id"
+        record_type_stub = "stub"
+        expected_response = {
+            "ui": "here"
+        }
+        self.custom_locust.set_response(
+            f"/suite/rest/a/record/latest/{record_type_stub}/{opaque_record_id}/actions/{opaque_related_action_id}",
+            200,
+            json.dumps(expected_response)
+        )
+
+        resp = self.task_set.appian._interactor.click_related_action(
+                    component={"label": "whatever"},
+                    record_type_stub=record_type_stub,
+                    opaque_record_id=opaque_record_id,
+                    opaque_related_action_id=opaque_related_action_id,
+                    open_in_a_dialog=False
+                )
+
+        self.assertEqual(resp, expected_response)
+
+    def test_click_related_action_chained(self) -> None:
+        opaque_record_id = "id"
+        opaque_related_action_id = "other_id"
+        expected_response = {
+            "it": "worked"
+        }
+        self.custom_locust.enqueue_response(200, '{"empty": "true"}')
+        self.custom_locust.enqueue_response(200, json.dumps(expected_response))
+
+        resp = self.task_set.appian._interactor.click_related_action(
+                    component={"label": "whatever"},
+                    record_type_stub="",
+                    opaque_record_id=opaque_record_id,
+                    opaque_related_action_id=opaque_related_action_id,
+                    open_in_a_dialog=True
+                )
+
+        self.assertEqual(resp, expected_response)
+
     def test_clean_filename(self) -> None:
         cleaned_str = self.task_set.appian._interactor._clean_filename("\\<>:\"/|?*")
         self.assertEqual(cleaned_str, ".........")
