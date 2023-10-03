@@ -146,7 +146,7 @@ class _Tasks(_Base):
         _, current_task = super().get(self._tasks, task_name, exact_match)
         if not current_task:
             e = Exception(f'There is no task with name "{task_name}" in the system under test (Exact match = {exact_match})')
-            log_locust_error(e)
+            log_locust_error('_tasks.get_task', e)
         return current_task
 
     def get_task_form_json(self, task_name: str, locust_request_label: str = "", exact_match: bool = True) -> Dict[str, Any]:

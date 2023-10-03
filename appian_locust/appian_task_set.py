@@ -130,7 +130,7 @@ class AppianTaskSet(TaskSet):
         try:
             override_default_feature_flags(self.appian._interactor, flags_to_override_generator)
         except Exception as e:
-            log_locust_error(e, error_desc="Override Default Flags Error")
+            log_locust_error('override_default_flags', e, error_desc="Override Default Flags Error")
 
 
 class AppianTaskSequence(SequentialTaskSet, AppianTaskSet):

@@ -84,7 +84,12 @@ class _Actions(_Base):
             self.get_actions_nav(locust_request_label=locust_request_label)
             self.get_actions_feed(locust_request_label=locust_request_label)
         except Exception as e:
-            log_locust_error(e, error_desc="Response Error", raise_error=False)
+            log_locust_error(
+                locust_request_label,
+                e,
+                error_desc="Response Error",
+                raise_error=False,
+            )
 
         headers = self.interactor.setup_request_headers(self.interactor.host + ACTIONS_ALL_PATH)
 
@@ -104,10 +109,22 @@ class _Actions(_Base):
                 except Exception as e:
                     error_key_count += 1
                     self._actions[error_key_string + str(error_key_count)] = {}
-                    log_locust_error(e, error_desc="Corrupt Action Error", raise_error=False)
+                    log_locust_error(
+                        locust_request_label,
+                        e,
+                        error_desc="Corrupt Action Error",
+                        resp=resp,
+                        raise_error=False,
+                    )
             self._errors = error_key_count
         except Exception as e:
-            log_locust_error(e, error_desc="No Actions Returned", raise_error=False)
+            log_locust_error(
+                locust_request_label,
+                e,
+                error_desc="No Actions Returned",
+                resp=resp,
+                raise_error=False,
+            )
             return self._actions
         return self._actions
 

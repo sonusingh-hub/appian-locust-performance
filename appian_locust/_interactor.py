@@ -134,8 +134,16 @@ class _Interactor:
             return uri.replace('/suite', self.client.base_path_override, 1)
         return uri
 
-    def post_page(self, uri: str, payload: Any = {}, headers: Optional[Dict[str, Any]] = None, label: Optional[str] = None,
-                  files: Optional[dict] = None, raise_error: bool = True, check_login: bool = True) -> Response:
+    def post_page(
+        self,
+        uri: str,
+        payload: Any = {},
+        headers: Optional[Dict[str, Any]] = None,
+        label: Optional[str] = None,
+        files: Optional[dict] = None,
+        raise_error: bool = True,
+        check_login: bool = True,
+    ) -> Response:
         """
         Given a uri, executes POST request and returns response
 
@@ -151,6 +159,7 @@ class _Interactor:
         if headers is None:
             headers = self.setup_sail_headers()
         uri = self.replace_base_path_if_appropriate(uri)
+        label = label or f'_interactor.post_page.{uri}'
         username = "No-auth User" if self.portals_mode else get_username(self.auth)
         if files:  # When a file is specified, don't send any data in the 'data' field
             post_payload = None
@@ -159,13 +168,29 @@ class _Interactor:
         elif isinstance(payload, str):
             post_payload = payload.encode()
         else:
-            log_locust_error(Exception("Cannot POST a payload that is not of type dict or string"))
-        with self.client.post(uri, data=post_payload, headers=headers, timeout=self._request_timeout, name=label, files=files,
-                              catch_response=True) as resp:  # type: ResponseContextManager
+            log_locust_error(
+                label,
+                Exception("Cannot POST a payload that is not of type dict or string")
+            )
+        with self.client.post(
+            uri,
+            data=post_payload,
+            headers=headers,
+            timeout=self._request_timeout,
+            name=label,
+            files=files,
+            catch_response=True,
+        ) as resp:  # type: ResponseContextManager
             if check_login:
                 self.check_post_response_for_valid_auth(resp=resp)
             try:
-                test_response_for_error(resp, uri, raise_error=raise_error, username=username)
+                test_response_for_error(
+                    resp,
+                    uri,
+                    raise_error=raise_error,
+                    username=username,
+                    name=label,
+                )
             except Exception as e:
                 raise e
             else:
@@ -266,8 +291,13 @@ class _Interactor:
                 self.client.cookies.clear()
                 self.login()
 
-    def get_page(self, uri: str, headers: Optional[Dict[str, Any]] = None, label: Optional[str] = None,
-                 check_login: bool = True) -> Response:
+    def get_page(
+        self,
+        uri: str,
+        headers: Optional[Dict[str, Any]] = None,
+        label: Optional[str] = None,
+        check_login: bool = True,
+    ) -> Response:
         """
         Given a uri, executes GET request and returns response
 
@@ -287,6 +317,7 @@ class _Interactor:
         kwargs: Dict[str, Any] = {'name': label, 'catch_response': True}
 
         uri = self.replace_base_path_if_appropriate(uri)
+        label = label or f"_interactor.get_page.{uri}"
         if headers is not None:
             kwargs['headers'] = headers
             kwargs['timeout'] = self._request_timeout
@@ -295,7 +326,13 @@ class _Interactor:
                 self.check_login(resp)
             if not self.portals_mode:
                 username = get_username(self.auth)
-                test_response_for_error(resp, uri, raise_error=check_login, username=username)
+                test_response_for_error(
+                    resp,
+                    uri,
+                    raise_error=check_login,
+                    username=username,
+                    name=label,
+                )
             if self.record_mode:
                 self.write_response_to_lib_folder(label, resp)
             return resp
@@ -392,6 +429,7 @@ class _Interactor:
 
         Returns: the response of get RecordLink operation as json
         '''
+        locust_label = locust_label or "Clicking RecordLink: " + component["label"]
 
         # The record links in record instance view tabs are 1 level further down
         if '_recordRef' not in component:
@@ -406,7 +444,7 @@ class _Interactor:
         record_view_url_stub = f"/view/{dashboard}"
         if not record_ref:
             e = Exception("Cannot find _recordRef attribute in RecordLink component.")
-            log_locust_error(e, raise_error=True)
+            log_locust_error(locust_label, e, raise_error=True)
         record_link_url_suffix = record_ref + record_view_url_stub
 
         # Logic to construct record link URL in tempo and sites
@@ -424,7 +462,7 @@ class _Interactor:
                 page_name = page_search.group()
             else:
                 e = Exception("Unexpected record link URL - couldn't find page name after /pages/")
-                log_locust_error(e, raise_error=True)
+                log_locust_error(locust_label, e, raise_error=True)
 
             parse_pattern = page_name
             if TEMPO_SITE_STUB not in get_url:
@@ -443,16 +481,14 @@ class _Interactor:
             record_link_url = f"/suite/rest/a/sites/latest/{site_name}/page/{page_name}/record/{record_link_url_suffix}"
         else:
             e = Exception("Unexpected record link URL")
-            log_locust_error(e, raise_error=True)
+            log_locust_error(locust_label, e, raise_error=True)
 
         if not get_url or not record_link_url:
             e = Exception("Cannot make Record Link request.")
-            log_locust_error(e, raise_error=True)
+            log_locust_error(locust_label, e, raise_error=True)
 
         # Clicking a record link returns a record instance feed - use setup_feed_headers to get the correct headers
         headers = self.setup_feed_headers()
-
-        locust_label = locust_label or "Clicking RecordLink: " + component["label"]
 
         resp = self.get_page(
             self.get_interaction_host() + record_link_url, headers=headers, label=locust_label
@@ -1023,6 +1059,8 @@ class _Interactor:
 
             Returns: the response of post operation as json
         '''
+        locust_label = locust_label or "Uploading Document to " + \
+            upload_field.get("label", upload_field.get("testLabel", "Generic FileUpload"))
         new_value: Dict
         # This codepath will only be taken by components older than a certain version
         # all new code will fall into the list path
@@ -1039,15 +1077,13 @@ class _Interactor:
                 "#v": [self._make_file_metadata(result) for result in doc_info]
             }
         else:
-            log_locust_error(Exception(f"Bad document id or list of document ids: {doc_info}"))
+            log_locust_error(locust_label, Exception(f"Bad document id or list of document ids: {doc_info}"))
         payload = save_builder() \
             .component(upload_field) \
             .context(context) \
             .uuid(uuid) \
             .value(new_value) \
             .build()
-        locust_label = locust_label or "Uploading Document to " + \
-            upload_field.get("label", upload_field.get("testLabel", "Generic FileUpload"))
 
         headers = self.setup_sail_headers()
         headers['X-Client-Mode'] = client_mode

@@ -57,14 +57,15 @@ def _get_javascript_and_find_feature_flag(client: HttpSession, script_uri: str, 
     """
     flag_str = None
     # Since this is a large request, read incrementally
+    name = "Login.Feature_Toggles.GetJS"
     with client.get(
             script_uri,
             headers=headers,
             stream=True,
-            name="Login.Feature_Toggles.GetJS",
-            catch_response=True
+            name=name,
+            catch_response=True,
     ) as res:
-        test_response_for_error(res, script_uri)
+        test_response_for_error(res, script_uri, name=name)
         res.encoding = "utf-8"
         prev_chunk = ""
         """ Sample regexes for the feature flag are:

@@ -66,7 +66,12 @@ class SystemOperator:
         resp = self.__interactor.get_page(uri, headers=headers, label=locust_request_label)
         return resp
 
-    def post_webapi(self, uri: str, headers: Optional[Dict[str, Any]] = None, locust_request_label: Optional[str] = None) -> Response:
+    def post_webapi(
+        self,
+        uri: str,
+        headers: Optional[Dict[str, Any]] = None,
+        locust_request_label: Optional[str] = None,
+    ) -> Response:
         """
         Make a GET request to a web api endpoint
         Args:
@@ -94,7 +99,7 @@ class SystemOperator:
         Returns: Response object containing information of downloaded content
 
         """
-        locust_request_label = locust_request_label or f"Site.DownloadContent.{opaque_id}"
+        locust_request_label = locust_request_label or f"system_operator.DownloadContent.{opaque_id}"
         uri = f"/suite/rest/a/content/latest/{opaque_id}/o"
         headers = self.__interactor.setup_content_headers()
         return self.__interactor.get_page(
