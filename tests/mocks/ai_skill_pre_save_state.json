@@ -1,0 +1,1226 @@
+{
+    "i18nInfo": {
+        "calendarId": "",
+        "decimalSeparator": ".",
+        "timezoneId": "GMT",
+        "groupingSeparator": ",",
+        "locale": "en-US",
+        "isRtl": false,
+        "isLtr": true
+    },
+    "asyncEventStreams": [],
+    "timers": {
+        "#t": "Dictionary"
+    },
+    "uiExpression": "",
+    "shortcuts": [],
+    "triggers": [],
+    "uuid": "5d65e6c7-4f0e-4d37-8794-30fa9bda1928",
+    "lastEvaluatedFormFactor": "DESKTOP",
+    "#t": "UiConfig",
+    "#u": "<\/sail-server/SYSTEM_SYSRULES_aiSkillDesigner/content/{opaqueContentId}>; rel=\"x-document-image\"; type=\"application/vnd.appian.tv+json\"; dt=\"DocumentImage\", <\/sail-server/SYSTEM_SYSRULES_aiSkillDesigner/content/{opaqueContentId}>; rel=\"x-custom\"; type=\"application/vnd.appian.tv+json\"; dt=\"DocumentImage\", <\/sail-server/SYSTEM_SYSRULES_aiSkillDesigner/content/{opaqueContentId}>; dt=\"DocumentDownloadLink\", <\/sail-server/SYSTEM_SYSRULES_aiSkillDesigner/content/{opaqueContentId}>; rel=\"x-viewport\"; type=\"application/vnd.appian.tv+json\"; dt=\"DocumentImage\", <\/sail-server/SYSTEM_SYSRULES_aiSkillDesigner/record/dataexport/download-grid>; rel=\"x-data-export-grid\"; dt=\"InPlaceDownloadLink\", <\/sail-server/SYSTEM_SYSRULES_aiSkillDesigner>; rel=\"x-web-bookmark\"; dt=\"NavigationNodeLink\", <\/sail-server/SYSTEM_SYSRULES_aiSkillDesigner/page/{pageUrlStub}>; rel=\"x-web-bookmark-page\"; dt=\"NavigationNodeLink\", <\/sail-server/SYSTEM_SYSRULES_aiSkillDesigner/_/ui>; rel=\"x-navigation-app\"; dt=\"NavigationNodeLink\", <\/sail-server/SYSTEM_SYSRULES_aiSkillDesigner/_/ui/page/{pageUrlStub}>; rel=\"x-navigation-app-page\"; dt=\"NavigationNodeLink\", ",
+    "_cId": "68e488b178fb76d25628bb18b16c9f27",
+    "ui": {
+        "padding": "STANDARD",
+        "accessibilityRole": "",
+        "#t": "ContentLayout",
+        "_cId": "66af7f2e45de09c7e28d66c33480920d",
+        "contents": [
+            {
+                "#t": "SailEventManager",
+                "_cId": "56be954df55867dc5ab3e4e1697dd818",
+                "ui": [
+                    {
+                        "#t": "PaneLayout",
+                        "_cId": "147aa92fdd9e8baae6ddbb1c7b9503e7",
+                        "panes": [
+                            {
+                                "padding": "",
+                                "backgroundColor": "#F3F3FD",
+                                "_cId": "98bfa0ea150b99b79618fd8a8c099ff5",
+                                "contents": [
+                                    {
+                                        "padding": "",
+                                        "accessibilityRole": "",
+                                        "#t": "ContentLayout",
+                                        "_cId": "d2c13b1b226c1b390ae93545eea807c8",
+                                        "customStyle": "PANE_CONTENTS_WRAPPER",
+                                        "contents": [
+                                            {
+                                                "decorativeBarColor": "",
+                                                "marginAbove": "",
+                                                "shape": "",
+                                                "browserTooltip": "",
+                                                "tooltip": "",
+                                                "decorativeBarPosition": "",
+                                                "tooltipAlignment": "",
+                                                "showBorder": false,
+                                                "accessibilityText": "",
+                                                "#t": "CardLayout",
+                                                "_cId": "7f8d4dea77e84834c5acb2f23c3c18e1",
+                                                "alignVertical": "",
+                                                "contents": [
+                                                    {
+                                                        "padding": "STANDARD",
+                                                        "accessibilityRole": "",
+                                                        "#t": "ContentLayout",
+                                                        "_cId": "6e3e560f6f9dc92da991679700d5c882",
+                                                        "contents": [
+                                                            {
+                                                                "instructions": "",
+                                                                "marginAbove": "",
+                                                                "preventWrapping": false,
+                                                                "tooltip": "",
+                                                                "label": "",
+                                                                "helpTooltip": "",
+                                                                "accessibilityText": "",
+                                                                "valueAlignment": "",
+                                                                "#t": "RichTextDisplayField",
+                                                                "_cId": "daad224dd5fe005f23faa24b377f0d7a",
+                                                                "labelPosition": "COLLAPSED",
+                                                                "marginBelow": "",
+                                                                "value": {
+                                                                    "#t": "FormattedText",
+                                                                    "_cId": "f2d090e624057e16d58b09bc90a398d2",
+                                                                    "values": [
+                                                                        {
+                                                                            "linkStyle": "STANDALONE",
+                                                                            "#t": "LinkedItem",
+                                                                            "_cId": "4c89d5a115b20e72829fc7a7430bd4f9",
+                                                                            "values": {
+                                                                                "#t": "FormattedText",
+                                                                                "_cId": "e6a4535ef18340d5e576c67fe8acf88a",
+                                                                                "values": [
+                                                                                    {
+                                                                                        "iconId": "",
+                                                                                        "captionPosition": "",
+                                                                                        "#t": "IconWidget",
+                                                                                        "_cId": "c57c3eb7397b1917052c8cc43ada3ee7",
+                                                                                        "altText": "",
+                                                                                        "size": "",
+                                                                                        "color": "",
+                                                                                        "icon": "long-arrow-left",
+                                                                                        "caption": ""
+                                                                                    },
+                                                                                    {
+                                                                                        "#t": "string",
+                                                                                        "#v": " View training summary"
+                                                                                    }
+                                                                                ]
+                                                                            },
+                                                                            "link": {
+                                                                                "#t": "DynamicLink",
+                                                                                "_cId": "5d2f8763d270c6533b0840b824dbeebd",
+                                                                                "tooltip": "",
+                                                                                "label": "",
+                                                                                "href": "",
+                                                                                "saveInto": [
+                                                                                    "<<jA0EAwMCqETi36TOaMsB0qkBdgDaF7/cgPcgjBPDwg4VtE290si+ZQmj0kN3xMvxHzo5zCY6IZSn\r\nLems5oOA3z2YM0YjtKFnYwQx2u6Ef1SNn5fpS6ZyS7Dx/+XVvx9Dv2RJAeXaVs+RtNKF3mRznm9B\r\nStvDd8YdoNTfufauopB2AF0pVeD5BF1Dcv/w3Uv+NWdyYn4//wYATyr1ahtSUHpJlfRDzwORCijN\r\nN+HPgEJYZzClx8ecfo6K\r\n>>"
+                                                                                ],
+                                                                                "value": {
+                                                                                    "#t": "string",
+                                                                                    "#v": ""
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                "removeBrowserTooltip": false
+                                                            },
+                                                            {
+                                                                "instructions": "",
+                                                                "marginAbove": "",
+                                                                "preventWrapping": false,
+                                                                "tooltip": "",
+                                                                "label": "",
+                                                                "helpTooltip": "",
+                                                                "accessibilityText": "",
+                                                                "valueAlignment": "",
+                                                                "#t": "RichTextDisplayField",
+                                                                "_cId": "4f20ef690aa625ac0369846382e32580",
+                                                                "labelPosition": "COLLAPSED",
+                                                                "marginBelow": "",
+                                                                "value": {
+                                                                    "#t": "FormattedText",
+                                                                    "_cId": "46f7fdf78749da9eea9b570ce76f2c83",
+                                                                    "values": [
+                                                                        {
+                                                                            "#t": "SizedText",
+                                                                            "_cId": "2807b3671fac9417d77ca8dd4df909b8",
+                                                                            "size": "MEDIUM_PLUS",
+                                                                            "values": [
+                                                                                {
+                                                                                    "#t": "string",
+                                                                                    "#v": "Create Model"
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                "removeBrowserTooltip": false
+                                                            },
+                                                            {
+                                                                "instructions": "",
+                                                                "marginAbove": "",
+                                                                "preventWrapping": false,
+                                                                "tooltip": "",
+                                                                "label": "",
+                                                                "helpTooltip": "",
+                                                                "accessibilityText": "",
+                                                                "valueAlignment": "",
+                                                                "#t": "RichTextDisplayField",
+                                                                "_cId": "8d7eee2a7cb2d2e17febd9919363bbb2",
+                                                                "labelPosition": "COLLAPSED",
+                                                                "marginBelow": "",
+                                                                "value": {
+                                                                    "#t": "FormattedText",
+                                                                    "_cId": "bbdc674b3c190af8506e4f91fa266683",
+                                                                    "values": [
+                                                                        {
+                                                                            "#t": "string",
+                                                                            "#v": "Define the types of documents you work with. A model needs at least two document types to begin training."
+                                                                        },
+                                                                        {
+                                                                            "#t": "string",
+                                                                            "#v": "\n"
+                                                                        },
+                                                                        {
+                                                                            "#t": "string",
+                                                                            "#v": "\n"
+                                                                        },
+                                                                        {
+                                                                            "#t": "string",
+                                                                            "#v": "Then, add example documents of each type to train the skill to classify similar documents. "
+                                                                        },
+                                                                        {
+                                                                            "#t": "string",
+                                                                            "#v": "\n"
+                                                                        },
+                                                                        {
+                                                                            "#t": "string",
+                                                                            "#v": "\n"
+                                                                        },
+                                                                        {
+                                                                            "iconId": "",
+                                                                            "captionPosition": "",
+                                                                            "#t": "IconWidget",
+                                                                            "_cId": "1ccb3eef5116bd97015848d9bc2c62f8",
+                                                                            "altText": "",
+                                                                            "size": "SMALL",
+                                                                            "color": "ACCENT",
+                                                                            "icon": "info-circle",
+                                                                            "caption": ""
+                                                                        },
+                                                                        {
+                                                                            "#t": "SizedText",
+                                                                            "_cId": "2b74ab9788cd87ac80896b01379c0c87",
+                                                                            "size": "SMALL",
+                                                                            "values": [
+                                                                                {
+                                                                                    "#t": "string",
+                                                                                    "#v": " Make sure the documents you add represent the documents you expect to see when you use your skill in production."
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                "removeBrowserTooltip": false
+                                                            }
+                                                        ],
+                                                        "topLevelBackgroundColor": ""
+                                                    }
+                                                ],
+                                                "width": "FIT",
+                                                "marginBelow": "",
+                                                "style": "#F3F3FD",
+                                                "customHoverStyle": "",
+                                                "height": "AUTO"
+                                            },
+                                            {
+                                                "decorativeBarColor": "",
+                                                "marginAbove": "",
+                                                "shape": "",
+                                                "browserTooltip": "",
+                                                "tooltip": "",
+                                                "decorativeBarPosition": "",
+                                                "tooltipAlignment": "",
+                                                "showBorder": false,
+                                                "accessibilityText": "",
+                                                "#t": "CardLayout",
+                                                "_cId": "44ef999584568ccdc90070c154380d03",
+                                                "alignVertical": "",
+                                                "contents": [
+                                                    {
+                                                        "padding": "LESS",
+                                                        "accessibilityRole": "",
+                                                        "#t": "ContentLayout",
+                                                        "_cId": "81d851fa826818ee6cfd755bf4108fdc",
+                                                        "contents": [],
+                                                        "topLevelBackgroundColor": ""
+                                                    }
+                                                ],
+                                                "width": "FIT",
+                                                "marginBelow": "",
+                                                "style": "#F3F3FD",
+                                                "customHoverStyle": "",
+                                                "height": "EXTRA_TALL"
+                                            }
+                                        ],
+                                        "topLevelBackgroundColor": ""
+                                    }
+                                ],
+                                "width": "MEDIUM"
+                            },
+                            {
+                                "padding": "",
+                                "backgroundColor": "",
+                                "_cId": "2f94c070a9868a8300ec25c9e55d47c1",
+                                "contents": [
+                                    {
+                                        "padding": "",
+                                        "accessibilityRole": "",
+                                        "#t": "ContentLayout",
+                                        "_cId": "6aced8503b315b126cf2bbde5612a394",
+                                        "customStyle": "PANE_CONTENTS_WRAPPER",
+                                        "contents": [
+                                            {
+                                                "decorativeBarColor": "",
+                                                "marginAbove": "",
+                                                "shape": "",
+                                                "browserTooltip": "",
+                                                "tooltip": "",
+                                                "decorativeBarPosition": "",
+                                                "tooltipAlignment": "",
+                                                "showBorder": false,
+                                                "accessibilityText": "",
+                                                "#t": "CardLayout",
+                                                "_cId": "028f2ebaa4b087d0606d68850154efbd",
+                                                "alignVertical": "",
+                                                "contents": [
+                                                    {
+                                                        "padding": "STANDARD",
+                                                        "accessibilityRole": "",
+                                                        "#t": "ContentLayout",
+                                                        "_cId": "b1d3b4c4d84402bb04a88a6a19ca95f0",
+                                                        "contents": [
+                                                            {
+                                                                "instructions": "",
+                                                                "helpTooltipPosition": "",
+                                                                "marginAbove": "",
+                                                                "skinName": "",
+                                                                "label": "",
+                                                                "helpTooltip": "",
+                                                                "accessibilityText": "",
+                                                                "#t": "FieldLayout",
+                                                                "_cId": "149a6b169b41d238d1c01402e34304bc",
+                                                                "contents": {
+                                                                    "instructions": "",
+                                                                    "#t": "SideBySideGroup",
+                                                                    "_cId": "6d85ca7b995b71120acd20d7a1f86945",
+                                                                    "spacing": "",
+                                                                    "alignVertical": "BOTTOM",
+                                                                    "labelPosition": "",
+                                                                    "label": "",
+                                                                    "helpTooltip": "",
+                                                                    "validations": [],
+                                                                    "items": [
+                                                                        {
+                                                                            "item": {
+                                                                                "instructions": "",
+                                                                                "marginAbove": "MORE",
+                                                                                "preventWrapping": false,
+                                                                                "tooltip": "",
+                                                                                "label": "",
+                                                                                "helpTooltip": "",
+                                                                                "accessibilityText": "",
+                                                                                "valueAlignment": "",
+                                                                                "#t": "RichTextDisplayField",
+                                                                                "_cId": "d095f09974c964e0798a4e903c7cf5df",
+                                                                                "labelPosition": "COLLAPSED",
+                                                                                "marginBelow": "STANDARD",
+                                                                                "value": {
+                                                                                    "#t": "FormattedText",
+                                                                                    "_cId": "bdbfc4b3cea33387eeff384c35bbc76b",
+                                                                                    "values": [
+                                                                                        {
+                                                                                            "headerSize": "SMALL",
+                                                                                            "#t": "HeaderText",
+                                                                                            "_cId": "c8a3e2bb7914d82c2d6571948a92a124",
+                                                                                            "values": [
+                                                                                                {
+                                                                                                    "#t": "string",
+                                                                                                    "#v": "Document Types (1)"
+                                                                                                }
+                                                                                            ]
+                                                                                        }
+                                                                                    ]
+                                                                                },
+                                                                                "removeBrowserTooltip": false
+                                                                            },
+                                                                            "_cId": "c86fa46035718e7cdf3aa719f417e79d",
+                                                                            "width": ""
+                                                                        },
+                                                                        {
+                                                                            "item": {
+                                                                                "#t": "ButtonLayout",
+                                                                                "_cId": "0d7943cf10ea09864fdb6a71ca73383b",
+                                                                                "secondaryButtons": [
+                                                                                    {
+                                                                                        "confirmMessage": "",
+                                                                                        "icon": "plus",
+                                                                                        "saveInto": [
+                                                                                            "<<jA0EAwMCqETi36TOaMsB0q0BdgDaF7/cgPcgjBPDwg4VtE290si+ZQmlTqmucmSPaL3F4hUk28ej\r\n/zOshjVjlUhWxU9T0FDQG51sIhDIwlWns8/BHSjO+EmoY3OqlBVC+Y359zKN3NvU+XizDZVOgpMt\r\nbgkKwCDFNz6PBKocUW6lA7aLxd7PKByLeJk92Z5K7LIyNXQ8jnuVwnEpp4NnetRgmv0FLB/BiIsy\r\nBJNQ6VyvaxcC0npa+PzrTr4Aiw==\r\n>>"
+                                                                                        ],
+                                                                                        "enableRecaptcha": "false",
+                                                                                        "tooltipStyle": "",
+                                                                                        "confirmButtonLabel": "",
+                                                                                        "cancelButtonLabel": "",
+                                                                                        "disabled": false,
+                                                                                        "value": {
+                                                                                            "#t": "string",
+                                                                                            "#v": ""
+                                                                                        },
+                                                                                        "confirmHeader": "",
+                                                                                        "isFlat": "false",
+                                                                                        "shape": "",
+                                                                                        "buttonStyle": "LINK",
+                                                                                        "skinName": "",
+                                                                                        "tooltipVerticalPosition": "",
+                                                                                        "label": "New Type",
+                                                                                        "tooltipWidth": "",
+                                                                                        "accessibilityText": "",
+                                                                                        "ariaLabel": "",
+                                                                                        "_cId": "98274b9671b6f78271ee9d37533ebd00",
+                                                                                        "size": "SMALL",
+                                                                                        "width": "",
+                                                                                        "iconPosition": "",
+                                                                                        "style": "",
+                                                                                        "confirmButtonStyle": "PRIMARY"
+                                                                                    }
+                                                                                ],
+                                                                                "marginAbove": "",
+                                                                                "isButtonArrayLayout": "true",
+                                                                                "marginBelow": "NONE",
+                                                                                "align": "START",
+                                                                                "accessibilityText": ""
+                                                                            },
+                                                                            "_cId": "bff68f1a6709f54a2cb72ac2ae33132f",
+                                                                            "width": "MINIMIZE"
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                "labelPosition": "COLLAPSED",
+                                                                "instructionsPosition": "",
+                                                                "marginBelow": "",
+                                                                "requiredStyle": ""
+                                                            },
+                                                            {
+                                                                "decorativeBarColor": "",
+                                                                "marginAbove": "",
+                                                                "shape": "",
+                                                                "browserTooltip": "",
+                                                                "tooltip": "",
+                                                                "decorativeBarPosition": "",
+                                                                "tooltipAlignment": "",
+                                                                "showBorder": false,
+                                                                "accessibilityText": "Error message",
+                                                                "#t": "CardLayout",
+                                                                "_cId": "5d51bd1e2f860da1df464068ae03ad1b",
+                                                                "alignVertical": "",
+                                                                "contents": [
+                                                                    {
+                                                                        "padding": "LESS",
+                                                                        "accessibilityRole": "",
+                                                                        "#t": "ContentLayout",
+                                                                        "_cId": "0c04d633a50dd74aac1de400037803d3",
+                                                                        "contents": [
+                                                                            {
+                                                                                "instructions": "",
+                                                                                "helpTooltipPosition": "",
+                                                                                "marginAbove": "",
+                                                                                "skinName": "",
+                                                                                "label": "",
+                                                                                "helpTooltip": "",
+                                                                                "accessibilityText": "",
+                                                                                "#t": "FieldLayout",
+                                                                                "_cId": "46da1423a13d40674508816eb9c15677",
+                                                                                "contents": {
+                                                                                    "instructions": "",
+                                                                                    "#t": "SideBySideGroup",
+                                                                                    "_cId": "76899a57c5dbaec2eeb8b1601c939c60",
+                                                                                    "spacing": "NONE",
+                                                                                    "alignVertical": "MIDDLE",
+                                                                                    "labelPosition": "",
+                                                                                    "label": "",
+                                                                                    "helpTooltip": "",
+                                                                                    "validations": [],
+                                                                                    "items": [
+                                                                                        {
+                                                                                            "item": {
+                                                                                                "instructions": "",
+                                                                                                "marginAbove": "",
+                                                                                                "preventWrapping": false,
+                                                                                                "tooltip": "",
+                                                                                                "label": "",
+                                                                                                "helpTooltip": "",
+                                                                                                "accessibilityText": "",
+                                                                                                "valueAlignment": "CENTER",
+                                                                                                "#t": "RichTextDisplayField",
+                                                                                                "_cId": "039126f16ae01d6569fba17a3582bdd6",
+                                                                                                "labelPosition": "COLLAPSED",
+                                                                                                "marginBelow": "",
+                                                                                                "value": {
+                                                                                                    "#t": "FormattedText",
+                                                                                                    "_cId": "436afa87c19f3710d7391126c61ec368",
+                                                                                                    "values": [
+                                                                                                        {
+                                                                                                            "iconId": "",
+                                                                                                            "captionPosition": "",
+                                                                                                            "#t": "IconWidget",
+                                                                                                            "_cId": "1acf5541e9a0115c116a6f716dbfd6ad",
+                                                                                                            "altText": "",
+                                                                                                            "size": "STANDARD",
+                                                                                                            "color": "#ffa800",
+                                                                                                            "icon": "exclamation-triangle",
+                                                                                                            "caption": ""
+                                                                                                        },
+                                                                                                        {
+                                                                                                            "#t": "FormattedText",
+                                                                                                            "_cId": "6b3fa8aa1040f5a29f6122dc85dde79a",
+                                                                                                            "values": [
+                                                                                                                {
+                                                                                                                    "#t": "string",
+                                                                                                                    "#v": " "
+                                                                                                                }
+                                                                                                            ]
+                                                                                                        }
+                                                                                                    ]
+                                                                                                },
+                                                                                                "removeBrowserTooltip": false
+                                                                                            },
+                                                                                            "_cId": "10004a7eb6fe51c9ab4e5eadf397018a",
+                                                                                            "width": "MINIMIZE"
+                                                                                        },
+                                                                                        {
+                                                                                            "item": {
+                                                                                                "instructions": "",
+                                                                                                "marginAbove": "",
+                                                                                                "preventWrapping": false,
+                                                                                                "tooltip": "",
+                                                                                                "label": "",
+                                                                                                "helpTooltip": "",
+                                                                                                "accessibilityText": "",
+                                                                                                "valueAlignment": "",
+                                                                                                "#t": "RichTextDisplayField",
+                                                                                                "_cId": "a2c37434cf0949cc64bc4f789056e545",
+                                                                                                "labelPosition": "COLLAPSED",
+                                                                                                "marginBelow": "",
+                                                                                                "value": {
+                                                                                                    "#t": "FormattedText",
+                                                                                                    "_cId": "2ed8ffa06c59c0080ee10859c5c5d02c",
+                                                                                                    "values": [
+                                                                                                        {
+                                                                                                            "#t": "StrongText",
+                                                                                                            "_cId": "9245a8ee9f926caac27150e7b19e77ba",
+                                                                                                            "values": [
+                                                                                                                {
+                                                                                                                    "#t": "string",
+                                                                                                                    "#v": ""
+                                                                                                                }
+                                                                                                            ]
+                                                                                                        },
+                                                                                                        {
+                                                                                                            "#t": "string",
+                                                                                                            "#v": " "
+                                                                                                        },
+                                                                                                        {
+                                                                                                            "#t": "string",
+                                                                                                            "#v": "The following document type"
+                                                                                                        },
+                                                                                                        {
+                                                                                                            "#t": "string",
+                                                                                                            "#v": " doesn't"
+                                                                                                        },
+                                                                                                        {
+                                                                                                            "#t": "string",
+                                                                                                            "#v": " meet all document requirements: "
+                                                                                                        },
+                                                                                                        {
+                                                                                                            "#t": "string",
+                                                                                                            "#v": ""
+                                                                                                        },
+                                                                                                        {
+                                                                                                            "#t": "StrongText",
+                                                                                                            "_cId": "56b3bfc5c198eab7415373b45c2ba71e",
+                                                                                                            "values": [
+                                                                                                                {
+                                                                                                                    "#t": "string",
+                                                                                                                    "#v": "dsfg"
+                                                                                                                }
+                                                                                                            ]
+                                                                                                        },
+                                                                                                        {
+                                                                                                            "#t": "string",
+                                                                                                            "#v": ". Click "
+                                                                                                        },
+                                                                                                        {
+                                                                                                            "#t": "StrongText",
+                                                                                                            "_cId": "45e5152de27349d163bd25a72dba25db",
+                                                                                                            "values": [
+                                                                                                                {
+                                                                                                                    "#t": "string",
+                                                                                                                    "#v": "Edit"
+                                                                                                                }
+                                                                                                            ]
+                                                                                                        },
+                                                                                                        {
+                                                                                                            "#t": "string",
+                                                                                                            "#v": " to add or update the documents required to start training."
+                                                                                                        },
+                                                                                                        {
+                                                                                                            "#t": "string",
+                                                                                                            "#v": " "
+                                                                                                        }
+                                                                                                    ]
+                                                                                                },
+                                                                                                "removeBrowserTooltip": false
+                                                                                            },
+                                                                                            "_cId": "17ff100bc46154aa6b3d060e9a24655c",
+                                                                                            "width": ""
+                                                                                        }
+                                                                                    ]
+                                                                                },
+                                                                                "labelPosition": "COLLAPSED",
+                                                                                "instructionsPosition": "",
+                                                                                "marginBelow": "",
+                                                                                "requiredStyle": ""
+                                                                            }
+                                                                        ],
+                                                                        "topLevelBackgroundColor": ""
+                                                                    }
+                                                                ],
+                                                                "width": "FIT",
+                                                                "marginBelow": "STANDARD",
+                                                                "style": "WARN",
+                                                                "customHoverStyle": "",
+                                                                "height": ""
+                                                            },
+                                                            {
+                                                                "decorativeBarColor": "WARN",
+                                                                "marginAbove": "",
+                                                                "shape": "SEMI_ROUNDED",
+                                                                "browserTooltip": "",
+                                                                "tooltip": "",
+                                                                "decorativeBarPosition": "START",
+                                                                "tooltipAlignment": "",
+                                                                "accessibilityText": "",
+                                                                "#t": "CardLayout",
+                                                                "_cId": "1cd5837288309c8ca35663fa93b8d570",
+                                                                "alignVertical": "",
+                                                                "contents": [
+                                                                    {
+                                                                        "padding": "LESS",
+                                                                        "accessibilityRole": "",
+                                                                        "#t": "ContentLayout",
+                                                                        "_cId": "d2f1eedc5026455f70889c82bbc69c1f",
+                                                                        "contents": [
+                                                                            {
+                                                                                "#t": "MultiColumnLayout",
+                                                                                "_cId": "7bdf5c0cbe0040f25b3f004a5cb6f4d4",
+                                                                                "spacing": "",
+                                                                                "marginAbove": "",
+                                                                                "alignVertical": "MIDDLE",
+                                                                                "columns": [
+                                                                                    {
+                                                                                        "_cId": "9c5940137d05ea0efbf08c7218cdaabe",
+                                                                                        "contents": [
+                                                                                            {
+                                                                                                "instructions": "",
+                                                                                                "marginAbove": "",
+                                                                                                "preventWrapping": false,
+                                                                                                "tooltip": "",
+                                                                                                "label": "",
+                                                                                                "helpTooltip": "",
+                                                                                                "accessibilityText": "",
+                                                                                                "valueAlignment": "",
+                                                                                                "#t": "RichTextDisplayField",
+                                                                                                "_cId": "663a45bd1b88da9808b5237968c687e5",
+                                                                                                "labelPosition": "COLLAPSED",
+                                                                                                "marginBelow": "",
+                                                                                                "value": {
+                                                                                                    "#t": "FormattedText",
+                                                                                                    "_cId": "0ef1f12c641fcedcf1b15cfed3c8ce1d",
+                                                                                                    "values": [
+                                                                                                        {
+                                                                                                            "#t": "SecondaryText",
+                                                                                                            "_cId": "80e63b7604619416b10985b752127d0d",
+                                                                                                            "values": [
+                                                                                                                {
+                                                                                                                    "#t": "string",
+                                                                                                                    "#v": "Type"
+                                                                                                                }
+                                                                                                            ]
+                                                                                                        }
+                                                                                                    ]
+                                                                                                },
+                                                                                                "removeBrowserTooltip": false
+                                                                                            },
+                                                                                            {
+                                                                                                "instructions": "",
+                                                                                                "marginAbove": "",
+                                                                                                "preventWrapping": false,
+                                                                                                "tooltip": "",
+                                                                                                "label": "",
+                                                                                                "helpTooltip": "",
+                                                                                                "accessibilityText": "",
+                                                                                                "valueAlignment": "",
+                                                                                                "#t": "RichTextDisplayField",
+                                                                                                "_cId": "1990f59cca2edbaa171cdae49c1c61fc",
+                                                                                                "labelPosition": "COLLAPSED",
+                                                                                                "marginBelow": "",
+                                                                                                "value": {
+                                                                                                    "#t": "FormattedText",
+                                                                                                    "_cId": "b8d368ac5588c5d9c45c5148e37cf131",
+                                                                                                    "values": [
+                                                                                                        {
+                                                                                                            "#t": "FormattedText",
+                                                                                                            "_cId": "0f66322f70a1d093ccefa0534b504df7",
+                                                                                                            "values": [
+                                                                                                                {
+                                                                                                                    "#t": "string",
+                                                                                                                    "#v": "dsfg"
+                                                                                                                }
+                                                                                                            ]
+                                                                                                        }
+                                                                                                    ]
+                                                                                                },
+                                                                                                "removeBrowserTooltip": false
+                                                                                            }
+                                                                                        ],
+                                                                                        "width": "",
+                                                                                        "align": ""
+                                                                                    },
+                                                                                    {
+                                                                                        "_cId": "676099028a8e7951a11b9d195914214e",
+                                                                                        "contents": [
+                                                                                            {
+                                                                                                "instructions": "",
+                                                                                                "marginAbove": "",
+                                                                                                "preventWrapping": false,
+                                                                                                "tooltip": "",
+                                                                                                "label": "",
+                                                                                                "helpTooltip": "",
+                                                                                                "accessibilityText": "",
+                                                                                                "valueAlignment": "",
+                                                                                                "#t": "RichTextDisplayField",
+                                                                                                "_cId": "ac4443b200c78f7ffdfcf30f7a199d53",
+                                                                                                "labelPosition": "COLLAPSED",
+                                                                                                "marginBelow": "",
+                                                                                                "value": {
+                                                                                                    "#t": "FormattedText",
+                                                                                                    "_cId": "b53251eb1fff4430f2324a5215256553",
+                                                                                                    "values": [
+                                                                                                        {
+                                                                                                            "#t": "SecondaryText",
+                                                                                                            "_cId": "620fbe6adfbb3d49d31b4fdd7a112d5f",
+                                                                                                            "values": [
+                                                                                                                {
+                                                                                                                    "#t": "string",
+                                                                                                                    "#v": "Documents"
+                                                                                                                }
+                                                                                                            ]
+                                                                                                        }
+                                                                                                    ]
+                                                                                                },
+                                                                                                "removeBrowserTooltip": false
+                                                                                            },
+                                                                                            {
+                                                                                                "instructions": "",
+                                                                                                "helpTooltipPosition": "",
+                                                                                                "marginAbove": "",
+                                                                                                "skinName": "",
+                                                                                                "label": "",
+                                                                                                "helpTooltip": "",
+                                                                                                "accessibilityText": "",
+                                                                                                "#t": "FieldLayout",
+                                                                                                "_cId": "8e9755d890f42bbd35ecb3994223b8ed",
+                                                                                                "contents": {
+                                                                                                    "instructions": "",
+                                                                                                    "#t": "SideBySideGroup",
+                                                                                                    "_cId": "11e268a9aabfb143e969ccb7de97e41f",
+                                                                                                    "spacing": "",
+                                                                                                    "alignVertical": "BOTTOM",
+                                                                                                    "labelPosition": "",
+                                                                                                    "label": "",
+                                                                                                    "helpTooltip": "",
+                                                                                                    "validations": [],
+                                                                                                    "items": [
+                                                                                                        {
+                                                                                                            "item": {
+                                                                                                                "instructions": "",
+                                                                                                                "marginAbove": "",
+                                                                                                                "preventWrapping": false,
+                                                                                                                "tooltip": "",
+                                                                                                                "label": "",
+                                                                                                                "helpTooltip": "",
+                                                                                                                "accessibilityText": "",
+                                                                                                                "valueAlignment": "",
+                                                                                                                "#t": "RichTextDisplayField",
+                                                                                                                "_cId": "4bbbc945bb6cc4503e929b4dec6c6de2",
+                                                                                                                "labelPosition": "COLLAPSED",
+                                                                                                                "marginBelow": "",
+                                                                                                                "value": {
+                                                                                                                    "#t": "FormattedText",
+                                                                                                                    "_cId": "3fb337ad54ffa4053bf986738bf11c1c",
+                                                                                                                    "values": [
+                                                                                                                        {
+                                                                                                                            "#t": "FormattedText",
+                                                                                                                            "_cId": "b2edacbeff90c047d9ddffe7888e0bea",
+                                                                                                                            "values": [
+                                                                                                                                {
+                                                                                                                                    "#t": "string",
+                                                                                                                                    "#v": "1 documents"
+                                                                                                                                }
+                                                                                                                            ]
+                                                                                                                        }
+                                                                                                                    ]
+                                                                                                                },
+                                                                                                                "removeBrowserTooltip": false
+                                                                                                            },
+                                                                                                            "_cId": "0014408fe2602a2e9586d9db664a8bbb",
+                                                                                                            "width": "MINIMIZE"
+                                                                                                        },
+                                                                                                        {
+                                                                                                            "item": {
+                                                                                                                "instructions": "",
+                                                                                                                "marginAbove": "",
+                                                                                                                "preventWrapping": false,
+                                                                                                                "tooltip": "",
+                                                                                                                "label": "",
+                                                                                                                "helpTooltip": "",
+                                                                                                                "accessibilityText": "",
+                                                                                                                "valueAlignment": "CENTER",
+                                                                                                                "#t": "RichTextDisplayField",
+                                                                                                                "_cId": "109112bac7b8251f0eeafcc3c49edea5",
+                                                                                                                "labelPosition": "COLLAPSED",
+                                                                                                                "marginBelow": "",
+                                                                                                                "value": {
+                                                                                                                    "#t": "FormattedText",
+                                                                                                                    "_cId": "e7abbb4bf76bb6c9fab1d195d331c2ab",
+                                                                                                                    "values": [
+                                                                                                                        {
+                                                                                                                            "iconId": "",
+                                                                                                                            "captionPosition": "",
+                                                                                                                            "#t": "IconWidget",
+                                                                                                                            "_cId": "a339549599ec702af195eff28176b1ce",
+                                                                                                                            "altText": "",
+                                                                                                                            "size": "STANDARD",
+                                                                                                                            "color": "#ffa800",
+                                                                                                                            "icon": "exclamation-triangle",
+                                                                                                                            "caption": ""
+                                                                                                                        },
+                                                                                                                        {
+                                                                                                                            "#t": "FormattedText",
+                                                                                                                            "_cId": "18c61eac1b89881622cc00041e70a618",
+                                                                                                                            "values": [
+                                                                                                                                {
+                                                                                                                                    "#t": "string",
+                                                                                                                                    "#v": " "
+                                                                                                                                }
+                                                                                                                            ]
+                                                                                                                        }
+                                                                                                                    ]
+                                                                                                                },
+                                                                                                                "removeBrowserTooltip": false
+                                                                                                            },
+                                                                                                            "_cId": "6c7b9a9ef3ccc3c71af30d3861f87481",
+                                                                                                            "width": "MINIMIZE"
+                                                                                                        }
+                                                                                                    ]
+                                                                                                },
+                                                                                                "labelPosition": "COLLAPSED",
+                                                                                                "instructionsPosition": "",
+                                                                                                "marginBelow": "",
+                                                                                                "requiredStyle": ""
+                                                                                            }
+                                                                                        ],
+                                                                                        "width": "",
+                                                                                        "align": ""
+                                                                                    },
+                                                                                    {
+                                                                                        "_cId": "0d78d410f0356a4a2728bf191978e8a8",
+                                                                                        "contents": [
+                                                                                            {
+                                                                                                "#t": "ButtonLayout",
+                                                                                                "_cId": "2b6e21a034d28e86328d6d8036c39d27",
+                                                                                                "marginAbove": "",
+                                                                                                "isButtonArrayLayout": "true",
+                                                                                                "marginBelow": "NONE",
+                                                                                                "primaryButtons": [
+                                                                                                    {
+                                                                                                        "isFlat": "false",
+                                                                                                        "confirmMessage": "",
+                                                                                                        "shape": "",
+                                                                                                        "buttonStyle": "LINK",
+                                                                                                        "icon": "",
+                                                                                                        "skinName": "",
+                                                                                                        "tooltipVerticalPosition": "",
+                                                                                                        "label": "Edit",
+                                                                                                        "saveInto": [
+                                                                                                            "<<jA0EAwMCqETi36TOaMsB0sATAXYA2he/3ID3IIwTw8IOFbRNvdLIvmUJo9JFd8SO9hs6XiYfYDIs\r\nHC2Z9L029rSP0elz6nmyvSn8PePDKRFfU2+s+M7FTMy5ZWHFmsvlsWFsmjuecfNWX8GBgT894IH9\r\ndanRwi8x5aWlOtOyK/+k+EuNheRvj0ZvyjVWqVm9PQBKGUh0nv+FSYWmsbZ7wPHYlwJDbRqMCJ4g\r\nJDIJg+G2eO3RaWZMip8CI0S5fpS+4rFZI0yVkkugVvszBdnQHE3N0GwmCzylM/V4ciidsOBcGKvb\r\nBQ==\r\n>>"
+                                                                                                        ],
+                                                                                                        "tooltipWidth": "",
+                                                                                                        "accessibilityText": "",
+                                                                                                        "enableRecaptcha": "false",
+                                                                                                        "ariaLabel": "",
+                                                                                                        "tooltipStyle": "",
+                                                                                                        "_cId": "e321ac9e3f07159b9f7f76b0a0802914",
+                                                                                                        "confirmButtonLabel": "",
+                                                                                                        "cancelButtonLabel": "",
+                                                                                                        "size": "",
+                                                                                                        "width": "",
+                                                                                                        "iconPosition": "",
+                                                                                                        "style": "",
+                                                                                                        "value": {
+                                                                                                            "#t": "string",
+                                                                                                            "#v": ""
+                                                                                                        },
+                                                                                                        "confirmButtonStyle": "PRIMARY",
+                                                                                                        "confirmHeader": ""
+                                                                                                    },
+                                                                                                    {
+                                                                                                        "confirmMessage": "When you remove a document type, all example documents for this document type are also removed.",
+                                                                                                        "icon": "",
+                                                                                                        "saveInto": [
+                                                                                                            "<<jA0EAwMCqETi36TOaMsB0sATAXYA2he/3ID3IIwTw8IOFbRNvdLIvmUJo9NFd8SO9Rs6lS/SUSob\r\nJ6R4VTCW1p/aJmeEXgYoi3reH/hBEr16VjR90fOTis1ignNuD+KYNo1qvIHuRb8RstY/BERwXcvM\r\nwW3pMTsUllZuaR7ojbvXup7bvM0Aj7Ym8t/leuF1id/jHXfSP7vsxiUqBO0W1MzrZEWWUdz83I+A\r\nkZmoTOs6Ryp6jfc8NPsrMJdKqtCMIUx/PZJuIW6xZplEL1Rt9kPG7LMRFiyRBXWwMiqeIa2sJRt1\r\nQw==\r\n>>"
+                                                                                                        ],
+                                                                                                        "enableRecaptcha": "false",
+                                                                                                        "tooltipStyle": "",
+                                                                                                        "confirmButtonLabel": "Remove",
+                                                                                                        "cancelButtonLabel": "Cancel",
+                                                                                                        "value": {
+                                                                                                            "#t": "string",
+                                                                                                            "#v": ""
+                                                                                                        },
+                                                                                                        "confirmHeader": "Remove Document Type?",
+                                                                                                        "isFlat": "false",
+                                                                                                        "shape": "",
+                                                                                                        "enableLoadingIndicator": true,
+                                                                                                        "buttonStyle": "LINK",
+                                                                                                        "skinName": "",
+                                                                                                        "tooltipVerticalPosition": "",
+                                                                                                        "label": "Remove",
+                                                                                                        "tooltipWidth": "",
+                                                                                                        "accessibilityText": "",
+                                                                                                        "ariaLabel": "",
+                                                                                                        "_cId": "1df12e8b3e09198e571da46bb15c2d58",
+                                                                                                        "size": "",
+                                                                                                        "width": "",
+                                                                                                        "iconPosition": "",
+                                                                                                        "style": "",
+                                                                                                        "confirmButtonStyle": "PRIMARY"
+                                                                                                    }
+                                                                                                ],
+                                                                                                "align": "END",
+                                                                                                "accessibilityText": ""
+                                                                                            }
+                                                                                        ],
+                                                                                        "width": "",
+                                                                                        "align": ""
+                                                                                    }
+                                                                                ],
+                                                                                "marginBelow": ""
+                                                                            }
+                                                                        ],
+                                                                        "topLevelBackgroundColor": ""
+                                                                    }
+                                                                ],
+                                                                "width": "FIT",
+                                                                "marginBelow": "STANDARD",
+                                                                "style": "NONE",
+                                                                "customHoverStyle": "",
+                                                                "height": "AUTO"
+                                                            },
+                                                            {
+                                                                "expandLabel": "Show section contents",
+                                                                "marginAbove": "",
+                                                                "labelHeadingTag": "",
+                                                                "skinName": "",
+                                                                "label": "",
+                                                                "labelIcon": {
+                                                                    "#t": "string",
+                                                                    "#v": ""
+                                                                },
+                                                                "accessibilityText": "",
+                                                                "labelColor": "",
+                                                                "iconAltText": "",
+                                                                "#t": "SectionLayout2",
+                                                                "dividerWeight": "",
+                                                                "_cId": "df60313b19a441f336375e70a2993801",
+                                                                "labelSize": "",
+                                                                "contents": [
+                                                                    {
+                                                                        "layout": "",
+                                                                        "minHeight": "",
+                                                                        "#t": "ColumnArrayLayout",
+                                                                        "_cId": "235ed16683bd72b7029784c78ea1043b",
+                                                                        "alignVertical": "",
+                                                                        "columns": [
+                                                                            {
+                                                                                "_cId": "9c194f7f62f35b3c71e981c33fee24fe",
+                                                                                "contents": [
+                                                                                    {
+                                                                                        "#t": "ButtonLayout",
+                                                                                        "_cId": "59de5d876faff5a3c9184766ee6fd0c9",
+                                                                                        "secondaryButtons": [
+                                                                                            {
+                                                                                                "isFlat": "false",
+                                                                                                "confirmMessage": "Changes you made may not be saved.",
+                                                                                                "shape": "",
+                                                                                                "buttonStyle": "",
+                                                                                                "icon": "",
+                                                                                                "skinName": "",
+                                                                                                "tooltipVerticalPosition": "",
+                                                                                                "label": "Cancel",
+                                                                                                "saveInto": [
+                                                                                                    "<<jA0EAwMCqETi36TOaMsB0qEBdgDaF7/cgPcgjBPDwg4VtE290si+ZQmlK6mucmePaK3fuj7HhLKw\r\n8co+r+ugmDNkmvj8q3NYaHQE69rQKdI5ckwrGU83OgYh/v/7qumZRnN46aFwQZT7yCW7sDlGcrgC\r\nVcX2BtgXxrBPVV3sCpVJZJfsANKIUp4IYGb1dAyVQIsXz335oTc3kY6E96OCX2ZpNKWd1ZVH0RmX\r\nBMzZTHOcjg==\r\n>>"
+                                                                                                ],
+                                                                                                "tooltipWidth": "",
+                                                                                                "accessibilityText": "",
+                                                                                                "enableRecaptcha": "false",
+                                                                                                "ariaLabel": "",
+                                                                                                "tooltipStyle": "",
+                                                                                                "_cId": "30c8989b84731d39af1f1a3d1898e3ec",
+                                                                                                "confirmButtonLabel": "Yes",
+                                                                                                "cancelButtonLabel": "No",
+                                                                                                "size": "",
+                                                                                                "width": "",
+                                                                                                "iconPosition": "",
+                                                                                                "style": "",
+                                                                                                "value": {
+                                                                                                    "#t": "string",
+                                                                                                    "#v": ""
+                                                                                                },
+                                                                                                "confirmButtonStyle": "PRIMARY",
+                                                                                                "confirmHeader": "Discard changes?"
+                                                                                            }
+                                                                                        ],
+                                                                                        "marginAbove": "",
+                                                                                        "marginBelow": "",
+                                                                                        "primaryButtons": [
+                                                                                            {
+                                                                                                "confirmMessage": "",
+                                                                                                "tooltip": "Add at least two document types to start training",
+                                                                                                "icon": "",
+                                                                                                "saveInto": [
+                                                                                                    "<<jA0EAwMCqETi36TOaMsB0q0BdgDaF7/cgPcgjBPDwg4VtE290si+ZQmlTa+ucmaPaK2qh5nzvFv3\r\nyzHqEirfiOtDS7TpPck1nuoMeLtFtlSS/WT+0iItDMp3MyMwRPN0Xcpn+GRfiOJY+7Pmx0Kph91O\r\niPdHgVi79w9qZdtQFqztbL8GNQ+bK7cgH7OyIxEU3310zD5G3RWnQYMDl4KEzOu7IYeYKqmCAWyl\r\nAGf7Uj+fAltg01ItTzzCa8V7Lw==\r\n>>"
+                                                                                                ],
+                                                                                                "enableRecaptcha": "false",
+                                                                                                "tooltipStyle": "",
+                                                                                                "confirmButtonLabel": "",
+                                                                                                "cancelButtonLabel": "",
+                                                                                                "disabled": true,
+                                                                                                "value": {
+                                                                                                    "#t": "string",
+                                                                                                    "#v": ""
+                                                                                                },
+                                                                                                "confirmHeader": "",
+                                                                                                "isFlat": "false",
+                                                                                                "shape": "",
+                                                                                                "buttonStyle": "PRIMARY",
+                                                                                                "skinName": "",
+                                                                                                "tooltipVerticalPosition": "",
+                                                                                                "label": "Train Model",
+                                                                                                "tooltipWidth": "",
+                                                                                                "accessibilityText": "",
+                                                                                                "ariaLabel": "",
+                                                                                                "_cId": "81fe3d02361a6ef3e6abecddcb8ee26d",
+                                                                                                "size": "",
+                                                                                                "width": "",
+                                                                                                "iconPosition": "",
+                                                                                                "style": "",
+                                                                                                "confirmButtonStyle": "PRIMARY"
+                                                                                            }
+                                                                                        ],
+                                                                                        "align": "",
+                                                                                        "accessibilityText": ""
+                                                                                    }
+                                                                                ],
+                                                                                "width": "",
+                                                                                "align": ""
+                                                                            }
+                                                                        ]
+                                                                    }
+                                                                ],
+                                                                "divider": "ABOVE",
+                                                                "isInitiallyCollapsed": "false",
+                                                                "labelStyle": "STANDARD",
+                                                                "marginBelow": "",
+                                                                "collapseLabel": "Hide section contents",
+                                                                "validations": [],
+                                                                "isCollapsible": "false",
+                                                                "errorLabel": "This section contains errors",
+                                                                "dividerColor": ""
+                                                            }
+                                                        ],
+                                                        "topLevelBackgroundColor": ""
+                                                    }
+                                                ],
+                                                "width": "FIT",
+                                                "marginBelow": "STANDARD",
+                                                "style": "NONE",
+                                                "customHoverStyle": "",
+                                                "height": "AUTO"
+                                            }
+                                        ],
+                                        "topLevelBackgroundColor": ""
+                                    }
+                                ],
+                                "width": ""
+                            }
+                        ]
+                    }
+                ],
+                "interfaceId": "SYSTEM_SYSRULES_aiSkillDesigner",
+                "saveInto": [
+                    "<<jA0EAwMCqETi36TOaMsB0oEBdgDaF7/cgPcgjBPDwg4VtE290si+ZQmlJKiYcmGPbL0sCs2YUQll\r\nV6WRcWICIi4APeQDYewZ9ZmJjnGSnBUyZcvwApMeZpvEiK0egZx/sHqET+etHW6FZZq5L1WVMRzj\r\nQFDlyWesPALjfnptKB+J9Qh/ZPIBYgNBRRq2bDy+b64=\r\n>>"
+                ],
+                "dependencies": {
+                    "evaluation": {
+                        "canSave": {
+                            "#t": "boolean",
+                            "#v": true
+                        },
+                        "id": {
+                            "#t": "int",
+                            "#v": 0
+                        }
+                    },
+                    "#t": "Map",
+                    "localStorage": {},
+                    "actionList": [
+                        {
+                            "op": "add",
+                            "path": "/doc-classification",
+                            "#t": "Map",
+                            "value": "37671fe0-4968-41a2-b810-0ddd4f662ac8"
+                        },
+                        {
+                            "op": "replace",
+                            "path": "/doc-classification/37671fe0-4968-41a2-b810-0ddd4f662ac8/documentTypes",
+                            "#t": "Map",
+                            "value": [
+                                {
+                                    "#t": "Map",
+                                    "data": [
+                                        {
+                                            "ignored": {
+                                                "#t": "boolean",
+                                                "#v": false
+                                            },
+                                            "fileName": {
+                                                "#t": "string",
+                                                "#v": "Invoice 1.pdf"
+                                            },
+                                            "fileSize": {
+                                                "#t": "int",
+                                                "#v": 14585
+                                            },
+                                            "filePosition": {
+                                                "#t": "int",
+                                                "#v": 1
+                                            },
+                                            "progress": {
+                                                "#t": "int",
+                                                "#v": 100
+                                            },
+                                            "fileCreatedAt": {
+                                                "#t": "int",
+                                                "#v": 1695922481
+                                            },
+                                            "fileId": {
+                                                "#t": "string",
+                                                "#v": "881daac2-a693-4fac-a9b3-eca35de78070"
+                                            }
+                                        }
+                                    ],
+                                    "label": "dsfg"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        ],
+        "topLevelBackgroundColor": "",
+        "_isAppianInjected": "true",
+        "_dirty": "false"
+    },
+    "formFactors": [],
+    "context": {
+        "#t": "Map",
+        "type": "stateless",
+        "value": "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"
+    },
+    "links": [
+        {
+            "method": "POST",
+            "rel": "update",
+            "href": "/sail-server/SYSTEM_SYSRULES_aiSkillDesigner/ui",
+            "title": "Update"
+        },
+        {
+            "method": "GET",
+            "rel": "self",
+            "href": "/sail-server/SYSTEM_SYSRULES_aiSkillDesigner/ui",
+            "title": "Update"
+        }
+    ],
+    "actions": [
+        {
+            "#t": "DynamicLink",
+            "_cId": "8333cdbab40a98c14806ddac91e84583",
+            "tooltip": "",
+            "label": "updateRecordActionRefresh",
+            "href": "",
+            "_actionName": "sail:record-action-trigger",
+            "saveInto": [
+                "<<jA0EAwMCqETi36TOaMsB0n0BdgDaF7/cgPcgjBPDwg4VtE290si+ZQmm1LtfDq78iBSBuJZsmCKD\r\nN0cxL6I7jQwtEozJtSkeY/MOjd93CIKLKImGWE+L1oKg9b+xGNfwjMITwTOvW4OhIrGn98GDct+p\r\n7qqchoptavPchjC2TMB2N0j5ET+nLv6aqjYzFQ==\r\n>>"
+            ]
+        },
+        {
+            "#t": "DynamicLink",
+            "_cId": "4713416ca9ec5e98a7be1d09b03bc84f",
+            "tooltip": "",
+            "label": "updateFormFactor",
+            "href": "",
+            "_actionName": "sail:update-form-factor",
+            "saveInto": [
+                "<<jA0EAwMCqETi36TOaMsB0n0BdgDaF7/cgPcgjBPDwg4VtE290si+ZQmm1LsaKK78iBRzumRw14r8\r\nM8cItkKx8wJrkZqVlDVnmPqpYqbSe2KDYMZwHHOICWrNk3ZB9AYIjXgcqrR1oSiNIziDbaWuLwAd\r\nldJkbJjaNfdgE3j+za6RC1um7yhQek3nfO/AQw==\r\n>>"
+            ]
+        },
+        {
+            "#t": "DynamicLink",
+            "_cId": "44a7926bb6f6110edd4075eab3f01b36",
+            "tooltip": "",
+            "label": "toggleSitesXray",
+            "href": "",
+            "_actionName": "sail:toggle-sites-xray",
+            "saveInto": [
+                "<<jA0EAwMCqETi36TOaMsB0n0BdgDaF7/cgPcgjBPDwg4VtE290si+ZQmm1LtfDq78iBSBuJZsmCKD\r\nN0cxL6I7jQwtEozJtSkeY/MOjd93CIKLKImGWE+L1oKg9b+xGNfwpsha8Z4eQIh5N4RHBvqOk2mn\r\n+VxwaBMlLx2FoIDFnH5Z/KRsZ4Tv2M137S7T7g==\r\n>>"
+            ]
+        },
+        {
+            "#t": "DynamicLink",
+            "_cId": "d9d6f55c2aaabb5fd3a32c4e02258640",
+            "tooltip": "",
+            "label": "",
+            "href": "",
+            "_actionName": "sail:update-async-event-streams",
+            "saveInto": [
+                "<<jA0EAwMCqETi36TOaMsB0n0BdgDaF7/cgPcgjBPDwg4VtE290si+ZQmm1LtfDq78iBSBuJZsmCKD\r\nN0cxL6I7jQwtEozJtSkeY/MOjd93CIKLKImGWE+L1oKg9b+xGNfwjMIbwTOvWImhIg1I6c5jhkm6\r\nTwaoWrQKTaU0tbCjCjG5kANzcVJ03F41hE3FDw==\r\n>>"
+            ]
+        }
+    ],
+    "validationLifeCycleId": 1
+}

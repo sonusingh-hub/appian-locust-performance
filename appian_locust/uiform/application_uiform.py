@@ -58,8 +58,6 @@ class ApplicationUiForm(SailUiForm):
         breadcrumb = f"Design.SelectedAiSkill.{opaque_id[:10]}.SailUi"
         return AISkillUiForm(rdo_interactor=rdo_interactor,
                              rdo_state=ai_skill_json,
-                             lcp_interactor=self._interactor,
-                             lcp_state=self._state,
                              ai_skill_id=ai_skill_info.object_uuid,
                              breadcrumb=breadcrumb,
                               )
