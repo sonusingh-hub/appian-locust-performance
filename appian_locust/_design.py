@@ -188,13 +188,9 @@ class _Design:
         create_ai_skill_json = rdo_interactor.fetch_ai_skill_creation_dialog_json(app_prefix=app_prefix)
         # passing in a temporary id because we need one to create the uiform, but one has not been assigned to the object yet
         ai_skill_temp_id = "temp_id"
-        ai_skill_ui_form = AISkillUiForm(
-            rdo_interactor=rdo_interactor,
-            rdo_state=create_ai_skill_json,
-            lcp_interactor=self.interactor,
-            lcp_state=ui_form.get_latest_state(),
-            ai_skill_id=ai_skill_temp_id
-        )
+        ai_skill_ui_form = AISkillUiForm(rdo_interactor=rdo_interactor,
+                                         rdo_state=create_ai_skill_json,
+                                         ai_skill_id=ai_skill_temp_id)
         ai_skill_ui_form.click_card_layout_by_index(index=ai_skill_type.value)
         ai_skill_ui_form.fill_text_field(label="Name", value=ai_skill_name)
         ai_skill_ui_form.assert_no_validations_present()\

@@ -308,7 +308,7 @@ class _RDOInteractor(_Interactor):
             return (data_id, file_size)
 
     def upload_document_to_mlas_field(self, upload_field: Dict[str, Any],
-                                      context: Dict[str, Any], uuid: str, skill_id: str, file_infos: List[Dict[str, Any]], locust_label: Optional[str] = None) -> Dict[str, Any]:
+                                      context: Dict[str, Any], uuid: str, file_infos: List[Dict[str, Any]], locust_label: Optional[str] = None) -> Dict[str, Any]:
         new_value = {
             "#t": "Map",
             "#v": {
@@ -330,29 +330,12 @@ class _RDOInteractor(_Interactor):
 
     def _make_mlas_file_metadata(self, id: int, doc_size: int, position: int, file_name: str) -> dict:
         """Produces a file metadata object to use for multifile upload fields"""
-        dummy_data = {
+        return {
             "fileName": file_name,
             "fileSize": doc_size,
-            "createdAt": 23893457,  # dummy time
+            "createdAt": 23893457,
             "uploadPosition": position,
             "fileId": id,
-            "ignored": "false",
-            "progress": 100,
-            "validation": {
-                "duplicate": "",
-                "fileType": "",
-                "maxFileSize": "",
-                "ok": "true",
-                "isError": ""
-            },
-            "message": None
-        }
-        return {
-            "fileName": dummy_data["fileName"],
-            "fileSize": dummy_data["fileSize"],
-            "createdAt": dummy_data["createdAt"],
-            "uploadPosition": dummy_data["uploadPosition"],
-            "fileId": dummy_data["fileId"],
             "ignored": "false",
             "progress": 100,
             "validation": {

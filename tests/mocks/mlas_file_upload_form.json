@@ -1,0 +1,802 @@
+{
+    "i18nInfo": {
+        "calendarId": "",
+        "decimalSeparator": ".",
+        "timezoneId": "GMT",
+        "groupingSeparator": ",",
+        "locale": "en-US",
+        "isRtl": false,
+        "isLtr": true
+    },
+    "asyncEventStreams": [],
+    "timers": {},
+    "uiExpression": "",
+    "shortcuts": [
+        {
+            "#t": "DynamicLink",
+            "_cId": "5d20f050e3e736c64bb67a49aece7729",
+            "keyboard-shortcuts:fire-in-inputs": "true",
+            "testLabel": "shortcut-Cancel",
+            "tooltip": "",
+            "label": "",
+            "href": "",
+            "_actionName": "keyboard-shortcuts",
+            "keyboard-shortcuts:keys": "Escape",
+            "saveInto": [
+                "<<jA0EAwMCqETi36TOaMsB0sArAXYA2he/3ID3IIwTw8IOFbRNvdLIvmUJo9JHX+KJ9RsqmlRyCoa8\r\n0lH3J6Myj77psxrCNqKfzaJvnGx9mCbRDNXppXBrutNmC2385v+2AKoyKtOadxUJxmrdTt4AGqtm\r\nL1uSkoTc0h7sv/9MjOntbY0z+QYsqfmw6khcmal0xr8hJbUyvzX66oaB78YkF0DzQSTcJ+1sdRYh\r\nJxPMvLOjtb0Rbdhu3QCFUhn5a/j50n8jnAYZDnvZsZhgIsuwFmqVL2iqcwWTPfPsZFME5qfXGxXD\r\nC7X9anroPc2/ZFDmTuIjkZmqeLQnMbvRxQ==\r\n>>"
+            ],
+            "value": {
+                "#t": "string",
+                "#v": ""
+            }
+        }
+    ],
+    "triggers": [],
+    "uuid": "e761b769-96f2-405f-94d8-2a332fcc562a",
+    "lastEvaluatedFormFactor": "DESKTOP",
+    "#s": {
+        "#t": "DataType?list",
+        "#v": [
+            {
+                "instanceProperties": [],
+                "typeProperties": [],
+                "localPart": "Variant?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "flags": 12,
+                "description": "List of Variant",
+                "id": 197,
+                "foundation": 93,
+                "listViewMapping": "",
+                "uuid": "{http://www.appian.com/ae/types/2009}Variant?list",
+                "typeof": 97,
+                "base": 93
+            }
+        ]
+    },
+    "#t": "UiConfig",
+    "#u": "<\/sail-server/SYSTEM_SYSRULES_aiSkillDesigner/content/{opaqueContentId}>; rel=\"x-document-image\"; type=\"application/vnd.appian.tv+json\"; dt=\"DocumentImage\", <\/sail-server/SYSTEM_SYSRULES_aiSkillDesigner/content/{opaqueContentId}>; rel=\"x-custom\"; type=\"application/vnd.appian.tv+json\"; dt=\"DocumentImage\", <\/sail-server/SYSTEM_SYSRULES_aiSkillDesigner/content/{opaqueContentId}>; dt=\"DocumentDownloadLink\", <\/sail-server/SYSTEM_SYSRULES_aiSkillDesigner/content/{opaqueContentId}>; rel=\"x-viewport\"; type=\"application/vnd.appian.tv+json\"; dt=\"DocumentImage\", <\/sail-server/SYSTEM_SYSRULES_aiSkillDesigner/record/dataexport/download-grid>; rel=\"x-data-export-grid\"; dt=\"InPlaceDownloadLink\", <\/sail-server/SYSTEM_SYSRULES_aiSkillDesigner>; rel=\"x-web-bookmark\"; dt=\"NavigationNodeLink\", <\/sail-server/SYSTEM_SYSRULES_aiSkillDesigner/page/{pageUrlStub}>; rel=\"x-web-bookmark-page\"; dt=\"NavigationNodeLink\", <\/sail-server/SYSTEM_SYSRULES_aiSkillDesigner/_/ui>; rel=\"x-navigation-app\"; dt=\"NavigationNodeLink\", <\/sail-server/SYSTEM_SYSRULES_aiSkillDesigner/_/ui/page/{pageUrlStub}>; rel=\"x-navigation-app-page\"; dt=\"NavigationNodeLink\", ",
+    "_cId": "607e2628e1faf2d8728fd66cf25dfd8b",
+    "ui": {
+        "#t": "ModalDialogLayout",
+        "_cId": "75b33cc91146e7892597e28fb71dd8d8",
+        "focusFieldId": "868787738a4a187a067ac311ab4069ee",
+        "contents": [
+            {
+                "#t": "HeaderContentFooterLayout",
+                "_cId": "5ede436c7bedb64e3fa1ba887671d39d",
+                "footer": {
+                    "padding": "STANDARD",
+                    "accessibilityRole": "",
+                    "#t": "ContentLayout",
+                    "_cId": "6b4bb0d05ca7dd15e99c75fb35bc5390",
+                    "contents": [
+                        {
+                            "instructions": "",
+                            "helpTooltipPosition": "",
+                            "marginAbove": "",
+                            "skinName": "",
+                            "label": "",
+                            "helpTooltip": "",
+                            "accessibilityText": "",
+                            "#t": "FieldLayout",
+                            "_cId": "6aa0fdf9d0807a81eec444f25b012afd",
+                            "contents": {
+                                "instructions": "",
+                                "#t": "SideBySideGroup",
+                                "_cId": "95bfeaa203ee17a6d0443f6ec18c98f0",
+                                "spacing": "",
+                                "alignVertical": "",
+                                "labelPosition": "",
+                                "label": "",
+                                "helpTooltip": "",
+                                "validations": [],
+                                "items": [
+                                    {
+                                        "item": {
+                                            "#t": "ButtonLayout",
+                                            "_cId": "b82bf748fb974a5106fc2f2abe8e0baa",
+                                            "secondaryButtons": [
+                                                {
+                                                    "confirmMessage": "",
+                                                    "icon": "",
+                                                    "saveInto": [
+                                                        "<<jA0EAwMCqETi36TOaMsB0sAfAXYA2he/3ID3IIwTw8IOFbRNvdLIvmUJo9JGX+KK9B86ZKy8NXVc\r\njfHNMu8cuKU7tyKckz1IvNlDjG6vgw2hcy+AOpUO11gxeTlHdIGjkkuS0afCNdhF0zDy0taunQbC\r\n+sdUxk3y0diOrCD5k4PbGZP/3A04d9Qd709WM9Z32yqu9tjpzMgaN0gWRrUxtbtVuy2MzKYxtjue\r\nCxaao7qiE2aLP2sBxdQb4S/cL1uNPyJCCdfT9oErnFLlAGE+X8VH6Nvi3hBIRMv0Awxt4EkQ2Zzy\r\nXBJCoXtbpDBpaYo0Ew==\r\n>>"
+                                                    ],
+                                                    "enableRecaptcha": "false",
+                                                    "tooltipStyle": "",
+                                                    "confirmButtonLabel": "",
+                                                    "cancelButtonLabel": "",
+                                                    "value": {
+                                                        "#t": "string",
+                                                        "#v": ""
+                                                    },
+                                                    "confirmHeader": "",
+                                                    "isFlat": "false",
+                                                    "shape": "",
+                                                    "buttonStyle": "NORMAL",
+                                                    "skinName": "",
+                                                    "tooltipVerticalPosition": "",
+                                                    "label": "Cancel",
+                                                    "tooltipWidth": "",
+                                                    "accessibilityText": "",
+                                                    "ariaLabel": "",
+                                                    "_cId": "cc223edc9298518516d5fa101354e315",
+                                                    "size": "",
+                                                    "width": "",
+                                                    "iconPosition": "",
+                                                    "style": "",
+                                                    "actions": [
+                                                        {
+                                                            "#t": "DynamicLink",
+                                                            "_cId": "5d20f050e3e736c64bb67a49aece7729",
+                                                            "keyboard-shortcuts:fire-in-inputs": "true",
+                                                            "testLabel": "shortcut-Cancel",
+                                                            "tooltip": "",
+                                                            "label": "",
+                                                            "href": "",
+                                                            "_actionName": "keyboard-shortcuts",
+                                                            "keyboard-shortcuts:keys": "Escape",
+                                                            "saveInto": [
+                                                                "<<jA0EAwMCqETi36TOaMsB0sArAXYA2he/3ID3IIwTw8IOFbRNvdLIvmUJo9JHX+KJ9RsqmlRyCoa8\r\n0lH3J6Myj77psxrCNqKfzaJvnGx9mCbRDNXppXBrutNmC2385v+2AKoyKtOadxUJxmrdTt4AGqtm\r\nL1uSkoTc0h7sv/9MjOntbY0z+QYsqfmw6khcmal0xr8hJbUyvzX66oaB78YkF0DzQSTcJ+1sdRYh\r\nJxPMvLOjtb0Rbdhu3QCFUhn5a/j50n8jnAYZDnvZsZhgIsuwFmqVL2iqcwWTPfPsZFME5qfXGxXD\r\nC7X9anroPc2/ZFDmTuIjkZmqeLQnMbvRxQ==\r\n>>"
+                                                            ],
+                                                            "value": {
+                                                                "#t": "string",
+                                                                "#v": ""
+                                                            }
+                                                        }
+                                                    ],
+                                                    "confirmButtonStyle": "PRIMARY"
+                                                }
+                                            ],
+                                            "marginAbove": "",
+                                            "isButtonArrayLayout": "true",
+                                            "marginBelow": "NONE",
+                                            "align": "START",
+                                            "accessibilityText": ""
+                                        },
+                                        "_cId": "f8559269aaf4ce3cea3f99a13d625cbc",
+                                        "width": ""
+                                    },
+                                    {
+                                        "item": {
+                                            "#t": "ButtonLayout",
+                                            "_cId": "4d5238a07555a1e3dc4e3005cf1bfd17",
+                                            "marginAbove": "",
+                                            "isButtonArrayLayout": "true",
+                                            "marginBelow": "NONE",
+                                            "primaryButtons": [
+                                                {
+                                                    "confirmMessage": "",
+                                                    "icon": "",
+                                                    "saveInto": [
+                                                        "<<jA0EAwMCqETi36TOaMsB0sAbAXYA2he/3ID3IIwTw8IOFbRNvdLIvmUJo9JGX8SI9Rsq925Gqpto\r\ndFTrHXk1IE3uuEiH9CgQAm+YjvmwJKng93T5fclVV6DTeCLwhToAeV96SICnNlRDP9414uo3On6Q\r\nB+7XIkZWL1uUEWDGEJnZDu1w0/0TKbALOJLgaGgHH8gG9k2/ZzTh92uYBoUDdxwqiVG7U1TRTDp9\r\nySNhDFE2DfD4UTR4NLYTEVfHBqdfnRHXRgSa6Fydrz0jc6Tpr/0sNHuRKLPalM8CjOcbRRjNCvpQ\r\nh4q27KKXSkJe\r\n>>"
+                                                    ],
+                                                    "enableRecaptcha": "false",
+                                                    "tooltipStyle": "",
+                                                    "confirmButtonLabel": "",
+                                                    "cancelButtonLabel": "",
+                                                    "action": "VALIDATE",
+                                                    "disabled": false,
+                                                    "value": {
+                                                        "#t": "string",
+                                                        "#v": ""
+                                                    },
+                                                    "validate": "true",
+                                                    "confirmHeader": "",
+                                                    "isFlat": "false",
+                                                    "shape": "",
+                                                    "enableLoadingIndicator": true,
+                                                    "buttonStyle": "NORMAL",
+                                                    "skinName": "",
+                                                    "tooltipVerticalPosition": "",
+                                                    "label": "Create and Add Another",
+                                                    "tooltipWidth": "",
+                                                    "accessibilityText": "",
+                                                    "ariaLabel": "",
+                                                    "_cId": "f8d95874e7fc2503c65c2da184f53acc",
+                                                    "size": "",
+                                                    "width": "",
+                                                    "iconPosition": "",
+                                                    "style": "",
+                                                    "confirmButtonStyle": "PRIMARY"
+                                                },
+                                                {
+                                                    "confirmMessage": "",
+                                                    "icon": "",
+                                                    "saveInto": [
+                                                        "<<jA0EAwMCqETi36TOaMsB0sAbAXYA2he/3ID3IIwTw8IOFbRNvdLIvmUJo9JGX+KI9hsqnqKAWiXV\r\nIYvuIgskiDXeNWt3Wnrek/T2UZlggvtJnNw4lNq7TSHfBR3be7nm/ohmUksAmZUDFLrA53Sjv03r\r\nmieqsq3fjEGHCPnLL/XtYYGWDn4ZCPQ7J+zxnM4Pep9lBQ5tHGJaJivgF6Nnx40x3kueSrc5w4bX\r\nRWpdiSD2z24odF9jkrRp05O+HS2QkGIcJnBE+3TNEDkEz5OFR7T9sPoYugjSlxbc3c8MQ+Giwh6v\r\nyebWq10/JJqE\r\n>>"
+                                                    ],
+                                                    "enableRecaptcha": "false",
+                                                    "tooltipStyle": "",
+                                                    "confirmButtonLabel": "",
+                                                    "cancelButtonLabel": "",
+                                                    "action": "VALIDATE",
+                                                    "disabled": false,
+                                                    "value": {
+                                                        "#t": "string",
+                                                        "#v": ""
+                                                    },
+                                                    "validate": "true",
+                                                    "confirmHeader": "",
+                                                    "isFlat": "false",
+                                                    "shape": "",
+                                                    "enableLoadingIndicator": true,
+                                                    "buttonStyle": "PRIMARY",
+                                                    "skinName": "",
+                                                    "tooltipVerticalPosition": "",
+                                                    "label": "Create",
+                                                    "tooltipWidth": "",
+                                                    "accessibilityText": "",
+                                                    "ariaLabel": "",
+                                                    "_cId": "9e8b73ff9b91c41eb366d8d72c2e11d0",
+                                                    "size": "",
+                                                    "width": "",
+                                                    "iconPosition": "",
+                                                    "style": "",
+                                                    "confirmButtonStyle": "PRIMARY"
+                                                }
+                                            ],
+                                            "align": "END",
+                                            "accessibilityText": ""
+                                        },
+                                        "_cId": "34ff73566f536bcf76d411155bd921e8",
+                                        "width": ""
+                                    }
+                                ]
+                            },
+                            "labelPosition": "COLLAPSED",
+                            "instructionsPosition": "",
+                            "marginBelow": "",
+                            "requiredStyle": ""
+                        }
+                    ],
+                    "topLevelBackgroundColor": ""
+                },
+                "header": {
+                    "padding": "STANDARD",
+                    "accessibilityRole": "",
+                    "#t": "ContentLayout",
+                    "_cId": "602f27d0492d58a64b5a799ae2c3c31e",
+                    "contents": [
+                        {
+                            "instructions": "",
+                            "marginAbove": "",
+                            "preventWrapping": false,
+                            "tooltip": "",
+                            "label": "",
+                            "helpTooltip": "",
+                            "accessibilityText": "",
+                            "valueAlignment": "",
+                            "#t": "RichTextDisplayField",
+                            "_cId": "95df8614b60cb69ee6ab8d9445bd6065",
+                            "labelPosition": "COLLAPSED",
+                            "marginBelow": "",
+                            "value": {
+                                "#t": "FormattedText",
+                                "_cId": "683d86cf50314100c8c643eb6c28aa9b",
+                                "values": [
+                                    {
+                                        "#t": "TitleText",
+                                        "values": [
+                                            {
+                                                "#t": "string",
+                                                "#v": "Create New Document Type"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            "removeBrowserTooltip": false
+                        }
+                    ],
+                    "topLevelBackgroundColor": ""
+                },
+                "content": {
+                    "padding": "STANDARD",
+                    "accessibilityRole": "",
+                    "#t": "ContentLayout",
+                    "_cId": "92da75106c39d4f8fb6aeb5362b8ea09",
+                    "contents": [
+                        {
+                            "instructions": "",
+                            "keyboard": "STANDARD",
+                            "helpTooltipPosition": "",
+                            "readOnly": false,
+                            "label": "Document Type Name",
+                            "helpTooltip": "",
+                            "saveInto": [
+                                "<<jA0EAwMCqETi36TOaMsB0sATAXYA2he/3ID3IIwTw8IOFbRNvdLIvmUJo9JGX8SI9Rsq925Gqpto\r\ndFTrHXk1IE3uuEiH9CsSAl+uaoS24JZy6MkJZne9B6MTOGnhagg73yByvQxAyLkDJVuoN0q3ZJ8G\r\nS0jZU7U5bYzLN9ASRf4blBzaUJfGqbXtcJkT+iSvLzNMTplJ9xUFBwUU+nj0xetp2QLnN04Qz/hH\r\nhLLFEyO6xGel2SYXSrTDqU9r2ZU0Poi/yMcNOw+N1ve8DbHHGEBMU1Ez45X3CjYIRZvEgy9SlF+x\r\nfQ==\r\n>>"
+                            ],
+                            "align": "DEFAULT",
+                            "accessibilityText": "",
+                            "required": true,
+                            "#t": "TextField",
+                            "inputPurpose": "",
+                            "_cId": "868787738a4a187a067ac311ab4069ee",
+                            "refreshAfter": "UNFOCUS",
+                            "labelPosition": "ABOVE",
+                            "placeholder": "",
+                            "value": "",
+                            "requiredMessage": "Document Type Name is required."
+                        },
+                        {
+                            "#t": "MultiColumnLayout",
+                            "_cId": "ca15d585c868b379aead6e49e9ce87fa",
+                            "spacing": "",
+                            "marginAbove": "",
+                            "alignVertical": "TOP",
+                            "columns": [
+                                {
+                                    "_cId": "2cc4dba0f593fe3f0c66d1f9befa0445",
+                                    "contents": [
+                                        {
+                                            "instructions": "",
+                                            "helpTooltipPosition": "",
+                                            "marginAbove": "",
+                                            "skinName": "",
+                                            "label": "",
+                                            "helpTooltip": "",
+                                            "accessibilityText": "",
+                                            "#t": "FieldLayout",
+                                            "_cId": "afdca1e51141517a28f54ffeb31d07e5",
+                                            "contents": {
+                                                "instructions": "",
+                                                "#t": "SideBySideGroup",
+                                                "_cId": "76e9b3d15ea2ea7326a15361471bee85",
+                                                "spacing": "",
+                                                "alignVertical": "",
+                                                "labelPosition": "",
+                                                "label": "",
+                                                "helpTooltip": "",
+                                                "validations": [],
+                                                "items": [
+                                                    {
+                                                        "item": {
+                                                            "instructions": "",
+                                                            "marginAbove": "",
+                                                            "preventWrapping": false,
+                                                            "tooltip": "",
+                                                            "label": "",
+                                                            "helpTooltip": "",
+                                                            "accessibilityText": "",
+                                                            "valueAlignment": "",
+                                                            "#t": "RichTextDisplayField",
+                                                            "_cId": "7429235776c9b901974420ba9d56dd7a",
+                                                            "labelPosition": "COLLAPSED",
+                                                            "marginBelow": "",
+                                                            "value": {
+                                                                "#t": "FormattedText",
+                                                                "_cId": "b974c29ceba4657447c571a8bcbc820c",
+                                                                "values": [
+                                                                    {
+                                                                        "#t": "StrongText",
+                                                                        "_cId": "8beb8ace3c99c2821d1298b14365adf7",
+                                                                        "values": [
+                                                                            {
+                                                                                "#t": "string",
+                                                                                "#v": "Documents"
+                                                                            }
+                                                                        ]
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "removeBrowserTooltip": false
+                                                        },
+                                                        "_cId": "b1032774f323fba104dbe090de74689d",
+                                                        "width": ""
+                                                    }
+                                                ]
+                                            },
+                                            "labelPosition": "COLLAPSED",
+                                            "instructionsPosition": "",
+                                            "marginBelow": "",
+                                            "requiredStyle": ""
+                                        },
+                                        {
+                                            "instructions": "",
+                                            "modelId": "156ca74f-22a4-4b78-bf34-268408a8a4eb",
+                                            "classificationType": "doc",
+                                            "allowedFileTypes": [
+                                                "pdf"
+                                            ],
+                                            "saveInto": [
+                                                "<<jA0EAwMCqETi36TOaMsB0sATAXYA2he/3ID3IIwTw8IOFbRNvdLIvmUJo9JGX+KK9B86ZKy8NXVc\r\njfHNMu8fuKU7tzGYoxH/rFxNZXHhPVm0fhEYE8+zCW/Nla0Pu/7vxarTFJ0SEh45dWO4fGIIhHWI\r\nNmR2i5RJ8zSVl0BpAIBIZbO7ECRS1ko6ljryTtBt+o7sG8N7+fQZUYP9+E0XeO9FojslKt7KbxWi\r\nzJPfbAZubhlnPtP6lz7MFAKw/aEn8Hnza6Oz3sSbuFaLUkqtF+9D5sGtO1iytRB9jKQGwXAxLGS1\r\nKg==\r\n>>"
+                                            ],
+                                            "#t": "MLASFileUpload",
+                                            "_cId": "a40252ca42de4d87edea89b3bd0fa2a8",
+                                            "uploadInstructions": "Drop files here",
+                                            "uploadType": "",
+                                            "aiSkillId": "6151d568-5e9c-4881-82fb-a3b2d8b333bf",
+                                            "maxFileSizeMb": 25,
+                                            "value": {
+                                                "filesState": {
+                                                    "#t": "Variant?list",
+                                                    "#v": []
+                                                }
+                                            },
+                                            "maxFiles": 100
+                                        }
+                                    ],
+                                    "width": "",
+                                    "align": ""
+                                },
+                                {
+                                    "_cId": "3d2e9f0f3a87269e5288dfc9850b0b7d",
+                                    "contents": [
+                                        {
+                                            "decorativeBarColor": "",
+                                            "marginAbove": "",
+                                            "shape": "",
+                                            "browserTooltip": "",
+                                            "tooltip": "",
+                                            "decorativeBarPosition": "",
+                                            "tooltipAlignment": "",
+                                            "showBorder": false,
+                                            "accessibilityText": "",
+                                            "#t": "CardLayout",
+                                            "_cId": "6e061dadcd8a37fb8e303b64ed9d17ec",
+                                            "alignVertical": "",
+                                            "contents": [
+                                                {
+                                                    "padding": "STANDARD",
+                                                    "accessibilityRole": "",
+                                                    "#t": "ContentLayout",
+                                                    "_cId": "3c9692d1406c17b2a502062dbc62bd8c",
+                                                    "contents": [
+                                                        {
+                                                            "instructions": "",
+                                                            "marginAbove": "",
+                                                            "preventWrapping": false,
+                                                            "tooltip": "",
+                                                            "label": "",
+                                                            "helpTooltip": "",
+                                                            "accessibilityText": "",
+                                                            "valueAlignment": "",
+                                                            "#t": "RichTextDisplayField",
+                                                            "_cId": "3954d8121ea2f2df5bb9d5557739427c",
+                                                            "labelPosition": "COLLAPSED",
+                                                            "marginBelow": "STANDARD",
+                                                            "value": {
+                                                                "#t": "FormattedText",
+                                                                "_cId": "f2c3197492ce618474a58098dd3b1e47",
+                                                                "values": [
+                                                                    {
+                                                                        "#t": "StrongText",
+                                                                        "_cId": "3589e1c4035731bd4075958676173d03",
+                                                                        "values": [
+                                                                            {
+                                                                                "#t": "string",
+                                                                                "#v": "Requirements for Training"
+                                                                            }
+                                                                        ]
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "removeBrowserTooltip": false
+                                                        },
+                                                        {
+                                                            "instructions": "",
+                                                            "marginAbove": "LESS",
+                                                            "preventWrapping": false,
+                                                            "tooltip": "",
+                                                            "label": "",
+                                                            "helpTooltip": "",
+                                                            "accessibilityText": "",
+                                                            "valueAlignment": "",
+                                                            "#t": "RichTextDisplayField",
+                                                            "_cId": "03eaa9f0113be12f2e3644e700ac3278",
+                                                            "labelPosition": "COLLAPSED",
+                                                            "marginBelow": "LESS",
+                                                            "value": {
+                                                                "#t": "FormattedText",
+                                                                "_cId": "2fedc94212a142263907cfcc97fdaecf",
+                                                                "values": [
+                                                                    {
+                                                                        "#t": "FormattedText",
+                                                                        "_cId": "fee811e72a9eedb811552ceb56e8d996",
+                                                                        "values": [
+                                                                            {
+                                                                                "#t": "string",
+                                                                                "#v": "For the best results, upload documents that represent what you expect to classify in production. "
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "linkStyle": "STANDALONE",
+                                                                        "#t": "LinkedItem",
+                                                                        "_cId": "be16839dda16ce01536c551f3de44426",
+                                                                        "values": {
+                                                                            "#t": "FormattedText",
+                                                                            "_cId": "114e5d0af800535b42ecc9ac2128ac65",
+                                                                            "values": [
+                                                                                {
+                                                                                    "#t": "string",
+                                                                                    "#v": "Learn more about how to build a training dataset "
+                                                                                },
+                                                                                {
+                                                                                    "iconId": "",
+                                                                                    "captionPosition": "",
+                                                                                    "#t": "IconWidget",
+                                                                                    "_cId": "12c3c6a041d9cf34e1297ab766d3c093",
+                                                                                    "altText": "",
+                                                                                    "size": "",
+                                                                                    "color": "",
+                                                                                    "icon": "external-link",
+                                                                                    "caption": ""
+                                                                                }
+                                                                            ]
+                                                                        },
+                                                                        "link": {
+                                                                            "openLinkIn": "NEW_TAB",
+                                                                            "#t": "SafeLink",
+                                                                            "_cId": "cd645bac655fae3311fb71917d30e33f",
+                                                                            "metricKey": "",
+                                                                            "tooltip": "",
+                                                                            "label": "",
+                                                                            "uri": "https://docs.appian.com/suite/help/23.2/collect-data.html"
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "removeBrowserTooltip": false
+                                                        },
+                                                        {
+                                                            "instructions": "",
+                                                            "marginAbove": "NONE",
+                                                            "preventWrapping": false,
+                                                            "tooltip": "",
+                                                            "label": "",
+                                                            "helpTooltip": "",
+                                                            "accessibilityText": "",
+                                                            "valueAlignment": "",
+                                                            "#t": "RichTextDisplayField",
+                                                            "_cId": "da11984883e707402ffbf60ca074c8ec",
+                                                            "labelPosition": "COLLAPSED",
+                                                            "marginBelow": "STANDARD",
+                                                            "value": {
+                                                                "#t": "FormattedText",
+                                                                "_cId": "c27db52c882c533c9e329f59d209f4a0",
+                                                                "values": [
+                                                                    {
+                                                                        "#t": "FormattedText",
+                                                                        "_cId": "783d242dbf19c76a20c6682755963cc5",
+                                                                        "values": [
+                                                                            {
+                                                                                "#t": "string",
+                                                                                "#v": "Additionally, make sure of the following:"
+                                                                            }
+                                                                        ]
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "removeBrowserTooltip": false
+                                                        },
+                                                        {
+                                                            "instructions": "",
+                                                            "marginAbove": "STANDARD",
+                                                            "preventWrapping": false,
+                                                            "tooltip": "",
+                                                            "label": "",
+                                                            "helpTooltip": "",
+                                                            "accessibilityText": "",
+                                                            "valueAlignment": "",
+                                                            "#t": "RichTextDisplayField",
+                                                            "_cId": "01bfb10c16341375c41041f730c7eb7f",
+                                                            "labelPosition": "COLLAPSED",
+                                                            "marginBelow": "MORE",
+                                                            "value": {
+                                                                "#t": "FormattedText",
+                                                                "_cId": "8c2e96f05c66259d1e599f3a85e45f5a",
+                                                                "values": [
+                                                                    {
+                                                                        "#t": "FormattedText",
+                                                                        "_cId": "337d482450d5ad5f5e00b39ca03776ec",
+                                                                        "values": [
+                                                                            {
+                                                                                "iconId": "",
+                                                                                "captionPosition": "",
+                                                                                "#t": "IconWidget",
+                                                                                "_cId": "423142a7426f146b951f65a2273e72e1",
+                                                                                "altText": "",
+                                                                                "size": "",
+                                                                                "color": "",
+                                                                                "icon": "circle-o",
+                                                                                "caption": ""
+                                                                            },
+                                                                            {
+                                                                                "#t": "string",
+                                                                                "#v": " "
+                                                                            },
+                                                                            {
+                                                                                "#t": "string",
+                                                                                "#v": "Upload at least 10 documents. More is better!"
+                                                                            },
+                                                                            {
+                                                                                "#t": "string",
+                                                                                "#v": "\n"
+                                                                            },
+                                                                            {
+                                                                                "#t": "string",
+                                                                                "#v": "\n"
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "#t": "FormattedText",
+                                                                        "_cId": "e84bb9cbd8c6670c7b98c40d4fdf0cbc",
+                                                                        "values": [
+                                                                            {
+                                                                                "iconId": "",
+                                                                                "captionPosition": "",
+                                                                                "#t": "IconWidget",
+                                                                                "_cId": "661b6d545a695fc517bcd97dfe6484cd",
+                                                                                "altText": "",
+                                                                                "size": "",
+                                                                                "color": "",
+                                                                                "icon": "circle-o",
+                                                                                "caption": ""
+                                                                            },
+                                                                            {
+                                                                                "#t": "string",
+                                                                                "#v": " "
+                                                                            },
+                                                                            {
+                                                                                "#t": "string",
+                                                                                "#v": "All documents are PDF files"
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "#t": "string",
+                                                                        "#v": "\n"
+                                                                    },
+                                                                    {
+                                                                        "#t": "string",
+                                                                        "#v": "\n"
+                                                                    },
+                                                                    {
+                                                                        "#t": "FormattedText",
+                                                                        "_cId": "ccf9a17abbda341eea6dcbc89ce478dc",
+                                                                        "values": [
+                                                                            {
+                                                                                "iconId": "",
+                                                                                "captionPosition": "",
+                                                                                "#t": "IconWidget",
+                                                                                "_cId": "929b53fce3852675e15096cd86792bb2",
+                                                                                "altText": "",
+                                                                                "size": "",
+                                                                                "color": "",
+                                                                                "icon": "circle-o",
+                                                                                "caption": ""
+                                                                            },
+                                                                            {
+                                                                                "#t": "string",
+                                                                                "#v": " "
+                                                                            },
+                                                                            {
+                                                                                "#t": "string",
+                                                                                "#v": "All documents are unique"
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "#t": "string",
+                                                                        "#v": "\n"
+                                                                    },
+                                                                    {
+                                                                        "#t": "string",
+                                                                        "#v": "\n"
+                                                                    },
+                                                                    {
+                                                                        "#t": "SecondaryText",
+                                                                        "_cId": "6521b6807c6f636b2fe8c3eb97a65e95",
+                                                                        "values": [
+                                                                            {
+                                                                                "#t": "string",
+                                                                                "#v": "You can come back later to address all requirements."
+                                                                            }
+                                                                        ]
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "removeBrowserTooltip": false
+                                                        }
+                                                    ],
+                                                    "topLevelBackgroundColor": ""
+                                                }
+                                            ],
+                                            "width": "FIT",
+                                            "marginBelow": "LESS",
+                                            "style": "INFO",
+                                            "customHoverStyle": "",
+                                            "height": ""
+                                        }
+                                    ],
+                                    "width": "",
+                                    "align": ""
+                                }
+                            ],
+                            "marginBelow": ""
+                        }
+                    ],
+                    "topLevelBackgroundColor": ""
+                }
+            }
+        ],
+        "width": "MEDIUM",
+        "dialogIds": "0,9,3,10,9,27,28,52,53,59,3,52,14,14,62,52,7,7,52,241,52,75,5,76,3,76,14,5,8,364,43,283,238,302,108,305",
+        "_dirty": "false",
+        "accessibilityText": "",
+        "height": "EXTRA_TALL"
+    },
+    "formFactors": [
+        "DESKTOP",
+        "DESKTOP_WIDE"
+    ],
+    "context": {
+        "#t": "Map",
+        "type": "stateless",
+        "value": "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"
+    },
+    "links": [
+        {
+            "method": "POST",
+            "rel": "update",
+            "href": "/sail-server/SYSTEM_SYSRULES_aiSkillDesigner/ui",
+            "title": "Update"
+        },
+        {
+            "method": "GET",
+            "rel": "self",
+            "href": "/sail-server/SYSTEM_SYSRULES_aiSkillDesigner/ui",
+            "title": "Update"
+        }
+    ],
+    "actions": [
+        {
+            "#t": "DynamicLink",
+            "_cId": "8333cdbab40a98c14806ddac91e84583",
+            "tooltip": "",
+            "label": "updateRecordActionRefresh",
+            "href": "",
+            "_actionName": "sail:record-action-trigger",
+            "saveInto": [
+                "<<jA0EAwMCqETi36TOaMsB0n0BdgDaF7/cgPcgjBPDwg4VtE290si+ZQmmv7MEKK78iBR7U4/mHpm9\r\nf+iGFfkEdz7H+q2iGjmnB2KILAi/ZAmVqkx+1h8whHklmc0D/QdZl+zrhT8ewc7uNIrQjGN9jF/r\r\nwdP14k2wAhwtSvagNQt1AKhNMv7E8pXsz8HvOQ==\r\n>>"
+            ]
+        },
+        {
+            "#t": "DynamicLink",
+            "_cId": "4713416ca9ec5e98a7be1d09b03bc84f",
+            "tooltip": "",
+            "label": "updateFormFactor",
+            "href": "",
+            "_actionName": "sail:update-form-factor",
+            "saveInto": [
+                "<<jA0EAwMCqETi36TOaMsB0n0BdgDaF7/cgPcgjBPDwg4VtE290si+ZQmm1LQUKK78iBSndEKy7tbX\r\nQgMNSFX4O5IxZjAf71Yk9S8xHwkYsDsYOTiwfGub4A/HoRlazLo299gMuCWd98q+evsfF7Ank/65\r\n81VErTXoskYj/FlKi+bSJp40an/hJ6jchYiAaw==\r\n>>"
+            ]
+        },
+        {
+            "#t": "DynamicLink",
+            "_cId": "44a7926bb6f6110edd4075eab3f01b36",
+            "tooltip": "",
+            "label": "toggleSitesXray",
+            "href": "",
+            "_actionName": "sail:toggle-sites-xray",
+            "saveInto": [
+                "<<jA0EAwMCqETi36TOaMsB0n0BdgDaF7/cgPcgjBPDwg4VtE290si+ZQmmv7MKKK78iBSyfGqwvuX5\r\nMz52p8W96lvF957wza4Rde5BNbRXyBEr+7pULoatlSNLLua99oDfwtQAc/KNj6ujB6ZK1auHaKQO\r\nL/UDUeGsmn5nay/6HaxR+GQxGV60jtH5Qh3pMQ==\r\n>>"
+            ]
+        },
+        {
+            "#t": "DynamicLink",
+            "_cId": "d9d6f55c2aaabb5fd3a32c4e02258640",
+            "tooltip": "",
+            "label": "",
+            "href": "",
+            "_actionName": "sail:update-async-event-streams",
+            "saveInto": [
+                "<<jA0EAwMCqETi36TOaMsB0n0BdgDaF7/cgPcgjBPDwg4VtE290si+ZQmmv7MKKK78iBSyfGqwvuX5\r\nMyFYs++611vAr9MkCfxIPR1dY4HJZU5vpJrxqV+lsol/AYDOOSsWh1JH56A5O3+U3owaMVtxlFrp\r\nkb81/hZlUioKmyioVcUbxAtwg09mo23VJgzqyA==\r\n>>"
+            ]
+        }
+    ],
+    "validationLifeCycleId": 1
+}

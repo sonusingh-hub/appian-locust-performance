@@ -8,11 +8,9 @@ from ..utilities import find_component_by_attribute_in_dict, extract_all_by_labe
 
 class AISkillUiForm(SailUiForm):
 
-    def __init__(self, rdo_interactor: _RDOInteractor, rdo_state: Dict[str, Any], lcp_interactor: _Interactor, lcp_state: Dict[str, Any], ai_skill_id: str, breadcrumb: str = "AISkillUi"):
+    def __init__(self, rdo_interactor: _RDOInteractor, rdo_state: Dict[str, Any], ai_skill_id: str, breadcrumb: str = "AISkillUi"):
         self.rdo_interactor = rdo_interactor
         self.ai_skill_id = ai_skill_id
-        self.lcp_interactor = lcp_interactor
-        self.lcp_state = lcp_state
         super().__init__(self.rdo_interactor, rdo_state, breadcrumb)
 
     def save_ai_skill_changes(self, locust_request_label: Optional[str] = None) -> 'AISkillUiForm':
@@ -89,7 +87,6 @@ class AISkillUiForm(SailUiForm):
             upload_field=component,
             context=self.context,
             uuid=self.uuid,
-            skill_id=self.ai_skill_id,
             file_infos=file_infos,
             locust_label=locust_request_label
         )

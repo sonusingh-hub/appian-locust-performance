@@ -108,6 +108,14 @@ class MockClient:
         request_data = {'path': path, 'method': 'post', **kwargs}
         return self._respond(path, request_data)
 
+    def put(self, path: str, **kwargs: Any) -> 'MockResponse':
+        request_data = {'path': path, 'method': 'put', **kwargs}
+        return self._respond(path, request_data)
+
+    def patch(self, path: str, **kwargs: Any) -> 'MockResponse':
+        request_data = {'path': path, 'method': 'patch', **kwargs}
+        return self._respond(path, request_data)
+
     def _respond(self, path: str, request_data: dict) -> 'MockResponse':
         self.request_list.append(request_data)
         if not self.dummy_responses.empty():

@@ -378,8 +378,6 @@ class Visitor:
         ai_skill_json = rdo_interactor.fetch_ai_skill_designer_json(ai_skill_id=ai_skill_info.object_uuid)
         return AISkillUiForm(rdo_interactor=rdo_interactor,
                              rdo_state=ai_skill_json,
-                             lcp_interactor=self.__interactor,
-                             lcp_state=object_json,
                              ai_skill_id=ai_skill_info.object_uuid,
                              breadcrumb=locust_request_label
                              )
