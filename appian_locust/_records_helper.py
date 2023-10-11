@@ -31,7 +31,7 @@ def get_all_records_from_json(json_response: Dict[str, Any]) -> Tuple[Dict[str, 
             except Exception as e:
                 error_key_count += 1
                 records[error_key_string + str(error_key_count)] = {}
-                log_locust_error(e, error_desc="Corrupt Record Error")
+                log_locust_error('get_all_records_from_json.is_grid', e, error_desc="Corrupt Record Error")
     else:
         all_items = extract_values(json_response, "#t", "LinkedItem")
         label_extractor = _get_linkedItem_label
@@ -51,7 +51,7 @@ def get_all_records_from_json(json_response: Dict[str, Any]) -> Tuple[Dict[str, 
                 except Exception as e:
                     error_key_count += 1
                     records[error_key_string + str(error_key_count)] = {}
-                    log_locust_error(e, error_desc="Corrupt Record Error", raise_error=False)
+                    log_locust_error('get_all_records_from_json', e, error_desc="Corrupt Record Error", raise_error=False)
     return records, error_key_count
 
 
@@ -70,7 +70,7 @@ def get_records_from_json_by_column(json_response: Dict[str, Any], column_index:
                 if column_index > (num_columns-1):
                     error_key_count += 1
                     error_message = f'Column index ({column_index}) is out of bounds. Please provide a column index between 0 and {num_columns-1}.'
-                    log_locust_error(e=Exception(error_message))
+                    log_locust_error('get_records_from_json_by_column', e=Exception(error_message))
                 else:
                     record_item = record_link_raw[0]
                     try:
@@ -82,10 +82,10 @@ def get_records_from_json_by_column(json_response: Dict[str, Any], column_index:
                     except Exception as e:
                         error_key_count += 1
                         records[error_key_string + str(error_key_count)] = {}
-                        log_locust_error(e, error_desc="Corrupt Record Error")
+                        log_locust_error('get_records_from_json_by_column', e, error_desc="Corrupt Record Error")
             else:
                 error_key_count += 1
-                log_locust_error(e=Exception('No record links found.'))
+                log_locust_error('get_records_from_json_by_column', e=Exception('No record links found.'))
 
     return records, error_key_count
 
@@ -97,9 +97,11 @@ def get_record_summary_view_response(form_json: Dict[str, Any]) -> Dict[str, Any
     # SAIL Code for the Record Summary View is embedded within the response.
     record_summary_response = find_component_by_attribute_in_dict("name", "x-embedded-summary", form_json).get("children")
     if not record_summary_response or len(record_summary_response) < 1:
-        log_locust_error(Exception("Parser was not able to find embedded SAIL code within JSON response for the requested Record Instance."),
-                         raise_error=True
-                         )
+        log_locust_error(
+            'get_record_summary_view_response',
+            Exception("Parser was not able to find embedded SAIL code within JSON response for the requested Record Instance."),
+            raise_error=True,
+        )
     return json.loads(record_summary_response[0])
 
 
@@ -111,9 +113,11 @@ def get_record_header_response(form_json: Dict[str, Any]) -> Dict[str, Any]:
     # SAIL Code for the Record Header is embedded within the response.
     record_header_response = find_component_by_attribute_in_dict("name", "x-embedded-header", form_json).get("children")
     if not record_header_response or len(record_header_response) < 1:
-        log_locust_error(Exception("Parser was not able to find embedded SAIL code within JSON response for the requested Record Instance."),
-                         raise_error=True
-                         )
+        log_locust_error(
+            'get_record_header_response',
+            Exception("Parser was not able to find embedded SAIL code within JSON response for the requested Record Instance."),
+            raise_error=True,
+        )
     return json.loads(record_header_response[0])
 
 

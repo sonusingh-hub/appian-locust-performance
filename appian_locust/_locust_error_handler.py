@@ -5,13 +5,21 @@ from typing import Any, Callable, Optional
 
 from locust.clients import ResponseContextManager
 from requests.exceptions import HTTPError
-from requests.models import Response
+from requests.models import Response, Request
+from locust import events
+from datetime import timedelta
 
-from .utilities.helper import ENV
+from .utilities import logger, ENV
 
-from .utilities import logger
 
 log = logger.getLogger(__name__)
+
+INTERNAL_ERROR_RESPONSE = Response()
+INTERNAL_ERROR_RESPONSE.request = Request('GET', 'https://localhost').prepare()
+INTERNAL_ERROR_RESPONSE.status_code = 500
+INTERNAL_ERROR_RESPONSE.elapsed = timedelta()
+INTERNAL_ERROR_RESPONSE._content = b''
+INTERNAL_ERROR_RESPONSE.reason = 'Internal System Error'
 
 
 def _format_http_error(resp: Response, uri: str, username: str) -> str:
@@ -48,7 +56,13 @@ def _format_http_error(resp: Response, uri: str, username: str) -> str:
     return http_error_msg
 
 
-def test_response_for_error(resp: ResponseContextManager, uri: str = 'No URI Specified', raise_error: bool = True, username: str = "") -> None:
+def test_response_for_error(
+    resp: ResponseContextManager,
+    uri: str = 'No URI Specified',
+    raise_error: bool = True,
+    username: str = "",
+    name: str = "",
+) -> None:
     """
     Locust relies on errors to be logged to the global_stats attribute for error handling.
     This function is used to notify Locust that its instances are failing and that it should fail too.
@@ -77,23 +91,33 @@ def test_response_for_error(resp: ResponseContextManager, uri: str = 'No URI Spe
             resp.failure(error)
             # TODO: Consider using this resp.failure construct in other parts of the code
             log_locust_error(
+                name,
                 error,
+                resp,
                 'REQUEST:',
                 f'URI: {resp.url}',
-                raise_error=raise_error
+                raise_error=raise_error,
             )
     except HTTPError as e:
         raise e
     except Exception as e:
         log_locust_error(
+            name,
             Exception(f'MESSAGE: {e}'),
+            resp,
             'REQUEST:',
             f'URI: {resp.url}',
-            raise_error=True
         )
 
 
-def log_locust_error(e: Exception, error_desc: str = 'No description', location: Optional[str] = None, raise_error: bool = True) -> None:
+def log_locust_error(
+    name: str,
+    e: Exception,
+    resp: ResponseContextManager = INTERNAL_ERROR_RESPONSE,
+    error_desc: str = 'No description',
+    location: Optional[str] = None,
+    raise_error: bool = True,
+) -> None:
     """
     This function allows scripts in appian_locust to manually report an error to locust.
 
@@ -115,6 +139,7 @@ def log_locust_error(e: Exception, error_desc: str = 'No description', location:
             desc = f'Error in get_news function'
             log_locust_error(e, error_desc=desc)
     """
+    trigger_request_event_for_error(name, e, resp)
     if not location:
         # Infer location from inspecting the frame
         if len(inspect.stack()) > 1:
@@ -125,6 +150,29 @@ def log_locust_error(e: Exception, error_desc: str = 'No description', location:
 
     if raise_error:
         raise e
+
+
+def trigger_request_event_for_error(
+    name: str,
+    exception: Exception,
+    resp: ResponseContextManager,
+) -> None:
+    events.request.fire(
+        name=name,
+        request_type=resp.request.method if resp.request else "UNKNOWN",
+        response_time=resp.elapsed.total_seconds(),
+        response_length=len(resp.content) if resp.content else 0,
+        response=resp,
+        context=get_context_from_response(resp),
+        exception=exception,
+    )
+
+
+def get_context_from_response(resp: ResponseContextManager) -> str:
+    try:
+        return resp.json()["requestId"]
+    except Exception as e:
+        return ""
 
 
 def raises_locust_error(func: Callable) -> Callable:
@@ -143,6 +191,11 @@ def raises_locust_error(func: Callable) -> Callable:
         except Exception as e:
             file_without_path = os.path.basename(inspect.getfile(func))
             location = f'{file_without_path}/{func.__name__}()'
-            log_locust_error(e, location=location, raise_error=True)
+            name = (
+                kwargs['locust_request_label']
+                if 'locust_request_label' in kwargs
+                else f'raises_locust_error.{func.__name__}'
+            )
+            log_locust_error(name, e, location=location)
             return None
     return func_wrapper

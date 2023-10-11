@@ -72,7 +72,12 @@ class _Reports(_Base):
             self.get_reports_interface(locust_request_label=locust_request_label)
             self.get_reports_nav(locust_request_label=locust_request_label)
         except Exception as e:
-            log_locust_error(e, error_desc="Response Error", raise_error=False)
+            log_locust_error(
+                locust_request_label,
+                e,
+                error_desc="Response Error",
+                raise_error=False,
+            )
 
         uri = ALL_REPORTS_URI
         if search_string:
@@ -97,10 +102,24 @@ class _Reports(_Base):
                 except Exception as e:
                     error_key_count += 1
                     self._reports[error_key_string + str(error_key_count)] = {}
-                    log_locust_error(e, error_desc="Corrupt Report Error", location=uri, raise_error=False)
+                    log_locust_error(
+                        locust_request_label,
+                        e,
+                        resp=response,
+                        error_desc="Corrupt Report Error",
+                        location=uri,
+                        raise_error=False,
+                    )
             self._errors = error_key_count
         except Exception as e:
-            log_locust_error(e, error_desc="No Reports Returned", location=uri, raise_error=False)
+            log_locust_error(
+                locust_request_label,
+                e,
+                resp=response,
+                error_desc="No Reports Returned",
+                location=uri,
+                raise_error=False,
+            )
             return self._reports
         return self._reports
 
@@ -172,6 +191,5 @@ class _Reports(_Base):
         self.interactor.get_page(uri=uri, headers=headers, label=nav_label)  # report request
         label = locust_request_label or "Reports.GetUi." + format_label(report_name, "::", 0)
         resp = self.interactor.get_page(uri=form_uri, headers=headers, label=label)
-        test_response_for_error(resp)
         resp.raise_for_status()
         return resp.json()

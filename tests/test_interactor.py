@@ -277,7 +277,7 @@ class TestInteractor(unittest.TestCase):
     def test_post_page(self) -> None:
         self.custom_locust.set_response("", 200, "{}")
         output = self.task_set.appian._interactor.post_page(
-            "", payload={}, headers=None, label=None)
+            "", payload={}, headers=None)
         self.assertEqual(output.json(), dict())
 
     def test_change_user_to_mobile(self) -> None:

@@ -22,5 +22,10 @@ class RecordsInfo():
             self.__records.get_records_interface(locust_request_label=locust_request_label)
             self.__records.get_records_nav(locust_request_label=locust_request_label)
         except Exception as e:
-            log_locust_error(e, error_desc="Response Error", raise_error=False)
+            log_locust_error(
+                locust_request_label,
+                e,
+                error_desc="Response Error",
+                raise_error=False,
+            )
         return self.__records.get_all_record_types(locust_request_label=locust_request_label)

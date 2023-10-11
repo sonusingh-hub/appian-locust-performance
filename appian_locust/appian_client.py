@@ -159,8 +159,7 @@ class AppianClient:
                 get_client_feature_toggles(self._interactor, self.client)
             )
         except Exception as e:
-            log_locust_error(e, error_desc="Client Feature Toggles Error")
-            raise e
+            log_locust_error('get_client_feature_toggles', e, error_desc="Client Feature Toggles Error")
 
 
 class _NoOpEvents():

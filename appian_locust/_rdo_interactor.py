@@ -155,7 +155,10 @@ class _RDOInteractor(_Interactor):
         elif isinstance(payload, str):
             post_payload = payload.encode()
         else:
-            log_locust_error(Exception("Cannot PUT a payload that is not of type dict or string"))
+            log_locust_error(
+                label or f'_rdo_interactor.put_page.{uri}',
+                Exception("Cannot PUT a payload that is not of type dict or string"),
+            )
         with self.client.put(
                 uri,
                 data=post_payload,
@@ -192,8 +195,10 @@ class _RDOInteractor(_Interactor):
         elif isinstance(payload, str):
             post_payload = payload.encode()
         else:
-            log_locust_error(Exception("Cannot PATCH a payload that is not of type dict, list or string"))
-            sys.exit(1)
+            log_locust_error(
+                label or f'_rdo_interactor.patch_page.{uri}',
+                Exception("Cannot PATCH a payload that is not of type dict, list or string"),
+            )
         with self.client.patch(uri, data=post_payload, headers=headers, timeout=self._request_timeout, name=label, files=files,
                                catch_response=True) as resp:  # type: ResponseContextManager
             try:

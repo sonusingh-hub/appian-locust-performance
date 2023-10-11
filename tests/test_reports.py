@@ -1,4 +1,4 @@
-from requests import Response
+from requests import Response, Request
 from .mock_reader import read_mock_file
 from appian_locust._interactor import _Interactor
 from appian_locust._reports import ALL_REPORTS_URI, _Reports
@@ -24,7 +24,7 @@ class TestReports(unittest.TestCase):
         response = Response()
         setattr(response, 'json', response_mock)
         get_page_mock = unittest.mock.Mock(
-            side_effect=lambda uri, label: response if uri == ALL_REPORTS_URI else ""
+            side_effect=lambda uri, label: response if uri == ALL_REPORTS_URI else Response()
         )
         setattr(self.interactor, 'get_page', get_page_mock)
 
@@ -38,7 +38,7 @@ class TestReports(unittest.TestCase):
         response = Response()
         setattr(response, 'json', response_mock)
         get_page_mock = unittest.mock.Mock(
-            side_effect=lambda uri, label: response if uri == ALL_REPORTS_URI else ""
+            side_effect=lambda uri, label: response if uri == ALL_REPORTS_URI else Response()
         )
         setattr(self.interactor, 'get_page', get_page_mock)
 
@@ -52,7 +52,7 @@ class TestReports(unittest.TestCase):
         response = Response()
         setattr(response, 'json', response_mock)
         get_page_mock = unittest.mock.Mock(
-            side_effect=lambda uri, label: response if uri == ALL_REPORTS_URI else ""
+            side_effect=lambda uri, label: response if uri == ALL_REPORTS_URI else Response()
         )
         setattr(self.interactor, 'get_page', get_page_mock)
 
@@ -64,7 +64,7 @@ class TestReports(unittest.TestCase):
         response = Response()
         setattr(response, 'json', response_mock)
         get_page_mock = unittest.mock.Mock(
-            side_effect=lambda uri, label: response if uri == ALL_REPORTS_URI else ""
+            side_effect=lambda uri, label: response if uri == ALL_REPORTS_URI else Response()
         )
         setattr(self.interactor, 'get_page', get_page_mock)
 
@@ -78,7 +78,7 @@ class TestReports(unittest.TestCase):
         setattr(response, 'json', response_mock)
         setattr(response, 'raise_for_status', response_all_ok_mock)  # ensure response.ok returns true
         get_page_mock = unittest.mock.Mock(
-            side_effect=lambda uri, headers, label: response if uri == "some_url" else "",
+            side_effect=lambda uri, headers, label: response if uri == "some_url" else Response(),
         )
         setattr(self.interactor, 'get_page', get_page_mock)
         get_form_uri_mock = unittest.mock.Mock(return_value="some_url")
@@ -92,7 +92,7 @@ class TestReports(unittest.TestCase):
         response = Response()
         setattr(response, 'json', response_mock)
         get_page_mock = unittest.mock.Mock(
-            side_effect=lambda uri, label: response if uri == ALL_REPORTS_URI else ""
+            side_effect=lambda uri, label: response if uri == ALL_REPORTS_URI else Response()
         )
 
         setattr(self.interactor, 'get_page', get_page_mock)
