@@ -465,9 +465,6 @@ class _Interactor:
                 log_locust_error(locust_label, e, raise_error=True)
 
             parse_pattern = page_name
-            if TEMPO_SITE_STUB not in get_url:
-                page_type = get_url.split('/')[-1]
-                parse_pattern = parse_pattern + "/" + page_type
             url_prefix_index = get_url.index(parse_pattern) + len(page_name)
             # record_link_url = get_url[:get_url.index(parse_pattern) + len(page_name)].replace("/pages/",
             record_link_url = get_url[:url_prefix_index].replace("/pages/",
