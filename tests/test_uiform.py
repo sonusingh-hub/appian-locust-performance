@@ -9,16 +9,17 @@ from appian_locust.uiform import SailUiForm, RecordInstanceUiForm
 from appian_locust.utilities.helper import (ENV, find_component_by_attribute_in_dict,
                                             find_component_by_index_in_dict,
                                             find_component_by_label_and_type_dict)
-from appian_locust.uiform import (PROCESS_TASK_LINK_TYPE,
-                                  InvalidComponentException,
-                                  ChoiceNotFoundException)
+from appian_locust.uiform import PROCESS_TASK_LINK_TYPE
+from appian_locust.exceptions import (InvalidComponentException,
+                                      ChoiceNotFoundException,
+                                      InvalidDateRangeException)
 from locust import TaskSet, User
 from requests.exceptions import HTTPError
 
 from .mock_client import CustomLocust
 from .mock_reader import read_mock_file
 from appian_locust._reports import REPORTS_INTERFACE_PATH
-from appian_locust._actions import ACTIONS_ALL_PATH, ACTIONS_INTERFACE_PATH, ACTIONS_FEED_PATH
+from appian_locust._actions import ACTIONS_INTERFACE_PATH, ACTIONS_FEED_PATH
 
 
 class TestSailUiForm(unittest.TestCase):
@@ -1248,6 +1249,33 @@ class TestSailUiForm(unittest.TestCase):
             "/suite/rest/a/sites/latest/D6JMim/page/reports/record/lIBHer_bdD8Emw8hLLETeiApBrxq-qoA49oyo6ZbfRANWNchnXIC8_QQLHMvQo3q8_3W_uY-NIUjTsvBQt9hzZiRJbsXbp75nXNb4s_IQMGZzxV/view/summary",
             200, read_mock_file("record_summary_view_response.json"))
         sail_form.click_grid_plaintext_record_link(grid_index=0, row_index=0, column_name="Customer")
+
+    @patch('appian_locust._interactor._Interactor.click_generic_element')
+    def test_select_date_range_user_filter(self, click_generic_mock: MagicMock) -> None:
+        report_body = read_mock_file("date_range_user_filter.json")
+        self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
+        sail_form = self.task_set.appian.visitor.visit_report(self.report_name, exact_match=False)
+        start_date = datetime.date(2023, 10, 18)
+        end_date = datetime.date(2023, 10, 19)
+
+        sail_form.select_date_range_user_filter("Read-only Grid-userFilterDateRange_1", start_date, end_date)
+
+        _, kwargs = click_generic_mock.call_args_list[0]
+        value = kwargs["new_value"]
+        self.assertEqual(value, {
+            "startDate": {"#t": "date", "#v": f"{start_date.isoformat()}Z"},
+            "endDate": {"#t": "date", "#v": f"{end_date.isoformat()}Z"}
+        })
+
+    def test_select_date_range_user_filter_invalid_dates(self) -> None:
+        report_body = read_mock_file("date_range_user_filter.json")
+        self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
+        sail_form = self.task_set.appian.visitor.visit_report(self.report_name, exact_match=False)
+        start_date = datetime.date(2023, 10, 20)
+        end_date = datetime.date(2023, 10, 19)
+
+        with self.assertRaises(InvalidDateRangeException):
+            sail_form.select_date_range_user_filter("Read-only Grid-userFilterDateRange_1", start_date, end_date)
 
 
 if __name__ == '__main__':

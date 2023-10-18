@@ -5,6 +5,7 @@ import json
 import os
 import random
 import warnings
+from datetime import date
 from typing import Any, Dict, List, Union, Optional, TYPE_CHECKING
 from urllib.parse import quote, urlparse
 from copy import deepcopy
@@ -15,7 +16,7 @@ from .._interactor import _Interactor, TEMPO_SITE_STUB
 from .._locust_error_handler import raises_locust_error
 from .._task_opener import _TaskOpener
 from .._ui_reconciler import UiReconciler
-from ..exceptions import InvalidComponentException, ChoiceNotFoundException
+from ..exceptions import InvalidComponentException, InvalidDateRangeException
 from ..utilities.helper import (extract_all_by_label, find_component_by_attribute_and_index_in_dict,
                                 find_component_by_attribute_in_dict, find_component_by_index_in_dict,
                                 find_component_by_label_and_type_dict, find_component_by_type_and_attribute_and_index_in_dict)
@@ -575,6 +576,50 @@ class SailUiForm:
         """
         locust_label = locust_request_label or f"{self.breadcrumb}.ClickStartProcessLink.Mobile.{label}"
         return self.click_start_process_link(label, site_name, page_name, is_mobile=True, locust_request_label=locust_label)
+
+    def select_date_range_user_filter(
+            self,
+            filter_label: str,
+            filter_start_date: date,
+            filter_end_date: date,
+            locust_request_label: Optional[str] = None
+    ) -> 'SailUiForm':
+        """
+        Select a value on a date range user filter
+
+        Args:
+            filter_label(str): the testLabel of the filter to select a value for
+            filter_start_date(date): the start date for the range
+            filter_end_date(date): the end date for the range
+
+        Keyword Args:
+            locust_request_label(str): Label used to identify the request for locust statistics
+
+        Returns (SailUiForm): The latest state of the UiForm
+
+        Examples:
+
+            >>> form.select_date_range_user_filter(filter_label="userFilter", filter_start_date=datetime.date(2023, 10, 18), filter_end_date=datetime.date(2023,10,19))
+        """
+        if filter_start_date > filter_end_date:
+            raise InvalidDateRangeException(filter_start_date, filter_end_date)
+        locust_request_label = locust_request_label or f"{self.breadcrumb}.SelectDateUserFilter.{filter_label}"
+        date_range_component = find_component_by_attribute_in_dict(attribute="testLabel", value=filter_label, component_tree=self._state)
+        new_value = {
+            "startDate": {"#t": "date", "#v": f"{filter_start_date.isoformat()}Z"},
+            "endDate": {"#t": "date", "#v": f"{filter_end_date.isoformat()}Z"}
+        }
+
+        new_state = self._interactor.click_generic_element(
+                        post_url=self.form_url,
+                        component=date_range_component,
+                        context=self.context,
+                        uuid=self.uuid,
+                        new_value=new_value,
+                        label=locust_request_label
+                    )
+
+        return self._reconcile_state(new_state)
 
     def _click_start_process_link(self, site_name: str, page_name: str, is_mobile: bool,
                                   component: Dict[str, Any], locust_request_label: str) -> Dict[str, Any]:
