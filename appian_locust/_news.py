@@ -76,7 +76,7 @@ class _News(_Base):
         self._errors = error_key_count
 
         if len(self._news) == 0:
-            log.warning(f"News search failed for keyword: '{search_string}'")
+            log.info(f"News search returned no results for keyword: '{search_string}'")
         return self._news
 
     def get_news(self, news_name: str, exact_match: bool = True, search_string: Optional[str] = None) -> Dict[str, Any]:

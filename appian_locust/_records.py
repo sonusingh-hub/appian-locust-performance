@@ -166,8 +166,9 @@ class _Records(_Base):
         _, current_record = super().get(self._records[record_type], record_name, exact_match,
                                         ignore_retry=True)
         if not current_record:
+            self.get_all(search_string=record_name)
             _, current_record = super().get(self._records[record_type], record_name, exact_match,
-                                            search_string=record_name)
+                                            ignore_retry=True)
         if not current_record:
             raise Exception(f"There is no record with name {record_name} found in record type {record_type} (Exact match = {exact_match})")
         return current_record

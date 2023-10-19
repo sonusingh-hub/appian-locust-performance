@@ -405,12 +405,12 @@ class TestInteractor(unittest.TestCase):
         )
 
         resp = self.task_set.appian._interactor.click_related_action(
-                    component={"label": "whatever"},
-                    record_type_stub=record_type_stub,
-                    opaque_record_id=opaque_record_id,
-                    opaque_related_action_id=opaque_related_action_id,
-                    open_in_a_dialog=False
-                )
+            component={"label": "whatever"},
+            record_type_stub=record_type_stub,
+            opaque_record_id=opaque_record_id,
+            opaque_related_action_id=opaque_related_action_id,
+            open_in_a_dialog=False
+        )
 
         self.assertEqual(resp, expected_response)
 
@@ -424,12 +424,12 @@ class TestInteractor(unittest.TestCase):
         self.custom_locust.enqueue_response(200, json.dumps(expected_response))
 
         resp = self.task_set.appian._interactor.click_related_action(
-                    component={"label": "whatever"},
-                    record_type_stub="",
-                    opaque_record_id=opaque_record_id,
-                    opaque_related_action_id=opaque_related_action_id,
-                    open_in_a_dialog=True
-                )
+            component={"label": "whatever"},
+            record_type_stub="",
+            opaque_record_id=opaque_record_id,
+            opaque_related_action_id=opaque_related_action_id,
+            open_in_a_dialog=True
+        )
 
         self.assertEqual(resp, expected_response)
 
