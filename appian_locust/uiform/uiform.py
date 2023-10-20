@@ -611,13 +611,13 @@ class SailUiForm:
         }
 
         new_state = self._interactor.click_generic_element(
-                        post_url=self.form_url,
-                        component=date_range_component,
-                        context=self.context,
-                        uuid=self.uuid,
-                        new_value=new_value,
-                        label=locust_request_label
-                    )
+            post_url=self.form_url,
+            component=date_range_component,
+            context=self.context,
+            uuid=self.uuid,
+            new_value=new_value,
+            label=locust_request_label
+        )
 
         return self._reconcile_state(new_state)
 

@@ -354,6 +354,28 @@ class TestVisitor(unittest.TestCase):
         self.assertTrue(isinstance(sail_form, RecordInstanceUiForm))
         self.assertEqual(sail_form.get_latest_state(), {"a": "b"})
 
+    @patch('appian_locust._records_helper.find_component_by_attribute_in_dict',
+           return_value={'children': [json.dumps({"a": "b"})]})
+    def test_records_form_example_must_search(self, find_component_by_attribute_in_dict_function: Any) -> None:
+        self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/pages/records/recordType/commit",
+                                        200,
+                                        self.grid_records)
+        self.custom_locust.set_response(
+            f"/suite/rest/a/sites/latest/D6JMim/pages/records/recordType/commit?searchTerm=Actions%20Page", 200,
+            self.records)
+        self.custom_locust.set_response(
+            f"/suite/rest/a/sites/latest/D6JMim/pages/records/recordType/BE5pSw?searchTerm=Actions%20Page", 200,
+            self.grid_records)
+
+        sail_form = self.task_set.appian.visitor.visit_record_instance(
+            "Commits",
+            self.record_instance_name,
+            view_url_stub="summary",
+            exact_match=False
+        )
+        self.assertTrue(isinstance(sail_form, RecordInstanceUiForm))
+        self.assertEqual(sail_form.get_latest_state(), {"a": "b"})
+
     def test_records_form_incorrect_name(self) -> None:
         record_name = "Fake Record"
         record_type = "Commits"

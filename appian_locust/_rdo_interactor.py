@@ -276,7 +276,7 @@ class _RDOInteractor(_Interactor):
             payload=payload,
             headers=headers,
             label=label
-            ).json()
+        ).json()
 
     def persist_ai_skill_changes_to_rdo(self, ai_skill_id: str, state: Dict[str, Any], locust_request_label: Optional[str] = None) -> Dict[str, Any]:
         uri = f"{self.rdo_host}/rdo-server/ai-skill/{ai_skill_id}"
@@ -291,7 +291,7 @@ class _RDOInteractor(_Interactor):
             payload=payload,
             headers=headers,
             label=label
-            ).json()
+        ).json()
 
     def get_presigned_url(self, ai_skill_id: str, model_id: str) -> dict:
         uri = f"{self.rdo_host}/rdo-server/ai-skill/{ai_skill_id}/doc-classification/{model_id}/actions/get-presigned-url"
