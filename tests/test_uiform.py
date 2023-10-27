@@ -312,9 +312,9 @@ class TestSailUiForm(unittest.TestCase):
 
         label = self.picker_label
         value = 'You will not find me'
-        with self.assertRaises(ComponentNotFoundException) as context:
+        with self.assertRaises(Exception) as context:
             sail_form.fill_picker_field(label, value)
-        self.assertEqual(context.exception.args[0], "No components with type 'PickerWidget' found on page")
+        self.assertEqual(context.exception.args[0], "No identifiers found when 'You will not find me' was entered in the picker field.")
 
     def test_fill_picker_field_no_response(self) -> None:
         sail_ui_actions_cmf = json.loads(self.sail_ui_actions_response)
@@ -819,6 +819,18 @@ class TestSailUiForm(unittest.TestCase):
         sail_form = SailUiForm(self.task_set.appian._interactor, sail_ui_record_action_before)
 
         sail_form.refresh_after_record_action("Update Table 1 (Dup) (PSF)")
+
+    @patch('appian_locust._interactor._Interactor.refresh_after_record_action')
+    def test_refresh_after_record_action_interaction_by_test_label(self, mock_refresh: MagicMock) -> None:
+        sail_ui_record_action_before = json.loads(self.record_action_launch_form_before_refresh)
+
+        sail_form = SailUiForm(self.task_set.appian._interactor, sail_ui_record_action_before)
+
+        sail_form.refresh_after_record_action("updateTable1-1", True)
+
+        args, _ = mock_refresh.call_args_list[0]
+
+        self.assertEqual(args[1]['label'], "Update Table 1 (Dup) (PSF)")
 
     def test_click_record_search_button_by_index(self) -> None:
         sail_ui_site_with_record_search_button = json.loads(self.site_with_record_search_button)

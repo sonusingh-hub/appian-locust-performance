@@ -184,6 +184,7 @@
                   "_cId": "c5d475751b05967c681daebde0a86159",
                   "recordActions": [{
                     "containsComponents": "true",
+                    "testLabel": "updateTable1-1",
                     "recordAction": {
                       "_cId": "c845898d52ccec938e5d7dc13e8c2e67",
                       "label": "Update Table 1 (Dup) (PSF)",
