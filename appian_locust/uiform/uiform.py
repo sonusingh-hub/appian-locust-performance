@@ -249,7 +249,9 @@ class SailUiForm:
         if not new_state:
             raise Exception(f"No response returned when trying to update field with label '{label}'")
 
-        component = find_component_by_label_and_type_dict('testLabel', test_label, 'PickerWidget', new_state)
+        self._reconcile_state(new_state)
+
+        component = find_component_by_label_and_type_dict('testLabel', test_label, 'PickerWidget', self._state)
 
         suggestions_list = extract_all_by_label(component, 'suggestions')
 
@@ -1701,12 +1703,13 @@ class SailUiForm:
         return self
 
     @raises_locust_error
-    def refresh_after_record_action(self, label: str, locust_request_label: str = "") -> 'SailUiForm':
+    def refresh_after_record_action(self, label: str, is_test_label: bool = False, locust_request_label: str = "") -> 'SailUiForm':
         """
         Refreshes a form after the completion of a record action.
 
         Args:
             label(str): Label of the record action that has just been completed
+            is_test_label(bool): If you are referencing a record action via a test label instead of a label, set this boolean to true
 
         Keyword Args:
             locust_request_label(str): Label used to identify the request for locust statistics
@@ -1723,8 +1726,13 @@ class SailUiForm:
 
         """
 
-        record_action_component = find_component_by_attribute_in_dict(
-            'label', label, self._state)
+        attribute_to_find = 'testLabel' if is_test_label else 'label'
+
+        record_action_component = find_component_by_attribute_in_dict(attribute_to_find, label, self._state)
+
+        # testLabel is one level up from label for record actions, so if using testLabel we need to pull the record action component out
+        if is_test_label:
+            record_action_component = record_action_component["recordAction"]
 
         record_action_trigger_component = find_component_by_attribute_in_dict(
             '_actionName', 'sail:record-action-trigger', self._state)
