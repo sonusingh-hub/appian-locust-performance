@@ -4,14 +4,14 @@ from ._interactor import _Interactor
 from ._rdo_interactor import _RDOInteractor
 from ._locust_error_handler import raises_locust_error
 from .exceptions import IncorrectDesignAccessException
-from .objects import DesignObject, AISkillObjectType
+from .objects import DesignObject, AISkillObjectType, DesignObjectType
 from .objects.ai_skill import AiSkill
 from .utilities import find_component_by_label_and_type_dict, find_component_by_type_and_attribute_and_index_in_dict, find_component_by_attribute_in_dict
 from .uiform import SailUiForm, AISkillUiForm
 from urllib.parse import urlparse
 
 DESIGN_URI_PATH: str = "/suite/rest/a/applications/latest/app/design"
-AI_SKILL_INDEX: int = 1
+AI_SKILL_DESCRIPTOR: str = "AI Skill"
 
 
 def get_available_design_objects(state: Dict[str, Any]) -> Dict[str, DesignObject]:
@@ -170,6 +170,14 @@ class _Design:
         grid_component = self.find_design_grid(current_state)
         link_component = find_component_by_attribute_in_dict('testLabel', design_object_name, grid_component, throw_attribute_exception=True)
         return link_component.get("uri").split('/')[-1]
+
+    def find_design_object_type_indices(self, current_state: Dict[str, Any], design_object_types: list[str]) -> list[int]:
+        checkbox = find_component_by_attribute_in_dict(attribute="testLabel", value="object-type-checkbox", component_tree=current_state)
+        choices = checkbox["choices"]
+        indices = []
+        for design_object_type in design_object_types:
+            indices.append(choices.index(design_object_type) + 1)
+        return indices
 
     def create_object(self, ui_form: SailUiForm, link_name: str, object_name: str) -> SailUiForm:
         return ui_form.click(link_name)\
