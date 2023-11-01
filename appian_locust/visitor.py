@@ -3,7 +3,7 @@ from urllib.parse import urlparse
 
 from ._actions import _Actions
 from ._data_fabric import _DataFabric
-from ._design import _Design, AI_SKILL_INDEX, validate_design_object_access_method
+from ._design import _Design, AI_SKILL_DESCRIPTOR, validate_design_object_access_method
 from ._interactor import _Interactor
 from ._portals import _Portals
 from ._rdo_interactor import _RDOInteractor
@@ -169,7 +169,8 @@ class Visitor:
         """
         design_ui_form: DesignUiForm = self.visit_design()
         design_ui_form.select_nav_card_by_index(nav_group_label="leftNavbar", is_test_label=True, index=1)
-        design_ui_form.check_checkbox_by_test_label(test_label="object-type-checkbox", indices=[object_type.value])
+        indices = self.__design.find_design_object_type_indices(current_state=design_ui_form.get_latest_state(), design_object_types=[object_type.value])
+        design_ui_form.check_checkbox_by_test_label(test_label="object-type-checkbox", indices=indices)
         design_ui_form.search_objects(object_name)
         design_object_opaque_id = self.__design.find_design_object_opaque_id_in_grid(object_name, design_ui_form.get_latest_state())
         return self.visit_design_object_by_id(design_object_opaque_id, locust_request_label)
@@ -394,7 +395,8 @@ class Visitor:
         """
         design_ui_form = self.visit_design()
         design_ui_form.select_nav_card_by_index(nav_group_label="leftNavbar", is_test_label=True, index=1)
-        design_ui_form.check_checkbox_by_test_label(test_label="object-type-checkbox", indices=[AI_SKILL_INDEX])
+        ai_skill_index_in_list = self.__design.find_design_object_type_indices(current_state=design_ui_form.get_latest_state(), design_object_types=[AI_SKILL_DESCRIPTOR])
+        design_ui_form.check_checkbox_by_test_label(test_label="object-type-checkbox", indices=ai_skill_index_in_list)
         design_ui_form.search_objects(ai_skill_name)
         design_object_opaque_id = self.__design.find_design_object_opaque_id_in_grid(ai_skill_name,
                                                                                      design_ui_form.get_latest_state())

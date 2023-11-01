@@ -129,6 +129,7 @@ class ApplicationUiForm(SailUiForm):
         Returns (ApplicationUiForm): ApplicationUiForm with filtered list of design objects
 
         """
-        self.check_checkbox_by_test_label(test_label="object-type-checkbox",
-                                          indices=[design_object_type.value for design_object_type in design_object_types])
+        indices = self.__design.find_design_object_type_indices(current_state=self._state,
+                                                                design_object_types=[design_object_type.value for design_object_type in design_object_types])
+        self.check_checkbox_by_test_label(test_label="object-type-checkbox", indices=indices)
         return self
