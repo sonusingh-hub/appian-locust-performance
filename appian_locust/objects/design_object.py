@@ -10,6 +10,7 @@ class DesignObjectType(Enum):
     RECORD_TYPE = "Record Type"
     SITE = "Site"
     WEB_API = "Web API"
+    TRANSLATION_SET = "Translation Set"
 
 
 class DesignObject:
