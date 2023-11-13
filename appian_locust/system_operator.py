@@ -89,6 +89,26 @@ class SystemOperator:
         resp = self.__interactor.post_page(uri, headers=headers, label=locust_request_label)
         return resp
 
+    def fetch_autosuggestions(
+        self,
+        payload: Dict[str, Any],
+        locust_request_label: Optional[str] = None,
+    ) -> Response:
+        """
+        Retrieve suggestions from autosuggest endpoint
+        Args:
+            payload: payload containing expression details to retrieve suggestions for
+            locust_request_label: the label to be displayed by locust
+
+        Returns: Json response of suggestions
+        """
+        uri = "/suite/rest/a/interfacedesigner/latest/autosuggest"
+        headers = self.__interactor.setup_sail_headers()
+        headers["Accept"] = "application/vnd.appian.tv+json"
+        resp = self.__interactor.post_page(
+            uri, payload=payload, headers=headers, label=locust_request_label)
+        return resp
+
     def fetch_content(self, opaque_id: str, locust_request_label: Optional[str]) -> Response:
         """
         Fetch a content element, such as an image
