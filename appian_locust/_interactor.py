@@ -181,7 +181,7 @@ class _Interactor:
             files=files,
             catch_response=True,
         ) as resp:  # type: ResponseContextManager
-            if check_login:
+            if check_login and not self.portals_mode:
                 self.check_post_response_for_valid_auth(resp=resp)
             try:
                 test_response_for_error(
