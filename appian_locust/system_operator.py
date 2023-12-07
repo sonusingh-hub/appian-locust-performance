@@ -51,12 +51,12 @@ class SystemOperator:
         To set custom headers
 
         >>> headers = {'Is-Admin': 'true'}
-        ... self.appian._interactor.get_webapi('/suite/webapi/headers', headers=headers)
+        ... self.appian.system_operator.get_webapi('/suite/webapi/headers', headers=headers)
 
         To set custom query parameters
 
         >>> params = {'age': 5, 'start-date': '10-05-2020'}
-        ... self.appian._interactor.get_webapi('/suite/webapi/query', query_parameters=params)
+        ... self.appian.system_operator.get_webapi('/suite/webapi/query', query_parameters=params)
         """
         querystring = []
         for k, v in query_parameters.items():
@@ -84,7 +84,7 @@ class SystemOperator:
         To set custom headers
 
         >>> headers = {'Is-Admin': 'true'}
-        ... self.appian._interactor.get_webapi('/suite/webapi/headers', headers=headers)
+        ... self.appian.system_operator.post_webapi('/suite/webapi/headers', headers=headers)
         """
         resp = self.__interactor.post_page(uri, headers=headers, label=locust_request_label)
         return resp
