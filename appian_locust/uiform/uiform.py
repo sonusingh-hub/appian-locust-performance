@@ -1036,8 +1036,17 @@ class SailUiForm:
             >>> form.upload_document_to_upload_field('Upload Properties', "/usr/local/appian/File.properties")
 
         """
-        component = find_component_by_attribute_in_dict(
-            'label', label, self._state)
+        component = find_component_by_type_and_attribute_and_index_in_dict(
+            component_tree=self._state,
+            type="FileUploadWidget",
+            attribute="label",
+            value=label,
+            raise_error=False
+        )
+
+        if not component:
+            component = find_component_by_attribute_in_dict(
+                'label', label, self._state)
 
         # Inner component can be the upload field
         if component.get('#t') != 'FileUploadWidget' and 'contents' in component:
@@ -1089,8 +1098,17 @@ class SailUiForm:
             >>> form.multi_upload_document_to_upload_field('Upload Files', ["/usr/local/appian/File1.zip", "/usr/local/appian/File2.zip"])
 
         """
-        component = find_component_by_attribute_in_dict(
-            'label', label, self._state)
+        component = find_component_by_type_and_attribute_and_index_in_dict(
+            component_tree=self._state,
+            type="MultipleFileUploadWidget",
+            attribute="label",
+            value=label,
+            raise_error=False
+        )
+
+        if not component:
+            component = find_component_by_attribute_in_dict(
+                'label', label, self._state)
 
         # Inner component can be the upload field
         if component.get('#t') != 'MultipleFileUploadWidget' and 'contents' in component:
