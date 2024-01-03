@@ -676,6 +676,39 @@
                                                                                         },
                                                                                         "linkStyle": "STANDALONE",
                                                                                         "#t": "LinkedItem"
+                                                                                    },
+                                                                                    {
+                                                                                        "_cId": "8f11b4c340a6da8cb642254bffdf1a2dxxx",
+                                                                                        "values": {
+                                                                                            "_cId": "cd713174c0c09f32c64f448e5e41539axxx",
+                                                                                            "values": [
+                                                                                                {
+                                                                                                    "#v": "20 | Opportunity for Locust - page substring of site",
+                                                                                                    "#t": "string"
+                                                                                                }
+                                                                                            ],
+                                                                                            "#t": "FormattedText"
+                                                                                        },
+                                                                                        "link": {
+                                                                                            "_cId": "4cf2104269247f1f0021049ab75bdbc0xxx",
+                                                                                            "uuid": "b02c9307-6efb-4a02-8a97-1bc0ee013404xxx",
+                                                                                            "siteUrlStub": "requirements-management",
+                                                                                            "pageUrlStub": "requirements",
+                                                                                            "recordIdentifier": "20",
+                                                                                            "_recordRef": "lIBfAsR2YQyJlLLwfJGAueN_ksp5YBWRWq5zbPq5TyhUEZM1YuYDBn5V0g-ViXrv6lacKlK9mmEsJu8Df0h9bqIn6NS1ZXJJWfTTNmJWBML_S6K",
+                                                                                            "testLabel": "RecordLinkTestLabelPageSubstringOfSite",
+                                                                                            "recordRef": {
+                                                                                                "id": "6#{http://www.appian.com/ae/types/2009}Integer#20",
+                                                                                                "#t": "RecordReference"
+                                                                                            },
+                                                                                            "dashboard": "",
+                                                                                            "label": "",
+                                                                                            "tooltip": "",
+                                                                                            "openLinkIn": "",
+                                                                                            "#t": "RecordLink"
+                                                                                        },
+                                                                                        "linkStyle": "STANDALONE",
+                                                                                        "#t": "LinkedItem"
                                                                                     }
                                                                                 ],
                                                                                 "#t": "StrongText"
