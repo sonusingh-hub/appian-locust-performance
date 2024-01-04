@@ -3,9 +3,7 @@ from typing import Any, Dict, Union, Optional
 from .utilities import logger
 from ._base import _Base
 from ._interactor import _Interactor
-from ._locust_error_handler import log_locust_error
 from ._task_opener import _TaskOpener
-from .uiform import SailUiForm
 
 log = logger.getLogger(__name__)
 
@@ -145,8 +143,7 @@ class _Tasks(_Base):
         """
         _, current_task = super().get(self._tasks, task_name, exact_match)
         if not current_task:
-            e = Exception(f'There is no task with name "{task_name}" in the system under test (Exact match = {exact_match})')
-            log_locust_error('_tasks.get_task', e)
+            raise Exception(f'There is no task with name "{task_name}" in the system under test (Exact match = {exact_match})')
         return current_task
 
     def get_task_form_json(self, task_name: str, locust_request_label: str = "", exact_match: bool = True) -> Dict[str, Any]:

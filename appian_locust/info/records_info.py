@@ -1,7 +1,9 @@
 from typing import Any, Dict
+from ..utilities import logger
 
-from .._locust_error_handler import log_locust_error
 from .._records import _Records
+
+log = logger.getLogger(__name__)
 
 
 class RecordsInfo():
@@ -22,10 +24,5 @@ class RecordsInfo():
             self.__records.get_records_interface(locust_request_label=locust_request_label)
             self.__records.get_records_nav(locust_request_label=locust_request_label)
         except Exception as e:
-            log_locust_error(
-                locust_request_label,
-                e,
-                error_desc="Response Error",
-                raise_error=False,
-            )
+            log.error(e)
         return self.__records.get_all_record_types(locust_request_label=locust_request_label)

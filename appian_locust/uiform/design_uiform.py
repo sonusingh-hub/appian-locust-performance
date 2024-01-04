@@ -3,7 +3,6 @@ from typing import Any, Dict, Optional
 from ..utilities import logger
 from .._design import _Design, get_available_design_objects
 from .._interactor import _Interactor
-from .._locust_error_handler import raises_locust_error
 from ..objects import Application, DesignObject
 from ..uiform import ApplicationUiForm, SailUiForm
 from ..objects import DesignObject
@@ -18,7 +17,6 @@ class DesignUiForm(SailUiForm):
         super().__init__(interactor, state, breadcrumb)
         self.__design = _Design(interactor)
 
-    @raises_locust_error
     def click_application(self, application_name: str, locust_request_label: Optional[str] = None) -> 'ApplicationUiForm':
         """
         Click on an application in the /design application grid. Must be on the current page to be clicked.
@@ -36,7 +34,6 @@ class DesignUiForm(SailUiForm):
                 return ApplicationUiForm(self._interactor, self._dispatch_click(column["links"][index], locust_request_label or "DesignGrid"), f"Application.{ application_name }.Ui")
         raise Exception(f"No Application with name { application_name } found in /design grid")
 
-    @raises_locust_error
     def create_application(self, application_name: str) -> 'ApplicationUiForm':
         """
         Creates an application and returns a form within representing the app contents

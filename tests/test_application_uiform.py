@@ -36,9 +36,9 @@ class TestApplicationUiform(unittest.TestCase):
         result_state = '{"ase": "ase"}'
         self.custom_locust.set_response(
             "/suite/rest/a/applications/latest/app/design/lIBKSzmcS2f-JBIoXdpEpcXkuLVVXxoykWGSNEqB-oPAfjLayGXYe7CkjVo53babGjVtBl2x-96-oRsUrFC3i3bZm3cF0kG7wwaG-9H6213zpNl", 200, result_state)
-        application = application.click_design_object("RE_stockData")
-        self.assertEqual(type(application), DesignObjectUiForm)
-        self.assertEqual(application.get_latest_state(), json.loads(result_state))
+        design_object = application.click_design_object("RE_stockData")
+        self.assertEqual(type(design_object), DesignObjectUiForm)
+        self.assertEqual(design_object.get_latest_state(), json.loads(result_state))
 
     def test_click_design_object_throws_ai_skill_exception(self) -> None:
         app_landing_page = read_mock_file("design_app_landing_page.json")
@@ -72,5 +72,5 @@ class TestApplicationUiform(unittest.TestCase):
         )
         self.custom_locust.set_response(f"{RDO_HOST}/sail-server/SYSTEM_SYSRULES_aiSkillDesigner/ui", 200, "{\"this_is\": \"a_response\"}")
 
-        application = application.click_ai_skill("RE_stockData")
-        self.assertEqual(application.get_latest_state(), {"this_is": "a_response"})
+        ai_skill = application.click_ai_skill("RE_stockData")
+        self.assertEqual(ai_skill.get_latest_state(), {"this_is": "a_response"})

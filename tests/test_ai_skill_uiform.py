@@ -65,7 +65,7 @@ class TestAISkillUiForm(unittest.TestCase):
         ]
         ai_skill_uiform = AISkillUiForm(rdo_interactor=self.rdo_interactor, rdo_state=file_upload_form, ai_skill_id=AI_SKILL_ID)
 
-        ai_skill_uiform.upload_documents_to_multiple_file_upload_field(file_paths)
+        ai_skill_uiform.upload_documents_to_multiple_file_upload_field("Unused Label", file_paths)
 
         _, kwargs = upload_doc_mlas_mock.call_args_list[0]
         file_infos = kwargs["file_infos"]

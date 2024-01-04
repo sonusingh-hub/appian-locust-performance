@@ -10,7 +10,6 @@ from .utilities import logger
 from .utilities import loadDriverUtils, DEFAULT_CONFIG_PATH
 from ._feature_toggle_helper import get_client_feature_toggles
 from ._interactor import _Interactor
-from ._locust_error_handler import log_locust_error
 from ._actions import _Actions
 from ._news import _News
 from ._records import _Records
@@ -154,12 +153,9 @@ class AppianClient:
         self.client.cookies.clear()
 
     def get_client_feature_toggles(self) -> None:
-        try:
-            self.client.feature_flag, self.client.feature_flag_extended = ("7ffceebc", "1bff7f49dc1fffceebc") if self.portals_mode else (
-                get_client_feature_toggles(self._interactor, self.client)
-            )
-        except Exception as e:
-            log_locust_error('get_client_feature_toggles', e, error_desc="Client Feature Toggles Error")
+        self.client.feature_flag, self.client.feature_flag_extended = ("7ffceebc", "1bff7f49dc1fffceebc") if self.portals_mode else (
+            get_client_feature_toggles(self._interactor, self.client)
+        )
 
 
 class _NoOpEvents():

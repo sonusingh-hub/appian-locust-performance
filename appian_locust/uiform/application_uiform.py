@@ -3,7 +3,6 @@ from typing import Any, Dict, Optional
 from .._design import _Design, get_available_design_objects, validate_design_object_access_method
 from .._rdo_interactor import _RDOInteractor
 from .._interactor import _Interactor
-from .._locust_error_handler import raises_locust_error
 from ..uiform import AISkillUiForm, DesignObjectUiForm, SailUiForm
 from ..objects import DesignObject, DesignObjectType, AISkillObjectType
 
@@ -18,7 +17,6 @@ class ApplicationUiForm(SailUiForm):
         super().__init__(interactor, state, breadcrumb)
         self.__design = _Design(interactor)
 
-    @raises_locust_error
     def click_design_object(self, design_object_name: str, locust_request_label: Optional[str] = None) -> DesignObjectUiForm:
         """
         Click on a design object in the design object grid. The current view of the grid must contain the object you wish
@@ -36,7 +34,6 @@ class ApplicationUiForm(SailUiForm):
         validate_design_object_access_method(design_object_json, _RDO_TYPE_TO_APPLICATION_METHOD)
         return DesignObjectUiForm(self._interactor, design_object_json, breadcrumb)
 
-    @raises_locust_error
     def click_ai_skill(self, ai_skill_name: str, locust_request_label: Optional[str] = None) -> AISkillUiForm:
         """
         Click on an AI Skill in the design object grid. The current view of the grid must contain the skill you wish
@@ -62,7 +59,6 @@ class ApplicationUiForm(SailUiForm):
                              breadcrumb=breadcrumb,
                              )
 
-    @raises_locust_error
     def create_ai_skill_object(self, ai_skill_name: str, ai_skill_type: AISkillObjectType) -> 'ApplicationUiForm':
         """
         Creates an AI Skill with the given name
@@ -73,7 +69,6 @@ class ApplicationUiForm(SailUiForm):
         self.__design.create_ai_skill_object(self, ai_skill_name=ai_skill_name, ai_skill_type=ai_skill_type)
         return self
 
-    @raises_locust_error
     def create_record_type(self, record_type_name: str) -> 'ApplicationUiForm':
         """
         Creates a record type with the given name
@@ -84,7 +79,6 @@ class ApplicationUiForm(SailUiForm):
         self.__design.create_object(self, link_name='Record Type', object_name=record_type_name)
         return self
 
-    @raises_locust_error
     def create_report(self, report_name: str) -> 'ApplicationUiForm':
         """
         Creates a report with the given name

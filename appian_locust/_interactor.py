@@ -1,6 +1,5 @@
 import json
 import os
-import sys
 import time
 import urllib.parse
 from datetime import date, datetime
@@ -11,7 +10,7 @@ from locust.clients import HttpSession, ResponseContextManager
 from requests import Response
 
 from .utilities import logger
-from ._locust_error_handler import log_locust_error, test_response_for_error
+from ._locust_error_handler import test_response_for_error
 from ._save_request_builder import save_builder
 from .exceptions import (BadCredentialsException, MissingCsrfTokenException, ComponentNotFoundException,
                          InvalidComponentException, ChoiceNotFoundException)
@@ -168,10 +167,7 @@ class _Interactor:
         elif isinstance(payload, str):
             post_payload = payload.encode()
         else:
-            log_locust_error(
-                label,
-                Exception("Cannot POST a payload that is not of type dict or string")
-            )
+            raise Exception("Cannot POST a payload that is not of type dict or string")
         with self.client.post(
             uri,
             data=post_payload,
@@ -443,8 +439,7 @@ class _Interactor:
             dashboard = "summary"
         record_view_url_stub = f"/view/{dashboard}"
         if not record_ref:
-            e = Exception("Cannot find _recordRef attribute in RecordLink component.")
-            log_locust_error(locust_label, e, raise_error=True)
+            raise Exception("Cannot find _recordRef attribute in RecordLink component")
         record_link_url_suffix = record_ref + record_view_url_stub
 
         # Logic to construct record link URL in tempo and sites
@@ -461,8 +456,7 @@ class _Interactor:
             if page_search:
                 page_name = page_search.group()
             else:
-                e = Exception("Unexpected record link URL - couldn't find page name after /pages/")
-                log_locust_error(locust_label, e, raise_error=True)
+                raise Exception("Unexpected record link URL - couldn't find page name after /pages/")
 
             parse_pattern = page_name
             url_prefix_index = get_url.index(parse_pattern) + len(page_name)
@@ -477,12 +471,10 @@ class _Interactor:
             page_name = component.get('pageUrlStub', "")
             record_link_url = f"/suite/rest/a/sites/latest/{site_name}/page/{page_name}/record/{record_link_url_suffix}"
         else:
-            e = Exception("Unexpected record link URL")
-            log_locust_error(locust_label, e, raise_error=True)
+            raise Exception("Unexpected record link URL")
 
         if not get_url or not record_link_url:
-            e = Exception("Cannot make Record Link request.")
-            log_locust_error(locust_label, e, raise_error=True)
+            raise Exception("Cannot make Record Link request.")
 
         # Clicking a record link returns a record instance feed - use setup_feed_headers to get the correct headers
         headers = self.setup_feed_headers()
@@ -1066,7 +1058,7 @@ class _Interactor:
                 "#v": [self._make_file_metadata(result) for result in doc_info]
             }
         else:
-            log_locust_error(locust_label, Exception(f"Bad document id or list of document ids: {doc_info}"))
+            raise Exception(f"Bad document id or list of document ids: {doc_info}")
         payload = save_builder() \
             .component(upload_field) \
             .context(context) \

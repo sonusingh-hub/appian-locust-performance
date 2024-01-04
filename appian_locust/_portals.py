@@ -1,7 +1,6 @@
 from typing import Any, Dict, Optional
 
 from ._interactor import _Interactor
-from ._locust_error_handler import raises_locust_error
 
 PAGE_URL_PREFIX = "/_/ui/page/"
 
@@ -11,7 +10,6 @@ class _Portals:
     def __init__(self, interactor: _Interactor):
         self.interactor = interactor
 
-    @raises_locust_error
     def fetch_page_json(self, portal_unique_identifier: str, portal_page__unique_identifier: str, locust_request_label: Optional[str] = None) -> Dict[str, Any]:
         """
         Navigates to specific portal's page

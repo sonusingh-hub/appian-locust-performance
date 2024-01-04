@@ -4,7 +4,6 @@ from requests.models import Response
 from .utilities import logger
 from ._base import _Base
 from ._interactor import _Interactor
-from ._locust_error_handler import log_locust_error
 
 log = logger.getLogger(__name__)
 
@@ -71,8 +70,8 @@ class _News(_Base):
                     self._news[key] = current_item
             except Exception as e:
                 error_key_count += 1
-                self._news[error_key_string + str(error_key_count)] = {}
-                log_locust_error(label, e, error_desc="Corrupt News Error", resp=response, location=uri, raise_error=False)
+                self._news[error_key_string + str(error_key_count)] = current_item
+                log.error(f"Corrupt News Error: {current_item}")
         self._errors = error_key_count
 
         if len(self._news) == 0:

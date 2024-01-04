@@ -204,15 +204,6 @@ class TestVisitor(unittest.TestCase):
             "/suite/rest/a/applications/latest/app/design", 400, "")
         with self.assertRaises(Exception) as context:
             sail_form = self.task_set.appian.visitor.visit_design()
-        # Two errors will be logged, one at the get_page request level, and one at the visit
-        self.assertEqual(2, len(ENV.stats.errors))
-
-        # Assert error structure
-        error: stats.StatsError = list(ENV.stats.errors.values())[1]
-        self.assertEqual('DESC: No description', error.method)
-        self.assertEqual('LOCATION: _design.py/fetch_design_json()', error.name)
-        self.assertEqual('EXCEPTION: 400 Client Error: None for uri: /suite/rest/a/applications/latest/app/design Username: fake_user', error.error)
-        self.assertEqual(1, error.occurrences)
 
     def test_visit_design(self) -> None:
         self.custom_locust.set_response(
@@ -321,7 +312,7 @@ class TestVisitor(unittest.TestCase):
                 exact_match=False)
         self.assertEqual(
             context.exception.args[0],
-            "Parser was not able to find embedded SAIL code within JSON response for the requested Record Instance.")
+            "Parser was not able to find embedded SAIL code within JSON response for the requested Record Instance")
 
     def test_record_types_form_example_success(self) -> None:
         sail_form = self.task_set.appian.visitor.visit_record_type(
@@ -478,15 +469,6 @@ class TestVisitor(unittest.TestCase):
         self.custom_locust.set_response(ADMIN_URI_PATH, 400, "")
         with self.assertRaises(Exception) as context:
             sail_form = self.task_set.appian.visitor.visit_admin()
-        # Two errors will be logged, one at the get_page request level, and one at the visit
-        self.assertEqual(2, len(ENV.stats.errors))
-
-        # Assert error structure
-        error: stats.StatsError = list(ENV.stats.errors.values())[1]
-        self.assertEqual('DESC: No description', error.method)
-        self.assertEqual('LOCATION: _admin.py/fetch_admin_json()', error.name)
-        self.assertEqual('EXCEPTION: 400 Client Error: None for uri: /suite/rest/a/applications/latest/app/admin Username: fake_user', error.error)
-        self.assertEqual(1, error.occurrences)
 
     def test_visit_portal_verify_return_type(self) -> None:
         portal_page_form = self.task_set.appian.visitor.visit_portal_page("performance-test", "one")

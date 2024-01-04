@@ -1,7 +1,7 @@
 from typing import Any, Dict, Optional, Tuple, List
 from requests import Response
 from ._interactor import _Interactor
-from ._locust_error_handler import raises_locust_error, log_locust_error, test_response_for_error
+from ._locust_error_handler import test_response_for_error
 from ._save_request_builder import save_builder
 from .utilities.helper import find_component_by_attribute_in_dict, extract_all_by_label, get_username, remove_type_info
 from locust.clients import ResponseContextManager
@@ -155,10 +155,7 @@ class _RDOInteractor(_Interactor):
         elif isinstance(payload, str):
             post_payload = payload.encode()
         else:
-            log_locust_error(
-                label or f'_rdo_interactor.put_page.{uri}',
-                Exception("Cannot PUT a payload that is not of type dict or string"),
-            )
+            raise Exception("Cannot PUT a payload that is not of type dict or string")
         with self.client.put(
                 uri,
                 data=post_payload,
@@ -195,10 +192,7 @@ class _RDOInteractor(_Interactor):
         elif isinstance(payload, str):
             post_payload = payload.encode()
         else:
-            log_locust_error(
-                label or f'_rdo_interactor.patch_page.{uri}',
-                Exception("Cannot PATCH a payload that is not of type dict, list or string"),
-            )
+            raise Exception("Cannot PATCH a payload that is not of type dict, list or string")
         with self.client.patch(uri, data=post_payload, headers=headers, timeout=self._request_timeout, name=label, files=files,
                                catch_response=True) as resp:  # type: ResponseContextManager
             try:
@@ -210,7 +204,6 @@ class _RDOInteractor(_Interactor):
                     resp.raise_for_status()
             return resp
 
-    @raises_locust_error
     def fetch_ai_skill_creation_dialog_json(self, app_prefix: str, locust_request_label: str = "AISkill.CreateDialog") -> Dict[str, Any]:
         headers = self.setup_rdo_ui_request_headers()
         headers["x-http-method-override"] = "PUT"
@@ -218,7 +211,6 @@ class _RDOInteractor(_Interactor):
         uri = f"{self.rdo_host}/sail-server/SYSTEM_SYSRULES_aiSkillCreateDialog/ui"
         return self.post_page(uri=uri, payload=payload, headers=headers, label=locust_request_label).json()
 
-    @raises_locust_error
     def fetch_ai_skill_creation_save_dialog_json(self, state: Dict[str, Any], rdo_state: Dict[str, Any], locust_request_label: str = "AISkill.CreationSaveDialog") -> Dict[str, Any]:
         object_uuid = extract_all_by_label(obj=rdo_state, label="newObjectUuid")[0]
         payload = self.ai_skill_creation_save_payload(state=state, object_uuid=object_uuid)
@@ -236,7 +228,6 @@ class _RDOInteractor(_Interactor):
             label=locust_request_label
         ).json()
 
-    @raises_locust_error
     def fetch_ai_skill_designer_json(self, ai_skill_id: str, locust_request_label: Optional[str] = None) -> Dict[str, Any]:
         locust_request_label = locust_request_label or f"Designer.AiSkill.{ai_skill_id}"
         headers = self.setup_rdo_ui_request_headers()
