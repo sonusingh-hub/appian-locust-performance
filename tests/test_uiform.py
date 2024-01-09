@@ -141,7 +141,6 @@ class TestSailUiForm(unittest.TestCase):
             sail_form.sort_paging_grid(index=0, field_name='Abc')
         with self.assertRaisesRegex(Exception, "Field to sort cannot be blank"):
             sail_form.sort_paging_grid(index=0)
-        self.assertEqual(4, len(ENV.stats.errors))
 
     def test_paging_grid_sort_by_label_finds_grid(self) -> None:
         report_form = read_mock_file("paging_grid_sortable.json")
@@ -442,7 +441,7 @@ class TestSailUiForm(unittest.TestCase):
                 ]
             }
             sail_form = SailUiForm(self.task_set.appian._interactor, ui)
-            sail_form.upload_documents_to_multiple_file_upload_field(label, 'fake_file')
+            sail_form.upload_documents_to_multiple_file_upload_field(label, ['fake_file'])
 
     def test_multi_upload_document_invalid_file(self) -> None:
         with self.assertRaisesRegex(FileNotFoundError, "No such file or directory: "):
@@ -481,7 +480,7 @@ class TestSailUiForm(unittest.TestCase):
         ui = json.loads(self.file_upload_initial)
         label = 'File Upload 4'
         sail_form = SailUiForm(self.task_set.appian._interactor, ui)
-        sail_form.upload_documents_to_multiple_file_upload_field(label, 'fake_file')
+        sail_form.upload_documents_to_multiple_file_upload_field(label, ['fake_file'])
         mock_upload_document_to_upload_field.assert_called_once()
 
     def test_click_related_action_on_record_form(self) -> None:
@@ -659,11 +658,6 @@ class TestSailUiForm(unittest.TestCase):
             test_form.fill_date_field('Datey', datetime.date.today())
         self.assertEqual(context.exception.args[0], "No components with label 'Datey' found on page")
 
-    def test_fill_datefield_bad_input(self) -> None:
-        test_form = self._setup_date_form()
-        with self.assertRaisesRegex(Exception, "Input must be of type date"):
-            test_form.fill_date_field('Dt', 'abc')
-
     def test_fill_datefield_success(self) -> None:
         test_form = self._setup_date_form()
         test_form.fill_date_field('Date', datetime.date(1990, 1, 5))
@@ -704,11 +698,6 @@ class TestSailUiForm(unittest.TestCase):
         self.assertEqual('post', last_request['method'])
         self.assertEqual(self.multi_dropdown_uri, last_request['path'])
         self.assertEqual([1, 2], self._unwrap_value(last_request["data"]))
-
-    def test_fill_datetimefield_bad_input(self) -> None:
-        test_form = self._setup_date_form()
-        with self.assertRaisesRegex(Exception, "Input must be of type datetime"):
-            test_form.fill_datetime_field('Dt', 'abc')
 
     def test_fill_datetimefield_not_found(self) -> None:
         test_form = self._setup_date_form()
@@ -1236,12 +1225,6 @@ class TestSailUiForm(unittest.TestCase):
             context.exception.args[0],
             f"Index: '{index_too_high}' out of range"
         )
-
-        index_invalid = "bad index"
-        with self.assertRaises(Exception) as context:
-            sail_form.select_radio_button_by_index(index_invalid, 1)
-        self.assertEqual(
-            context.exception.args[0], f"'<' not supported between instances of 'str' and 'int'")
 
     def test_click_grid_rich_text_link(self) -> None:
         report_body = read_mock_file("rich_text_grid_field.json")

@@ -2,9 +2,8 @@ from typing import Any, Dict, Optional
 
 from ._interactor import _Interactor
 from ._rdo_interactor import _RDOInteractor
-from ._locust_error_handler import raises_locust_error
 from .exceptions import IncorrectDesignAccessException
-from .objects import DesignObject, AISkillObjectType, DesignObjectType
+from .objects import DesignObject, AISkillObjectType
 from .objects.ai_skill import AiSkill
 from .utilities import find_component_by_label_and_type_dict, find_component_by_type_and_attribute_and_index_in_dict, find_component_by_attribute_in_dict
 from .uiform import SailUiForm, AISkillUiForm
@@ -40,7 +39,6 @@ class _Design:
     def __init__(self, interactor: _Interactor):
         self.interactor = interactor
 
-    @raises_locust_error
     def fetch_design_json(self, locust_request_label: Optional[str] = None) -> Dict[str, Any]:
         """
         Fetches the JSON of /design UI
@@ -59,7 +57,6 @@ class _Design:
         response.raise_for_status()
         return response.json()
 
-    @raises_locust_error
     def fetch_application_json(self, app_id: str, locust_request_label: Optional[str] = None) -> Dict[str, Any]:
         """
         Fetches the JSON of the UI for a specific application within the /design environment
@@ -79,7 +76,6 @@ class _Design:
         response.raise_for_status()
         return response.json()
 
-    @raises_locust_error
     def fetch_design_object_json(self, opaque_id: str, locust_request_label: Optional[str] = None) -> Dict[str, Any]:
         """
         Fetches the JSON of the UI for a specific object within the /design environment
@@ -99,7 +95,6 @@ class _Design:
         response.raise_for_status()
         return response.json()
 
-    @raises_locust_error
     def extract_ai_skill_info(self, object_json: Dict[str, Any]) -> AiSkill:
         object_info = find_component_by_attribute_in_dict(
             attribute="testLabel",
@@ -115,7 +110,6 @@ class _Design:
         rdo_host = parsed_url._replace(path="").geturl()
         return AiSkill(host_url=rdo_host, object_uuid=object_info["objectUuid"])
 
-    @raises_locust_error
     def find_design_grid(self, state: Dict[str, Any]) -> Dict[str, Any]:
         return find_component_by_type_and_attribute_and_index_in_dict(state, "GridField", "testLabel", "GRID-LABEL")
 

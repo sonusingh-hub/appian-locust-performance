@@ -11,7 +11,6 @@ from ._base import _Base
 from ._interactor import _Interactor
 from ._records_helper import (get_all_records_from_json,
                               get_all_record_types_from_json, get_records_from_json_by_column)
-from ._locust_error_handler import log_locust_error
 
 log = logger.getLogger(__name__)
 
@@ -73,12 +72,7 @@ class _Records(_Base):
             self.get_records_interface(locust_request_label=locust_request_label)
             self.get_records_nav(locust_request_label=locust_request_label)
         except Exception as e:
-            log_locust_error(
-                locust_request_label,
-                e,
-                error_desc="Response Error",
-                raise_error=False,
-            )
+            log.error(e)
 
         if search_string:
             # Format search string to be compatible with URLs

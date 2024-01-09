@@ -44,12 +44,13 @@ class AISkillUiForm(SailUiForm):
         self._reconcile_state(state)
         return self
 
-    def upload_documents_to_multiple_file_upload_field(self, file_paths: List[str],
-                                                       locust_request_label: Optional[str] = None, ) -> 'AISkillUiForm':
+    def upload_documents_to_multiple_file_upload_field(self, label: str, file_paths: List[str],
+                                                       locust_request_label: Optional[str] = None) -> 'AISkillUiForm':
         """
        Uploads multiple documents to an MLAS upload field.
 
        Args:
+           label(str): Currently Unused
            file_paths(list): List of document file paths in string form
 
        Keyword Args:

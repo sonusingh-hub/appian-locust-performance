@@ -3,14 +3,14 @@ from urllib.parse import quote
 
 from ._base import _Base
 from ._interactor import _Interactor
-from ._locust_error_handler import log_locust_error, test_response_for_error
-from .utilities.helper import format_label
-from .uiform import SailUiForm
+from .utilities import format_label, logger
 
 ALL_REPORTS_URI = "/suite/rest/a/uicontainer/latest/reports"
 REPORTS_INTERFACE_PATH = "/suite/rest/a/sites/latest/D6JMim/pages/reports/interface"
 REPORTS_LINK_PATH = ["/suite/rest/a/sites/latest/D6JMim/pages/reports/report/", "/reportlink"]
 REPORTS_NAV_PATH = ["/suite/rest/a/sites/latest/D6JMim/page/", "reports", "/nav"]
+
+log = logger.getLogger(__name__)
 
 
 class _Reports(_Base):
@@ -72,12 +72,7 @@ class _Reports(_Base):
             self.get_reports_interface(locust_request_label=locust_request_label)
             self.get_reports_nav(locust_request_label=locust_request_label)
         except Exception as e:
-            log_locust_error(
-                locust_request_label,
-                e,
-                error_desc="Response Error",
-                raise_error=False,
-            )
+            log.error(e)
 
         uri = ALL_REPORTS_URI
         if search_string:
@@ -102,24 +97,10 @@ class _Reports(_Base):
                 except Exception as e:
                     error_key_count += 1
                     self._reports[error_key_string + str(error_key_count)] = {}
-                    log_locust_error(
-                        locust_request_label,
-                        e,
-                        resp=response,
-                        error_desc="Corrupt Report Error",
-                        location=uri,
-                        raise_error=False,
-                    )
+                    log.error(f"Corrupt Report Error: {current_item}")
             self._errors = error_key_count
         except Exception as e:
-            log_locust_error(
-                locust_request_label,
-                e,
-                resp=response,
-                error_desc="No Reports Returned",
-                location=uri,
-                raise_error=False,
-            )
+            log.info("No Reports Returned")
             return self._reports
         return self._reports
 

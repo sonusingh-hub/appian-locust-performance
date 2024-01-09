@@ -1,25 +1,6 @@
-import inspect
-import os
-from functools import wraps
-from typing import Any, Callable, Optional
-
 from locust.clients import ResponseContextManager
 from requests.exceptions import HTTPError
-from requests.models import Response, Request
-from locust import events
-from datetime import timedelta
-
-from .utilities import logger, ENV
-
-
-log = logger.getLogger(__name__)
-
-INTERNAL_ERROR_RESPONSE = Response()
-INTERNAL_ERROR_RESPONSE.request = Request('GET', 'https://localhost').prepare()
-INTERNAL_ERROR_RESPONSE.status_code = 500
-INTERNAL_ERROR_RESPONSE.elapsed = timedelta()
-INTERNAL_ERROR_RESPONSE._content = b''
-INTERNAL_ERROR_RESPONSE.reason = 'Internal System Error'
+from requests.models import Response
 
 
 def _format_http_error(resp: Response, uri: str, username: str) -> str:
@@ -84,118 +65,9 @@ def test_response_for_error(
       with self.client.get(uri) as resp:
         test_response_for_error(resp, uri, username)
     """
-    try:
-        if not resp or not resp.ok:
-            http_error_msg = _format_http_error(resp, uri, username)
-            error = HTTPError(http_error_msg)
-            resp.failure(error)
-            # TODO: Consider using this resp.failure construct in other parts of the code
-            log_locust_error(
-                name,
-                error,
-                resp,
-                'REQUEST:',
-                f'URI: {resp.url}',
-                raise_error=raise_error,
-            )
-    except HTTPError as e:
-        raise e
-    except Exception as e:
-        log_locust_error(
-            name,
-            Exception(f'MESSAGE: {e}'),
-            resp,
-            'REQUEST:',
-            f'URI: {resp.url}',
-        )
-
-
-def log_locust_error(
-    name: str,
-    e: Exception,
-    resp: ResponseContextManager = INTERNAL_ERROR_RESPONSE,
-    error_desc: str = 'No description',
-    location: Optional[str] = None,
-    raise_error: bool = True,
-) -> None:
-    """
-    This function allows scripts in appian_locust to manually report an error to locust.
-
-    Args:
-        e (Exception): whichever error occured should be propagated through this variable.
-        error_desc (str): contains information about the error.
-        location (str): Codepath or URL path for the error. If non specified, this will become the codepath
-        raise_error (bool): Whether or not to raise the exception
-
-    Returns:
-        None
-
-    Example:
-
-    .. code-block:: python
-
-        if not current_news:
-            e = Exception(f"News object: {current} news does not exist.")
-            desc = f'Error in get_news function'
-            log_locust_error(e, error_desc=desc)
-    """
-    trigger_request_event_for_error(name, e, resp)
-    if not location:
-        # Infer location from inspecting the frame
-        if len(inspect.stack()) > 1:
-            stack_item: inspect.FrameInfo = inspect.stack()[1]
-            file_without_path = os.path.basename(stack_item.filename)
-            location = f'{file_without_path}/{stack_item.function}()'
-    ENV.stats.log_error(f'DESC: {error_desc}', f'LOCATION: {location}', f'EXCEPTION: {e}')
-
-    if raise_error:
-        raise e
-
-
-def trigger_request_event_for_error(
-    name: str,
-    exception: Exception,
-    resp: ResponseContextManager,
-) -> None:
-    events.request.fire(
-        name=name,
-        request_type=resp.request.method if resp.request else "UNKNOWN",
-        response_time=resp.elapsed.total_seconds(),
-        response_length=len(resp.content) if resp.content else 0,
-        response=resp,
-        context=get_context_from_response(resp),
-        exception=exception,
-    )
-
-
-def get_context_from_response(resp: ResponseContextManager) -> str:
-    try:
-        return resp.json()["requestId"]
-    except Exception as e:
-        return ""
-
-
-def raises_locust_error(func: Callable) -> Callable:
-    """Indicates that the below method should log a locust error
-
-    Args:
-        func (Callable): method that could throw an exception
-
-    Returns:
-        Callable: a wrapped form of that method
-    """
-    @wraps(func)
-    def func_wrapper(*args: Any, **kwargs: Any) -> Optional[Callable]:
-        try:
-            return func(*args, **kwargs)
-        except Exception as e:
-            file_without_path = os.path.basename(inspect.getfile(func))
-            location = f'{file_without_path}/{func.__name__}()'
-            name = (
-                kwargs['locust_request_label']
-                if 'locust_request_label' in kwargs
-                else f'raises_locust_error.{func.__name__}'
-            )
-            log_locust_error(name, e, location=location)
-            return None
-    return func_wrapper
+    if not resp or not resp.ok:
+        http_error_msg = _format_http_error(resp, uri, username)
+        error = HTTPError(http_error_msg)
+        resp.failure(error)
+        if raise_error:
+            raise error

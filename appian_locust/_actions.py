@@ -5,7 +5,6 @@ from requests.models import Response
 from .utilities import logger
 from ._base import _Base
 from ._interactor import _Interactor
-from ._locust_error_handler import log_locust_error
 from .utilities.helper import format_label
 from .uiform import SailUiForm
 
@@ -78,18 +77,12 @@ class _Actions(_Base):
             >>> self.appian.action.get_all()
 
         """
-
         try:
             self.get_actions_interface(locust_request_label=locust_request_label)
             self.get_actions_nav(locust_request_label=locust_request_label)
             self.get_actions_feed(locust_request_label=locust_request_label)
         except Exception as e:
-            log_locust_error(
-                locust_request_label,
-                e,
-                error_desc="Response Error",
-                raise_error=False,
-            )
+            log.error(e)
 
         headers = self.interactor.setup_request_headers(self.interactor.host + ACTIONS_ALL_PATH)
 
@@ -108,23 +101,10 @@ class _Actions(_Base):
                     self._actions[key] = current_action
                 except Exception as e:
                     error_key_count += 1
-                    self._actions[error_key_string + str(error_key_count)] = {}
-                    log_locust_error(
-                        locust_request_label,
-                        e,
-                        error_desc="Corrupt Action Error",
-                        resp=resp,
-                        raise_error=False,
-                    )
+                    self._actions[error_key_string + str(error_key_count)] = current_action
             self._errors = error_key_count
         except Exception as e:
-            log_locust_error(
-                locust_request_label,
-                e,
-                error_desc="No Actions Returned",
-                resp=resp,
-                raise_error=False,
-            )
+            log.info("No Actions Returned")
             return self._actions
         return self._actions
 

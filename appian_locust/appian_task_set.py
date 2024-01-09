@@ -8,11 +8,7 @@ from .utilities import logger
 from .feature_flag import FeatureFlag
 from .utilities import DEFAULT_CONFIG_PATH
 from .appian_client import AppianClient
-from ._feature_toggle_helper import (get_client_feature_toggles,
-                                     override_default_feature_flags,
-                                     set_mobile_feature_flags)
-from ._interactor import _Interactor
-from ._locust_error_handler import log_locust_error
+from ._feature_toggle_helper import override_default_feature_flags
 
 log = logger.getLogger(__name__)
 
@@ -127,10 +123,7 @@ class AppianTaskSet(TaskSet):
         """
         def flags_to_override_generator() -> Generator[FeatureFlag, None, None]:
             yield from flags_to_override
-        try:
-            override_default_feature_flags(self.appian._interactor, flags_to_override_generator)
-        except Exception as e:
-            log_locust_error('override_default_flags', e, error_desc="Override Default Flags Error")
+        override_default_feature_flags(self.appian._interactor, flags_to_override_generator)
 
 
 class AppianTaskSequence(SequentialTaskSet, AppianTaskSet):

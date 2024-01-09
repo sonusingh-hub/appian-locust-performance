@@ -2,7 +2,6 @@ from typing import Any, Dict
 
 from .._design import _Design
 from .._interactor import _Interactor
-from .._locust_error_handler import raises_locust_error
 from ..uiform import SailUiForm
 
 
@@ -12,7 +11,6 @@ class DesignObjectUiForm(SailUiForm):
         super().__init__(interactor, state, breadcrumb)
         self.__design = _Design(interactor)
 
-    @raises_locust_error
     def launch_query_editor(self) -> 'DesignObjectUiForm':
         """
         Calls the post operation to click on the LaunchVQD button in the toolbar for the ExpressionEditorWidget.

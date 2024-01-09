@@ -1,7 +1,6 @@
 from typing import Any, Dict, Optional
 
 from ._interactor import _Interactor
-from ._locust_error_handler import raises_locust_error
 
 ADMIN_URI_PATH: str = "/suite/rest/a/applications/latest/app/admin"
 
@@ -10,7 +9,6 @@ class _Admin:
     def __init__(self, interactor: _Interactor):
         self.interactor = interactor
 
-    @raises_locust_error
     def fetch_admin_json(self, locust_request_label: Optional[str] = None) -> Dict[str, Any]:
         """
         Navigates to /admin
