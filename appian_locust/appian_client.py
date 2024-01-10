@@ -149,7 +149,7 @@ class AppianClient:
             log.info(f"Logging out user {self._interactor.auth[0]} from greenlet id {greenlet.getcurrent().minimal_ident}")
         else:
             log.info(f"Logging out user {self._interactor.auth[0]} from {greenlet.getcurrent()}")
-        self._interactor.post_page(logout_uri, headers=headers, label="Logout.LoadUi", raise_error=False)
+        self._interactor.post_page(logout_uri, headers=headers, label="Logout.LoadUi", raise_error=False, check_login=False)
         self.client.cookies.clear()
 
     def get_client_feature_toggles(self) -> None:
