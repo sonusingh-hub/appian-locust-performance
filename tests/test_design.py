@@ -1,8 +1,11 @@
+import json
 import unittest
 from requests import Response
 
 from appian_locust._design import _Design, DESIGN_URI_PATH
 from appian_locust._interactor import _Interactor
+from appian_locust.objects import DesignObjectType
+from .mock_reader import read_mock_file
 
 integration_url = ""
 auth = ["fake_user", ""]
@@ -60,6 +63,12 @@ class TestDesign(unittest.TestCase):
 
         output = self.design_interactor.fetch_design_object_json(design_object_id)
         self.assertEqual(output, {"ase": "ase2"})
+
+    def test_find_design_object_filter_index(self) -> None:
+        design_objects_mock = read_mock_file("design_objects.json")
+        design_objects_state = json.loads(design_objects_mock)
+        indices = self.design_interactor.find_design_object_type_indices(design_objects_state, [DesignObjectType.INTERFACE.value, DesignObjectType.DATA_TYPE.value])
+        self.assertEqual([13, 5], indices)
 
 
 if __name__ == '__main__':

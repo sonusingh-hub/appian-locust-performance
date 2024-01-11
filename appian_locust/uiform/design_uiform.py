@@ -3,7 +3,7 @@ from typing import Any, Dict, Optional
 from ..utilities import logger
 from .._design import _Design, get_available_design_objects
 from .._interactor import _Interactor
-from ..objects import Application, DesignObject
+from ..objects import Application, DesignObjectType
 from ..uiform import ApplicationUiForm, SailUiForm
 from ..objects import DesignObject
 from ..utilities.helper import find_component_by_attribute_in_dict
@@ -136,3 +136,17 @@ class DesignUiForm(SailUiForm):
             Returns (dict): Dictionary mapping design object names to DesignObject
         """
         return get_available_design_objects(self._state)
+
+    def filter_design_objects(self, design_object_types: list[DesignObjectType]) -> 'DesignUiForm':
+        """
+        Filter the design object list in /design, must be on page with design object list
+        Args:
+            design_object_types (DesignObjectType): List of the types of objects you wish to filter on
+
+        Returns (DesignUiForm): DesignUiForm with filtered list of design objects
+
+        """
+        indices = self.__design.find_design_object_type_indices(current_state=self._state,
+                                                                design_object_types=[design_object_type.value for design_object_type in design_object_types])
+        self.check_checkbox_by_test_label(test_label="object-type-checkbox", indices=indices)
+        return self
