@@ -25,6 +25,11 @@ log = logger.getLogger(__name__)
 RECORD_PATH = "recorded_responses"
 TEMPO_SITE_STUB = "D6JMim"
 
+PICKERFIELD_RECORD_TYPE_UUID_INDEX = 0
+PICKERFIELD_RELATIONSHIP_PATH_INDEX = 1
+PICKERFIELD_SELECTION_LABEL_INDEX = 2
+PICKERFIELD_BASE_RECORD_TYPE_UUID_INDEX = 11
+
 
 class _Interactor:
     def __init__(self, session: HttpSession, host: str, portals_mode: bool = False, request_timeout: int = 300) -> None:
@@ -876,6 +881,54 @@ class _Interactor:
             self.get_interaction_host() + post_url, payload=payload, label=locust_label
         )
         return resp.json()
+
+    def fetch_new_cascading_pickerfield_selection(self, pickfield_payload: List, locust_request_label: str = "SelectCascadingPickerField") -> Dict[str, Any]:
+        pickerfield_choices_url = "/suite/rest/a/components/record/latest/picker/getChoices"
+        headers = self.setup_sail_headers()
+        headers["Accept"] = "application/vnd.appian.tv+json"
+        response = self.post_page(
+            self.get_interaction_host() + pickerfield_choices_url,
+            payload={
+                "#t": "Variant?list",
+                "#v": pickfield_payload
+            },
+            headers=headers,
+            label=f"{locust_request_label}.FetchNewSelections"
+        ).json()
+        return response["#v"]
+
+    def initialize_cascading_pickerfield_request(self, pickerfield_component: Dict[str, Any]) -> List:
+        request_payload = [
+            "RECORD_TYPE_UUID_PLACEHOLDER",
+            "RELATIONSHIP_PATH_PLACEHOLDER",
+            "SELECTION_LABEL_PLACEHOLDER",
+            None,
+            pickerfield_component["nestedChoicesEndpointPayload"]["relationshipTypes"],
+            pickerfield_component["nestedChoicesEndpointPayload"]["allowedTypes"],
+            None,
+            pickerfield_component["nestedChoicesEndpointPayload"]["omitQueryTimeCustomFields"],
+            [],
+            pickerfield_component["nestedChoicesEndpointPayload"]["requiredRelationshipType"],
+            pickerfield_component["nestedChoicesEndpointPayload"]["topRecordType"],
+            "BASE_RECORD_TYPE_UUID_PLACEHOLDER",
+            pickerfield_component["nestedChoicesEndpointPayload"]["shouldUseFriendlyName"],
+            None,
+            pickerfield_component["nestedChoicesEndpointPayload"]["checkAccess"]
+        ]
+        return request_payload
+
+    def fill_cascading_pickerfield_request(self, request_payload: List, choice: Dict[str, Any]) -> List:
+        request_payload[PICKERFIELD_RECORD_TYPE_UUID_INDEX] = choice["id"]["recordTypeUuid"]
+        request_payload[PICKERFIELD_RELATIONSHIP_PATH_INDEX] = choice["id"]["relationshipPath"]
+        request_payload[PICKERFIELD_SELECTION_LABEL_INDEX] = choice["selectionLabel"]
+        request_payload[PICKERFIELD_BASE_RECORD_TYPE_UUID_INDEX] = choice["id"]["baseRecordTypeUuid"]
+        return request_payload
+
+    def find_selection_from_choices(self, selection: str, choices: List) -> Optional[Dict[str, Any]]:
+        for choice in choices:
+            if choice["label"] == selection:
+                return choice
+        return None
 
     def select_checkbox_item(self, post_url: str, checkbox: Dict[str, Any],
                              context: Dict[str, Any], uuid: str, indices: list,

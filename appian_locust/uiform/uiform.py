@@ -15,7 +15,7 @@ from .._grid_interactor import GridInteractor
 from .._interactor import _Interactor, TEMPO_SITE_STUB
 from .._task_opener import _TaskOpener
 from .._ui_reconciler import UiReconciler
-from ..exceptions import InvalidComponentException, InvalidDateRangeException
+from ..exceptions import InvalidComponentException, InvalidDateRangeException, ChoiceNotFoundException
 from ..utilities.helper import (extract_all_by_label, find_component_by_attribute_and_index_in_dict,
                                 find_component_by_attribute_in_dict, find_component_by_index_in_dict,
                                 find_component_by_label_and_type_dict, find_component_by_type_and_attribute_and_index_in_dict)
@@ -278,6 +278,55 @@ class SailUiForm:
             raise Exception(f"No response returned when trying to update field with label '{label}'")
 
         return self._reconcile_state(newer_state)
+
+    def fill_cascading_pickerfield(self, label: str, selections: List[str], locust_request_label: str = "") -> 'SailUiForm':
+        """
+        Select a choice for a cascading pickerfield, one where multiple choices can be chained together
+
+        Args:
+            label(str): Label of the field to fill out
+            selections(str): The series of options to select through
+
+        Keyword Args:
+            locust_request_label(str): Label to associate in locust statistics with selecting the picker choice
+        """
+        # pickerFieldCustom will add a test-Label at the level where the suggestions/saveInto exist
+        test_label = f'test-{label}'
+        component = find_component_by_label_and_type_dict('testLabel', test_label, 'PickerWidget', self._state)
+
+        locust_request_label = locust_request_label or f"{self.breadcrumb}.SelectCascadingPickerField.{label}"
+        choices = component["inlineChoices"]
+
+        for selection in selections[:-1]:
+            selection_details = self._interactor.find_selection_from_choices(selection, choices)
+
+            if not selection_details:
+                raise ChoiceNotFoundException(f"Selection {selection} not found among choices for cascading pickerfield {label}")
+
+            request_payload = self._interactor.initialize_cascading_pickerfield_request(component)
+            request_payload = self._interactor.fill_cascading_pickerfield_request(request_payload, selection_details)
+
+            choices = self._interactor.fetch_new_cascading_pickerfield_selection(request_payload, locust_request_label)
+
+        # At this point, we should have the final list of choices
+        selection_details = self._interactor.find_selection_from_choices(selections[-1], choices)
+        if not selection_details:
+            raise ChoiceNotFoundException(
+                f"Selection {selections[-1]} not found among choices for cascading pickerfield {label}")
+
+        new_state = self._interactor.select_pickerfield_suggestion(
+            self.form_url,
+            component,
+            selection_details["id"],
+            self.context,
+            self.uuid,
+            label=locust_request_label
+        )
+
+        if not new_state:
+            raise Exception(f"No response returned when trying to update selection for pickerfield with label '{label}'")
+
+        return self._reconcile_state(new_state)
 
     def click(self, label: str, is_test_label: bool = False, locust_request_label: str = "", index: int = 1) -> 'SailUiForm':
         """
@@ -1501,12 +1550,12 @@ class SailUiForm:
 
     def select_card_choice_field_by_label(self, label: str, index: int, locust_request_label: str = "") -> 'SailUiForm':
         """
-        Select a card by it's lable
+        Select a card by its label
         Index is position to be selected
 
         Args:
-            label(str): Label of the radio button field
-            index(int): Index of the radio button to select
+            label(str): Label of the card choice field
+            index(int): Index of the card to select
 
         Returns (SailUiForm): The latest state of the UiForm
 

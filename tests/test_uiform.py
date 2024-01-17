@@ -2,7 +2,7 @@ import datetime
 import json
 import unittest
 from typing import Any, List, Optional
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import MagicMock, patch
 
 from appian_locust import AppianTaskSet, ComponentNotFoundException
 from appian_locust.uiform import SailUiForm, RecordInstanceUiForm
@@ -17,7 +17,7 @@ from locust import TaskSet, User
 from requests.exceptions import HTTPError
 
 from .mock_client import CustomLocust
-from .mock_reader import read_mock_file
+from .mock_reader import read_mock_file, read_mock_file_as_dict
 from appian_locust._reports import REPORTS_INTERFACE_PATH
 from appian_locust._actions import ACTIONS_INTERFACE_PATH, ACTIONS_FEED_PATH
 
@@ -1271,6 +1271,37 @@ class TestSailUiForm(unittest.TestCase):
 
         with self.assertRaises(InvalidDateRangeException):
             sail_form.select_date_range_user_filter("Read-only Grid-userFilterDateRange_1", start_date, end_date)
+
+    @patch('appian_locust._interactor._Interactor.fetch_new_cascading_pickerfield_selection')
+    def test_cascading_pickerfield_select(self, fetch_choices_mock: MagicMock) -> None:
+        cascading_pickerfield_ui = read_mock_file("cascading_picker.json")
+        cascading_pickerfield_ui_dict = json.loads(cascading_pickerfield_ui)
+        first_choices = read_mock_file_as_dict("cascading_picker_choices.json")
+
+        sail_form = SailUiForm(interactor=self.task_set.appian._interactor, state=cascading_pickerfield_ui_dict)
+
+        self.custom_locust.set_response("/suite/rest/a/applications/latest/app/data-fabric/explore", 200, cascading_pickerfield_ui)
+        fetch_choices_mock.return_value = first_choices["#v"]
+
+        sail_form.fill_cascading_pickerfield(label="Aggregation Field", selections=["Jira Ticket", "Jira Ticket Event", "Jira Ticket Event"])
+
+        pickerfield_component = find_component_by_attribute_in_dict(attribute="testLabel",
+                                                                    value="test-Aggregation Field",
+                                                                    component_tree=cascading_pickerfield_ui_dict)
+
+        first_payload = self.task_set.appian._interactor.initialize_cascading_pickerfield_request(
+            pickerfield_component)
+        first_payload = self.task_set.appian._interactor.fill_cascading_pickerfield_request(first_payload, pickerfield_component["inlineChoices"][0])
+        first_choices_call, _ = fetch_choices_mock.call_args_list[0]
+        self.assertEqual(first_choices_call[0], first_payload)
+
+        second_payload = self.task_set.appian._interactor.initialize_cascading_pickerfield_request(
+            pickerfield_component)
+        second_payload = self.task_set.appian._interactor.fill_cascading_pickerfield_request(second_payload, first_choices["#v"][0])
+        second_choices_call, _ = fetch_choices_mock.call_args_list[1]
+        self.assertEqual(second_choices_call[0], second_payload)
+
+        self.assertEqual(sail_form.get_latest_state(), cascading_pickerfield_ui_dict)
 
 
 if __name__ == '__main__':
