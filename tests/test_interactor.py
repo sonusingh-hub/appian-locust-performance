@@ -11,7 +11,7 @@ from appian_locust.utilities import logger
 from locust import Locust, TaskSet
 
 from .mock_client import CustomLocust
-from .mock_reader import read_mock_file
+from .mock_reader import read_mock_file, read_mock_file_as_dict
 
 log = logger.getLogger(__name__)
 
@@ -27,6 +27,8 @@ class TestInteractor(unittest.TestCase):
     record_action_refresh_response = read_mock_file("record_action_refresh_response.json")
     site_with_record_search_button = read_mock_file("site_with_record_search_button.json")
     site_with_expression_editor = read_mock_file("site_with_expression_editor.json")
+    cascading_picker_ui = read_mock_file_as_dict("cascading_picker.json")
+    cascading_picker_ui_choices = read_mock_file_as_dict("cascading_picker_choices.json")
     default_user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36"
     mobile_user_agent = "AppianAndroid/20.2 (Google AOSP on IA Emulator, 9; Build 0-SNAPSHOT; AppianPhone)"
 
@@ -464,3 +466,41 @@ class TestInteractor(unittest.TestCase):
         positional_args, _ = get_page_mock.call_args_list[0]
         self.assertEqual(positional_args[0], "/suite/cors/ping")
         login_mock.assert_called_once()
+
+    def test_fill_cascading_pickerfield_request(self) -> None:
+        choice = self.cascading_picker_ui_choices["#v"][0]
+        picker = find_component_by_attribute_in_dict(attribute="testLabel", value="test-Aggregation Field", component_tree=self.cascading_picker_ui)
+        base_payload = self.task_set.appian._interactor.initialize_cascading_pickerfield_request(picker)
+
+        base_payload = self.task_set.appian._interactor.fill_cascading_pickerfield_request(base_payload, choice)
+
+        self.assertEqual(base_payload[0], "dc15939c-6a89-4ca2-afe4-1eeb102c0df8")
+        self.assertEqual(base_payload[1], ["acb7bab2-8b3d-4ec2-a37c-8e0a1bca764e", "2c7aecfa-ab40-4f94-acb0-2981f57126dc"])
+        self.assertEqual(base_payload[2], "jiraTicket.jiraTicketEvent")
+        self.assertEqual(base_payload[11], "dc15939c-6a89-4ca2-eeee-1eeb102c0df8")
+
+    def test_initialize_cascading_pickerfield_request(self) -> None:
+        picker = find_component_by_attribute_in_dict(attribute="testLabel", value="test-Aggregation Field",
+                                                     component_tree=self.cascading_picker_ui)
+
+        payload = self.task_set.appian._interactor.initialize_cascading_pickerfield_request(pickerfield_component=picker)
+
+        correct_picker = [
+            "RECORD_TYPE_UUID_PLACEHOLDER",
+            "RELATIONSHIP_PATH_PLACEHOLDER",
+            "SELECTION_LABEL_PLACEHOLDER",
+            None,
+            picker["nestedChoicesEndpointPayload"]["relationshipTypes"],
+            picker["nestedChoicesEndpointPayload"]["allowedTypes"],
+            None,
+            picker["nestedChoicesEndpointPayload"]["omitQueryTimeCustomFields"],
+            [],
+            picker["nestedChoicesEndpointPayload"]["requiredRelationshipType"],
+            picker["nestedChoicesEndpointPayload"]["topRecordType"],
+            "BASE_RECORD_TYPE_UUID_PLACEHOLDER",
+            picker["nestedChoicesEndpointPayload"]["shouldUseFriendlyName"],
+            None,
+            picker["nestedChoicesEndpointPayload"]["checkAccess"]
+        ]
+
+        self.assertEqual(payload, correct_picker)
