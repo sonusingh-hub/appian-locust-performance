@@ -146,43 +146,33 @@ class _Sites(_Base):
         if not display_name:
             raise InvalidSiteException(f"JSON response for navigating to site '{site_name}' was invalid")
 
-        pages_names = self.get_page_names_from_ui(initial_nav_json)
-        site = self._get_and_memoize_site_data(site_name, display_name, pages_names)
+        site = self._get_and_memoize_site_data_from_ui(initial_nav_json, site_name, display_name)
         return site
 
-    def get_page_names_from_ui(self, initial_nav_json: Dict[str, Any]) -> List[str]:
-        """
-        Extracts page names from the nav json
-
-        Args:
-            initial_nav_json: JSON from navigating to site tab
-        Returns: List of string, representing the page names
-        """
-        ui = initial_nav_json['ui']
-        pages_names = [node['link']['pageUrlStub'] for node in ui['tabs']]
-        return pages_names
-
-    def get_site_page(self, site_name: str, page_name: str) -> Union['Page', None]:
+    def get_site_page(self, site_name: str, page_name: str, group_name: Optional[str] = None) -> Union['Page', None]:
         """
         Gets site page from the site url stub and page url stub
 
         Args:
             site_name: Site url stub
             page_name: Page url stub
+            group_name: Group url stub, if there is one
         Returns: Page object, representing an individual page of a site
         """
+        # Group pages can only be interfaces
+        if group_name:
+            return Page(page_name, PageType.INTERFACE, group_name)
         headers = self._setup_headers_with_sail_json()
         headers['X-Appian-Features-Extended'] = 'e4bc'  # Required by legacy url to return successfully
-        page_resp = self.interactor.get_page(f"/suite/rest/a/applications/latest/legacy/sites/{site_name}/page/{page_name}",
-                                             headers=headers,
-                                             label=f"Sites.{site_name}.{page_name}.Nav")
+        url = f"/suite/rest/a/applications/latest/legacy/sites/{site_name}/page/{page_name}"
+        page_resp = self.interactor.get_page(url, headers=headers, label=f"Sites.{site_name}.{page_name}.Nav")
         page_resp_json = page_resp.json()
         if 'redirect' not in page_resp_json:
             log.error(f"Could not find page data with a redirect for site {site_name} page {page_name}")
             return None
         link_type_raw = page_resp_json['redirect']['#t']
         page_type = self._get_type_from_link_type(link_type_raw)
-        return Page(page_name, page_type)
+        return Page(page_name, page_type, group_name)
 
     def get_site_page_type(self, site_name: str, page_name: str) -> 'PageType':
         if site_name not in self._sites:
@@ -196,16 +186,28 @@ class _Sites(_Base):
         page = site.pages[page_name]
         return page.page_type
 
-    def _get_and_memoize_site_data(self, site_name: str, display_name: str, pages_names: List[str]) -> 'Site':
+    def _get_and_memoize_site_data_from_ui(self, initial_nav_json: Dict[str, Any], site_name: str, display_name: str) -> 'Site':
+        ui = initial_nav_json.get("ui", {})
         pages = {}
-        for page_name in pages_names:
-            page = self.get_site_page(site_name, page_name)
-            if page:
-                pages[page_name] = page
+        for tab in ui.get("tabs", []):
+            if tab.get("isGroup"):
+                for child in tab.get("children", []):
+                    page = self._get_page_from_json(site_name, child)
+                    if page:
+                        pages[page.page_name] = page
+            else:
+                page = self._get_page_from_json(site_name, tab)
+                if page:
+                    pages[page.page_name] = page
 
         site = Site(site_name, display_name, pages)
         self._sites[site_name] = site
         return site
+
+    def _get_page_from_json(self, site_name: str, page_info_json: Dict[str, Any]) -> Optional[Page]:
+        group_name = page_info_json['link'].get('groupUrlStub')
+        page_name = page_info_json['link']['pageUrlStub']
+        return self.get_site_page(site_name=site_name, page_name=page_name, group_name=group_name if group_name else None)
 
     def _get_type_from_link_type(self, link_type: str) -> 'PageType':
         if "InternalActionLink" in link_type:

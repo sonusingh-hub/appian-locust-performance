@@ -5,7 +5,7 @@ from requests.exceptions import HTTPError
 from appian_locust import AppianTaskSet
 from appian_locust._interactor import _Interactor
 from appian_locust._sites import _Sites
-from appian_locust.objects import PageType
+from appian_locust.objects import PageType, Page, Site
 from appian_locust import PageNotFoundException
 import json
 import unittest
@@ -123,7 +123,8 @@ class TestSites(unittest.TestCase):
             self.custom_locust.set_response(endpoint, 200, nav_resp)
 
         nav_ui = json.loads(nav_resp)
-        for mocked_page_name in self.sites_interactor.get_page_names_from_ui(nav_ui):
+        mocked_pages_names = ["orders", "new-order", "product-catalogue", "reports", "tasks"]
+        for mocked_page_name in mocked_pages_names:
             self.custom_locust.set_response(f"/suite/rest/a/applications/latest/legacy/sites/{site_name}/page/{mocked_page_name}",
                                             200,
                                             page_resp)
@@ -136,6 +137,38 @@ class TestSites(unittest.TestCase):
         resp = self.sites_interactor.fetch_site_tab_record_json(site_name, page_name)
 
         self.assertEqual(resp, json.loads(record_resp))
+
+    def test_get_all_sites_with_groups(self) -> None:
+        site_name = "test_site"
+        all_sites_str = read_mock_file("sites_groups_nav.json")
+        self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/page/news/nav", 200, all_sites_str)
+
+        nav_resp = all_sites_str
+        self.custom_locust.set_response(f"/suite/rest/a/sites/latest/{site_name}/nav", 200, nav_resp)
+        page_names = ["test2", "test3", "test4", "test"]
+        page_types = ["InternalReportLink", "SiteInterfaceLink", "SiteRecordTypeLink", "InternalActionLink"]
+        for idx in range(0, 4):
+            page_name = page_names[idx]
+            page_response = {
+                "redirect": {
+                    "#t": page_types[idx]
+                }
+            }
+            self.custom_locust.set_response(f"/suite/rest/a/sites/latest/{site_name}/pages/{page_name}/nav", 200, nav_resp)
+            self.custom_locust.set_response(f"/suite/rest/a/applications/latest/legacy/sites/{site_name}/page/{page_name}", 200, json.dumps(page_response))
+
+        all_sites = self.sites_interactor.get_all()
+
+        pages = {
+            "test2": Page("test2", PageType.REPORT),
+            "test3": Page("test3", PageType.INTERFACE),
+            "test4": Page("test4", PageType.RECORD),
+            "do": Page("do", PageType.INTERFACE, "first"),
+            "it": Page("it", PageType.INTERFACE, "first"),
+            "test": Page("test", PageType.ACTION),
+        }
+        sites = {"test_site": Site("test_site", "Test Site", pages)}
+        self.assertEqual(sites, all_sites)
 
 
 if __name__ == '__main__':
