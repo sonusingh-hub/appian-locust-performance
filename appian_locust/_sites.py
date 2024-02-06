@@ -52,19 +52,26 @@ class _Sites(_Base):
         Returns: Response of report/action/record
         """
 
-        page_type = self.get_site_page_type(site_name, page_name).value
+        page_type = self.get_site_page_type(site_name, page_name)
         headers = self._setup_headers_with_sail_json()
 
         base_path = f"{SITES_NAV_PATH[0]}{site_name}{SITES_NAV_PATH[1]}"
+        page = self.get_site_page(site_name, page_name)
+        modified_page_name = f"p.{page_name}"
+        if page.group_name:
+            modified_page_name = f"g.{page.group_name}.{modified_page_name}"
         if self.interactor.url_pattern_version == 1:
-            base_path += f"p.{page_name}"
+            base_path += modified_page_name
         else:
-            base_path += f"{page_name}"
+            base_path += page_name
         base_path += SITES_NAV_PATH[2]
 
         locust_label = locust_request_label or f"Sites.{site_name}.{page_name}"
         self.interactor.get_page(base_path, headers=headers, label=f"{locust_label}.Nav")
-        base_path = f"{SITES_PAGE_PATH[0]}{site_name}{SITES_PAGE_PATH[1]}{page_name}{SITES_PAGE_PATH[2]}{page_type}"
+        if self.interactor.url_pattern_version == 1 and page_type == PageType.INTERFACE:
+            base_path = f"{SITES_NAV_PATH[0]}{site_name}{SITES_NAV_PATH[1]}{modified_page_name}"
+        else:
+            base_path = f"{SITES_PAGE_PATH[0]}{site_name}{SITES_PAGE_PATH[1]}{page_name}{SITES_PAGE_PATH[2]}{page_type.value}"
         resp = self.interactor.get_page(base_path, headers=headers, label=f"{locust_label}.Ui")
         return resp.json()
 
@@ -95,14 +102,23 @@ class _Sites(_Base):
         record_key = random.choice(list(self._sites_records[page_name]))
         label = locust_request_label or f"Sites.{site_name}.{page_name}." + format_label(record_key, "::", 0)[:30]
         record_id = record_key.split("::")[1]
+        page = self.get_site_page(site_name, page_name)
+
+        page_name_to_visit = page_name
+        modified_page_name = f"p.{page_name}"
+        if page.group_name:
+            modified_page_name = f"g.{page.group_name}.{modified_page_name}"
+        if self.interactor.url_pattern_version == 1:
+            page_name_to_visit = modified_page_name
+
         record_resp = self.interactor.get_page(
-            f"/suite/sites/{site_name}/page/{page_name}/nav",
+            f"/suite/sites/{site_name}/page/{page_name_to_visit}/nav",
             headers=headers,
             label=label + ".Nav")
         # TODO: Add ability to go to arbitrary stubs
         headers = self.interactor.setup_feed_headers()
         record_resp = self.interactor.get_page(
-            f"/suite/rest/a/sites/latest/{site_name}/page/{page_name}/record/{record_id}/view/summary",
+            f"/suite/rest/a/sites/latest/{site_name}/page/{page_name_to_visit}/record/{record_id}/view/summary",
             headers=headers,
             label=label + ".View")
         return record_resp.json()
@@ -149,7 +165,7 @@ class _Sites(_Base):
         site = self._get_and_memoize_site_data_from_ui(initial_nav_json, site_name, display_name)
         return site
 
-    def get_site_page(self, site_name: str, page_name: str, group_name: Optional[str] = None) -> Union['Page', None]:
+    def fetch_site_page_metadata(self, site_name: str, page_name: str, group_name: Optional[str] = None) -> Union['Page', None]:
         """
         Gets site page from the site url stub and page url stub
 
@@ -174,7 +190,7 @@ class _Sites(_Base):
         page_type = self._get_type_from_link_type(link_type_raw)
         return Page(page_name, page_type, group_name)
 
-    def get_site_page_type(self, site_name: str, page_name: str) -> 'PageType':
+    def get_site_page(self, site_name: str, page_name: str) -> 'Page':
         if site_name not in self._sites:
             self.get_site_data_by_site_name(site_name)
 
@@ -183,7 +199,10 @@ class _Sites(_Base):
         site: Site = self._sites[site_name]
         if page_name not in [page.page_name for page in site.pages.values()]:
             raise PageNotFoundException(f"The site with name '{site_name}' does not contain the page {page_name}")
-        page = site.pages[page_name]
+        return site.pages[page_name]
+
+    def get_site_page_type(self, site_name: str, page_name: str) -> 'PageType':
+        page = self.get_site_page(site_name, page_name)
         return page.page_type
 
     def _get_and_memoize_site_data_from_ui(self, initial_nav_json: Dict[str, Any], site_name: str, display_name: str) -> 'Site':
@@ -207,7 +226,7 @@ class _Sites(_Base):
     def _get_page_from_json(self, site_name: str, page_info_json: Dict[str, Any]) -> Optional[Page]:
         group_name = page_info_json['link'].get('groupUrlStub')
         page_name = page_info_json['link']['pageUrlStub']
-        return self.get_site_page(site_name=site_name, page_name=page_name, group_name=group_name if group_name else None)
+        return self.fetch_site_page_metadata(site_name=site_name, page_name=page_name, group_name=group_name if group_name else None)
 
     def _get_type_from_link_type(self, link_type: str) -> 'PageType':
         if "InternalActionLink" in link_type:

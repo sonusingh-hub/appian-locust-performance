@@ -37,6 +37,7 @@ class TestVisitor(unittest.TestCase):
     records_interface = read_mock_file("records_interface.json")
     records_nav = read_mock_file("records_nav.json")
     sites_nav_resp = read_mock_file("sites_nav_resp.json")
+    sites_with_groups_nav_resp = read_mock_file("sites_groups_nav.json")
     actions = read_mock_file("actions_response.json")
     actions_interface = read_mock_file("actions_interface.json")
     actions_nav = read_mock_file("actions_nav.json")
@@ -450,6 +451,20 @@ class TestVisitor(unittest.TestCase):
         self.assertEqual(expected_uuid, ui_form.uuid)
         self.assertEqual(json.loads(expected_context), ui_form.context)
         self.assertEqual(expected_url, ui_form.form_url)
+
+    def test_visit_group_site(self) -> None:
+        site_name = "test_site"
+        page_name = "it"
+        group_name = "first"
+        expected_state = '{"abc":"123"}'
+        self.custom_locust.set_response(f"/suite/rest/a/sites/latest/{site_name}/nav", 200, self.sites_with_groups_nav_resp)
+        self.custom_locust.set_response(f"/suite/rest/a/sites/latest/{site_name}/page/g.{group_name}.p.{page_name}", 200, expected_state)
+
+        self.task_set.appian._interactor.url_pattern_version = 1
+        form = self.task_set.appian.visitor.visit_site(site_name, page_name)
+        self.task_set.appian._interactor.url_pattern_version = 0
+
+        self.assertEqual(json.loads(expected_state), form.get_latest_state())
 
     def setup_action_response_no_ui(self) -> None:
         action = self.task_set.appian.actions_info.get_action_info("Create a Case", False)
