@@ -490,7 +490,7 @@ class _Interactor:
         return resp.json()
 
     def click_start_process_link(self, component: Dict[str, Any], process_model_opaque_id: str,
-                                 cache_key: str, site_name: str, page_name: str, is_mobile: bool = False,
+                                 cache_key: str, site_name: str, page_name: str, group_name: Optional[str] = None, is_mobile: bool = False,
                                  locust_request_label: Optional[str] = None) -> Dict[str, Any]:
         '''
         Use this function to interact with start process links, which start a process and return the
@@ -501,6 +501,7 @@ class _Interactor:
             cache_key: cachekey for the start process link
             site_name: name of site for link in starting process model.
             page_name: name of page for link in starting process model.
+            group_name: name of group for link in starting process model, if there is one.
             is_mobile: indicates if it should hit the mobile endpoint.
             locust_request_label: label to be used within locust
 
@@ -508,6 +509,8 @@ class _Interactor:
         '''
         if self.url_pattern_version == 1:
             page_name = f"p.{page_name}"
+            if group_name:
+                page_name = f"g.{group_name}.{page_name}"
         if is_mobile:
             spl_link_url = f"/suite/rest/a/model/latest/startProcess/{process_model_opaque_id}?cacheKey={cache_key}"
         else:

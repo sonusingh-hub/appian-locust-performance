@@ -457,7 +457,8 @@ class SailUiForm:
         if link_component["#t"] == "StartProcessLink":
             site_name = link_component["siteUrlStub"] or TEMPO_SITE_STUB
             page_name = link_component["sitePageUrlStub"]
-            new_state = self._click_start_process_link(site_name, page_name, False, link_component, locust_request_label=locust_label)
+            group_name = link_component.get("siteGroupUrlStub", None)
+            new_state = self._click_start_process_link(site_name, page_name, group_name, False, link_component, locust_request_label=locust_label)
         else:
             new_state = self._interactor.click_component(self.form_url, link_component, self.context, self.uuid, label=locust_label)
 
@@ -583,9 +584,10 @@ class SailUiForm:
         component = find_component_by_label_and_type_dict('label', label, START_PROCESS_LINK_TYPE, self._state)
         site_name = component["siteUrlStub"]
         page_name = component["sitePageUrlStub"]
+        group_name = component.get("siteGroupUrlStub", None)
 
         locust_label = locust_request_label or f"{self.breadcrumb}.ClickStartProcessLink.{label}"
-        new_state = self._click_start_process_link(site_name, page_name, is_mobile, component, locust_request_label=locust_label)
+        new_state = self._click_start_process_link(site_name, page_name, group_name, is_mobile, component, locust_request_label=locust_label)
 
         return self._reconcile_state(new_state)
 
@@ -656,11 +658,11 @@ class SailUiForm:
 
         return self._reconcile_state(new_state)
 
-    def _click_start_process_link(self, site_name: str, page_name: str, is_mobile: bool,
+    def _click_start_process_link(self, site_name: str, page_name: str, group_name: Optional[str], is_mobile: bool,
                                   component: Dict[str, Any], locust_request_label: str) -> Dict[str, Any]:
         """
         This internal function is called by both click_start_process_link() and click_card_layout_by_index().
-        It takes parameters needed for making a start process lnik call to the server and calls the interactor to do that.
+        It takes parameters needed for making a start process link call to the server and calls the interactor to do that.
         """
         process_model_opaque_id = component.get("processModelOpaqueId", "")
         cache_key = component.get("cacheKey", "")
@@ -670,7 +672,7 @@ class SailUiForm:
             raise Exception(f"StartProcessLink component does not have cache key set.")
 
         return self._interactor.click_start_process_link(component=component, process_model_opaque_id=process_model_opaque_id,
-                                                         cache_key=cache_key, site_name=site_name, page_name=page_name, is_mobile=is_mobile,
+                                                         cache_key=cache_key, site_name=site_name, page_name=page_name, group_name=group_name, is_mobile=is_mobile,
                                                          locust_request_label=locust_request_label)
 
     def _dispatch_click(self, component: Dict[str, Any], locust_label: str) -> Dict[str, Any]:
@@ -696,7 +698,8 @@ class SailUiForm:
         if link_type == START_PROCESS_LINK_TYPE:
             site_name = link_component["siteUrlStub"] or TEMPO_SITE_STUB
             page_name = link_component["sitePageUrlStub"]
-            new_state = self._click_start_process_link(site_name, page_name, False, link_component, locust_request_label=locust_label)
+            group_name = link_component.get("siteGroupUrlStub", None)
+            new_state = self._click_start_process_link(site_name, page_name, group_name, False, link_component, locust_request_label=locust_label)
         elif link_type == PROCESS_TASK_LINK_TYPE:
             task_name = link_component.get('label') or 'Unnammed Task'
             task_id = link_component.get('opaqueTaskId')

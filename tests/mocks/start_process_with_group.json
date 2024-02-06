@@ -1,0 +1,237 @@
+{
+    "_cId": "d89a8cb43ef3c87096d1c399769acf07",
+    "links": [
+        {
+            "href": "https://fhw-test-site-groups.appianci.net/suite/rest/a/sites/latest/test_site/page/g.first.p.it",
+            "rel": "update",
+            "title": "Update"
+        },
+        {
+            "href": "https://fhw-test-site-groups.appianci.net/suite/rest/a/sites/latest/test_site/page/g.first.p.it",
+            "rel": "self",
+            "method": "POST"
+        },
+        {
+            "href": "https://fhw-test-site-groups.appianci.net/suite/api/tempo/file",
+            "rel": "upload",
+            "method": "POST"
+        }
+    ],
+    "actions": [
+        {
+            "_cId": "8333cdbab40a98c14806ddac91e84583",
+            "_actionName": "sail:record-action-trigger",
+            "label": "updateRecordActionRefresh",
+            "saveInto": [
+                "<<ww0EAwMCPyBhFDXaCMsB0nkBnRPJ5bbQecAls+OPsBaz4xjCuNLQn/fr13BRjAUSYieDqFD8YFRe\r\nq424A9TDxpapezDmoL1WWXRS50HU+oRPR82+zlpRwsyxkRC0MB3Y4CNW4LHn4fpweap0XYZUz8+9\r\nZJy7TirTaPShJrTTg+FyWRxJV5K5+OyW\r\n>>"
+            ],
+            "tooltip": "",
+            "href": "",
+            "#t": "DynamicLink"
+        },
+        {
+            "_cId": "4713416ca9ec5e98a7be1d09b03bc84f",
+            "_actionName": "sail:update-form-factor",
+            "label": "updateFormFactor",
+            "saveInto": [
+                "<<ww0EAwMCPyBhFDXaCMsB0n0BnRPJ5bbQecAls+OPsBaz4xjCuNLQn/frvHdBjF4SZiedZr8Ob16d\r\n+WNYwMeovCefr5jJgSMfc8D1XJSsVr5JuORHdacmE6h1XX68HkP8IWcJpzJnHouC5BUA17xGJX/H\r\n3A1V4fWuymC7ZeryPj3FpjpXJQjokVcwPjD63w==\r\n>>"
+            ],
+            "tooltip": "",
+            "href": "",
+            "#t": "DynamicLink"
+        },
+        {
+            "_cId": "44a7926bb6f6110edd4075eab3f01b36",
+            "_actionName": "sail:toggle-sites-xray",
+            "label": "toggleSitesXray",
+            "saveInto": [
+                "<<ww0EAwMCPyBhFDXaCMsB0nkBnRPJ5bbQecAls+OPsBaz4xjCuNLQn/fr13BRjAUSYieDqFD8YFRe\r\nq424A9TDxpapezDmoL1WWXRS50HU+oRPR82+zlpRwsyxkRC0MBrDzjDFfMwBx0HuDBOPNqVBXSR1\r\nmscYDfA2UxomoJ1v3kc31b6vp5fj14qL\r\n>>"
+            ],
+            "tooltip": "",
+            "href": "",
+            "#t": "DynamicLink"
+        },
+        {
+            "_cId": "d9d6f55c2aaabb5fd3a32c4e02258640",
+            "_actionName": "sail:update-async-event-streams",
+            "label": "",
+            "saveInto": [
+                "<<ww0EAwMCPyBhFDXaCMsB0nkBnRPJ5bbQecAls+OPsBaz4xjCuNLQn/fr13BRjAUSYieDqFD8YFRe\r\nq424A9TDxpapezDmoL1WWXRS50HU+oRPR82+zlpRwsyxkRC0MBvO1j1jmBPbADuId/Ddh3IDosMz\r\nUs+ZJUle2Rby6bX6Xnqw8IIkisEMy0H8\r\n>>"
+            ],
+            "tooltip": "",
+            "href": "",
+            "#t": "DynamicLink"
+        }
+    ],
+    "triggers": [],
+    "ui": {
+        "_cId": "54a33f80864d3ee2a679a4976cbc1e5c",
+        "_dirty": "false",
+        "contents": [
+            {
+                "_cId": "4e81be36117dfec1d9c38857330deb29",
+                "contents": {
+                    "_cId": "970444833bddfe2feb38d059866de0c6",
+                    "_isAppianInjected": "true",
+                    "_iddesign_id": "-1",
+                    "_iddesign_componentType": "component",
+                    "_iddesign_label": "F_process",
+                    "_iddesign_parentRuleName": "F_process",
+                    "_iddesign_path": "{}",
+                    "_xray_isOuterComponent": "true",
+                    "contents": [
+                        {
+                            "_cId": "b06ad659fa6f6032ed13bf7aea0cb477",
+                            "label": "",
+                            "instructions": "",
+                            "links": [
+                                {
+                                    "_cId": "08cfd1100fdcdd855ba144084fb331ee",
+                                    "label": "ASE",
+                                    "processModelOpaqueId": "iIBCbKan8kNUdA5Ncjzwr9UnD7wJjYmZdCufbWETWwhuG2e",
+                                    "processParameters": {
+                                        "#v": "",
+                                        "#t": "string"
+                                    },
+                                    "bannerMessage": "",
+                                    "cacheKey": "2141c24b-2dd2-44db-a390-5515e3d154d1",
+                                    "siteUrlStub": "test_site",
+                                    "siteGroupUrlStub": "first",
+                                    "sitePageUrlStub": "it",
+                                    "pmUuid": "0002eb6c-98df-8000-7444-a34d98a34d98",
+                                    "openActionsIn": "SAME_TAB",
+                                    "onSubmitSaveInto": [
+                                        "<<ww0EAwMCPyBhFDXaCMsB0p0BnRPJ5bbQecAls+OPsBaz4xjCuNLQn/fomwHnfbGxgb+xZdYIAXRi\r\nWg/+wRiCkM787rAYfz+X1f2Xxi2kb5rcWO6mHxqinkos2UJonzi0nVZSpF9FPpa52ejtUAzun0DL\r\n7ji/DtL0KN/cn5K3EoukmV+ovoiVGQLfRYmM28FMi3JBC3OW1bW8SpT0gUWcdO0bAhVTljVlPQRr\r\nJEHP\r\n>>"
+                                    ],
+                                    "dialogSize": "",
+                                    "fallbackLink": {
+                                        "_cId": "64f24220e948d5c2dd8b4eb2c1bf26dd",
+                                        "label": "ASE",
+                                        "value": {
+                                            "#v": "",
+                                            "#t": "string"
+                                        },
+                                        "saveInto": [
+                                            "<<ww0EAwMCPyBhFDXaCMsB0pkBnRPJ5bbQecAls+OPsBaz4xjCuNLQn/fomwGiW7Gxna/UKagLgEdr\r\noCA6hQgNh115PuQtdGPXasePLB2Aas5lAQ46G2gmshm5jWROYDZt3lRhztfxKdYXULPFvWmRuxE/\r\nlHAcEmrJQvgXT38p3NqY85tB+2sHN/Tul5L3seDATYIbHCdHMqQwC+oz9Z7CqyQGBHNdO2Pg+CA=\r\n>>"
+                                        ],
+                                        "tooltip": "",
+                                        "href": ""
+                                    },
+                                    "#t": "StartProcessLink"
+                                },
+                                {
+                                    "_cId": "81747b8397a0319ca6d5334be084ce54",
+                                    "uuid": "SYSTEM_RECORD_TYPE_USER",
+                                    "card": "user",
+                                    "siteUrlStub": "test_site",
+                                    "groupUrlStub": "first",
+                                    "pageUrlStub": "it",
+                                    "isUserRecord": "true",
+                                    "recordIdentifier": "admin.user - Admin User",
+                                    "_recordRef": "mQBCbKan8kNUdA5NckDrUvEq-X8k2rMFiMIrsiBo17wZggEC6NWNtG8qShIcRJGEm4bOg6kdCR9w4P226NgWeTATyMeoZwda_lZ9cwW80QMv3KQHOMq94B3OT2wbBuqdu4xe1Tr",
+                                    "recordRef": {
+                                        "id": "1#{http://www.appian.com/ae/types/2009}Text#admin.user - Admin User",
+                                        "#t": "RecordReference"
+                                    },
+                                    "dashboard": "",
+                                    "label": "RECORD",
+                                    "tooltip": "",
+                                    "openLinkIn": "",
+                                    "#t": "RecordLink"
+                                }
+                            ],
+                            "labelPosition": "ABOVE",
+                            "align": "DEFAULT",
+                            "helpTooltip": "",
+                            "accessibilityText": "",
+                            "#t": "AnyLinkField"
+                        }
+                    ],
+                    "padding": "STANDARD",
+                    "topLevelBackgroundColor": "",
+                    "accessibilityRole": "",
+                    "#t": "ContentLayout"
+                },
+                "value": "",
+                "isPassthrough": true,
+                "hideOuterPadding": true,
+                "saveInto": [
+                    "<<ww0EAwMCPyBhFDXaCMsB0o0BnRPJ5bbQecAls+OPsBaz4xjCuNLQn/fomwTnfeqxma+MqZlLoT5/\r\nOiV4FgxVlW5Kg+M1uH5W02s8SM759rpmLR2IAdRSChwppp6IE3O6Z48fngTdNfnrul6+sHOozN5x\r\nNLYvyMqSgEILpIvnOCzzsQ+XvLEUv6xcDpoltAdVsq5EaHmqK0QI5yLhpIc=\r\n>>"
+                ],
+                "siteEditLink": {
+                    "uri": "/suite/design/koBCbKan8kNUdA5Nc8P4RDVuhgcoHTYhLaYkOgym4pGoqyQiIGlQNTvFXn_G2YSUBugpTWCZB5Y1h1BNA9f0wzfH4LpWCavDij0BQ",
+                    "label": "F Site",
+                    "tooltip": "",
+                    "metricKey": "sites.showObjects.open.site",
+                    "openLinkIn": ""
+                },
+                "#t": "XrayComponentSelectionManager"
+            }
+        ],
+        "padding": "NONE",
+        "topLevelBackgroundColor": "",
+        "accessibilityRole": "",
+        "#t": "ContentLayout"
+    },
+    "context": {
+        "type": "stateful",
+        "value": "ww0EAwMCPyBhFDXaCMsB0q8BpzmOTAfVnHeecLSOywcDvrt29qBceIeQjDYHsF2tmi2Dkqpj2NQi\r\nehGWVf9WEqhgSlV+33RnMybUi918+tL+raM0kGT5GbFC2SsBwdYM3bFHAm+v+3vfEhp7enVPsXsN\r\nDR0ODjhxSOC+6qAoN0Lw036tJLnf+1VgnXH1/NMC69ZKvk8XsU6KgM0aUPxshjcYV6Cj4763ZAu+\r\nmhTvFQkc6nSuWzwGJ5+Z6FzBR8L4\r\n",
+        "#t": "Map"
+    },
+    "uuid": "0fd8e603-d0d6-4d42-83b0-70097e66af7f",
+    "i18nInfo": {
+        "locale": "en-US",
+        "timezoneId": "GMT",
+        "calendarId": "gregorian",
+        "decimalSeparator": ".",
+        "groupingSeparator": ",",
+        "isRtl": false,
+        "isLtr": true
+    },
+    "timers": {
+        "#t": "Dictionary"
+    },
+    "formFactors": [],
+    "lastEvaluatedFormFactor": "TABLET_LANDSCAPE",
+    "uiExpression": "",
+    "asyncEventStreams": [],
+    "validationLifeCycleId": 0,
+    "urlContextQueryString": "",
+    "#t": "UiConfig",
+    "#s": {
+        "#v": [
+            {
+                "id": 216,
+                "uuid": "{http://www.appian.com/ae/types/2009}RecordReference",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "RecordReference",
+                "description": "a Record Identifier",
+                "base": 53,
+                "foundation": 53,
+                "typeof": 216,
+                "list": 217,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 217,
+                "uuid": "{http://www.appian.com/ae/types/2009}RecordReference?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "RecordReference?list",
+                "description": "a list of Record Identifiers",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 216,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            }
+        ],
+        "#t": "DataType?list"
+    },
+    "shortcuts": [],
+    "#u": "<https://fhw-test-site-groups.appianci.net/suite/tempo/start-process/{processModelOpaqueId}?parameters={cacheKey}>; rel=\"x-web-bookmark\"; dt=\"StartProcessLink\",<https://fhw-test-site-groups.appianci.net/suite/rest/a/applications/latest/legacy/usercard/{%40attributes.%40anyAttribute.recordIdentifier}>; rel=\"x-data-request-usercard\"; dt=\"RecordLink\",<https://fhw-test-site-groups.appianci.net/suite/sites{/siteUrlStub}/page/{pageUrlStub}/record/{opaqueRecordReference}/view/{viewUrlStub}>; rel=\"x-web-bookmark-sites\"; dt=\"RecordLink\",<https://fhw-test-site-groups.appianci.net/suite/rest/a/navigation/latest/intent{?uri*}>; rel=\"x-intent\"; dt=\"SafeLink\",<https://fhw-test-site-groups.appianci.net/suite/rest/a/sites/latest/{siteUrlStub}/page/{sitePageUrlStub}/action/{processModelId}>; rel=\"x-sites-data-request-form\"; dt=\"StartProcessLink\",<https://fhw-test-site-groups.appianci.net/suite/rest/a/sites/latest/{siteUrlStub}/page/{pageUrlStub}/record/{opaqueRecordReference}/view/{viewUrlStub}>; rel=\"x-data-request-site-record\"; dt=\"RecordLink\",<https://fhw-test-site-groups.appianci.net/suite/rest/a/record/latest/{recordTypeUrlStub}/{recordId}/dashboards/{dashboardUrlStub}/transparentid>; rel=\"x-record-ui\"; dt=\"RecordLink\",<https://fhw-test-site-groups.appianci.net/suite/internal/webapi/releaselock/{objectUuid}/{uiSourceUuid}>; rel=\"x-data-release-object-lock\"; dt=\"UiConfig\",<https://fhw-test-site-groups.appianci.net/suite/tempo/records/type/{recordTypeName}/item/{opaqueId}/actions>; rel=\"x-web-bookmark-actions\"; dt=\"RecordLink\",<https://fhw-test-site-groups.appianci.net/suite/rest/a/applications/latest/legacy/>; rel=\"x-sasa-app\"; dt=\"UiConfig\",<https://fhw-test-site-groups.appianci.net/suite/sites{/siteUrlStub}/record/{opaqueRecordReference}/view/{viewUrlStub}>; rel=\"x-web-bookmark-sites-nopage\"; dt=\"RecordLink\",<https://fhw-test-site-groups.appianci.net/suite/rest/a/record/latest{/recordTypeUrlStub}{/recordId}/dashboards{/dashboardUrlStub}>; rel=\"x-record-dashboard-feed\"; type=\"application/atom+json\"; dt=\"RecordLink\",<https://fhw-test-site-groups.appianci.net/suite/rest/a/sites/latest/{siteUrlStub}/record/{opaqueRecordReference}/view/{viewUrlStub}>; rel=\"x-data-request-site-record-nopage\"; dt=\"RecordLink\",<https://fhw-test-site-groups.appianci.net/suite/tempo/records/item/{_recordRef}/view/{dashboard}>; rel=\"x-web-bookmark-records\"; dt=\"RecordLink\",<https://fhw-test-site-groups.appianci.net/suite/rest/a/navigation/latest/default>; rel=\"x-default-landing-page\"; dt=\"SafeLink\",<https://fhw-test-site-groups.appianci.net/suite/rest/a/sites/latest/{siteUrlStub}/recordType/{recordTypeUrlStub}/record/{opaqueRecordId}/view/{viewUrlStub}>; rel=\"x-data-request-site-record-by-id-nopage\"; dt=\"RecordLink\",<https://fhw-test-site-groups.appianci.net/suite/rest/a/rpacomponent/latest/editor>; rel=\"x-rpa-expression-editor\"; dt=\"UiConfig\",<https://fhw-test-site-groups.appianci.net/suite/rest/a/record/latest{/_recordRef}/dashboards{/dashboard}>; rel=\"x-record-dashboard\"; type=\"application/atom+xml\"; dt=\"RecordLink\",<https://fhw-test-site-groups.appianci.net/suite/cors>; rel=\"x-cors\"; dt=\"UiConfig\",<https://fhw-test-site-groups.appianci.net/suite/rest/a/sites/latest/{siteUrlStub}/pages/{pageUrlStub}/report>; rel=\"x-sites-report\"; dt=\"UiConfig\",<https://fhw-test-site-groups.appianci.net/suite/sites/{siteUrlStub}/start-process/{processModelOpaqueId}?parameters={cacheKey}>; rel=\"x-web-bookmark-sites-nopage\"; dt=\"StartProcessLink\",<https://fhw-test-site-groups.appianci.net/suite/sites>; rel=\"x-site-main\"; dt=\"UiConfig\",<https://fhw-test-site-groups.appianci.net/suite/tempo/records/type/{recordTypeName}/item/{opaqueId}/view/{dashboard}>; rel=\"x-web-bookmark\"; dt=\"RecordLink\",<https://fhw-test-site-groups.appianci.net/suite/components/ping.do>; rel=\"x-resume-session\"; dt=\"UiConfig\",<https://fhw-test-site-groups.appianci.net/suite/applications/img/{image}>; rel=\"x-web-design-app-object-img\"; dt=\"UiConfig\",<https://fhw-test-site-groups.appianci.net/suite/rest/a/sites/latest/{siteUrlStub}/action/{processModelId}>; rel=\"x-sites-data-request-form-nopage\"; dt=\"StartProcessLink\",<https://fhw-test-site-groups.appianci.net/suite/tempo/records/item/{_recordRef}/view/{dashboard}>; dt=\"RecordLink\",<https://fhw-test-site-groups.appianci.net/suite/rest/a/sites/latest/all>; rel=\"x-sites-all\"; dt=\"UiConfig\",<https://fhw-test-site-groups.appianci.net/suite/sites{/urlStub}/tasks/task/{id}>; rel=\"x-site-task\"; dt=\"UiConfig\",<https://fhw-test-site-groups.appianci.net/suite/sites{/urlStub}/page/{pageUrlStub}/task/{id}>; rel=\"x-site-task-page\"; dt=\"UiConfig\",<https://fhw-test-site-groups.appianci.net/suite/rest/a/applications/latest/legacy/sites{/urlStub}/page{/pageUrlStub}/nav>; rel=\"x-site-page-navattributes\"; dt=\"UiConfig\",<https://fhw-test-site-groups.appianci.net/suite/rest/a/applications/latest/evalWithContext/processModelSail/{viewName}>; rel=\"x-modeler-view\"; dt=\"UiConfig\",<https://fhw-test-site-groups.appianci.net/suite/rest/a/user/latest/user/{%40attributes.%40anyAttribute.user}/about>; rel=\"x-data-request-userinfo\"; dt=\"RecordLink\",<https://fhw-test-site-groups.appianci.net/suite/rest/a/sites/latest/record/{opaqueRecordReference}/view/{viewUrlStub}>; rel=\"x-data-request-site-record-leftnav\"; dt=\"RecordLink\",<https://fhw-test-site-groups.appianci.net/suite/rest/a/record/latest{/recordTypeUrlStub}{/recordId}/dashboards{/dashboardUrlStub}/headerFeed>; rel=\"x-record-dashboard-feed-header\"; type=\"application/atom+json\"; dt=\"RecordLink\",<https://fhw-test-site-groups.appianci.net/suite/rest/a/task/latest/{taskId}/attributes>; rel=\"x-task-attributes\"; dt=\"UiConfig\",<https://fhw-test-site-groups.appianci.net/suite/rest/a/sites/latest/{siteUrlStub}/record/{opaqueRecordReference}/view/{viewUrlStub}/views>; rel=\"x-data-request-site-mobile-record-views\"; dt=\"RecordLink\",<https://fhw-test-site-groups.appianci.net/suite/rest/a/sites/latest/{siteUrlStub}/startProcess/{processModelOpaqueId}?cacheKey={cacheKey}>; rel=\"x-sites-data-request-nopage\"; dt=\"StartProcessLink\",<https://fhw-test-site-groups.appianci.net/suite/sites{/siteUrlStub}/group/{groupUrlStub}/page/{pageUrlStub}/record/{opaqueRecordReference}/view/{viewUrlStub}>; rel=\"x-web-bookmark-sites-nested-page\"; dt=\"RecordLink\",<https://fhw-test-site-groups.appianci.net/suite/api/feed/tempo?t=e,x,b,f&m=menu-records&s=mt{&_recordRef,dashboard,c}>; rel=\"x-record-news\"; type=\"application/atom+xml\"; dt=\"RecordLink\",<https://fhw-test-site-groups.appianci.net/suite/rest/a/applications/latest/app{/appName}{/path*}{?params*}>; rel=\"x-sail-application\"; dt=\"UiConfig\",<https://fhw-test-site-groups.appianci.net/suite/rest/a/model/latest/startProcess/{processModelOpaqueId}?cacheKey={cacheKey}>; rel=\"x-data-request\"; dt=\"StartProcessLink\",<https://fhw-test-site-groups.appianci.net/suite/rest/a/sites/latest/{siteUrlStub}/page/{sitePageUrlStub}/startProcess/{processModelOpaqueId}?cacheKey={cacheKey}>; rel=\"x-sites-data-request\"; dt=\"StartProcessLink\",<https://fhw-test-site-groups.appianci.net/suite/rest/a/record/latest/{recordTypeUrlStub}/{recordId}/feed/dashboards/{dashboardUrlStub}/transparentid>; rel=\"x-record-feed\"; dt=\"RecordLink\",<https://fhw-test-site-groups.appianci.net/suite/api/feed/tempo?t=e,x,b,f&m=menu-records&s=mt{&_recordRef,dashboard,c}>; rel=\"x-data-request-record-news\"; dt=\"RecordLink\",<https://fhw-test-site-groups.appianci.net/suite/rest/a/interfacedesigner/latest/evaluateComponentTemplateAndPreview{/templateId}>; rel=\"x-ifcdesigner-evaluatecomponenttemplateandpreview\"; dt=\"UiConfig\",<https://fhw-test-site-groups.appianci.net/suite/rest/a/record/latest{/_recordRef}/dashboards{/dashboard}/headerFeed>; rel=\"x-record-dashboard-header\"; type=\"application/atom+xml\"; dt=\"RecordLink\",<https://fhw-test-site-groups.appianci.net/suite/rest/a/content/latest/{opaqueContentId}/thumbnail/o;maxWidth={maxWidth};maxHeight={maxHeight}>; rel=\"x-thumbnail\"; dt=\"RecordLink\",<https://fhw-test-site-groups.appianci.net/suite/rest/a/record/latest/{%40attributes.%40anyAttribute.opaqueId}/followers>; rel=\"x-record-follow\"; dt=\"SafeLink\",<https://fhw-test-site-groups.appianci.net/suite/rest/a/applications/latest/legacy/sites{/urlStub}/nav>; rel=\"x-site-navattributes\"; dt=\"UiConfig\",<https://fhw-test-site-groups.appianci.net/suite/sites/{siteUrlStub}/group/{siteGroupUrlStub}/page/{sitePageUrlStub}/start-process/{processModelOpaqueId}?parameters={cacheKey}>; rel=\"x-web-bookmark-sites-nested-page\"; dt=\"StartProcessLink\",<https://fhw-test-site-groups.appianci.net/suite/rest/a/sites/latest/{siteUrlStub}/page/{pageUrlStub}/recordType/{recordTypeUrlStub}/record/{opaqueRecordId}/view/{viewUrlStub}>; rel=\"x-data-request-site-record-by-id\"; dt=\"RecordLink\",<https://fhw-test-site-groups.appianci.net/suite/internal/webapi/releaselockbyuisource/{uiSourceUuid}>; rel=\"x-data-release-object-lock-uisource\"; dt=\"UiConfig\",<https://fhw-test-site-groups.appianci.net/suite/sites/{siteUrlStub}/page/{sitePageUrlStub}/start-process/{processModelOpaqueId}?parameters={cacheKey}>; rel=\"x-web-bookmark-sites\"; dt=\"StartProcessLink\""
+}
