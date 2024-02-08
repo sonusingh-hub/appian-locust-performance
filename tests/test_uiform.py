@@ -27,6 +27,7 @@ class TestSailUiForm(unittest.TestCase):
     record_instance_response = read_mock_file("record_summary_dashboard_response.json")
     related_action_response = read_mock_file("related_action_response.json")
     spl_response = read_mock_file("test_response.json")
+    spl_group_response = read_mock_file("start_process_with_group.json")
     sites_task_report_resp = read_mock_file("sites_task_report.json")
     date_response = read_mock_file("date_task.json")
     multi_dropdown_response = read_mock_file("dropdown_test_ui.json")
@@ -520,7 +521,7 @@ class TestSailUiForm(unittest.TestCase):
             "processModelOpaqueId": "iQB8GmxIr5iZT6YnVytCx9QKdJBPaRDdv_-hRj3HM747ZtRjSw",
             "cacheKey": "c93e2f33-06eb-42b2-9cfc-2c4a0e14088e"
         }
-        test_form._click_start_process_link("z1ck30E1", "home", False, component=mock_component_object,
+        test_form._click_start_process_link("z1ck30E1", "home", None, False, component=mock_component_object,
                                             locust_request_label="I am a label!")
 
         mock_click_spl.assert_called_once()
@@ -531,6 +532,23 @@ class TestSailUiForm(unittest.TestCase):
         self.assertEqual(kwargs['cache_key'], "c93e2f33-06eb-42b2-9cfc-2c4a0e14088e")
         self.assertEqual(kwargs['is_mobile'], False)
         self.assertEqual(kwargs['locust_request_label'], "I am a label!")
+
+    def test_click_start_process_link_with_group(self) -> None:
+        test_form = SailUiForm(self.task_set.appian._interactor, json.loads(self.spl_group_response))
+        processModelOpaqueId = "iIBCbKan8kNUdA5Ncjzwr9UnD7wJjYmZdCufbWETWwhuG2e",
+        cacheKey = "2141c24b-2dd2-44db-a390-5515e3d154d1"
+        resp = '{"it": "worked"}'
+        self.custom_locust.set_response(
+            f"/suite/rest/a/sites/latest/test_site/page/g.first.p.it/startProcess/iIBCbKan8kNUdA5Ncjzwr9UnD7wJjYmZdCufbWETWwhuG2e?cacheKey=2141c24b-2dd2-44db-a390-5515e3d154d1",
+            200,
+            resp
+        )
+
+        self.task_set.appian._interactor.url_pattern_version = 1
+        test_form.click_start_process_link(label="ASE")
+        self.task_set.appian._interactor.url_pattern_version = 0
+
+        self.assertEqual(json.loads(resp), test_form.get_latest_state())
 
     @patch('appian_locust.uiform.SailUiForm._click_start_process_link')
     def test_click_card_layout_by_index_spl(self, mock_click_spl: MagicMock) -> None:
@@ -544,7 +562,7 @@ class TestSailUiForm(unittest.TestCase):
         mock_click_spl.assert_called_once()
         args, kwargs = mock_click_spl.call_args_list[0]
 
-        self.assertTupleEqual(args, ('z1ck30E1', 'home', False, component))
+        self.assertTupleEqual(args, ('z1ck30E1', 'home', None, False, component))
         self.assertEqual(kwargs["locust_request_label"], self.locust_label)
 
     @patch('appian_locust._interactor._Interactor.click_component')

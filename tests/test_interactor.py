@@ -222,7 +222,7 @@ class TestInteractor(unittest.TestCase):
 
         setattr(self.task_set.appian._interactor, 'post_page', mock)
         self.task_set.appian._interactor.click_start_process_link(spl_component, process_model_opaque_id, cache_key,
-                                                                  site_name, page_name, is_mobile)
+                                                                  site_name, page_name, None, is_mobile)
 
         mock.assert_called_once()
         if not is_mobile:
