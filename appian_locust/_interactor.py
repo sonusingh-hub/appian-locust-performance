@@ -453,7 +453,7 @@ class _Interactor:
         elif "sites" in get_url and "/record/" in get_url:
             parse_pattern = "/record/"
             record_link_url = get_url[:get_url.index(parse_pattern) + len(parse_pattern)] + record_link_url_suffix
-        elif match(r'.*\/page\/\w+$', get_url):
+        elif match(r'.*\/page\/.*$', get_url):
             record_link_url = get_url + "/record/" + record_link_url_suffix
         # Support record links on site pages
         elif "sites" in get_url and "/pages/" in get_url:
