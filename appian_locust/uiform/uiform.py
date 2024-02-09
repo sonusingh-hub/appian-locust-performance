@@ -202,7 +202,7 @@ class SailUiForm:
     # Aliases for fill_text_field() function
     fill_paragraph_field = fill_text_field
 
-    def fill_picker_field(self, label: str, value: str, identifier: str = 'id',
+    def fill_picker_field(self, label: str, value: str, identifier: str = 'id', format_test_label: bool = True,
                           fill_request_label: str = "", pick_request_label: str = "") -> 'SailUiForm':
         """
         Enters the value in the picker widget and selects one of the suggested items
@@ -220,6 +220,7 @@ class SailUiForm:
 
         Keyword Args:
             identifier(str): Key to select the field to filter on, defaults to 'id'
+            format_test_label(bool): If you don't want to prepend a "test-" to the testLabel, set this to False
             fill_request_label(str): Label to associate in locust statistics with filling the picker field
             pick_request_label(str): Label to associate in locust statistics with selecting the picker suggestion
 
@@ -233,7 +234,10 @@ class SailUiForm:
 
         """
         # pickerFieldCustom will add a test-Label at the level where the suggestions/saveInto exist
-        test_label = f'test-{label}'
+        if not format_test_label:
+            test_label = label
+        else:
+            test_label = f'test-{label}'
         component = find_component_by_label_and_type_dict('testLabel', test_label, 'PickerWidget', self._state)
 
         locust_label = fill_request_label or f"{self.breadcrumb}.FillPickerField.{label}"
@@ -279,7 +283,8 @@ class SailUiForm:
 
         return self._reconcile_state(newer_state)
 
-    def fill_cascading_pickerfield(self, label: str, selections: List[str], locust_request_label: str = "") -> 'SailUiForm':
+    def fill_cascading_pickerfield(self, label: str, selections: List[str], format_test_label: bool = True,
+                                   locust_request_label: str = "") -> 'SailUiForm':
         """
         Select a choice for a cascading pickerfield, one where multiple choices can be chained together
 
@@ -288,10 +293,14 @@ class SailUiForm:
             selections(str): The series of options to select through
 
         Keyword Args:
+            format_test_label(bool): If you don't want to prepend a "test-" to the testLabel, set this to False
             locust_request_label(str): Label to associate in locust statistics with selecting the picker choice
         """
         # pickerFieldCustom will add a test-Label at the level where the suggestions/saveInto exist
-        test_label = f'test-{label}'
+        if not format_test_label:
+            test_label = label
+        else:
+            test_label = f'test-{label}'
         component = find_component_by_label_and_type_dict('testLabel', test_label, 'PickerWidget', self._state)
 
         locust_request_label = locust_request_label or f"{self.breadcrumb}.SelectCascadingPickerField.{label}"
