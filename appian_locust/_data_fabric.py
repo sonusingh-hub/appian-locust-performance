@@ -2,7 +2,7 @@ from typing import Optional, Dict, Any
 
 from ._interactor import _Interactor
 
-DATA_FABRIC_URI_PATH = "/suite/rest/a/applications/latest/app/data-fabric"
+DATA_FABRIC_URI_PATH = "/suite/rest/a/applications/latest/app/process-hq"
 
 
 class _DataFabric:

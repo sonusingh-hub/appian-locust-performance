@@ -2,22 +2,22 @@
     "_cId": "b8ff9561635c3039c5fc5e6bbfb1566c",
     "isSystemUi": "true",
     "_dirty": "false",
-    "sail-navigation-bookmark-url": "/data-fabric",
-    "sail-navigation-endpoint-url": "/rest/a/applications/latest/app/data-fabric",
+    "sail-navigation-bookmark-url": "/process-hq",
+    "sail-navigation-endpoint-url": "/rest/a/applications/latest/app/process-hq",
     "links": [
         {
-            "href": "https://daily-1node.appianci.net/suite/rest/a/applications/latest/app/data-fabric",
+            "href": "https://daily-1node.appianci.net/suite/rest/a/applications/latest/app/process-hq",
             "rel": "update",
             "title": "Update",
             "method": "POST"
         },
         {
-            "href": "https://daily-1node.appianci.net/suite/rest/a/applications/latest/app/data-fabric",
+            "href": "https://daily-1node.appianci.net/suite/rest/a/applications/latest/app/process-hq",
             "rel": "self",
             "method": "GET"
         },
         {
-            "href": "https://daily-1node.appianci.net/suite/rest/a/applications/latest/app/data-fabric",
+            "href": "https://daily-1node.appianci.net/suite/rest/a/applications/latest/app/process-hq",
             "rel": "self",
             "method": "POST"
         },
