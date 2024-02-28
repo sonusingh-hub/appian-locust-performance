@@ -783,6 +783,59 @@ class SailUiForm:
                                                           locust_request_label=locust_label, open_in_a_dialog=open_action_in_a_dialog)
         return self._reconcile_state(new_state)
 
+    def click_menu_item_by_name(self, label: str, choice_name: str, is_test_label: bool = False,
+                                locust_request_label: str = "") -> 'SailUiForm':
+        """
+        Clicks an item in a MenuLayout provided the primaryText of the chosen MenuItem
+        ValueError is thrown if component found is NOT a MenuLayout,
+        OR if the MenuLayout doesn't contain specified choice
+
+        Args:
+            label(str): Label of the MenuLayout
+            choice_name(str): PrimaryText of the MenuItem to select
+            is_test_label(bool): True if you are finding a MenuLayout by test label instead of a label, False o.w.
+
+        Keyword Args:
+            locust_request_label(str): Label used to identify the request for locust statistics
+
+        Returns (SailUiForm): The latest state of the UiForm
+
+        Examples:
+            >>> form.click_menu_item_by_name("changeScopeMenu", "Scope 2", True, locust_request_label="Change Scope")
+        """
+        attribute_to_find = 'testLabel' if is_test_label else 'label'
+        menu = find_component_by_attribute_in_dict(attribute_to_find, label, self._state)
+        menu_item = find_component_by_label_and_type_dict(
+            type="MenuItem", attribute="primaryText", value=choice_name, component_tree=menu)
+        link_test_label = menu_item.get("link").get("testLabel")
+        return self.click_link(label=link_test_label, is_test_label=True, locust_request_label=locust_request_label)
+
+    def click_menu_item_by_choice_index(self, label: str, choice_index: int, is_test_label: bool = False,
+                                        locust_request_label: str = "") -> 'SailUiForm':
+        """
+        Clicks an item in a MenuLayout provided the index of the chosen MenuItem
+        ValueError is thrown if component found is NOT a MenuLayout,
+        IndexError is thrown if the provided choice index is out of bounds for the available menu items
+
+        Args:
+            label(str): Label of the MenuLayout
+            choice_index(str): Index of the MenuItem to select
+            is_test_label(bool): True if you are finding a MenuLayout by test label instead of a label, False o.w.
+
+        Keyword Args:
+            locust_request_label(str): Label used to identify the request for locust statistics
+
+        Returns (SailUiForm): The latest state of the UiForm
+
+        Examples:
+            >>> form.click_menu_item_by_choice_index("changeScopeMenu", 0, True, locust_request_label="Create Scope")
+        """
+        attribute_to_find = 'testLabel' if is_test_label else 'label'
+        menu = find_component_by_attribute_in_dict(attribute_to_find, label, self._state)
+        menu_item = find_component_by_index_in_dict(component_tree=menu, component_type="MenuItem", index=choice_index)
+        link_test_label = menu_item.get("link").get("testLabel")
+        return self.click_link(label=link_test_label, is_test_label=True, locust_request_label=locust_request_label)
+
     def get_dropdown_items(self, label: str, is_test_label: bool = False) -> List[str]:
         """
         Gets all dropdown items for the dropdown label provided on the form
