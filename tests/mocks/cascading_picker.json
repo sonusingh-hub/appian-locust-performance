@@ -2,22 +2,22 @@
     "_cId": "0d2bbb01394561cdd090b7b57ff3c778",
     "isSystemUi": "true",
     "_dirty": "false",
-    "sail-navigation-bookmark-url": "/data-fabric/explore",
-    "sail-navigation-endpoint-url": "/rest/a/applications/latest/app/data-fabric/explore",
+    "sail-navigation-bookmark-url": "/process-hq/explore",
+    "sail-navigation-endpoint-url": "/rest/a/applications/latest/app/process-hq/explore",
     "links": [
         {
-            "href": "https://mdp-picker-stratus.appian-sites.net/suite/rest/a/applications/latest/app/data-fabric/explore",
+            "href": "https://mdp-picker-stratus.appian-sites.net/suite/rest/a/applications/latest/app/process-hq/explore",
             "rel": "update",
             "title": "Update",
             "method": "POST"
         },
         {
-            "href": "https://mdp-picker-stratus.appian-sites.net/suite/rest/a/applications/latest/app/data-fabric/explore",
+            "href": "https://mdp-picker-stratus.appian-sites.net/suite/rest/a/applications/latest/app/process-hq/explore",
             "rel": "self",
             "method": "GET"
         },
         {
-            "href": "https://mdp-picker-stratus.appian-sites.net/suite/rest/a/applications/latest/app/data-fabric/explore",
+            "href": "https://mdp-picker-stratus.appian-sites.net/suite/rest/a/applications/latest/app/process-hq/explore",
             "rel": "self",
             "method": "POST"
         },

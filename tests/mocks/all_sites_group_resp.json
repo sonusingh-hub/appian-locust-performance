@@ -268,7 +268,7 @@
                     "tooltip": "",
                     "link": {
                         "_cId": "c6378968a89af84064c844efd8fac427",
-                        "uri": "https://fhw-test-site-groups.appianci.net/suite/data-fabric",
+                        "uri": "https://fhw-test-site-groups.appianci.net/suite/process-hq",
                         "label": "Data Fabric Analytics",
                         "tooltip": "",
                         "metricKey": "navigationMenu.dataFabric",

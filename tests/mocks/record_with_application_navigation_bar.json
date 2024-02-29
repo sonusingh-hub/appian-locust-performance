@@ -330,7 +330,7 @@
                         "tooltip": "",
                         "link": {
                             "_cId": "401cf6c85d89eac60fe635e926131c9a",
-                            "uri": "https://homedev.appiancloud.com/suite/data-fabric",
+                            "uri": "https://homedev.appiancloud.com/suite/process-hq",
                             "label": "Appian Process HQ",
                             "tooltip": "",
                             "metricKey": "navigationMenu.dataFabric",

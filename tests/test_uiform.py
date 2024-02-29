@@ -20,6 +20,7 @@ from .mock_client import CustomLocust
 from .mock_reader import read_mock_file, read_mock_file_as_dict
 from appian_locust._reports import REPORTS_INTERFACE_PATH
 from appian_locust._actions import ACTIONS_INTERFACE_PATH, ACTIONS_FEED_PATH
+from appian_locust._data_fabric import DATA_FABRIC_URI_PATH
 
 
 class TestSailUiForm(unittest.TestCase):
@@ -1298,7 +1299,7 @@ class TestSailUiForm(unittest.TestCase):
 
         sail_form = SailUiForm(interactor=self.task_set.appian._interactor, state=cascading_pickerfield_ui_dict)
 
-        self.custom_locust.set_response("/suite/rest/a/applications/latest/app/data-fabric/explore", 200, cascading_pickerfield_ui)
+        self.custom_locust.set_response(DATA_FABRIC_URI_PATH + "/explore", 200, cascading_pickerfield_ui)
         fetch_choices_mock.return_value = first_choices["#v"]
 
         sail_form.fill_cascading_pickerfield(label="Aggregation Field", selections=["Jira Ticket", "Jira Ticket Event", "Jira Ticket Event"])
