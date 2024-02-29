@@ -571,7 +571,7 @@ class SailUiForm:
         from .record_uiform import RecordInstanceUiForm
         return RecordInstanceUiForm(self._interactor, new_state)
 
-    def click_start_process_link(self, label: str, is_mobile: bool = False, locust_request_label: str = "") -> 'SailUiForm':
+    def click_start_process_link(self, label: str, is_test_label: bool = False, is_mobile: bool = False, locust_request_label: str = "") -> 'SailUiForm':
         """
         Clicks a start process link on the form by label
         If no link is found, throws a ComponentNotFoundException
@@ -582,6 +582,7 @@ class SailUiForm:
         Keyword Args:
             is_mobile(bool): Boolean to use the mobile form of the request
             locust_request_label(str): Label used to identify the request for locust statistics
+            is_test_label(bool): Boolean indicating if label is a test label
 
         Returns (SailUiForm): The latest state of the UiForm
 
@@ -589,8 +590,8 @@ class SailUiForm:
             >>> form.click_start_process_link('Request upgrade')
 
         """
-
-        component = find_component_by_label_and_type_dict('label', label, START_PROCESS_LINK_TYPE, self._state)
+        attribute_to_find = 'testLabel' if is_test_label else 'label'
+        component = find_component_by_label_and_type_dict(attribute_to_find, label, START_PROCESS_LINK_TYPE, self._state)
         site_name = component["siteUrlStub"]
         page_name = component["sitePageUrlStub"]
         group_name = component.get("siteGroupUrlStub", None)
