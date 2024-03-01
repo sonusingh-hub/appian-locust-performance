@@ -155,3 +155,4 @@ def __get_javascript_uri_regex() -> Generator[str, None, None]:
 def __get_javascript_feature_flag_regex() -> Generator[str, None, None]:
     yield r'RAW_DEFAULT_FEATURE_FLAGS=(0x\w+|\d+);'
     yield r'RAW_DEFAULT_FEATURE_FLAGS=jsbi__WEBPACK_IMPORTED_MODULE_\d+__\["default"\].BigInt\("(0b[01]+)"\);'
+    yield r'BigInt\("(0b[01]+)"\)'
