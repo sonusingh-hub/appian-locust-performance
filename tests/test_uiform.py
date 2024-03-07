@@ -1322,6 +1322,60 @@ class TestSailUiForm(unittest.TestCase):
 
         self.assertEqual(sail_form.get_latest_state(), cascading_pickerfield_ui_dict)
 
+    def _get_menu_layout_sail_form(self) -> SailUiForm:
+        report_body = read_mock_file("menu_layout.json")
+        self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
+        return self.task_set.appian.visitor.visit_report(self.report_name, exact_match=False)
+
+    @patch('appian_locust.uiform.uiform.SailUiForm.click_link')
+    def test_menu_layout_by_label_select_with_name(self, click_link_mock: MagicMock) -> None:
+        # these menu layout functions are centered around calling click_link on the right menu item link testLabel
+        locust_request_label = "label with name valid find"
+        sail_form = self._get_menu_layout_sail_form()
+        sail_form.click_menu_item_by_name(label="noDividerMenu", choice_name="Folder Contents",
+                                          locust_request_label=locust_request_label)
+        click_link_mock.assert_called_once_with(label="folder-contents-no-dividers-link", is_test_label=True,
+                                                locust_request_label=locust_request_label)
+
+    @patch('appian_locust.uiform.uiform.SailUiForm.click_link')
+    def test_menu_layout_by_test_label_select_with_index(self, click_link_mock: MagicMock) -> None:
+        # these menu layout functions are centered around calling click_link on the right menu item link testLabel
+        locust_request_label = "testLabel with index valid find"
+        sail_form = self._get_menu_layout_sail_form()
+        # selection
+        sail_form.click_menu_item_by_choice_index(label="menuWithDividers", choice_index=2, is_test_label=True,
+                                                  locust_request_label=locust_request_label)
+        click_link_mock.assert_called_once_with(label="folder-contents-with-dividers-link", is_test_label=True,
+                                                locust_request_label=locust_request_label)
+
+    def test_menu_layout_can_not_be_found(self) -> None:
+        sail_form = self._get_menu_layout_sail_form()
+        # We use regex to ensure the component exception is for the menu layout
+        # Using item by index function w/ VALID testLabel that is INVALID as just a label
+        with self.assertRaisesRegex(ComponentNotFoundException, ".*label.*menuWithDividers.*"):
+            sail_form.click_menu_item_by_choice_index(label="menuWithDividers", choice_index=1, is_test_label=False,
+                                                      locust_request_label="invalid menu layout find")
+        # Using item by name function w/ VALID label that is INVALID as a testLabel
+        with self.assertRaisesRegex(ComponentNotFoundException, ".*testLabel.*noDividerMenu.*"):
+            sail_form.click_menu_item_by_name(label="noDividerMenu", choice_name="Folder Contents",
+                                              is_test_label=True, locust_request_label="invalid menu layout find")
+
+    def test_menu_layout_choice_name_not_found(self) -> None:
+        # these menu layout functions are centered around calling click_link on the right menu item link testLabel
+        sail_form = self._get_menu_layout_sail_form()
+        # Using regex to ensure this exception is for the correct component
+        with self.assertRaisesRegex(ComponentNotFoundException, ".*primaryText.*FAKE NAME.*"):
+            sail_form.click_menu_item_by_name(label="noDividerMenu", choice_name="FAKE NAME",
+                                              locust_request_label="label with name not found")
+
+    def test_menu_layout_choice_index_not_found(self) -> None:
+        sail_form = self._get_menu_layout_sail_form()
+        # The actual error we're interested in is a generic 'Exception', so we use regex to make sure it's correct
+        with self.assertRaisesRegex(Exception, "Index.*out of range"):
+            # this index is in bounds IFF menu dividers are counted, so we want to ensure it still fails
+            sail_form.click_menu_item_by_choice_index(label="menuWithDividers", choice_index=4, is_test_label=True,
+                                                      locust_request_label="testLabel with index valid find")
+
 
 if __name__ == '__main__':
     unittest.main()

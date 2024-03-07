@@ -1,0 +1,198 @@
+{
+  "_cId": "6f3aee2e64a4cfe8ccfec6f9fee55216",
+  "contents": [
+      {
+          "_cId": "81f4cb5b56a1bd4070fc5445d09fcb46",
+          "label": "noDividerMenu",
+          "headerImageUrl": "",
+          "headerText": "Add Existing",
+          "icon": "",
+          "style": "SECONDARY",
+          "color": "",
+          "size": "SMALL",
+          "tooltip": "",
+          "ariaLabel": "",
+          "contents": [
+              {
+                  "_cId": "428585a66ea588368388ed2917309343",
+                  "primaryText": "Application Contents",
+                  "secondaryText": "",
+                  "tooltip": "",
+                  "link": {
+                      "_cId": "9947eaa2670cd07d3be6b929554fd2fb",
+                      "testLabel": "application-contents",
+                      "label": "",
+                      "value": {
+                          "#v": "",
+                          "#t": "string"
+                      },
+                      "saveInto": [
+                          "<<ww0EAwMCsI8HxWUNILgB0sAzAbvvLYthNd5EGDG6RO+PRBnV91kJ/jMCDGJDi5suyFlCjdQmy28y\r\nh+2BRnccVQDC6Cpaa2QfQuJ7vqVjMMrI6Yj0q84lcUJF6CZebfjHUlWhCFvd9TDEVdptZwsG+U2c\r\nJapv0BS9dM2pMg/rWJVti77ulK35+o8n2hcmbuhuYGgyrJVmaI+AinRPdpUma8c1wlbsahh7jXEa\r\nkKGlCW45YmDDGeuE1JJt8F9ErvRDfpypdoGawpu0StfziPNXJpCcnr9KzkGopFrROVOa7j80Hbu7\r\n8dQh9KkLc5zMlEyJ2wnAeJrh5u8LpSBbCuLAYbHobjEJ\r\n>>"
+                      ],
+                      "tooltip": "",
+                      "href": "",
+                      "#t": "DynamicLink"
+                  },
+                  "disabledHelpText": "",
+                  "#t": "MenuItem"
+              },
+              {
+                  "_cId": "31f6a871ecdadfd4afc6294226629b1e",
+                  "primaryText": "Folder Contents",
+                  "secondaryText": "",
+                  "tooltip": "",
+                  "link": {
+                      "_cId": "8703256783c9828b487bdec1644c182a",
+                      "testLabel": "folder-contents-no-dividers-link",
+                      "label": "",
+                      "value": {
+                          "#v": "",
+                          "#t": "string"
+                      },
+                      "saveInto": [
+                          "<<ww0EAwMCsI8HxWUNILgB0sAzAbvvLYthNd5EGDG6RO+PRBnV91kJ/jMCDGNDi5szyFlSOgcJUKaZ\r\n83Yc3CRfOETjgIBghYiNrsWqJyjWZ2mnxXiQGfcA0qQduQj0LI9M2uJhflFpQYvoIp7tVOJH2E8Z\r\n4WyCMr90U4DoT8vPxkaCxEu7+LBOgpRQ7pCYLMyoggDNBx4Js5D60Yjx/kHsOJ3XMkwmfNsecr98\r\nGioUbzTQB6UjfISQUxKeE01xItGhaZkyuuhK6qKjXTvemOJDzckin6klzUd4dPWdvrudODtACmqq\r\nEb6KtAXzMpDGIt365oHVHun0DYBwNo+x2hHNEsH6Dsnr\r\n>>"
+                      ],
+                      "tooltip": "",
+                      "href": "",
+                      "#t": "DynamicLink"
+                  },
+                  "disabledHelpText": "",
+                  "#t": "MenuItem"
+              },
+              {
+                  "_cId": "b1310302159f605d482e661af9d90831",
+                  "primaryText": "Existing Objects",
+                  "secondaryText": "",
+                  "tooltip": "",
+                  "link": {
+                      "_cId": "617570631e613851bb07e32bedcac8b5",
+                      "testLabel": "existing-objects",
+                      "label": "",
+                      "value": {
+                          "#v": "",
+                          "#t": "string"
+                      },
+                      "saveInto": [
+                          "<<ww0EAwMCsI8HxWUNILgB0sAzAbvvLYthNd5EGDG6RO+PRBnV91kJ/jMCDGJDi5suyFlCjdQmy28y\r\nh+2BRnccVQDC6Cpaa2QfQuRQMussGBgILfx0j/L5Cdy5l4hTcUACm7HXZ8TbsAY+ShA+egElIYMT\r\nCSEu4xtIAzvLya1BLhze3uIs3KuYzeSB4KKw006bAiVfzU2ffPhRGT/a41Lv47j97va1D0T8DhRy\r\nEgG+R0RUp6qrOo8VCm4a/QtELHP5G8T5YANPWBig9vtcp0S9P+ZbQDgQ/11S0sRzWraPXlAHsCxg\r\naXvhGEEEtWejbQyF5w+n7ZsxDKzt67/Da600npXE1oOZ\r\n>>"
+                      ],
+                      "tooltip": "",
+                      "href": "",
+                      "#t": "DynamicLink"
+                  },
+                  "disabledHelpText": "",
+                  "#t": "MenuItem"
+              }
+          ],
+          "menuAlignment": "",
+          "buttonSkinName": "",
+          "tooltipStyle": "",
+          "menuHeight": "",
+          "width": "",
+          "#t": "MenuLayout"
+      },
+      {
+            "_cId": "81f4cb5b56a1bd4070fc5445d09fcb46",
+            "testLabel": "menuWithDividers",
+            "headerImageUrl": "",
+            "headerText": "Add Existing",
+            "icon": "",
+            "style": "SECONDARY",
+            "color": "",
+            "size": "SMALL",
+            "tooltip": "",
+            "ariaLabel": "",
+            "contents": [
+                {
+                    "_cId": "428585a66ea588368388ed2917309343",
+                    "primaryText": "Application Contents",
+                    "secondaryText": "",
+                    "tooltip": "",
+                    "link": {
+                        "_cId": "9947eaa2670cd07d3be6b929554fd2fb",
+                        "testLabel": "application-contents",
+                        "label": "",
+                        "value": {
+                            "#v": "",
+                            "#t": "string"
+                        },
+                        "saveInto": [
+                            "<<ww0EAwMCsI8HxWUNILgB0sAzAbvvLYthNd5EGDG6RO+PRBnV91kJ/jMCDGJDi5suyFlCjdQmy28y\r\nh+2BRnccVQDC6Cpaa2QfQuJ7vqVjMMrI6Yj0q84lcUJF6CZebfjHUlWhCFvd9TDEVdptZwsG+U2c\r\nJapv0BS9dM2pMg/rWJVti77ulK35+o8n2hcmbuhuYGgyrJVmaI+AinRPdpUma8c1wlbsahh7jXEa\r\nkKGlCW45YmDDGeuE1JJt8F9ErvRDfpypdoGawpu0StfziPNXJpCcnr9KzkGopFrROVOa7j80Hbu7\r\n8dQh9KkLc5zMlEyJ2wnAeJrh5u8LpSBbCuLAYbHobjEJ\r\n>>"
+                        ],
+                        "tooltip": "",
+                        "href": "",
+                        "#t": "DynamicLink"
+                    },
+                    "disabledHelpText": "",
+                    "#t": "MenuItem"
+                },
+                {
+                    "_cId": "dac45931f37773fefa025298a6859f57",
+                    "style": "STANDARD",
+                    "#t": "MenuDivider"
+                },
+                {
+                    "_cId": "31f6a871ecdadfd4afc6294226629b1e",
+                    "primaryText": "Folder Contents",
+                    "secondaryText": "",
+                    "tooltip": "",
+                    "link": {
+                        "_cId": "8703256783c9828b487bdec1644c182a",
+                        "testLabel": "folder-contents-with-dividers-link",
+                        "label": "",
+                        "value": {
+                            "#v": "",
+                            "#t": "string"
+                        },
+                        "saveInto": [
+                            "<<ww0EAwMCsI8HxWUNILgB0sAzAbvvLYthNd5EGDG6RO+PRBnV91kJ/jMCDGNDi5szyFlSOgcJUKaZ\r\n83Yc3CRfOETjgIBghYiNrsWqJyjWZ2mnxXiQGfcA0qQduQj0LI9M2uJhflFpQYvoIp7tVOJH2E8Z\r\n4WyCMr90U4DoT8vPxkaCxEu7+LBOgpRQ7pCYLMyoggDNBx4Js5D60Yjx/kHsOJ3XMkwmfNsecr98\r\nGioUbzTQB6UjfISQUxKeE01xItGhaZkyuuhK6qKjXTvemOJDzckin6klzUd4dPWdvrudODtACmqq\r\nEb6KtAXzMpDGIt365oHVHun0DYBwNo+x2hHNEsH6Dsnr\r\n>>"
+                        ],
+                        "tooltip": "",
+                        "href": "",
+                        "#t": "DynamicLink"
+                    },
+                    "disabledHelpText": "",
+                    "#t": "MenuItem"
+                },
+                              {
+                    "_cId": "dac45931f37773fefa025298a6859f57",
+                    "style": "STANDARD",
+                    "#t": "MenuDivider"
+                },
+                {
+                    "_cId": "b1310302159f605d482e661af9d90831",
+                    "primaryText": "Existing Objects",
+                    "secondaryText": "",
+                    "tooltip": "",
+                    "link": {
+                        "_cId": "617570631e613851bb07e32bedcac8b5",
+                        "testLabel": "existing-objects",
+                        "label": "",
+                        "value": {
+                            "#v": "",
+                            "#t": "string"
+                        },
+                        "saveInto": [
+                            "<<ww0EAwMCsI8HxWUNILgB0sAzAbvvLYthNd5EGDG6RO+PRBnV91kJ/jMCDGJDi5suyFlCjdQmy28y\r\nh+2BRnccVQDC6Cpaa2QfQuRQMussGBgILfx0j/L5Cdy5l4hTcUACm7HXZ8TbsAY+ShA+egElIYMT\r\nCSEu4xtIAzvLya1BLhze3uIs3KuYzeSB4KKw006bAiVfzU2ffPhRGT/a41Lv47j97va1D0T8DhRy\r\nEgG+R0RUp6qrOo8VCm4a/QtELHP5G8T5YANPWBig9vtcp0S9P+ZbQDgQ/11S0sRzWraPXlAHsCxg\r\naXvhGEEEtWejbQyF5w+n7ZsxDKzt67/Da600npXE1oOZ\r\n>>"
+                        ],
+                        "tooltip": "",
+                        "href": "",
+                        "#t": "DynamicLink"
+                    },
+                    "disabledHelpText": "",
+                    "#t": "MenuItem"
+                }
+            ],
+            "menuAlignment": "",
+            "buttonSkinName": "",
+            "tooltipStyle": "",
+            "menuHeight": "",
+            "width": "",
+            "#t": "MenuLayout"
+        }
+  ],
+  "align": "",
+  "marginBelow": "NONE",
+  "accessibilityText": "",
+  "marginAbove": "",
+  "#t": "ButtonLayout2"
+}
