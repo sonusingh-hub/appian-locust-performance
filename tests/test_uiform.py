@@ -621,15 +621,21 @@ class TestSailUiForm(unittest.TestCase):
         self.assertIsNotNone(test_form_state, "Unexpected behavior: test_form_state is None")
         if test_form_state is not None:
             component = find_component_by_attribute_in_dict("testLabel", "cardChoiceField-Card Choices", test_form_state)
+        index = 2
         test_uuid = test_form.uuid
         test_context = test_form.context
-        test_form.select_card_choice_field_by_label("Card Choices", 2, locust_request_label=self.locust_label)
+        test_new_value = {
+            "#t": "Variant?list",
+            "#v": [component["identifiers"][index - 1]]
+            }
+        test_form.select_card_choice_field_by_label("Card Choices", index, locust_request_label=self.locust_label)
         mock_radio_select_component.assert_called_once()
         args, kwargs = mock_radio_select_component.call_args_list[0]
         self.assertEqual(args[0], uri)
         self.assertEqual(args[1], component)
         self.assertEqual(args[2], test_context)
         self.assertEqual(args[3], test_uuid)
+        self.assertEqual(kwargs["new_value"], test_new_value)
         self.assertEqual(kwargs["label"], self.locust_label)
 
     def test_click_card_layout_by_index_no_link(self) -> None:

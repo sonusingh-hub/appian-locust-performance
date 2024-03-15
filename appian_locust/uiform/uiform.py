@@ -1636,7 +1636,10 @@ class SailUiForm:
             'testLabel', label, self._state)
 
         reeval_url = self._get_update_url_for_reeval(self._state)
-        new_value = component["identifiers"][index - 1]
+        new_value = {
+            "#t": "Variant?list",
+            "#v": [component["identifiers"][index - 1]]
+            }
         new_state = self._interactor.click_generic_element(
             reeval_url, component, self.context, self.uuid, new_value=new_value, label=context_label)
         if not new_state:
