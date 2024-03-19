@@ -171,6 +171,21 @@ class TestInteractor(unittest.TestCase):
         expected_record_link_url = f"('/suite/rest/a/sites/latest/vendor-management/page/opportunities/record/{recordRef}/view/summary',)"
         self.assertEqual(f"{mock.call_args[0]}", expected_record_link_url)
 
+    def test_record_link_interface_site_page_substring_of_site(self) -> None:
+        ui = read_mock_file("sites_page_interface.json")
+        record_link = find_component_by_attribute_in_dict("testLabel", "RecordLinkTestLabelPageSubstringOfSite", json.loads(ui))
+
+        mock = unittest.mock.Mock()
+        setattr(self.task_set.appian._interactor, 'get_page', mock)
+
+        self.task_set.appian._interactor.click_record_link(
+            "/suite/rest/a/sites/latest/requirements-management/pages/requirements/interface", record_link, {}, "")
+        mock.assert_called_once()
+
+        recordRef = record_link.get("_recordRef")
+        expected_record_link_url = f"('/suite/rest/a/sites/latest/requirements-management/page/requirements/record/{recordRef}/view/summary',)"
+        self.assertEqual(f"{mock.call_args[0]}", expected_record_link_url)
+
     def test_record_link_sites_any_page(self) -> None:
         record_link = find_component_by_attribute_in_dict("label", "DA0G-P2A6",
                                                           json.loads(self.form_content_3))

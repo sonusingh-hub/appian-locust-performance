@@ -463,9 +463,9 @@ class _Interactor:
             else:
                 raise Exception("Unexpected record link URL - couldn't find page name after /pages/")
 
-            parse_pattern = page_name
-            url_prefix_index = get_url.index(parse_pattern) + len(page_name)
-            # record_link_url = get_url[:get_url.index(parse_pattern) + len(page_name)].replace("/pages/",
+            parse_pattern = f"/{page_name}/"
+            url_prefix_index = get_url.index(parse_pattern) + len(parse_pattern)-1
+
             record_link_url = get_url[:url_prefix_index].replace("/pages/",
                                                                  "/page/") + "/record/" + record_link_url_suffix
         # Support record view links from a record within a site
