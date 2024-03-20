@@ -101,4 +101,4 @@ Now all we need to do is click the "Create" button, and our new Employee will be
         record_list_uiform.click_button(label="Create")
 
 If you run a locust test with the task above, you should be able to check the Employee record list and see the "Sample User" employees that the virtual Locust user just made!
-You can see a full version of a locust test including the task we just wrote `here <https://gitlab.com/appian-oss/appian-locust/-/tree/appian-locust-v2/examples/example_create_employee_record.py>`_.
+You can see a full version of a locust test including the task we just wrote `here <https://gitlab.com/appian-oss/appian-locust/-/blob/main/examples/example_create_employee_record.py>`_.
