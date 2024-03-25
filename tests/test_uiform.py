@@ -233,7 +233,7 @@ class TestSailUiForm(unittest.TestCase):
         label = 'Text'
         value = 'Filling out the form...'
         index = 3
-        with self.assertRaisesRegex(Exception, "Index: '3' out of range"):
+        with self.assertRaisesRegex(Exception, "Component found but index: '3' out of range"):
             sail_form.fill_text_field(label, value, index=index)
 
     def test_fill_text_field_zero_index(self) -> None:
@@ -916,12 +916,21 @@ class TestSailUiForm(unittest.TestCase):
             sail_form.click_record_link_by_attribute_and_index(attribute='Nonexistant', attribute_value='attribute')
         self.assertEqual(context.exception.args[0], "No components with Nonexistant 'attribute' found on page")
 
+    def test_click_record_link_missing_component(self) -> None:
+        report_body = read_mock_file("nested_dynamic_link_response.json")
+        self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
+        sail_form = self.task_set.appian.visitor.visit_report(self.report_name, exact_match=False)
+
+        with self.assertRaises(ComponentNotFoundException) as context:
+            sail_form.click_record_link_by_attribute_and_index(attribute='label', attribute_value='Related Actions')
+        self.assertEqual(context.exception.args[0], "Type 'RecordLink' and label 'Related Actions' found, but on different components")
+
     def test_click_record_link_out_of_bounds_index(self) -> None:
         report_body = read_mock_file("nested_dynamic_link_response.json")
         self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
         sail_form = self.task_set.appian.visitor.visit_report(self.report_name, exact_match=False)
 
-        with self.assertRaisesRegex(Exception, "Index: '100' out of range"):
+        with self.assertRaisesRegex(Exception, "Component found but index: '100' out of range"):
             sail_form.click_record_link_by_attribute_and_index(index=100)
 
     def test_click_record_link_zero_index(self) -> None:
@@ -1053,7 +1062,7 @@ class TestSailUiForm(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             sail_form.select_dropdown_item_by_index(dropdown_index, 'some choice')
         self.assertEqual(
-            context.exception.args[0], f"Index: '{str(dropdown_index)}' out of range")
+            context.exception.args[0], f"Component found but index: '{str(dropdown_index)}' out of range")
 
         dropdown_index = 1
         with self.assertRaises(ChoiceNotFoundException):
@@ -1166,7 +1175,7 @@ class TestSailUiForm(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             sail_form.select_multi_dropdown_item_by_index(dropdown_index, ["Asia"])
         self.assertEqual(
-            context.exception.args[0], f"Index: '{str(dropdown_index)}' out of range")
+            context.exception.args[0], f"Component found but index: '{str(dropdown_index)}' out of range")
 
         dropdown_index = 1
         with self.assertRaises(ChoiceNotFoundException):
@@ -1248,7 +1257,7 @@ class TestSailUiForm(unittest.TestCase):
             sail_form.select_radio_button_by_index(index_too_high, 1)
         self.assertEqual(
             context.exception.args[0],
-            f"Index: '{index_too_high}' out of range"
+            f"Component found but index: '{index_too_high}' out of range"
         )
 
     def test_click_grid_rich_text_link(self) -> None:
@@ -1377,7 +1386,7 @@ class TestSailUiForm(unittest.TestCase):
     def test_menu_layout_choice_index_not_found(self) -> None:
         sail_form = self._get_menu_layout_sail_form()
         # The actual error we're interested in is a generic 'Exception', so we use regex to make sure it's correct
-        with self.assertRaisesRegex(Exception, "Index.*out of range"):
+        with self.assertRaisesRegex(Exception, "Component found but index.*out of range"):
             # this index is in bounds IFF menu dividers are counted, so we want to ensure it still fails
             sail_form.click_menu_item_by_choice_index(label="menuWithDividers", choice_index=4, is_test_label=True,
                                                       locust_request_label="testLabel with index valid find")

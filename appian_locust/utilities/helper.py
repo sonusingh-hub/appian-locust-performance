@@ -303,6 +303,7 @@ def find_component_by_type_and_attribute_and_index_in_dict(
 
     Raises:
         ComponentNotFoundException if the attribute or type checks fail.
+        Exception if the component is found but at an incorrect index.
 
     Example:
         >>> find_component_by_attribute_and_index_in_dict('label', 'Submit', 1, self.json_response)
@@ -317,6 +318,7 @@ def find_component_by_type_and_attribute_and_index_in_dict(
 
     type_check_passed_once = False
     attribute_check_passed_once = False
+    match_on_component_type_and_attribute = False
     originial_index = index
     trees_to_search = [component_tree]
     while trees_to_search:
@@ -334,6 +336,7 @@ def find_component_by_type_and_attribute_and_index_in_dict(
         attribute_check = not attribute or tree.get(attribute, '') == value
         attribute_check_passed_once = attribute_check_passed_once if attribute_check_passed_once else attribute_check
         if type_check and attribute_check:
+            match_on_component_type_and_attribute = True
             if index == 1:
                 return tree
             index -= 1
@@ -346,7 +349,9 @@ def find_component_by_type_and_attribute_and_index_in_dict(
         raise ComponentNotFoundException(f"No components with type '{type}' found on page")
     if attribute and not attribute_check_passed_once:
         raise ComponentNotFoundException(f"No components with {attribute} '{value}' found on page")
-    raise Exception(f"Index: '{originial_index}' out of range")
+    if match_on_component_type_and_attribute:
+        raise Exception(f"Component found but index: '{originial_index}' out of range")
+    raise ComponentNotFoundException(f"Type '{type}' and {attribute} '{value}' found, but on different components")
 
 
 def find_component_by_attribute_and_index_in_dict(attribute: str, value: str, index: int, component_tree: Dict[str, Any]) -> Any:
