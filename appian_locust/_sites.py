@@ -5,8 +5,8 @@ from typing import Any, Dict, List, Union, Optional
 from .utilities import logger
 from ._base import _Base
 from ._interactor import _Interactor
-from ._news import NEWS_NAV_PATH
 from .utilities.helper import extract_values, format_label
+from .objects import TEMPO_NEWS_PAGE
 from ._records_helper import get_all_records_from_json
 from .objects import Site, Page, PageType
 from .exceptions import (PageNotFoundException,
@@ -14,9 +14,6 @@ from .exceptions import (PageNotFoundException,
                          SiteNotFoundException)
 
 log = logger.getLogger(__name__)
-
-SITES_NAV_PATH = ["/suite/rest/a/sites/latest/", "/page/", "/nav"]
-SITES_PAGE_PATH = ["/suite/rest/a/sites/latest/", "/pages/", "/"]
 
 
 class _Sites(_Base):
@@ -52,27 +49,15 @@ class _Sites(_Base):
         Returns: Response of report/action/record
         """
 
-        page_type = self.get_site_page_type(site_name, page_name)
+        page = self.get_site_page(site_name, page_name)
         headers = self._setup_headers_with_sail_json()
 
-        base_path = f"{SITES_NAV_PATH[0]}{site_name}{SITES_NAV_PATH[1]}"
-        page = self.get_site_page(site_name, page_name)
-        modified_page_name = f"p.{page_name}"
-        if page.group_name:
-            modified_page_name = f"g.{page.group_name}.{modified_page_name}"
-        if self.interactor.url_pattern_version == 1:
-            base_path += modified_page_name
-        else:
-            base_path += page_name
-        base_path += SITES_NAV_PATH[2]
+        nav_uri = self.interactor.get_url_provider().get_page_nav_path(page)
 
         locust_label = locust_request_label or f"Sites.{site_name}.{page_name}"
-        self.interactor.get_page(base_path, headers=headers, label=f"{locust_label}.Nav")
-        if self.interactor.url_pattern_version == 1 and page_type == PageType.INTERFACE:
-            base_path = f"{SITES_NAV_PATH[0]}{site_name}{SITES_NAV_PATH[1]}{modified_page_name}"
-        else:
-            base_path = f"{SITES_PAGE_PATH[0]}{site_name}{SITES_PAGE_PATH[1]}{page_name}{SITES_PAGE_PATH[2]}{page_type.value}"
-        resp = self.interactor.get_page(base_path, headers=headers, label=f"{locust_label}.Ui")
+        self.interactor.get_page(nav_uri, headers=headers, label=f"{locust_label}.Nav")
+        page_url = self.interactor.get_url_provider().get_page_path(page)
+        resp = self.interactor.get_page(page_url, headers=headers, label=f"{locust_label}.Ui")
         return resp.json()
 
     def fetch_site_tab_record_json(self, site_name: str, page_name: str, locust_request_label: Optional[str] = None) -> Dict[str, Any]:
@@ -104,21 +89,16 @@ class _Sites(_Base):
         record_id = record_key.split("::")[1]
         page = self.get_site_page(site_name, page_name)
 
-        page_name_to_visit = page_name
-        modified_page_name = f"p.{page_name}"
-        if page.group_name:
-            modified_page_name = f"g.{page.group_name}.{modified_page_name}"
-        if self.interactor.url_pattern_version == 1:
-            page_name_to_visit = modified_page_name
-
+        page_nav_url = self.interactor.get_url_provider().get_page_nav_path(page)
         record_resp = self.interactor.get_page(
-            f"/suite/sites/{site_name}/page/{page_name_to_visit}/nav",
+            page_nav_url,
             headers=headers,
             label=label + ".Nav")
         # TODO: Add ability to go to arbitrary stubs
         headers = self.interactor.setup_feed_headers()
+        record_url = self.interactor.get_url_provider().get_record_path(page, record_id, "summary")
         record_resp = self.interactor.get_page(
-            f"/suite/rest/a/sites/latest/{site_name}/page/{page_name_to_visit}/record/{record_id}/view/summary",
+            record_url,
             headers=headers,
             label=label + ".View")
         return record_resp.json()
@@ -128,11 +108,8 @@ class _Sites(_Base):
         Gets and stores data for all sites, including all of their url stubs
         """
         headers = self._setup_headers_with_sail_json()
-        uri = NEWS_NAV_PATH[0]
-        if self.interactor.url_pattern_version == 1:
-            uri += "p."
-        uri += NEWS_NAV_PATH[1] + NEWS_NAV_PATH[2]
-        all_site_resp = self.interactor.get_page(uri, headers=headers, label="Sites.SiteNames")
+        url = self.interactor.get_url_provider().get_page_nav_path(TEMPO_NEWS_PAGE)
+        all_site_resp = self.interactor.get_page(url, headers=headers, label="Sites.SiteNames")
         all_site_json = all_site_resp.json()
         for site_info in extract_values(all_site_json, '#t', 'SitePageLink'):
             if 'siteUrlStub' in site_info:
@@ -177,10 +154,10 @@ class _Sites(_Base):
         """
         # Group pages can only be interfaces
         if group_name:
-            return Page(page_name, PageType.INTERFACE, group_name)
+            return Page(page_name, PageType.INTERFACE, site_name, group_name)
         headers = self._setup_headers_with_sail_json()
         headers['X-Appian-Features-Extended'] = 'e4bc'  # Required by legacy url to return successfully
-        url = f"/suite/rest/a/applications/latest/legacy/sites/{site_name}/page/{page_name}"
+        url = self.interactor.get_url_provider().get_site_page_redirect_path(site_name, page_name)
         page_resp = self.interactor.get_page(url, headers=headers, label=f"Sites.{site_name}.{page_name}.Nav")
         page_resp_json = page_resp.json()
         if 'redirect' not in page_resp_json:
@@ -188,7 +165,7 @@ class _Sites(_Base):
             return None
         link_type_raw = page_resp_json['redirect']['#t']
         page_type = self._get_type_from_link_type(link_type_raw)
-        return Page(page_name, page_type, group_name)
+        return Page(page_name, page_type, site_name, group_name)
 
     def get_site_page(self, site_name: str, page_name: str) -> 'Page':
         if site_name not in self._sites:

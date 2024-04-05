@@ -7,6 +7,7 @@ from locust import SequentialTaskSet, TaskSet
 from .utilities import logger
 from .feature_flag import FeatureFlag
 from .utilities import DEFAULT_CONFIG_PATH
+from .utilities.url_provider import UrlProvider, URL_PROVIDER_V0, URL_PROVIDER_V1
 from .appian_client import AppianClient
 from ._feature_toggle_helper import override_default_feature_flags
 
@@ -26,6 +27,7 @@ class AppianTaskSet(TaskSet):
 
         # A set of datatypes cached. Used to populate "X-Appian-Cached-Datatypes" header field
         self.cached_datatype: set = set()
+        self.url_provider = None
 
     def on_start(self, portals_mode: bool = False, config_path: str = DEFAULT_CONFIG_PATH, is_mobile_client: bool = False) -> None:
         """
@@ -47,17 +49,22 @@ class AppianTaskSet(TaskSet):
         if not portals_mode:
             self.auth = self._determine_auth()
             self.appian.login(self.auth)
-            resp = self.appian._interactor.get_page(uri=self.host + "/suite/tempo/news")
-            test = r'\\\\\\/suite\\\\\\/rest\\\\\\/a\\\\\\/sites\\\\\\/latest\\\\\\/D6JMim\\\\\\/page\\\\\\/(.+)\\\\\\'
-            m = re.search(test, resp.text)
-            if m is None or m.group(1) == 'news':
-                # old way
-                self.appian._interactor.url_pattern_version = 0
-            elif m.group(1) == 'p.news':
-                # new way
-                self.appian._interactor.url_pattern_version = 1
+            resp = self.appian._interactor.get_page(self.host + '/suite/rest/a/sites/latest/locust-templates', check_login=False)
+            if not resp.ok:
+                # TODO: Remove on 4/4/25, we just need to hit endpoint at that point
+                resp = self.appian._interactor.get_page(uri=self.host + "/suite/tempo/news")
+                test = r'\\\\\\/suite\\\\\\/rest\\\\\\/a\\\\\\/sites\\\\\\/latest\\\\\\/D6JMim\\\\\\/page\\\\\\/(.+)\\\\\\'
+                m = re.search(test, resp.text)
+                if m is None or m.group(1) == 'news':
+                    # old way
+                    self.appian._interactor.set_url_provider(URL_PROVIDER_V0)
+                elif m.group(1) == 'p.news':
+                    # new way
+                    self.appian._interactor.set_url_provider(URL_PROVIDER_V1)
+                else:
+                    log.error("appian-locust could not determine appian interaction url pattern.  Please upgrade to the latest version.")
             else:
-                log.error("appian-locust could not determine appian interaction url pattern.  Please upgrade to the latest version.")
+                self.appian._interactor.set_url_provider(UrlProvider(resp.json()))
 
         self.appian.get_client_feature_toggles()
 

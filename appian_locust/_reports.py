@@ -3,12 +3,11 @@ from urllib.parse import quote
 
 from ._base import _Base
 from ._interactor import _Interactor
+from .objects import TEMPO_REPORTS_PAGE
 from .utilities import format_label, logger
 
 ALL_REPORTS_URI = "/suite/rest/a/uicontainer/latest/reports"
 REPORTS_INTERFACE_PATH = "/suite/rest/a/sites/latest/D6JMim/pages/reports/interface"
-REPORTS_LINK_PATH = ["/suite/rest/a/sites/latest/D6JMim/pages/reports/report/", "/reportlink"]
-REPORTS_NAV_PATH = ["/suite/rest/a/sites/latest/D6JMim/page/", "reports", "/nav"]
 
 log = logger.getLogger(__name__)
 
@@ -37,7 +36,7 @@ class _Reports(_Base):
         report_resp: dict = self.get_report(report_name, exact_match)
         report_url_stub = report_resp['links'][1]['href'].rsplit(
             '/', 1)[1]
-        uri = f"{REPORTS_LINK_PATH[0]}{report_url_stub}{REPORTS_LINK_PATH[1]}"
+        uri = self.interactor.get_url_provider().get_report_link_path(TEMPO_REPORTS_PAGE, report_url_stub)
         return uri
 
     def get_reports_interface(self, locust_request_label: str = "Reports") -> Dict[str, Any]:
@@ -47,10 +46,7 @@ class _Reports(_Base):
         return resp.json()
 
     def get_reports_nav(self, locust_request_label: str = "Reports") -> Dict[str, Any]:
-        uri = self.interactor.host + REPORTS_NAV_PATH[0]
-        if self.interactor.url_pattern_version == 1:
-            uri += "p."
-        uri += REPORTS_NAV_PATH[1] + REPORTS_NAV_PATH[2]
+        uri = self.interactor.get_url_provider().get_page_nav_path(TEMPO_REPORTS_PAGE)
         headers = self.interactor.setup_sail_headers()
         resp = self.interactor.get_page(uri, headers, f'{locust_request_label}.Nav')
         return resp.json()
@@ -161,10 +157,7 @@ class _Reports(_Base):
         headers["Accept"] = "application/vnd.appian.tv.ui+json"
 
         # navigation request
-        uri = REPORTS_NAV_PATH[0]
-        if self.interactor.url_pattern_version == 1:
-            uri += "p."
-        uri += REPORTS_NAV_PATH[1] + REPORTS_NAV_PATH[2]
+        uri = self.interactor.get_url_provider().get_page_nav_path(TEMPO_REPORTS_PAGE)
         if locust_request_label:
             nav_label = f"{locust_request_label}.Nav"
         else:

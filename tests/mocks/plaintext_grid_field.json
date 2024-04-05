@@ -2,12 +2,12 @@
     "_cId": "23860345526a1ec4934e603a42c9aa55",
     "links": [
         {
-            "href": "https://cmf-locust-testrun.appianci.net/suite/rest/a/sites/latest/D6JMim/pages/reports/report/Oydp6g/reportlink",
+            "href": "https://cmf-locust-testrun.appianci.net/suite/rest/a/sites/latest/D6JMim/pages/p.reports/report/Oydp6g/reportlink",
             "rel": "update",
             "title": "Update"
         },
         {
-            "href": "https://cmf-locust-testrun.appianci.net/suite/rest/a/sites/latest/D6JMim/pages/reports/report/Oydp6g/reportlink",
+            "href": "https://cmf-locust-testrun.appianci.net/suite/rest/a/sites/latest/D6JMim/pages/p.reports/report/Oydp6g/reportlink",
             "rel": "self",
             "method": "POST"
         },

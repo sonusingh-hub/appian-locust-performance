@@ -6,14 +6,14 @@ from .utilities import logger
 from ._base import _Base
 from ._interactor import _Interactor
 from .utilities.helper import format_label
-from .uiform import SailUiForm
+from .exceptions import MissingUrlProviderException
+from .objects import TEMPO_ACTIONS_PAGE
 
 log = logger.getLogger(__name__)
 
 ACTIONS_ALL_PATH = "/suite/api/tempo/open-a-case/available-actions?ids=%5B%5D"
 ACTIONS_FEED_PATH = "/suite/api/feed/tempo?m=menu-actions&c=0"
 ACTIONS_INTERFACE_PATH = "/suite/rest/a/sites/latest/D6JMim/pages/actions/interface"
-ACTIONS_NAV_PATH = ("/suite/rest/a/sites/latest/D6JMim/page/", "actions", "/nav")
 KEY_FORM_HREF = "formHref"
 
 
@@ -49,10 +49,7 @@ class _Actions(_Base):
         return resp.json()
 
     def get_actions_nav(self, locust_request_label: str = "Actions") -> Dict[str, Any]:
-        uri = self.interactor.host + ACTIONS_NAV_PATH[0]
-        if self.interactor.url_pattern_version == 1:
-            uri += "p."
-        uri += ACTIONS_NAV_PATH[1] + ACTIONS_NAV_PATH[2]
+        uri = self.interactor.get_url_provider().get_page_nav_path(TEMPO_ACTIONS_PAGE)
         headers = self.interactor.setup_sail_headers()
         resp = self.interactor.get_page(uri, headers, f'{locust_request_label}.Nav')
         return resp.json()

@@ -23,6 +23,10 @@ class IncorrectDesignAccessException(Exception):
         super().__init__(
             f"Selected Design Object was of type {object_type}, use {correct_access_method} method instead")
 
+class MissingUrlProviderException(Exception):
+    def __int__(self) -> None:
+        super().__init__("Url Provider not initialized in Interactor")
+
 
 class InvalidDateRangeException(Exception):
     def __init__(self, start_date: date, end_date: date) -> None:

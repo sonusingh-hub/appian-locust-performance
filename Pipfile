@@ -7,6 +7,7 @@ name = 'pypi'
 locust = "==2.15.1"
 pycodestyle = "==2.5.0"
 mypy = "==1.0.1"
+uritemplate = "==4.1.1"
 
 [dev-packages]
 pytest-cov = "==2.7.1"

@@ -42,6 +42,7 @@ class TestInteractor(unittest.TestCase):
             setattr(parent_task_set, "base_path_override", base_path_override)
             self.custom_locust.set_response(base_path_override + "/?signin=native", 200, "{}",
                                             cookies={"JSESSIONID": "a", "__appianCsrfToken": "b", "__appianMultipartCsrfToken": "c"})
+            self.custom_locust.set_response(base_path_override + "/rest/a/sites/latest/locust-templates", 404, "{}")
 
         self.task_set = AppianTaskSet(parent_task_set)
 
@@ -241,7 +242,7 @@ class TestInteractor(unittest.TestCase):
 
         mock.assert_called_once()
         if not is_mobile:
-            expected_spl_link_url = f"('/suite/rest/a/sites/latest/{site_name}/page/{page_name}/startProcess/{process_model_opaque_id}?cacheKey={cache_key}',)"
+            expected_spl_link_url = f"('/suite/rest/a/sites/latest/{site_name}/page/p.{page_name}/startProcess/{process_model_opaque_id}?cacheKey={cache_key}',)"
         else:
             expected_spl_link_url = f"('/suite/rest/a/model/latest/startProcess/{process_model_opaque_id}?cacheKey={cache_key}',)"
         self.assertEqual(f"{mock.call_args[0]}", expected_spl_link_url)

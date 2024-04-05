@@ -2,12 +2,12 @@
     "_cId": "b8091fc3f4a6946ea646562ecf325f20",
     "links": [
         {
-            "href": "https://fhw-test-buildin-a-grid.appianci.net/suite/rest/a/sites/latest/D6JMim/pages/reports/report/aEo0yQ/reportlink",
+            "href": "https://fhw-test-buildin-a-grid.appianci.net/suite/rest/a/sites/latest/D6JMim/pages/p.reports/report/aEo0yQ/reportlink",
             "rel": "update",
             "title": "Update"
         },
         {
-            "href": "https://fhw-test-buildin-a-grid.appianci.net/suite/rest/a/sites/latest/D6JMim/pages/reports/report/aEo0yQ/reportlink",
+            "href": "https://fhw-test-buildin-a-grid.appianci.net/suite/rest/a/sites/latest/D6JMim/pages/p.reports/report/aEo0yQ/reportlink",
             "rel": "self",
             "method": "POST"
         }

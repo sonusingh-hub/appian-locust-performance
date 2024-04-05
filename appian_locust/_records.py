@@ -5,6 +5,7 @@ from urllib.parse import quote
 
 import requests
 
+from .objects import TEMPO_RECORDS_PAGE
 from .utilities import logger
 
 from ._base import _Base
@@ -16,10 +17,8 @@ log = logger.getLogger(__name__)
 
 RECORDS_ALL_PATH = "/suite/rest/a/applications/latest/app/records/view/all"
 RECORDS_INTERFACE_PATH = "/suite/rest/a/sites/latest/D6JMim/pages/records/interface"
-RECORDS_NAV_PATH = ["/suite/rest/a/sites/latest/D6JMim/page/", "records", "/nav"]
 RECORDS_MOBILE_PATH = "/suite/rest/a/applications/latest/legacy/tempo/records/type/"
 RECORD_TYPE_VIEW_PATH = "/suite/rest/a/sites/latest/D6JMim/pages/records/recordType/"
-RECORD_VIEW_PATH = ["/suite/rest/a/sites/latest/", "/page/records/record/", "/view/"]
 
 
 class _Records(_Base):
@@ -51,10 +50,7 @@ class _Records(_Base):
         return resp.json()
 
     def get_records_nav(self, locust_request_label: Optional[str] = "Records") -> Dict[str, Any]:
-        uri = self.interactor.host + RECORDS_NAV_PATH[0]
-        if self.interactor.url_pattern_version == 1:
-            uri += "p."
-        uri += RECORDS_NAV_PATH[1] + RECORDS_NAV_PATH[2]
+        uri = self.interactor.get_url_provider().get_page_nav_path(TEMPO_RECORDS_PAGE)
         headers = self.interactor.setup_sail_headers()
         resp = self.interactor.get_page(uri, headers, f'{locust_request_label}.Nav')
         return resp.json()
@@ -252,7 +248,7 @@ class _Records(_Base):
             view_url_stub = dashboard_val if dashboard_val else "summary"
 
         locust_label = locust_request_label or f'Records.{record_type}.{record_label}.{view_url_stub}'
-        uri = f"{RECORD_VIEW_PATH[0]}{tempo_site_url_stub}{RECORD_VIEW_PATH[1]}{opaque_id}{RECORD_VIEW_PATH[2]}{view_url_stub}"
+        uri = self.interactor.get_url_provider().get_record_path(TEMPO_RECORDS_PAGE, opaque_id, view_url_stub)
         resp = self.interactor.get_page(uri=uri, headers=headers, label=locust_label)
         return resp.json()
 

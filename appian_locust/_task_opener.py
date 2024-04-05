@@ -35,9 +35,9 @@ class _TaskOpener:
             Dict[str, Any]: Response from accepting
         """
         # Appian Tasks require a plain text payload to be informed
-        # whether or not the Task has been accepted. Send "assigned" or
-        # "accepted" as the payload to manually assign ƒthe tasks state.
-        uri = "/suite/rest/a/task/latest/{}/status".format(task_id)
+        # whether the Task has been accepted or not. Send "assigned" or
+        # "accepted" as the payload to manually assign the tasks state.
+        uri = self.interactor.get_url_provider().get_task_status_path(task_id)
         headers = headers.copy() if headers else {}
         headers["Accept"] = "application/vnd.appian.tv.ui+json"
         headers["Content-Type"] = "text/plain;charset=UTF-8"
@@ -65,7 +65,7 @@ class _TaskOpener:
             Dict[str, Any]: State returned by visiting the task
         """
 
-        uri = "/suite/rest/a/task/latest/{}/attributes".format(task_id)
+        uri = self.interactor.get_url_provider().get_task_attributes_path(task_id)
         headers = self.interactor.setup_request_headers(uri)
         if extra_headers:
             headers.update(extra_headers)
@@ -86,7 +86,7 @@ class _TaskOpener:
             # Then post a suite/rest/a/task/latest/{}/form call to trigger a re-evaluation with the task accepted
             uuid = unaccepted_task_form["uuid"]
             context = unaccepted_task_form["context"]
-            uri = "/suite/rest/a/task/latest/{}/form".format(task_id)
+            uri = self.interactor.get_url_provider().get_task_form_path(task_id)
 
             label = f'Tasks.{task_title}.Accept.Click'
             accepted_task_form = self.interactor.click_component(

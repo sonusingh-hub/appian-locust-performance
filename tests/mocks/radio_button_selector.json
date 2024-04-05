@@ -2,12 +2,12 @@
     "_cId": "4034bc7d6224c629b6ba40eaeb3f0cf2",
     "links": [
         {
-            "href": "https://test.net/suite/rest/a/sites/latest/D6JMim/pages/reports/report/nXLBqg/reportlink",
+            "href": "https://test.net/suite/rest/a/sites/latest/D6JMim/pages/p.reports/report/nXLBqg/reportlink",
             "rel": "update",
             "title": "Update"
         },
         {
-            "href": "https://test.net/suite/rest/a/sites/latest/D6JMim/pages/reports/report/nXLBqg/reportlink",
+            "href": "https://test.net/suite/rest/a/sites/latest/D6JMim/pages/p.reports/report/nXLBqg/reportlink",
             "rel": "self",
             "method": "POST"
         }

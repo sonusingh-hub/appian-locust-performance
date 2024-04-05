@@ -141,7 +141,7 @@ class TestSites(unittest.TestCase):
     def test_get_all_sites_with_groups(self) -> None:
         site_name = "test_site"
         all_sites_str = read_mock_file("sites_groups_nav.json")
-        self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/page/news/nav", 200, all_sites_str)
+        self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/page/p.news/nav", 200, all_sites_str)
 
         nav_resp = all_sites_str
         self.custom_locust.set_response(f"/suite/rest/a/sites/latest/{site_name}/nav", 200, nav_resp)
@@ -154,18 +154,18 @@ class TestSites(unittest.TestCase):
                     "#t": page_types[idx]
                 }
             }
-            self.custom_locust.set_response(f"/suite/rest/a/sites/latest/{site_name}/pages/{page_name}/nav", 200, nav_resp)
+            self.custom_locust.set_response(f"/suite/rest/a/sites/latest/{site_name}/pages/p.{page_name}/nav", 200, nav_resp)
             self.custom_locust.set_response(f"/suite/rest/a/applications/latest/legacy/sites/{site_name}/page/{page_name}", 200, json.dumps(page_response))
 
         all_sites = self.sites_interactor.get_all()
 
         pages = {
-            "test2": Page("test2", PageType.REPORT),
-            "test3": Page("test3", PageType.INTERFACE),
-            "test4": Page("test4", PageType.RECORD),
-            "do": Page("do", PageType.INTERFACE, "first"),
-            "it": Page("it", PageType.INTERFACE, "first"),
-            "test": Page("test", PageType.ACTION),
+            "test2": Page("test2", PageType.REPORT, "test_site"),
+            "test3": Page("test3", PageType.INTERFACE, "test_site"),
+            "test4": Page("test4", PageType.RECORD, "test_site"),
+            "do": Page("do", PageType.INTERFACE, "test_site", "first"),
+            "it": Page("it", PageType.INTERFACE, "test_site", "first"),
+            "test": Page("test", PageType.ACTION, "test_site"),
         }
         sites = {"test_site": Site("test_site", "Test Site", pages)}
         self.assertEqual(sites, all_sites)
