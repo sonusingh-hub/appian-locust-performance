@@ -26,9 +26,9 @@ class CustomLocust(User):
         return tuples
 
     def set_response(self, path: str, status_code: int, body: AnyStr,
-                     cookies: Optional[dict] = None,  headers: CaseInsensitiveDict = CaseInsensitiveDict({"Requested-While-Authenticated": "True"})) -> None:
+                     cookies: Optional[dict] = None,  headers: CaseInsensitiveDict = CaseInsensitiveDict({"Requested-While-Authenticated": "True"}), redirected_path: Optional[str] = None) -> None:
 
-        self.client.set_response(path, status_code, body, cookies=cookies, headers=headers)
+        self.client.set_response(path, status_code, body, cookies=cookies, headers=headers, redirected_path=redirected_path)
 
     def set_default_response(self, status_code: int, body: str,
                              headers: CaseInsensitiveDict = CaseInsensitiveDict({"Requested-While-Authenticated": "True"})) -> None:
@@ -128,26 +128,26 @@ class MockClient:
         return self._response(path)
 
     def enqueue_response(self, status_code: int, body: str,
-                         headers: CaseInsensitiveDict = CaseInsensitiveDict({"Requested-While-Authenticated": "True"}),
+                         headers: CaseInsensitiveDict = CaseInsensitiveDict({"Requested-While-Authenticated": "True"}), redirected_path: Optional[str] = None,
                          cookies: Optional[Dict[str, Any]] = None) -> None:
 
-        response = self.make_response(status_code, body, cookies=cookies if cookies else self.enqueue_cookies, headers=headers)
+        response = self.make_response(status_code, body, cookies=cookies if cookies else self.enqueue_cookies, headers=headers, redirected_path=redirected_path)
         self.dummy_responses.put(response)
 
     def set_response(self, path: str, status_code: int, body: str, cookies: Optional[dict] = None,
-                     headers: CaseInsensitiveDict = CaseInsensitiveDict({"Requested-While-Authenticated": "True"})) -> None:
+                     headers: CaseInsensitiveDict = CaseInsensitiveDict({"Requested-While-Authenticated": "True"}), redirected_path: Optional[str] = None) -> None:
 
-        response = self.make_response(status_code, body, path=path, cookies=cookies, headers=headers)
+        response = self.make_response(status_code, body, path=path, cookies=cookies, headers=headers, redirected_path=redirected_path)
         self.response_dict[path] = response
 
     def set_default_response(self, status_code: int, body: str,
-                             headers: CaseInsensitiveDict = CaseInsensitiveDict({"Requested-While-Authenticated": "True"})) -> None:
+                             headers: CaseInsensitiveDict = CaseInsensitiveDict({"Requested-While-Authenticated": "True"}), redirected_path: Optional[str] = None) -> None:
 
-        response = self.make_response(status_code, body, headers=headers)
+        response = self.make_response(status_code, body, headers=headers, redirected_path=redirected_path)
         self.default_response = response
 
     def make_response(self, status_code: int, body: str, path: str = "", cookies: Optional[dict] = None,
-                      headers: CaseInsensitiveDict = CaseInsensitiveDict({"Requested-While-Authenticated": "True"})) -> 'MockResponse':
+                      headers: CaseInsensitiveDict = CaseInsensitiveDict({"Requested-While-Authenticated": "True"}), redirected_path: Optional[str] = None) -> 'MockResponse':
 
         response = MockResponse()
         response.status_code = status_code
@@ -156,7 +156,7 @@ class MockClient:
         response.raw = NoOpReadCloser(content)
         response.cookies = requests.cookies.cookiejar_from_dict(cookies) if cookies else self.cookies
         response.request = MockPreparedRequest()
-        response.request.path_url = path
+        response.request.path_url = redirected_path if redirected_path else path
         response.headers = headers
         return response
 

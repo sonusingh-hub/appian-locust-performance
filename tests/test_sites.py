@@ -45,6 +45,7 @@ class TestSites(unittest.TestCase):
         page_resp_json = read_mock_file("page_resp.json")
         site_nav_resp = read_mock_file("sites_nav_resp.json")
         all_sites_str = read_mock_file("all_sites.json")
+        self.custom_locust.client.enqueue_response(200, all_sites_str, redirected_path="suite/sites/tempo")
         self.custom_locust.client.enqueue_response(200, all_sites_str)
         for i in range(136):
             self.custom_locust.client.enqueue_response(200, site_nav_resp)
@@ -209,7 +210,8 @@ class TestSites(unittest.TestCase):
     def test_get_all_sites_with_groups(self) -> None:
         site_name = "test_site"
         all_sites_str = read_mock_file("sites_groups_nav.json")
-        self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/page/p.news/nav", 200, all_sites_str)
+        self.custom_locust.set_response("/suite/", 200, all_sites_str, redirected_path="suite/sites/tempo")
+        self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/nav", 200, all_sites_str)
 
         nav_resp = all_sites_str
         self.custom_locust.set_response(f"/suite/rest/a/sites/latest/{site_name}/nav", 200, nav_resp)

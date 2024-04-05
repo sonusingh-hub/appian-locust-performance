@@ -229,6 +229,9 @@ class TestAppianBase(unittest.TestCase):
         inner_client.set_response(host + "/suite/?signin=native", 200, "{}", cookies={"JSESSIONID": "a", "__appianCsrfToken": "b", "__appianMultipartCsrfToken": "c"})
         appian_client = AppianClient(inner_client, host)
 
+        # consumed by login
+        inner_client.enqueue_response(200, sites)
+        inner_client.enqueue_response(200, sites, redirected_path="suite/sites/tempo")
         inner_client.enqueue_response(200, sites)
         for i in range(total_site_number):
             inner_client.enqueue_response(200, site_nav_resp)
