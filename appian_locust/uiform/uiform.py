@@ -1297,7 +1297,7 @@ class SailUiForm:
 
         return self._reconcile_state(new_state)
 
-    def select_rows_in_grid(self, rows: List[int], label: Optional[str] = None, index: Optional[int] = None, locust_request_label: str = "") -> 'SailUiForm':
+    def select_rows_in_grid(self, rows: List[int], label: Optional[str] = None, index: Optional[int] = None, append_to_existing_selected: bool = False, locust_request_label: str = "") -> 'SailUiForm':
         """
         Selects rows in a grid
         Either a label or an index is required, indices are useful if there is no title for the grid
@@ -1306,6 +1306,7 @@ class SailUiForm:
             rows(List[int]): The rows to select
             label(str): Label of the grid
             index(int): Index of the grid
+            append_to_existing_selected(bool): Flag to control appending row selections
 
         Keyword Args:
             locust_request_label(str): Label used to identify the request for locust statistics
@@ -1319,7 +1320,7 @@ class SailUiForm:
         grid = self.grid_interactor.find_grid_by_label_or_index(self._state, label=label, index=index)
         grid_label = self.grid_interactor.format_grid_display_label(grid)
 
-        new_grid_save = self.grid_interactor.select_rows(grid, rows)
+        new_grid_save = self.grid_interactor.select_rows(grid, rows, append_to_existing_selected)
         context_label = locust_request_label or f"{self.breadcrumb}.Grid.SelectRows.{grid_label}"
 
         reeval_url = self._get_update_url_for_reeval(self._state)

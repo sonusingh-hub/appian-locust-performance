@@ -815,7 +815,12 @@
                     "<<jA0EAwMCb24pCQUucNUB0pUB/cJVwaQsmlJRYM/lzcIsmN8JEpYB+dcEGRphABzq3D9LzrnAOUOI\r\nd9uAOxQJ7xaVtyhBnUAMpdrjdi8MQEpMBwWIevo4d5ijH2HA6XPrqXWPsxoNnBSIEXrC1AY4jBRa\r\nOmbPehoL1LVQBHrCBh+/FuO/3seiry1pGVZUd6RSQkTKlIndq36WROLI1b5V4IYM3zXxFQ==\r\n>>"
                 ],
                 "value": {
-                    "selected": [],
+                    "selected": [
+                        {
+                            "#v": 268435892,
+                            "#t": "int"
+                        }
+                    ],
                     "pagingInfo": {
                         "startIndex": 51,
                         "batchSize": 50,
