@@ -782,6 +782,27 @@ class TestSailUiForm(unittest.TestCase):
         self.assertEqual("int", second_selected['#t'])
         self.assertEqual(268435892, second_selected['#v'])
 
+    def test_select_grid_row_append_success(self) -> None:
+        test_form = self._setup_grid_form()
+        test_form.select_rows_in_grid([0], "My Tasks", append_to_existing_selected=True)
+
+        last_request = self.custom_locust.get_request_list().pop()
+        self.assertEqual('post', last_request['method'])
+        self.assertEqual(self.sites_task_uri, last_request['path'])
+
+        update = json.loads(last_request['data'])['updates']['#v'][0]['value']
+        self.assertEqual("GridSelection", update['#t'])
+        selected_list = update['selected']
+        self.assertEqual(2, len(selected_list))
+
+        first_selected = selected_list[0]
+        self.assertEqual("int", first_selected['#t'])
+        self.assertEqual(268435892, first_selected['#v'])
+
+        second_selected = selected_list[1]
+        self.assertEqual("int", second_selected['#t'])
+        self.assertEqual(536871411, second_selected['#v'])
+
     def test_dispatch_click_task_no_id(self) -> None:
         sites_task_report = SailUiForm(self.task_set.appian._interactor, json.loads(self.sites_task_report_resp))
         component = {'#t': PROCESS_TASK_LINK_TYPE, 'label': "my task"}
