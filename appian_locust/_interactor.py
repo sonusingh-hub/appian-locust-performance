@@ -338,6 +338,8 @@ class _Interactor:
                 self.write_response_to_lib_folder(label, resp)
             return resp
 
+    # COMPONENT RELATED METHODS
+
     def upload_document_to_server(self, file_path: str, validate_extensions: bool = False, is_encrypted: bool = False) -> Dict[str, Any]:
         """
         Uploads a document to the server, so that it can be used in upload fields
@@ -561,18 +563,16 @@ class _Interactor:
             return self.post_page(self.get_interaction_host() + related_action_link_url, payload={}, headers=headers, label=locust_label).json()
         return json_response
 
-    def click_record_list_action(self, component: Dict[str, Any], process_model_uuid: str,
+    def click_record_list_action(self, component_label: str, process_model_uuid: str,
                                  cache_key: str, locust_request_label: Optional[str] = None) -> Dict[str, Any]:
         record_list_action_url = f"/suite/rest/a/model/latest/{process_model_uuid}/forminternal?cacheKey={cache_key}"
 
         headers = self.setup_sail_headers()
-        locust_label = locust_request_label or "Clicking RecordListAction: " + component["label"]
+        locust_label = locust_request_label or f"Clicking RecordListAction: {component_label}"
         resp = self.post_page(
             self.get_interaction_host() + record_list_action_url, payload={}, headers=headers, label=locust_label
         )
         return resp.json()
-
-    # COMPONENT RELATED METHODS
 
     def click_component(self, post_url: str, component: Dict[str, Any], context: Dict[str, Any],
                         uuid: str, label: Optional[str] = None, headers: Optional[Dict[str, Any]] = None,
@@ -595,16 +595,16 @@ class _Interactor:
             component = component["link"]
             component["label"] = wrapper_label
 
-        payload = save_builder() \
-            .component(component) \
-            .context(context) \
-            .uuid(uuid) \
-            .build()
+        payload = (save_builder()
+                   .component(component)
+                   .context(context)
+                   .uuid(uuid)
+                   .build())
 
         locust_label = label or f'Click \'{component["label"]}\' Component'
 
         resp = self.post_page(
-            self.get_interaction_host() + post_url, payload=payload, label=locust_label
+            uri=self.get_interaction_host() + post_url, payload=payload, label=locust_label
         )
         return resp.json()
 
@@ -633,18 +633,18 @@ class _Interactor:
             "#v": index
         }
         # url_stub should only be populated if the page is a record list
-        payload = save_builder() \
-            .component(dropdown) \
-            .context(context) \
-            .uuid(uuid) \
-            .value(new_value) \
-            .identifier(identifier) \
-            .build()
+        payload = (save_builder()
+                   .component(dropdown)
+                   .context(context)
+                   .uuid(uuid)
+                   .value(new_value)
+                   .identifier(identifier)
+                   .build())
 
         locust_label = label or f'Select \'{dropdown["label"]}\' Dropdown'
 
         resp = self.post_page(
-            self.get_interaction_host() + post_url, payload=payload, label=locust_label
+            uri=self.get_interaction_host() + post_url, payload=payload, label=locust_label
         )
         return resp.json()
 
@@ -675,9 +675,6 @@ class _Interactor:
 
         index = choices.index(choice_label) + 1  # Appian is _sigh_ one indexed
 
-        # Opting to use this field, rather than self.form_url, because 'sail-application-url' is the same between web and mobile
-        url = state.get('sail-application-url')
-
         new_state = self.send_dropdown_update(
             reeval_url, component, context, uuid, index=index, label=context_label, identifier=identifier)
         if not new_state:
@@ -707,13 +704,13 @@ class _Interactor:
             "#v": index
         }
         # url_stub should only be populated if the page is a record list
-        payload = save_builder() \
-            .component(multi_dropdown) \
-            .context(context) \
-            .uuid(uuid) \
-            .value(new_value) \
-            .identifier(identifier) \
-            .build()
+        payload = (save_builder()
+                   .component(multi_dropdown)
+                   .context(context)
+                   .uuid(uuid)
+                   .value(new_value)
+                   .identifier(identifier)
+                   .build())
 
         locust_label = label or f'Select \'{multi_dropdown["label"]}\' Dropdown'
 
@@ -749,11 +746,6 @@ class _Interactor:
             raise ChoiceNotFoundException(f"Choice {choice_label} not found for multiple dropdown with {exception_label}, valid choices were {choices}")
         index_multi = [choices.index(current_label) + 1 for current_label in choice_label]  # Appian is _sigh_ one indexed
 
-        # Opting to use this field, rather than self.form_url, because 'sail-application-url' is the same between web and mobile
-        url = state.get('sail-application-url')
-        # url_stub should only be populated if the page is a record list
-        url_stub = get_url_stub_from_record_list_url_path(url)
-
         new_state = self.send_multiple_dropdown_update(
             reeval_url, component, context, uuid, index=index_multi, label=context_label, identifier=identifier)
         if not new_state:
@@ -776,11 +768,11 @@ class _Interactor:
         primary_button["#t"] = "ButtonWidget"
         context = page_content_in_json["context"]
         uuid = page_content_in_json["uuid"]
-        payload = save_builder() \
-            .component(primary_button) \
-            .context(context) \
-            .uuid(uuid) \
-            .build()
+        payload = (save_builder()
+                   .component(primary_button)
+                   .context(context)
+                   .uuid(uuid)
+                   .build())
 
         return payload
 
@@ -800,12 +792,12 @@ class _Interactor:
 
         """
         new_value = {"#t": "Text", "#v": text}
-        payload = save_builder() \
-            .component(text_field) \
-            .context(context) \
-            .uuid(uuid) \
-            .value(new_value) \
-            .build()
+        payload = (save_builder()
+                   .component(text_field)
+                   .context(context)
+                   .uuid(uuid)
+                   .value(new_value)
+                   .build())
 
         locust_label = label or f'Fill \'{text_field["label"]}\' TextField'
 
@@ -834,12 +826,12 @@ class _Interactor:
             "typedText": text
         }
 
-        payload = save_builder() \
-            .component(picker_field) \
-            .context(context) \
-            .uuid(uuid) \
-            .value(new_value) \
-            .build()
+        payload = (save_builder()
+                   .component(picker_field)
+                   .context(context)
+                   .uuid(uuid)
+                   .value(new_value)
+                   .build())
 
         locust_label = label or f'Fill \'{picker_field["label"]}\' PickerField'
 
@@ -871,12 +863,12 @@ class _Interactor:
             "identifiers": identifiers_list
         }
 
-        payload = save_builder() \
-            .component(picker_field) \
-            .context(context) \
-            .uuid(uuid) \
-            .value(new_value) \
-            .build()
+        payload = (save_builder()
+                   .component(picker_field)
+                   .context(context)
+                   .uuid(uuid)
+                   .value(new_value)
+                   .build())
 
         locust_label = label or f'Fill \'{picker_field["label"]}\' PickerField'
 
@@ -954,12 +946,12 @@ class _Interactor:
             "#t": "Integer?list",
             "#v": indices if indices else None
         }
-        payload = save_builder() \
-            .component(checkbox) \
-            .context(context) \
-            .uuid(uuid) \
-            .value(new_value) \
-            .build()
+        payload = (save_builder()
+                   .component(checkbox)
+                   .context(context)
+                   .uuid(uuid)
+                   .value(new_value)
+                   .build())
 
         locust_label = context_label or "Checking boxes for " + checkbox.get("testLabel",
                                                                              checkbox.get("label", "label-not-found"))
@@ -1003,12 +995,12 @@ class _Interactor:
         else:
             raise Exception(f"Cannot click a tab with label: '{tab_label}' inside the TabButtonGroup component")
 
-        payload = save_builder() \
-            .component(tab_group_component) \
-            .context(context) \
-            .uuid(uuid) \
-            .value(new_value) \
-            .build()
+        payload = (save_builder()
+                   .component(tab_group_component)
+                   .context(context)
+                   .uuid(uuid)
+                   .value(new_value)
+                   .build())
 
         locust_label = f"Selecting tab with label: '{tab_label}' inside TabButtonGroup component"
 
@@ -1037,12 +1029,12 @@ class _Interactor:
             "#t": "Integer",
             "#v": index
         }
-        payload = save_builder() \
-            .component(buttons) \
-            .context(context) \
-            .uuid(uuid) \
-            .value(new_value) \
-            .build()
+        payload = (save_builder()
+                   .component(buttons)
+                   .context(context)
+                   .uuid(uuid)
+                   .value(new_value)
+                   .build())
 
         resp = self.post_page(
             self.get_interaction_host() + post_url, payload=payload, label=context_label
@@ -1149,12 +1141,12 @@ class _Interactor:
             "#v": f"{date_input.isoformat()}Z" if date_input else None
         }
 
-        payload = save_builder() \
-            .component(date_field_component) \
-            .context(context) \
-            .uuid(uuid) \
-            .value(new_value) \
-            .build()
+        payload = (save_builder()
+                   .component(date_field_component)
+                   .context(context)
+                   .uuid(uuid)
+                   .value(new_value)
+                   .build())
 
         locust_label = locust_label or "Filling Date Field for " + \
             date_field_component.get("label", date_field_component.get("testLabel", "DateField"))
@@ -1187,12 +1179,12 @@ class _Interactor:
             "#v": f"{datetime_input.replace(second=0, microsecond=0).isoformat()}Z" if datetime_input else None
         }
 
-        payload = save_builder() \
-            .component(datetime_field) \
-            .context(context) \
-            .uuid(uuid) \
-            .value(new_value) \
-            .build()
+        payload = (save_builder()
+                   .component(datetime_field)
+                   .context(context)
+                   .uuid(uuid)
+                   .value(new_value)
+                   .build())
 
         locust_label = locust_label or "Filling Date Time Field for " + \
             datetime_field.get("label", datetime_field.get("testLabel", "DateField"))
@@ -1221,12 +1213,12 @@ class _Interactor:
 
             Returns: the response of post operation as jso
         """
-        payload = save_builder() \
-            .component(grid_component) \
-            .context(context) \
-            .uuid(uuid) \
-            .value(new_grid_save_value) \
-            .build()
+        payload = (save_builder()
+                   .component(grid_component)
+                   .context(context)
+                   .uuid(uuid)
+                   .value(new_grid_save_value)
+                   .build())
 
         locust_label = context_label or "Updating Grid " + grid_component.get("label", "")
         resp = self.post_page(
@@ -1252,12 +1244,12 @@ class _Interactor:
 
             Returns: the response of post operation as json
         """
-        payload = save_builder() \
-            .component(grid_component) \
-            .context(context) \
-            .uuid(uuid) \
-            .identifier(identifier) \
-            .build()
+        payload = (save_builder()
+                   .component(grid_component)
+                   .context(context)
+                   .uuid(uuid)
+                   .identifier(identifier)
+                   .build())
 
         locust_label = context_label or "Updating Record Grid " + grid_component.get("label", "")
         resp = self.post_page(
@@ -1282,20 +1274,20 @@ class _Interactor:
             Returns: the response of post operation as json
         """
         # Get the payload for the record action on submit
-        record_action_payload = save_builder() \
-            .component(record_action_component) \
-            .context(context) \
-            .uuid(uuid) \
-            .value(dict()) \
-            .build()
+        record_action_payload = (save_builder()
+                                 .component(record_action_component)
+                                 .context(context)
+                                 .uuid(uuid)
+                                 .value(dict())
+                                 .build())
 
         # Get the payload for the record action trigger
-        record_action_trigger_payload = save_builder() \
-            .component(record_action_trigger_component) \
-            .context(context) \
-            .uuid(uuid) \
-            .value(dict()) \
-            .build()
+        record_action_trigger_payload = (save_builder()
+                                         .component(record_action_trigger_component)
+                                         .context(context)
+                                         .uuid(uuid)
+                                         .value(dict())
+                                         .build())
 
         # Get both save requests
         record_action_save_request = record_action_payload["updates"]["#v"][0]
@@ -1342,11 +1334,11 @@ class _Interactor:
             "#t": "ButtonWidget"
         }
 
-        payload = save_builder() \
-            .component(search_box_button_component) \
-            .context(context) \
-            .uuid(uuid) \
-            .build()
+        payload = (save_builder()
+                   .component(search_box_button_component)
+                   .context(context)
+                   .uuid(uuid)
+                   .build())
 
         locust_label = label or f'Click \'{component["searchButtonLabel"]}\' Component'
 
@@ -1371,12 +1363,12 @@ class _Interactor:
             Returns: the response of post operation as json
 
         """
-        payload = save_builder() \
-            .component(component) \
-            .context(context) \
-            .uuid(uuid) \
-            .value(new_value) \
-            .build()
+        payload = (save_builder()
+                   .component(component)
+                   .context(context)
+                   .uuid(uuid)
+                   .value(new_value)
+                   .build())
 
         locust_label = label or "ClickElement"
 

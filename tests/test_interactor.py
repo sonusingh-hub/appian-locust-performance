@@ -1,11 +1,13 @@
 import json
 import os
 from requests.models import CaseInsensitiveDict
-from typing import Optional
+from typing import Optional, Dict, Any
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, patch, mock_open
+from datetime import date, datetime
 
 from appian_locust import AppianTaskSet
+from appian_locust._save_request_builder import save_builder
 from appian_locust.utilities.helper import find_component_by_attribute_in_dict, find_component_by_index_in_dict
 from appian_locust.utilities import logger
 from locust import Locust, TaskSet
@@ -33,6 +35,7 @@ class TestInteractor(unittest.TestCase):
     mobile_user_agent = "AppianAndroid/20.2 (Google AOSP on IA Emulator, 9; Build 0-SNAPSHOT; AppianPhone)"
 
     def setUpWithPath(self, base_path_override: Optional[str] = None) -> None:
+        self.base_netloc = "test-site.net"
         self.custom_locust = CustomLocust(Locust())
         parent_task_set = TaskSet(self.custom_locust)
         setattr(parent_task_set, "host", "")
@@ -49,6 +52,12 @@ class TestInteractor(unittest.TestCase):
 
     def setUp(self) -> None:
         self.setUpWithPath()
+        self.sample_component: Dict[str, Any] = {
+            "value": "some value",
+            "saveInto": "weird string",
+            "_cId": "other weird string",
+            "label": "sample label"
+        }
 
     def test_get_primary_button_payload(self) -> None:
         output = self.task_set.appian._interactor.get_primary_button_payload(
@@ -78,6 +87,39 @@ class TestInteractor(unittest.TestCase):
         self.task_set.appian._interactor.get_page("/suite/whatever")
         # Then
         self.assertEqual(expected_requests, self.custom_locust.get_request_list_as_method_path_tuple())
+
+    def test_header_setup_domain(self) -> None:
+        session_cookie_val = "site session"
+        token_cookie_val = "site token"
+        multi_token_val = "site multi token"
+        test_site_prefix = "test"
+        self.custom_locust.client.cookies.set("JSESSIONID", f"{test_site_prefix} {session_cookie_val}",
+                                              domain=self.base_netloc)
+        self.custom_locust.client.cookies.set("__appianCsrfToken", f"{test_site_prefix} {token_cookie_val}",
+                                              domain=self.base_netloc)
+        self.custom_locust.client.cookies.set("__appianMultipartCsrfToken", f"{test_site_prefix} {multi_token_val}",
+                                              domain=self.base_netloc)
+
+        demo_site_prefix = "demo"
+        demo_domain = "demo-site.net"
+        self.custom_locust.client.cookies.set("JSESSIONID", f"{demo_site_prefix} {session_cookie_val}",
+                                              domain=demo_domain)
+        self.custom_locust.client.cookies.set("__appianCsrfToken", f"{demo_site_prefix} {token_cookie_val}",
+                                              domain=demo_domain)
+        self.custom_locust.client.cookies.set("__appianMultipartCsrfToken", f"{demo_site_prefix} {multi_token_val}",
+                                              domain=demo_domain)
+
+        self.task_set.appian._interactor.host = f"http://{self.base_netloc}"
+        test_site_headers = self.task_set.appian._interactor.setup_request_headers()
+        expected_test_cookies_str = (
+            f"JSESSIONID={test_site_prefix} {session_cookie_val}; __appianCsrfToken={test_site_prefix} {token_cookie_val}; __appianMultipartCsrfToken={test_site_prefix} {multi_token_val}")
+        self.assertEqual(test_site_headers["Cookie"], expected_test_cookies_str)
+
+        demo_site_headers = self.task_set.appian._interactor.setup_request_headers(f"http://{demo_domain}/suite/test/path")
+        expected_demo_cookies_str = (
+            f"JSESSIONID={demo_site_prefix} {session_cookie_val}; __appianCsrfToken={demo_site_prefix} {token_cookie_val}; __appianMultipartCsrfToken={demo_site_prefix} {multi_token_val}")
+        self.assertEqual(demo_site_headers["Cookie"], expected_demo_cookies_str)
+        self.task_set.appian._interactor.host = ""
 
     def test_500_but_still_logged_in_get_page(self) -> None:
         # Given
@@ -125,6 +167,54 @@ class TestInteractor(unittest.TestCase):
         # Then
         except Exception as e:
             self.assertEqual(expected_requests, self.custom_locust.get_request_list_as_method_path_tuple())
+
+    @patch("builtins.open", new_callable=mock_open, read_data="ase")
+    def test_upload_document_to_server_validate(self, _mock_file: MagicMock) -> None:
+        expected_result = self.setup_upload_document_mocks("/suite/api/tempo/file?validateExtension=true")
+
+        result = self.task_set.appian._interactor.upload_document_to_server(file_path="path/to/file", validate_extensions=True)
+
+        self.assertEqual(expected_result, result)
+
+    @patch("builtins.open", new_callable=mock_open, read_data="ase")
+    def test_upload_document_to_server_validate_false(self, _mock_file: MagicMock) -> None:
+        expected_result = self.setup_upload_document_mocks("/suite/api/tempo/file?validateExtension=false")
+
+        result = self.task_set.appian._interactor.upload_document_to_server(file_path="path/to/file", validate_extensions=False)
+
+        self.assertEqual(expected_result, result)
+
+    @patch("builtins.open", new_callable=mock_open, read_data="ase")
+    def test_upload_document_to_server_validate_portals(self, _mock_file: MagicMock) -> None:
+        expected_result = self.setup_upload_document_mocks("/suite/docs/upload?validateExtension=true")
+
+        self.task_set.appian._interactor.portals_mode = True
+        result = self.task_set.appian._interactor.upload_document_to_server(file_path="path/to/file", validate_extensions=True)
+
+        self.assertEqual(expected_result, result)
+
+    def setup_upload_document_mocks(self, path_to_be_hit: str) -> Dict[str, Any]:
+        doc_id = 1234
+        doc_name = "ase"
+        extension = "txt"
+        size = 5678
+        signature = "big 'ol confusing string"
+        upload_resp = [{
+            "id": doc_id,
+            "name": f"{doc_name}.{extension}",
+            "size": size,
+            "signature": signature
+        }]
+
+        self.custom_locust.set_response(path_to_be_hit, 200, json.dumps(upload_resp))
+
+        return {
+            "doc_id": doc_id,
+            "name": doc_name,
+            "extension": extension,
+            "size": size,
+            "signature": signature
+        }
 
     def test_click_record_link(self) -> None:
         record_link = find_component_by_attribute_in_dict("label", "Profile",
@@ -282,20 +372,11 @@ class TestInteractor(unittest.TestCase):
             "", dyn_link, {}, "")
         self.assertEqual(output, dict())
 
-    def test_fill_textfield(self) -> None:
-        text_title = find_component_by_attribute_in_dict("label", "Title",
-                                                         json.loads(self.form_content))
-
-        self.custom_locust.set_response("", 200, "{}")
-        output = self.task_set.appian._interactor.fill_textfield(
-            "", text_title, "something", {}, "", "")
-        self.assertEqual(output, dict())
-
     def test_post_page(self) -> None:
-        self.custom_locust.set_response("", 200, "{}")
+        self.custom_locust.set_response("test/path", 200, '{"ase": "ase2"}')
         output = self.task_set.appian._interactor.post_page(
-            "", payload={}, headers=None)
-        self.assertEqual(output.json(), dict())
+            "test/path", payload={}, headers=None)
+        self.assertEqual(output.json(), {"ase": "ase2"})
 
     def test_change_user_to_mobile(self) -> None:
         # Given
@@ -341,9 +422,10 @@ class TestInteractor(unittest.TestCase):
     def test_click_record_search_button(self) -> None:
         component = find_component_by_index_in_dict("SearchBoxWidget", 1, json.loads(self.site_with_record_search_button))
 
-        self.custom_locust.set_response("", 200, "{}")
-        output = self.task_set.appian._interactor.click_record_search_button("", component, {}, "my_uuid", "")
-        self.assertEqual(output, dict())
+        correct_resp = '{"ase": "ase2"}'
+        self.custom_locust.set_response("/test/path", 200, correct_resp)
+        output = self.task_set.appian._interactor.click_record_search_button("/test/path", component, {}, "my_uuid", "")
+        self.assertEqual(output, json.loads(correct_resp))
 
     def test_login_retry(self) -> None:
         # Given
@@ -354,18 +436,48 @@ class TestInteractor(unittest.TestCase):
                          '__appianCsrfToken': 'different cookie',
                          '__appianMultipartCsrfToken': 'these cookies'}
 
-        self.custom_locust.set_response("/suite/", 200,
-                                        '<html>A huge html blob</html>', cookies=init_cookies)
-        self.custom_locust.set_response("/suite/auth?appian_environment=tempo", 200,
-                                        '<html>A huge html blob</html>', cookies=cookies_no_mcsrf)
-        self.custom_locust.set_response("/suite/auth?appian_environment=tempo", 200,
-                                        '<html>A huge html blob</html>', cookies=cookies_mcsrf)
+        self.custom_locust.enqueue_response(200,
+                                            '<html>A huge html blob</html>', cookies=init_cookies)
+        self.custom_locust.enqueue_response(200,
+                                            '<html>A huge html blob</html>', cookies=cookies_no_mcsrf)
+        self.custom_locust.enqueue_response(200,
+                                            '<html>A huge html blob</html>', cookies=cookies_mcsrf)
 
         # When
         self.task_set.appian.login(["", ""])
 
         # Then
         self.assertIn('__appianMultipartCsrfToken', self.task_set.appian.client.cookies.keys())
+
+    def test_login_already_logged_in(self) -> None:
+        init_cookies = {'JSESSIONID': 'abc'}
+
+        good_resp = '{"resp": "good"}'
+        self.custom_locust.set_response(f"{self.task_set.appian._interactor.host}/suite/?signin=native", 200,
+                                        good_resp, cookies=init_cookies)
+        self.custom_locust.set_response("/suite/auth?appian_environment=tempo", 200,
+                                        '{"resp": "bad"}')
+
+        _, resp = self.task_set.appian.login(["", ""])
+        self.assertEqual(resp.json(), json.loads(good_resp))
+
+    @patch('appian_locust._interactor._Interactor.login')
+    def test_check_login_resp_csrf(self, login_mock: MagicMock) -> None:
+        initial_response = self.custom_locust.client.make_response(200, "{}", headers=CaseInsensitiveDict({}), cookies={'__appianCsrfToken': "token!"})
+
+        self.task_set.appian._interactor.check_login(initial_response)
+
+        login_mock.assert_called_once()
+
+    @patch('appian_locust._interactor._Interactor.login')
+    def test_check_login_error_resp(self, login_mock: MagicMock) -> None:
+        initial_response = self.custom_locust.client.make_response(401, "{}", headers=CaseInsensitiveDict({}),
+                                                                   cookies={'__appianCsrfToken': "token!"})
+        self.custom_locust.set_response("/suite/", 200, "{}", cookies={'__appianCsrfToken': "token!"})
+
+        self.task_set.appian._interactor.check_login(initial_response)
+
+        login_mock.assert_called_once()
 
     def test_upload_document_to_field_bad_doc_id(self) -> None:
         bad_value = 'abc'
@@ -450,6 +562,16 @@ class TestInteractor(unittest.TestCase):
 
         self.assertEqual(resp, expected_response)
 
+    def test_click_record_list_action(self) -> None:
+        pm_id = "processModelId"
+        cache_key = "cacheKey"
+        correct_json = '{"ase": "ase2"}'
+        self.custom_locust.set_response(f"/suite/rest/a/model/latest/{pm_id}/forminternal?cacheKey={cache_key}", 200, correct_json)
+
+        resp_json = self.task_set.appian._interactor.click_record_list_action("label", pm_id, cache_key)
+
+        self.assertEqual(resp_json, json.loads(correct_json))
+
     def test_clean_filename(self) -> None:
         cleaned_str = self.task_set.appian._interactor._clean_filename("\\<>:\"/|?*")
         self.assertEqual(cleaned_str, ".........")
@@ -519,3 +641,396 @@ class TestInteractor(unittest.TestCase):
         ]
 
         self.assertEqual(payload, correct_picker)
+
+    @patch('appian_locust._interactor._Interactor.post_page')
+    def test_click_component(self, post_page_mock: MagicMock) -> None:
+        context = {"context": "stuff"}
+        component = {
+            "label": "ase",
+            "link": self.sample_component
+        }
+        uuid = "uuid"
+
+        expected_component = self.sample_component.copy()
+        expected_component.update({"label": "ase"})
+
+        expected_payload = (save_builder()
+                            .component(expected_component)
+                            .context(context)
+                            .uuid(uuid)
+                            .build())
+
+        self.task_set.appian._interactor.click_component(post_url="/any/ol/url", component=component.copy(), context=context, uuid=uuid)
+
+        _, kwargs = post_page_mock.call_args_list[0]
+        self.assertEqual(expected_payload, kwargs["payload"])
+
+    @patch('appian_locust._interactor._Interactor.post_page')
+    def test_send_dropwdown_update(self, post_page_mock: MagicMock) -> None:
+        index = 3
+        value = {
+            "#t": "Integer",
+            "#v": index
+        }
+        context = {"context": "stuff"}
+        uuid = "uuid"
+        identifier = {"its": "identified"}
+        expected_payload = (save_builder()
+                            .component(self.sample_component)
+                            .context(context)
+                            .uuid(uuid)
+                            .value(value)
+                            .identifier(identifier)
+                            .build())
+
+        self.task_set.appian._interactor.send_dropdown_update(
+            post_url="/any/ol/url",
+            dropdown=self.sample_component.copy(),
+            context=context,
+            uuid=uuid,
+            index=index,
+            identifier=identifier
+        )
+
+        _, kwargs = post_page_mock.call_args_list[0]
+        self.assertEqual(expected_payload, kwargs["payload"])
+
+    @patch('appian_locust._interactor._Interactor.send_dropdown_update')
+    def test_construct_and_send_dropdown_update(self, send_dropdown_mock: MagicMock) -> None:
+        component = {
+            "choices": [
+                "one",
+                "two",
+                "three"
+            ]
+        }
+
+        self.task_set.appian._interactor.construct_and_send_dropdown_update(component, "two", {}, {}, "", "", "", "")
+
+        _, kwargs = send_dropdown_mock.call_args_list[0]
+        self.assertEqual(2, kwargs["index"])
+
+    @patch('appian_locust._interactor._Interactor.post_page')
+    def test_send_multiple_dropdown_update(self, post_page_mock: MagicMock) -> None:
+        index = [3, 4]
+        value = {
+            "#t": "Integer?list",
+            "#v": index
+        }
+        context = {"context": "stuff"}
+        uuid = "uuid"
+        identifier = {"its": "identified"}
+        expected_payload = (save_builder()
+                            .component(self.sample_component)
+                            .context(context)
+                            .uuid(uuid)
+                            .value(value)
+                            .identifier(identifier)
+                            .build())
+
+        self.task_set.appian._interactor.send_multiple_dropdown_update(
+            post_url="/any/ol/url",
+            multi_dropdown=self.sample_component.copy(),
+            context=context,
+            uuid=uuid,
+            index=index,
+            identifier=identifier
+        )
+
+        _, kwargs = post_page_mock.call_args_list[0]
+        self.assertEqual(expected_payload, kwargs["payload"])
+
+    @patch('appian_locust._interactor._Interactor.send_multiple_dropdown_update')
+    def test_construct_and_send_multiple_dropdown_update(self, send_multiple_dropdown_mock: MagicMock) -> None:
+        component = {
+            "choices": [
+                "one",
+                "two",
+                "three"
+            ]
+        }
+
+        self.task_set.appian._interactor.construct_and_send_multiple_dropdown_update(component, ["two", "three"], {}, {}, "", "", "", "")
+
+        _, kwargs = send_multiple_dropdown_mock.call_args_list[0]
+        self.assertEqual([2, 3], kwargs["index"])
+
+    @patch('appian_locust._interactor._Interactor.post_page')
+    def test_fill_textfield(self, post_page_mock: MagicMock) -> None:
+        context = {"context": "stuff"}
+        uuid = "uuid"
+        text = "ase"
+
+        value = {"#t": "Text", "#v": text}
+        expected_payload = (save_builder()
+                            .component(self.sample_component)
+                            .context(context)
+                            .uuid(uuid)
+                            .value(value)
+                            .build())
+
+        self.task_set.appian._interactor.fill_textfield("/any/ol/url", self.sample_component.copy(), text, context, uuid)
+
+        _, kwargs = post_page_mock.call_args_list[0]
+        self.assertEqual(expected_payload, kwargs["payload"])
+
+    @patch('appian_locust._interactor._Interactor.post_page')
+    def test_fill_pickerfield_text(self, post_page_mock: MagicMock) -> None:
+        context = {"context": "stuff"}
+        uuid = "uuid"
+        text = "ase"
+
+        value = {
+            "#t": "PickerData",
+            "typedText": text
+        }
+        expected_payload = (save_builder()
+                            .component(self.sample_component)
+                            .context(context)
+                            .uuid(uuid)
+                            .value(value)
+                            .build())
+
+        self.task_set.appian._interactor.fill_pickerfield_text("/any/ol/url", self.sample_component.copy(), text, context, uuid)
+
+        _, kwargs = post_page_mock.call_args_list[0]
+        self.assertEqual(expected_payload, kwargs["payload"])
+
+    @patch('appian_locust._interactor._Interactor.post_page')
+    def test_select_pickerfield_suggestion(self, post_page_mock: MagicMock) -> None:
+        context = {"context": "stuff"}
+        uuid = "uuid"
+        selection = {"its": "selected"}
+
+        value = {
+            "#t": "PickerData",
+            "identifiers": [selection]
+        }
+        expected_payload = (save_builder()
+                            .component(self.sample_component)
+                            .context(context)
+                            .uuid(uuid)
+                            .value(value)
+                            .build())
+
+        self.task_set.appian._interactor.select_pickerfield_suggestion("/any/ol/url", self.sample_component.copy(), selection, context, uuid)
+
+        _, kwargs = post_page_mock.call_args_list[0]
+        self.assertEqual(expected_payload, kwargs["payload"])
+
+    @patch('appian_locust._interactor._Interactor.post_page')
+    def test_select_checkbox_item(self, post_page_mock: MagicMock) -> None:
+        context = {"context": "stuff"}
+        uuid = "uuid"
+        indices = [2, 3]
+
+        value = {
+            "#t": "Integer?list",
+            "#v": indices
+        }
+        expected_payload = (save_builder()
+                            .component(self.sample_component)
+                            .context(context)
+                            .uuid(uuid)
+                            .value(value)
+                            .build())
+
+        self.task_set.appian._interactor.select_checkbox_item("/any/ol/url", self.sample_component.copy(), context, uuid, indices)
+
+        _, kwargs = post_page_mock.call_args_list[0]
+        self.assertEqual(expected_payload, kwargs["payload"])
+
+    @patch('appian_locust._interactor._Interactor.post_page')
+    def test_click_selected_tab(self, post_page_mock: MagicMock) -> None:
+        context = {"context": "stuff"}
+        uuid = "uuid"
+
+        component = self.sample_component.copy()
+        component.update({
+            "tabs": [
+                {
+                    "label": "one"
+                },
+                {
+                    "label": "two"
+                },
+                {
+                    "label": "three"
+                }
+            ]
+        })
+
+        value = {
+            "#t": "Integer",
+            "#v": 2
+        }
+        expected_payload = (save_builder()
+                            .component(component)
+                            .context(context)
+                            .uuid(uuid)
+                            .value(value)
+                            .build())
+
+        self.task_set.appian._interactor.click_selected_tab("/any/ol/url", component, "two", context, uuid)
+
+        _, kwargs = post_page_mock.call_args_list[0]
+        self.assertEqual(expected_payload, kwargs["payload"])
+
+    @patch('appian_locust._interactor._Interactor.post_page')
+    def test_select_radio_button(self, post_page_mock: MagicMock) -> None:
+        context = {"context": "stuff"}
+        uuid = "uuid"
+        index = 2
+
+        value = {
+            "#t": "Integer",
+            "#v": 2
+        }
+        expected_payload = (save_builder()
+                            .component(self.sample_component)
+                            .context(context)
+                            .uuid(uuid)
+                            .value(value)
+                            .build())
+
+        self.task_set.appian._interactor.select_radio_button("/any/ol/url", self.sample_component.copy(), context, uuid, index)
+
+        _, kwargs = post_page_mock.call_args_list[0]
+        self.assertEqual(expected_payload, kwargs["payload"])
+
+    @patch('appian_locust._interactor._Interactor.post_page')
+    def test_update_date_field(self, post_page_mock: MagicMock) -> None:
+        context = {"context": "stuff"}
+        uuid = "uuid"
+        date_input = date.today()
+
+        value = {
+            "#t": "date",
+            "#v": f"{date_input.isoformat()}Z"
+        }
+        expected_payload = (save_builder()
+                            .component(self.sample_component)
+                            .context(context)
+                            .uuid(uuid)
+                            .value(value)
+                            .build())
+
+        self.task_set.appian._interactor.update_date_field("/any/ol/url", self.sample_component.copy(), date_input, context, uuid)
+
+        _, kwargs = post_page_mock.call_args_list[0]
+        self.assertEqual(expected_payload, kwargs["payload"])
+
+    @patch('appian_locust._interactor._Interactor.post_page')
+    def test_update_datetime_field(self, post_page_mock: MagicMock) -> None:
+        context = {"context": "stuff"}
+        uuid = "uuid"
+        datetime_input = datetime.now()
+
+        value = {
+            "#t": "dateTime",
+            "#v": f"{datetime_input.replace(second=0, microsecond=0).isoformat()}Z"
+        }
+        expected_payload = (save_builder()
+                            .component(self.sample_component)
+                            .context(context)
+                            .uuid(uuid)
+                            .value(value)
+                            .build())
+
+        self.task_set.appian._interactor.update_datetime_field("/any/ol/url", self.sample_component.copy(), datetime_input, context, uuid)
+
+        _, kwargs = post_page_mock.call_args_list[0]
+        self.assertEqual(expected_payload, kwargs["payload"])
+
+    @patch('appian_locust._interactor._Interactor.post_page')
+    def test_update_grid_from_sail_form(self, post_page_mock: MagicMock) -> None:
+        context = {"context": "stuff"}
+        uuid = "uuid"
+        text = "ase"
+
+        value = {"#t": "Text", "#v": text}
+        expected_payload = (save_builder()
+                            .component(self.sample_component)
+                            .context(context)
+                            .uuid(uuid)
+                            .value(value)
+                            .build())
+
+        self.task_set.appian._interactor.update_grid_from_sail_form("/any/ol/url", self.sample_component.copy(), value, context, uuid)
+
+        _, kwargs = post_page_mock.call_args_list[0]
+        self.assertEqual(expected_payload, kwargs["payload"])
+
+    @patch('appian_locust._interactor._Interactor.post_page')
+    def test_interact_with_record_grid(self, post_page_mock: MagicMock) -> None:
+        context = {"context": "stuff"}
+        uuid = "uuid"
+        identifier = {"its": "identified"}
+
+        expected_payload = (save_builder()
+                            .component(self.sample_component)
+                            .context(context)
+                            .uuid(uuid)
+                            .identifier(identifier)
+                            .build())
+
+        self.task_set.appian._interactor.interact_with_record_grid("/any/ol/url", self.sample_component.copy(), context, uuid, identifier)
+
+        _, kwargs = post_page_mock.call_args_list[0]
+        self.assertEqual(expected_payload, kwargs["payload"])
+
+    @patch('appian_locust._interactor._Interactor.post_page')
+    def test_click_generic_element(self, post_page_mock: MagicMock) -> None:
+        context = {"context": "stuff"}
+        uuid = "uuid"
+        text = "ase"
+
+        value = {"#t": "Text", "#v": text}
+        expected_payload = (save_builder()
+                            .component(self.sample_component)
+                            .context(context)
+                            .uuid(uuid)
+                            .value(value)
+                            .build())
+
+        self.task_set.appian._interactor.click_generic_element("/any/ol/url", self.sample_component.copy(), context, uuid, value)
+
+        _, kwargs = post_page_mock.call_args_list[0]
+        self.assertEqual(expected_payload, kwargs["payload"])
+
+    @patch('appian_locust._interactor._Interactor.post_page')
+    def test_refresh_after_record_action(self, post_page_mock: MagicMock) -> None:
+        context = {"context": "stuff"}
+        uuid = "uuid"
+        text = "ase"
+
+        expected_payload = (save_builder()
+                            .component(self.sample_component.copy())
+                            .context(context)
+                            .uuid(uuid)
+                            .value(dict())
+                            .build())
+
+        record_action_trigger_component = {
+            "value": "some other value",
+            "saveInto": "other weird string",
+            "_cId": "other other weird string",
+            "label": "other sample label"
+        }
+        record_action_trigger_payload = (save_builder()
+                                         .component(record_action_trigger_component)
+                                         .context(context)
+                                         .uuid(uuid)
+                                         .value(dict())
+                                         .build())
+
+        record_action_save_request = expected_payload["updates"]["#v"][0]
+        record_action_trigger_save_request = record_action_trigger_payload["updates"]["#v"][0]
+
+        # Update the main payload with the both save requests
+        expected_payload["updates"]["#v"] = [record_action_save_request, record_action_trigger_save_request]
+
+        self.task_set.appian._interactor.refresh_after_record_action("/any/ol/url", self.sample_component.copy(), record_action_trigger_component, context, uuid)
+
+        _, kwargs = post_page_mock.call_args_list[0]
+        self.assertEqual(expected_payload, kwargs["payload"])

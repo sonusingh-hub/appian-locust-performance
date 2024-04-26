@@ -35,8 +35,10 @@ class CustomLocust(User):
 
         self.client.set_default_response(status_code, body, headers=headers)
 
-    def enqueue_response(self, status_code: int, body: str) -> None:
-        self.client.enqueue_response(status_code, body)
+    def enqueue_response(self, status_code: int, body: str,
+                         headers: CaseInsensitiveDict = CaseInsensitiveDict({"Requested-While-Authenticated": "True"}),
+                         cookies: Optional[Dict[str, Any]] = None) -> None:
+        self.client.enqueue_response(status_code, body, headers, cookies)
 
 
 class NoOpReadCloser():
@@ -123,9 +125,10 @@ class MockClient:
         return self._response(path)
 
     def enqueue_response(self, status_code: int, body: str,
-                         headers: CaseInsensitiveDict = CaseInsensitiveDict({"Requested-While-Authenticated": "True"})) -> None:
+                         headers: CaseInsensitiveDict = CaseInsensitiveDict({"Requested-While-Authenticated": "True"}),
+                         cookies: Optional[Dict[str, Any]] = None) -> None:
 
-        response = self.make_response(status_code, body, cookies=self.enqueue_cookies, headers=headers)
+        response = self.make_response(status_code, body, cookies=cookies if cookies else self.enqueue_cookies, headers=headers)
         self.dummy_responses.put(response)
 
     def set_response(self, path: str, status_code: int, body: str, cookies: Optional[dict] = None,

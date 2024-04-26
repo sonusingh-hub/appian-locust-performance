@@ -89,7 +89,7 @@ class RecordListUiForm(SailUiForm):
             raise Exception(f"Record List Action component does not have cache key set.")
 
         locust_request_label = locust_request_label or f"RecordListUiform.ClickAction.{label}"
-        new_state = self._interactor.click_record_list_action(component=component, process_model_uuid=process_model_uuid,
+        new_state = self._interactor.click_record_list_action(component_label=label, process_model_uuid=process_model_uuid,
                                                               cache_key=cache_key, locust_request_label=locust_request_label)
         self._reconcile_state(new_state)
         return self
