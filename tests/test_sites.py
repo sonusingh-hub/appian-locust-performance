@@ -115,8 +115,9 @@ class TestSites(unittest.TestCase):
             200,
             page_resp)
 
-        page = self.sites_interactor.fetch_site_page_metadata(site_name, page_name)
-        self.assertIsNone(page)
+        with self.assertRaises(InvalidSiteException) as e:
+            self.sites_interactor.fetch_site_page_metadata(site_name, page_name)
+        self.assertEqual(f"Could not find page data with a redirect for site {site_name} page {page_name}", e.exception.args[0])
 
     def test_sites_link_type(self) -> None:
         for type_pair in [('InternalActionLink', 'action'),
