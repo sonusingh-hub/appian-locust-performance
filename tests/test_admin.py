@@ -27,7 +27,8 @@ class TestAdmin(unittest.TestCase):
         admin = self.admin_interactor.fetch_admin_json()
 
         # Then:
-        self.assertIsInstance(admin, dict)
+        self.assertEqual('/admin', admin['sail-navigation-bookmark-url'])
+        self.assertEqual('/rest/a/applications/latest/app/admin', admin['sail-navigation-endpoint-url'])
 
 
 if __name__ == '__main__':
