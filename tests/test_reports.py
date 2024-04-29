@@ -3,6 +3,7 @@ from .mock_reader import read_mock_file
 from appian_locust._interactor import _Interactor
 from appian_locust._reports import ALL_REPORTS_URI, _Reports
 import unittest
+from unittest import mock
 import json
 
 
@@ -28,9 +29,20 @@ class TestReports(unittest.TestCase):
         )
         setattr(self.interactor, 'get_page', get_page_mock)
 
-        reports = self.reports_interactor.get_report(
-            "RTE Basic Test Report")
-        self.assertIsInstance(reports, dict)
+        report = self.reports_interactor.get_report("RTE Basic Test Report")
+        self.assertEqual("RTE Basic Test Report", report['title'].strip())
+
+    def test_reports_get_first_of_multiple(self) -> None:
+        response_mock = unittest.mock.Mock(return_value=json.loads(self.reports))
+        response = Response()
+        setattr(response, 'json', response_mock)
+        get_page_mock = unittest.mock.Mock(
+            side_effect=lambda uri, label: response if uri == ALL_REPORTS_URI else Response()
+        )
+        setattr(self.interactor, 'get_page', get_page_mock)
+
+        report = self.reports_interactor.get_report("Barcode", exact_match=False)
+        self.assertEqual("Barcode Field Tester", report['title'].strip())
 
     def test_reports_get_corrupt_report(self) -> None:
         corrupt_reports = self.reports.replace('"title": "!!SAIL test charts"', '"corrupt_title": "!!SAIL test charts"')

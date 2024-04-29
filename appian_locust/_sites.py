@@ -184,8 +184,7 @@ class _Sites(_Base):
         page_resp = self.interactor.get_page(url, headers=headers, label=f"Sites.{site_name}.{page_name}.Nav")
         page_resp_json = page_resp.json()
         if 'redirect' not in page_resp_json:
-            log.error(f"Could not find page data with a redirect for site {site_name} page {page_name}")
-            return None
+            raise InvalidSiteException(f"Could not find page data with a redirect for site {site_name} page {page_name}")
         link_type_raw = page_resp_json['redirect']['#t']
         page_type = self._get_type_from_link_type(link_type_raw)
         return Page(page_name, page_type, group_name)
