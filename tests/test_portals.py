@@ -26,37 +26,43 @@ class TestRecords(unittest.TestCase):
         self.portals_interactor: _Portals = _Portals(self.interactor)
 
     def test_portals_fetch_page_json(self) -> None:
+        http_success_status_code = 200
         response_mock = unittest.mock.Mock(return_value=self.portal_page_dummy_response)
         response = Response()
         setattr(response, 'json', response_mock)
-        setattr(response, 'status_code', 200)
+        setattr(response, 'status_code', http_success_status_code)
         get_page_mock = unittest.mock.Mock(
             side_effect=lambda uri, label, check_login: response if uri == "/performance-test/_/ui/page/one" else ""
         )
-
         setattr(self.interactor, 'get_page', get_page_mock)
         setattr(self.interactor, 'client', Client())
+
         output = self.portals_interactor.fetch_page_json("performance-test", "one")
+
         self.assertIsInstance(output, dict)
         self.assertDictEqual(output, self.portal_page_dummy_response)
 
     def test_portals_fetch_page_json_server_error(self) -> None:
+        http_error_status_code = 500
         response_mock = unittest.mock.Mock(return_value=self.portal_page_dummy_response)
         response = Response()
         setattr(response, 'json', response_mock)
-        setattr(response, 'status_code', 500)
+        setattr(response, 'status_code', http_error_status_code)
         get_page_mock = unittest.mock.Mock(
             side_effect=lambda uri, label, check_login: response if uri == "/performance-test/_/ui/page/one" else ""
         )
         setattr(self.interactor, 'get_page', get_page_mock)
         setattr(self.interactor, 'client', Client())
+
         with self.assertRaises(HTTPError):
             self.portals_interactor.fetch_page_json("performance-test", "one")
 
-    def test_get_full_url(self) -> None:
-        expected_result = "/performance-test/_/ui/page/one"
+    def test_portals_get_full_url(self) -> None:
+        full_url_expected_result = "/performance-test/_/ui/page/one"
+
         result = self.portals_interactor.get_full_url("performance-test", "one")
-        self.assertEqual(result, expected_result)
+
+        self.assertEqual(result, full_url_expected_result)
 
 
 class Client:
