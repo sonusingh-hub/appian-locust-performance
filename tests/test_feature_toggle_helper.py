@@ -79,23 +79,25 @@ class FeatureToggleHelperTest(unittest.TestCase):
 
     def test_get_javascript_and_find_feature_flag_missing_value(self) -> None:
         # Given
-        self.custom_locust.set_response("abc", 200, "body")
+        script_uri = "abc"
+        self.custom_locust.set_response(script_uri, 200, "body")
 
         # When
         flag = feature_toggle_helper._get_javascript_and_find_feature_flag(
-            self.task_set.appian.client, "abc", {})
+            self.task_set.appian.client, script_uri, {})
 
         # Then
         self.assertEqual(flag, None)
 
     def test_get_javascript_and_find_feature_flag_value_present_hex(self) -> None:
         # Given a snippet of the minified js
-        self.custom_locust.set_response("/suite/file.js",
+        script_uri = "/suite/file.js"
+        self.custom_locust.set_response(script_uri,
                                         200, self.js_snippet.format("0xdc9fffceebc"))
 
         # When
         uri = feature_toggle_helper._get_javascript_and_find_feature_flag(self.task_set.appian.client,
-                                                                          "/suite/file.js", {})
+                                                                          script_uri, {})
 
         # Then
         self.assertEqual(
@@ -103,14 +105,15 @@ class FeatureToggleHelperTest(unittest.TestCase):
 
     def test_get_javascript_and_find_feature_flag_value_present_big_int(self) -> None:
         # Given a snippet of the minified js
+        script_uri = "/suite/file.js"
         for i in [9, 10]:
-            self.custom_locust.set_response("/suite/file.js",
+            self.custom_locust.set_response(script_uri,
                                             200, self.js_snippet.format(
                                                 f'jsbi__WEBPACK_IMPORTED_MODULE_{i}__["default"].BigInt("0b110100100111011100000111111111111111001110111010111100")'))
 
             # When
             binVal = feature_toggle_helper._get_javascript_and_find_feature_flag(self.task_set.appian.client,
-                                                                                 "/suite/file.js", {})
+                                                                                 script_uri, {})
 
             # Then
             self.assertEqual(
@@ -118,11 +121,12 @@ class FeatureToggleHelperTest(unittest.TestCase):
 
     def test_get_javascript_and_find_feature_flag_value_present_integer(self) -> None:
         # Given a snippet of the minified js
-        self.custom_locust.set_response("/suite/file.js",
+        script_uri = "/suite/file.js"
+        self.custom_locust.set_response(script_uri,
                                         200, self.js_snippet.format("5802956083228348"))
         # When
         uri = feature_toggle_helper._get_javascript_and_find_feature_flag(self.task_set.appian.client,
-                                                                          "/suite/file.js", {})
+                                                                          script_uri, {})
 
         # Then
         self.assertEqual(
@@ -142,11 +146,11 @@ class FeatureToggleHelperTest(unittest.TestCase):
 
     def test_get_feature_flags_from_regex_match_big_int(self) -> None:
         # Given
-        hex_val = "0b110100100111011100000111111111111111001110111010111100"
+        big_int_val = "0b110100100111011100000111111111111111001110111010111100"
 
         # When
         flag, flag_extended = feature_toggle_helper._get_feature_flags_from_regex_match(
-            hex_val)
+            big_int_val)
 
         # Then
         self.assertEqual(flag, "7ffceebc")
@@ -195,7 +199,7 @@ class FeatureToggleHelperTest(unittest.TestCase):
         # Given a missing feature toggle
         self.custom_locust.set_response("/suite/sites", 200, self.html_snippet)
         self.custom_locust.set_response(self.relative_uri,
-                                        200, 'missin')
+                                        200, 'missing feature toggle')
 
         # When and Then
         with self.assertRaisesRegex(Exception, "Could not find flag string within uri /suite/tempo/ui"):
@@ -308,10 +312,12 @@ class FeatureToggleHelperTest(unittest.TestCase):
         # Given a snippet of the sites page
         self.custom_locust.set_response("/suite/sites", 200, self.html_snippet)
 
-        def flags() -> Generator[FeatureFlag, None, None]:
-            yield FeatureFlag.RECORD_LIST_FEED_ITEM_DTO
+        # When
+        feature_toggle_helper.set_mobile_feature_flags(self.task_set.appian._interactor)
 
-        self.override_default_flags_runner(flags, "149dd1fffceebc", "7ffceebc")
+        # Then
+        self.assertEqual(self.task_set.appian._interactor.client.feature_flag_extended, "149dd1fffceebc")
+        self.assertEqual(self.task_set.appian._interactor.client.feature_flag, "7ffceebc")
 
 
 if __name__ == '__main__':
