@@ -1,15 +1,14 @@
-import json
-import time
 import unittest
-from typing import List
 
 from appian_locust._records_helper import (get_url_stub_from_record_list_url_path,
                                            get_url_stub_from_record_list_post_request_url)
+from appian_locust import _records_helper
 
 
 class TestHelper(unittest.TestCase):
     def test_get_url_stub_of_record_list_from_expected_state(self) -> None:
-        self.assertEqual(get_url_stub_from_record_list_url_path('tempo/records/type/url_stub123/view/all'), 'url_stub123')
+        self.assertEqual(get_url_stub_from_record_list_url_path('tempo/records/type/url_stub123/view/all'),
+                         'url_stub123')
 
     def test_get_url_stub_of_record_list_from_no_url(self) -> None:
         self.assertIsNone(get_url_stub_from_record_list_url_path(None))
@@ -46,6 +45,166 @@ class TestHelper(unittest.TestCase):
 
         # Then None is returned
         self.assertIsNone(record_instance_url_stub)
+
+    def test_get_record_header_response(self) -> None:
+        form_dict = {
+            "feed": {
+                "lang": "en_US",
+                "id": "record",
+                "title": "Customer Service Request #I49K-V46X",
+                "generator": {
+                    "version": "21.1.0.210",
+                    "uri": "https://an-appian-instance.host.net/suite/",
+                    "value": "Appian"
+                },
+                "icon": "https://an-appian-instance.host.net/suite/framework/img/favicon.ico",
+                "logo": "https://an-appian-instance.host.net/suite/portal/img/skins/default/companylogo.png",
+                "links": [{
+                    "href": "#",
+                    "rel": "x-embedded-uis",
+                    "extensions": [{
+                        "name": "x-embedded-header",
+                        "attributes": {
+                            "xmlns": ""
+                        },
+                        "children": ['{ "name":"John"}', '{"city":"New York"}']
+                    },
+                        {
+                            "name": "x-embedded-summary",
+                            "attributes": {
+                                "xmlns": ""
+                            },
+                            "children": ['{ "name":"Sam"}']
+                        }
+                    ]
+                }]
+            }}
+        obj = _records_helper.get_record_header_response(form_dict)
+
+        # assert that we get first child of ui component
+        self.assertEqual(obj, {"name": "John"})
+
+    def test_get_record_header_response_with_no_child_ui_component_throws_exception(self) -> None:
+        form_dict = {
+            "feed": {
+                "lang": "en_US",
+                "id": "record",
+                "title": "Customer Service Request #I49K-V46X",
+                "generator": {
+                    "version": "21.1.0.210",
+                    "uri": "https://an-appian-instance.host.net/suite/",
+                    "value": "Appian"
+                },
+                "icon": "https://an-appian-instance.host.net/suite/framework/img/favicon.ico",
+                "logo": "https://an-appian-instance.host.net/suite/portal/img/skins/default/companylogo.png",
+                "links": [{
+                    "href": "#",
+                    "rel": "x-embedded-uis",
+                    "extensions": [{
+                        "name": "x-embedded-header",
+                        "attributes": {
+                            "xmlns": ""
+                        },
+                        "children": []
+                    },
+                        {
+                            "name": "x-embedded-summary",
+                            "attributes": {
+                                "xmlns": ""
+                            },
+                            "children": ['{ "name":"Sam"}']
+                        }
+                    ]
+                }]
+            }}
+        exception_msg = ("Parser was not able to find embedded SAIL code within JSON response for the requested Record "
+                         "Instance")
+        # assert the exception get thrown
+        with self.assertRaises(Exception) as exc:
+            obj = _records_helper.get_record_header_response(form_dict)
+
+        self.assertEqual(exc.exception.__str__(), exception_msg)
+
+    def test_get_record_summary_view_response(self) -> None:
+        form_dict = {
+            "feed": {
+                "lang": "en_US",
+                "id": "record",
+                "title": "Customer Service Request #I49K-V46X",
+                "generator": {
+                    "version": "21.1.0.210",
+                    "uri": "https://an-appian-instance.host.net/suite/",
+                    "value": "Appian"
+                },
+                "icon": "https://an-appian-instance.host.net/suite/framework/img/favicon.ico",
+                "logo": "https://an-appian-instance.host.net/suite/portal/img/skins/default/companylogo.png",
+                "links": [{
+                    "href": "#",
+                    "rel": "x-embedded-uis",
+                    "extensions": [{
+                        "name": "x-embedded-header",
+                        "attributes": {
+                            "xmlns": ""
+                        },
+                        "children": ['{ "name":"John"}', '{"city":"New York"}']
+                    },
+                        {
+                            "name": "x-embedded-summary",
+                            "attributes": {
+                                "xmlns": ""
+                            },
+                            "children": ['{ "name":"Sam"}']
+                        }
+                    ]
+                }]
+            }
+        }
+        obj = _records_helper.get_record_summary_view_response(form_dict)
+
+        # assert that we get first child of ui component
+        self.assertEqual(obj, {"name": "Sam"})
+
+    def test_get_record_summary_view_response_with_no_child_ui_component_throws_exception(self) -> None:
+        form_dict = {
+            "feed": {
+                "lang": "en_US",
+                "id": "record",
+                "title": "Customer Service Request #I49K-V46X",
+                "generator": {
+                    "version": "21.1.0.210",
+                    "uri": "https://an-appian-instance.host.net/suite/",
+                    "value": "Appian"
+                },
+                "icon": "https://an-appian-instance.host.net/suite/framework/img/favicon.ico",
+                "logo": "https://an-appian-instance.host.net/suite/portal/img/skins/default/companylogo.png",
+                "links": [{
+                    "href": "#",
+                    "rel": "x-embedded-uis",
+                    "extensions": [{
+                        "name": "x-embedded-header",
+                        "attributes": {
+                            "xmlns": ""
+                        },
+                        "children": ['{ "name":"John"}', '{"city":"New York"}']
+                    },
+                        {
+                            "name": "x-embedded-summary",
+                            "attributes": {
+                                "xmlns": ""
+                            },
+                            "children": []
+                        }
+                    ]
+                }]
+            }
+        }
+        exception_msg = ("Parser was not able to find embedded SAIL code within JSON response for the requested Record "
+                         "Instance")
+        # assert the exception get thrown
+        with self.assertRaises(Exception) as exc:
+            obj = _records_helper.get_record_summary_view_response(form_dict)
+
+        self.assertEqual(exc.exception.__str__(), exception_msg)
 
 
 if __name__ == '__main__':

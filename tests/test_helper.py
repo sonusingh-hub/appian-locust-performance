@@ -11,6 +11,8 @@ from appian_locust.utilities.helper import (find_component_by_attribute_in_dict,
                                             repeat)
 
 from .mock_reader import read_mock_file
+import os
+import appian_locust.utilities.helper as helper
 
 
 class TestHelper(unittest.TestCase):
@@ -44,6 +46,7 @@ class TestHelper(unittest.TestCase):
         @repeat(2)
         def append_one(my_list: List) -> None:
             my_list.append(1)
+
         # When
         append_one(my_list)
         # Then
@@ -56,6 +59,7 @@ class TestHelper(unittest.TestCase):
         @repeat()
         def append_one(my_list: List) -> None:
             my_list.append(1)
+
         # When
         append_one(my_list)
         # Then
@@ -70,8 +74,39 @@ class TestHelper(unittest.TestCase):
         @repeat(wait_time=wait_time)
         def append_one(my_list: List) -> None:
             my_list.append(1)
+
         # When
         append_one(my_list)
         # Then
-        self.assertLessEqual(2*wait_time, time.time() - start)
-        self.assertGreaterEqual(2*wait_time+0.05, time.time() - start)
+        self.assertLessEqual(2 * wait_time, time.time() - start)
+        self.assertGreaterEqual(2 * wait_time + 0.05, time.time() - start)
+
+    def test_format_label(self) -> None:
+        var = helper.format_label("first second")
+        self.assertEqual(var, "first_second")
+
+    def test_get_random_item(self) -> None:
+        testlist = [10, 5, 6, 8, 2, 4]
+        var = helper.get_random_item(testlist)
+        self.assertIn(var, testlist)
+
+    def test_get_random_item_with_exclude(self) -> None:
+        testlist = [10, 5, 6, 8, 2, 4]
+        exclude = [2, 4]
+        var = helper.get_random_item(testlist, exclude)
+        self.assertTrue((var in testlist and var not in exclude))
+
+    def test_get_random_item_with_no_item_to_choose(self) -> None:
+        testlist = [2]
+        exclude = [2]
+        with self.assertRaisesRegex(Exception, "There is no item to select randomly"):
+            helper.get_random_item(testlist, exclude)
+
+    def test_find_component_by_attribute_in_dict_check_step2_status(self) -> None:
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+
+        raw_data = read_mock_file("library_utils.json")
+        testdata = json.loads(raw_data)
+
+        output = helper.find_component_by_attribute_in_dict('step2_status', 'pass', testdata)
+        self.assertTrue(output["step2_status"] == "pass")
