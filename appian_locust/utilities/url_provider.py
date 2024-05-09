@@ -44,6 +44,9 @@ class UrlProvider:
 
     def __init__(self, url_info: Dict[str, str]) -> None:
         self.url_info = url_info
+        # If not on version with full set of endpoints in API response, fall back to V1
+        if not "x-data-request-task-attributes" in self.url_info:
+            self.url_info = URL_PATTERN_V1
         for key in self.url_info:
             url = self.url_info[key]
             query = urlparse(url).query
