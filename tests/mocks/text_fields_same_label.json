@@ -2,12 +2,12 @@
     "_cId": "55e9eddedfd8de74bb60c7811ade30d5",
     "links": [
         {
-            "href": "https://an-appian-instance.host.net/suite/rest/a/sites/latest/D6JMim/pages/reports/report/nXLBqg/reportlink",
+            "href": "https://an-appian-instance.host.net/suite/rest/a/sites/latest/D6JMim/pages/p.reports/report/nXLBqg/reportlink",
             "rel": "update",
             "title": "Update"
         },
         {
-            "href": "https://an-appian-instance.host.net/suite/rest/a/sites/latest/D6JMim/pages/reports/report/nXLBqg/reportlink",
+            "href": "https://an-appian-instance.host.net/suite/rest/a/sites/latest/D6JMim/pages/p.reports/report/nXLBqg/reportlink",
             "rel": "self",
             "method": "POST"
         }

@@ -8,10 +8,8 @@ from appian_locust.utilities import logger
 from appian_locust.uiform import RecordListUiForm
 from locust import Locust, TaskSet
 
-from requests.exceptions import HTTPError
 from tests.mock_client import CustomLocust
 from tests.mock_reader import read_mock_file
-from appian_locust._records import RECORDS_INTERFACE_PATH, RECORDS_NAV_PATH
 
 log = logger.getLogger(__name__)
 

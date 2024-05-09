@@ -91,6 +91,9 @@ class MockClient:
         self.set_response("/suite/?signin=native", 200, "{}", cookies={"JSESSIONID": "a", "__appianCsrfToken": "b", "__appianMultipartCsrfToken": "c"})
         self.set_response("/suite/auth?appian_environment=tempo", 200, "{}", cookies={"JSESSIONID": "a", "__appianMultipartCsrfToken": "c"})
 
+        # For url provider
+        self.set_response("/suite/rest/a/sites/latest/locust-templates", 404, "{}")
+
         self.dummy_responses: Queue = Queue()
 
     def _response(self, path: str) -> 'MockResponse':

@@ -13,8 +13,10 @@ from .utilities import logger
 from ._locust_error_handler import test_response_for_error
 from ._save_request_builder import save_builder
 from .exceptions import (BadCredentialsException, MissingCsrfTokenException, ComponentNotFoundException,
-                         InvalidComponentException, ChoiceNotFoundException)
+                         InvalidComponentException, ChoiceNotFoundException, MissingUrlProviderException)
 from .utilities.helper import find_component_by_attribute_in_dict, get_username
+from .objects import Page, PageType
+from .utilities.url_provider import UrlProvider, URL_PROVIDER_V1
 from ._records_helper import get_url_stub_from_record_list_url_path
 
 log = logger.getLogger(__name__)
@@ -52,10 +54,11 @@ class _Interactor:
         self.datatype_cache = DataTypeCache()
         self.user_agent = ""
         self.portals_mode = portals_mode
-        self.url_pattern_version = 0
         self._request_timeout = request_timeout
         # Set to default as desktop request.
         self.set_user_agent_to_desktop()
+        # Default provider, will be overwritten in AppianTaskSet.on_start()
+        self.url_provider = URL_PROVIDER_V1
 
     # GENERIC UTILITY METHODS
     def set_user_agent_to_desktop(self) -> None:
@@ -63,6 +66,14 @@ class _Interactor:
 
     def set_user_agent_to_mobile(self) -> None:
         self.user_agent = "AppianAndroid/20.2 (Google AOSP on IA Emulator, 9; Build 0-SNAPSHOT; AppianPhone)"
+
+    def set_url_provider(self, provider: UrlProvider) -> None:
+        self.url_provider = provider
+
+    def get_url_provider(self) -> UrlProvider:
+        if not self.url_provider:
+            raise MissingUrlProviderException
+        return self.url_provider
 
     def get_interaction_host(self) -> str:
         return self.host
@@ -325,15 +336,14 @@ class _Interactor:
         with self.client.get(uri, **kwargs) as resp:  # type: ResponseContextManager
             if check_login and not self.portals_mode:
                 self.check_login(resp)
-            if not self.portals_mode:
-                username = get_username(self.auth)
-                test_response_for_error(
-                    resp,
-                    uri,
-                    raise_error=check_login,
-                    username=username,
-                    name=label,
-                )
+            username = get_username(self.auth)
+            test_response_for_error(
+                resp,
+                uri,
+                raise_error=check_login,
+                username=username,
+                name=label,
+            )
             if self.record_mode:
                 self.write_response_to_lib_folder(label, resp)
             return resp
@@ -459,9 +469,9 @@ class _Interactor:
             record_link_url = get_url + "/record/" + record_link_url_suffix
         # Support record links on site pages
         elif "sites" in get_url and "/pages/" in get_url:
-            page_search = search(r'(?<=\/pages\/)([\w-]+)', get_url)
+            page_search = search(r'(?<=\/pages\/)(.+?)(?=\/)', get_url)
             if page_search:
-                page_name = page_search.group()
+                page_name = page_search.group(0)
             else:
                 raise Exception("Unexpected record link URL - couldn't find page name after /pages/")
 
@@ -509,14 +519,11 @@ class _Interactor:
 
         Returns: the response of get Start Process Link operation as json
         '''
-        if self.url_pattern_version == 1:
-            page_name = f"p.{page_name}"
-            if group_name:
-                page_name = f"g.{group_name}.{page_name}"
         if is_mobile:
             spl_link_url = f"/suite/rest/a/model/latest/startProcess/{process_model_opaque_id}?cacheKey={cache_key}"
         else:
-            spl_link_url = f"/suite/rest/a/sites/latest/{site_name}/page/{page_name}/startProcess/{process_model_opaque_id}?cacheKey={cache_key}"
+            page = Page(page_name, PageType.ACTION, site_name, group_name)
+            spl_link_url = self.url_provider.get_site_start_process_path(page, process_model_opaque_id, cache_key)
 
         headers = self.setup_sail_headers()
         locust_label = locust_request_label or "Clicking StartProcessLink: " + component["label"]

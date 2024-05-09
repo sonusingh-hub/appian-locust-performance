@@ -2,12 +2,12 @@
     "_cId": "10ab02e1afc2f6f2c8634aa116e063d6",
     "links": [
         {
-            "href": "https://ase.com/suite/rest/a/sites/latest/D6JMim/pages/reports/report/TNCDrA/reportlink",
+            "href": "https://ase.com/suite/rest/a/sites/latest/D6JMim/pages/p.reports/report/TNCDrA/reportlink",
             "rel": "update",
             "title": "Update"
         },
         {
-            "href": "https://ase.com/suite/rest/a/sites/latest/D6JMim/pages/reports/report/TNCDrA/reportlink",
+            "href": "https://ase.com/suite/rest/a/sites/latest/D6JMim/pages/p.reports/report/TNCDrA/reportlink",
             "rel": "self",
             "method": "POST"
         }

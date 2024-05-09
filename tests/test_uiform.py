@@ -9,6 +9,7 @@ from appian_locust.uiform import SailUiForm, RecordInstanceUiForm
 from appian_locust.utilities.helper import (ENV, find_component_by_attribute_in_dict,
                                             find_component_by_index_in_dict,
                                             find_component_by_label_and_type_dict)
+from appian_locust.utilities.url_provider import URL_PROVIDER_V1, URL_PROVIDER_V0
 from appian_locust.uiform import PROCESS_TASK_LINK_TYPE
 from appian_locust.exceptions import (InvalidComponentException,
                                       ChoiceNotFoundException,
@@ -41,7 +42,7 @@ class TestSailUiForm(unittest.TestCase):
     site_with_record_search_button = read_mock_file("site_with_record_search_button.json")
     uiform_click_record_search_button_response = read_mock_file("uiform_click_record_search_button_response.json")
     design_uri = "/suite/rest/a/applications/latest/app/design"
-    report_link_uri = "/suite/rest/a/sites/latest/D6JMim/pages/reports/report/nXLBqg/reportlink"
+    report_link_uri = "/suite/rest/a/sites/latest/D6JMim/pages/p.reports/report/nXLBqg/reportlink"
     date_task_uri = '/suite/rest/a/task/latest/EMlJYSQyFKe2tvm5/form'
     sites_task_uri = '/suite/rest/a/sites/latest/tst-site/pages/action/action'
     multi_dropdown_uri = "/suite/rest/a/sites/latest/io/page/onboarding-requests/action/34"
@@ -117,7 +118,7 @@ class TestSailUiForm(unittest.TestCase):
         self.custom_locust.set_response(self.report_link_uri,
                                         200, report_form)
         sail_form = self.task_set.appian.visitor.visit_report(self.report_name, False)
-        self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/pages/reports/report/yS9bXA/reportlink",
+        self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/pages/p.reports/report/yS9bXA/reportlink",
                                         200, report_form)
 
         keyWords: List[dict] = [{'label': form_label}, {'index': 0}]
@@ -148,7 +149,7 @@ class TestSailUiForm(unittest.TestCase):
         report_form = read_mock_file("paging_grid_sortable.json")
         self.custom_locust.set_response(self.report_link_uri, 200, report_form)
         sail_form = self.task_set.appian.visitor.visit_report(self.report_name, False)
-        self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/pages/reports/report/TNCDrA/reportlink", 200, report_form)
+        self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/pages/p.reports/report/TNCDrA/reportlink", 200, report_form)
         sail_form.sort_paging_grid(label=" Dogs", field_name="Name")
 
     def test_datatype_caching(self) -> None:
@@ -545,9 +546,9 @@ class TestSailUiForm(unittest.TestCase):
             resp
         )
 
-        self.task_set.appian._interactor.url_pattern_version = 1
+        self.task_set.appian._interactor.set_url_provider(URL_PROVIDER_V1)
         test_form.click_start_process_link(label="ASE")
-        self.task_set.appian._interactor.url_pattern_version = 0
+        self.task_set.appian._interactor.set_url_provider(URL_PROVIDER_V0)
 
         self.assertEqual(json.loads(resp), test_form.get_latest_state())
 
@@ -1296,7 +1297,7 @@ class TestSailUiForm(unittest.TestCase):
         sail_form = self.task_set.appian.visitor.visit_report(self.report_name, exact_match=False)
 
         self.custom_locust.set_response(
-            "/suite/rest/a/sites/latest/D6JMim/page/reports/record/lIBHer_bdD8Emw8hLLETeiApBrxq-qoA49oyo6ZbfRANWNchnXIC8_QQLHMvQo3q8_3W_uY-NIUjTsvBQt9hzZiRJbsXbp75nXNb4s_IQMGZzxV/view/summary",
+            "/suite/rest/a/sites/latest/D6JMim/page/p.reports/record/lIBHer_bdD8Emw8hLLETeiApBrxq-qoA49oyo6ZbfRANWNchnXIC8_QQLHMvQo3q8_3W_uY-NIUjTsvBQt9hzZiRJbsXbp75nXNb4s_IQMGZzxV/view/summary",
             200, read_mock_file("record_summary_view_response.json"))
         sail_form.click_grid_plaintext_record_link(grid_index=0, row_index=0, column_name="Customer")
 

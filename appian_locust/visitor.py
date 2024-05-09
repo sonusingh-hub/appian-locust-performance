@@ -3,6 +3,15 @@ from urllib.parse import urlparse
 
 from ._actions import _Actions
 from ._data_fabric import _DataFabric
+from .uiform import (
+    ApplicationUiForm,
+    DesignUiForm,
+    DesignObjectUiForm,
+    RecordInstanceUiForm,
+    RecordListUiForm,
+    SailUiForm,
+    AISkillUiForm
+)
 from ._design import _Design, AI_SKILL_DESCRIPTOR, validate_design_object_access_method
 from ._interactor import _Interactor
 from ._portals import _Portals
@@ -14,15 +23,6 @@ from ._admin import _Admin
 from ._tasks import _Tasks
 from .utilities.helper import format_label
 from .objects import DesignObjectType, PageType
-from .uiform import (
-    ApplicationUiForm,
-    DesignUiForm,
-    DesignObjectUiForm,
-    RecordInstanceUiForm,
-    RecordListUiForm,
-    SailUiForm,
-    AISkillUiForm
-)
 
 _RDO_TYPE_TO_VISITOR_METHOD = {
     "aiSkill": "visit_ai_skill_by_id"

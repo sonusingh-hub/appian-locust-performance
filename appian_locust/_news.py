@@ -2,13 +2,13 @@ from typing import Any, Dict, Tuple, Optional
 from requests.models import Response
 
 from .utilities import logger
+from .objects import TEMPO_NEWS_PAGE
 from ._base import _Base
 from ._interactor import _Interactor
 
 log = logger.getLogger(__name__)
 
 NEWS_FEED_PATH = "/suite/api/feed/tempo?t=e,x,b&m=menu-news&st=o"
-NEWS_NAV_PATH = ["/suite/rest/a/sites/latest/D6JMim/page/", "news", "/nav"]
 NEWS_SEARCH_PATH = "/suite/api/feed/tempo?q="
 
 
@@ -176,10 +176,7 @@ class _News(_Base):
         headers = self.interactor.setup_request_headers()
 
         # Nav
-        nav_uri = NEWS_NAV_PATH[0]
-        if self.interactor.url_pattern_version == 1:
-            nav_uri += "p."
-        nav_uri += NEWS_NAV_PATH[1] + NEWS_NAV_PATH[2]
+        nav_uri = self.interactor.get_url_provider().get_page_nav_path(TEMPO_NEWS_PAGE)
         # navigation request before the search
         headers["Accept"] = "application/vnd.appian.tv.ui+json"
         self.interactor.get_page(uri=nav_uri, headers=headers, label="News.Nav")

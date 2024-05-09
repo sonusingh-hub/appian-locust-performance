@@ -5,8 +5,6 @@ from locust import TaskSet, Locust
 from .mock_client import CustomLocust
 from .mock_reader import read_mock_file
 from appian_locust import AppianTaskSet
-from appian_locust.uiform.record_uiform import RecordInstanceUiForm
-from appian_locust._records import RECORDS_INTERFACE_PATH, RECORDS_NAV_PATH
 
 
 class TestRecordUiform(unittest.TestCase):

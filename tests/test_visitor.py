@@ -11,6 +11,7 @@ from appian_locust.exceptions import IncorrectDesignAccessException
 from appian_locust.uiform import SailUiForm, ApplicationUiForm, DesignUiForm, DesignObjectUiForm, RecordListUiForm, RecordInstanceUiForm
 from appian_locust.objects import DesignObjectType
 from appian_locust.utilities.helper import ENV
+from appian_locust.utilities.url_provider import URL_PROVIDER_V0, URL_PROVIDER_V1
 from appian_locust._admin import ADMIN_URI_PATH
 from appian_locust._tasks import _Tasks
 from appian_locust._reports import REPORTS_INTERFACE_PATH
@@ -179,7 +180,7 @@ class TestVisitor(unittest.TestCase):
             self.assertEqual(context.exception.args[0], f"There is no task with name {task_name} in the system under test (Exact match = {exact_match})")
 
     def test_visit_report_success(self) -> None:
-        self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/pages/reports/report/qdjDPA/reportlink",
+        self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/pages/p.reports/report/qdjDPA/reportlink",
                                         200, '{"context":123, "uuid":123}')
 
         sail_form = self.task_set.appian.visitor.visit_report(
@@ -187,7 +188,7 @@ class TestVisitor(unittest.TestCase):
         self.assertTrue(isinstance(sail_form, SailUiForm))
 
     def test_visit_report_failure(self) -> None:
-        self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/pages/reports/report/qdjDPA/reportlink",
+        self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/pages/p.reports/report/qdjDPA/reportlink",
                                         200, '{"context":123, "uuid":123}')
 
         report_name = "Fake Report"
@@ -451,9 +452,9 @@ class TestVisitor(unittest.TestCase):
         self.custom_locust.set_response(f"/suite/rest/a/sites/latest/{site_name}/nav", 200, self.sites_with_groups_nav_resp)
         self.custom_locust.set_response(f"/suite/rest/a/sites/latest/{site_name}/page/g.{group_name}.p.{page_name}", 200, expected_state)
 
-        self.task_set.appian._interactor.url_pattern_version = 1
+        self.task_set.appian._interactor.set_url_provider(URL_PROVIDER_V1)
         form = self.task_set.appian.visitor.visit_site(site_name, page_name)
-        self.task_set.appian._interactor.url_pattern_version = 0
+        self.task_set.appian._interactor.set_url_provider(URL_PROVIDER_V0)
 
         self.assertEqual(json.loads(expected_state), form.get_latest_state())
 

@@ -109,7 +109,7 @@ class TestReports(unittest.TestCase):
 
         setattr(self.interactor, 'get_page', get_page_mock)
         output = self.reports_interactor.get_report_form_uri("RTE Basic Test Report")
-        self.assertEqual(output, "/suite/rest/a/sites/latest/D6JMim/pages/reports/report/qdjDPA/reportlink")
+        self.assertEqual(output, "/suite/rest/a/sites/latest/D6JMim/pages/p.reports/report/qdjDPA/reportlink")
 
     def test_reports_get_report_requires_search(self) -> None:
         response_mock = unittest.mock.Mock(return_value=json.loads(self.reports))

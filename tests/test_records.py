@@ -50,11 +50,11 @@ class TestRecords(unittest.TestCase):
         self.custom_locust.set_response("/suite/rest/a/applications/latest/legacy/tempo/records/type/BE5pSw/view/all", 200,
                                         self.grid_records)
         self.custom_locust.set_response(
-            "/suite/rest/a/sites/latest/D6JMim/page/records/record/lQB0K7YxC0UQ2Fhx4pmY1F49C_MjItD4hbtRdKDmOo6V3MOBxI47ipGa_bJKZf86CLtvOCp1cfX-sa2O9hp6WTKZpbGo5MxRaaTwMkcYMeDl8kN8Hg/view/summary",
+            "/suite/rest/a/sites/latest/D6JMim/page/p.records/record/lQB0K7YxC0UQ2Fhx4pmY1F49C_MjItD4hbtRdKDmOo6V3MOBxI47ipGa_bJKZf86CLtvOCp1cfX-sa2O9hp6WTKZpbGo5MxRaaTwMkcYMeDl8kN8Hg/view/summary",
             200,
             self.record_summary_view)
         self.custom_locust.set_response(RECORDS_INTERFACE_PATH, 200, self.records_interface)
-        self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/page/records/nav", 200, self.records_nav)
+        self.custom_locust.set_response("/suite/rest/a/sites/latest/D6JMim/page/p.records/nav", 200, self.records_nav)
 
     def test_records_get_all(self) -> None:
         all_records = self.record_interactor.get_all()

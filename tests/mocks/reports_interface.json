@@ -2,12 +2,12 @@
     "_cId": "c90ea2f17af6594d9c8a06c0812cef72",
     "links": [
         {
-            "href": "https://an-appian-instance.host.net/suite/rest/a/sites/latest/D6JMim/pages/reports/interface",
+            "href": "https://an-appian-instance.host.net/suite/rest/a/sites/latest/D6JMim/pages/p.reports/interface",
             "rel": "update",
             "title": "Update"
         },
         {
-            "href": "https://an-appian-instance.host.net/suite/rest/a/sites/latest/D6JMim/pages/reports/interface",
+            "href": "https://an-appian-instance.host.net/suite/rest/a/sites/latest/D6JMim/pages/p.reports/interface",
             "rel": "self",
             "method": "POST"
         }
