@@ -6,7 +6,7 @@ from .utilities import logger
 from ._base import _Base
 from ._interactor import _Interactor
 from .utilities.helper import extract_values, format_label
-from .objects import TEMPO_NEWS_PAGE
+from .objects import TEMPO_NEWS_PAGE, TEMPO_SITE_STUB
 from ._records_helper import get_all_records_from_json
 from .objects import Site, Page, PageType
 from .exceptions import (PageNotFoundException,
@@ -107,15 +107,31 @@ class _Sites(_Base):
         """
         Gets and stores data for all sites, including all of their url stubs
         """
+        all_site_stubs = self.get_site_stubs()
+        for site_url_stub in all_site_stubs:
+            self.get_site_data_by_site_name(site_url_stub)
+        return self._sites
+
+    def get_site_stubs(self) -> List[str]:
+        redirect_resp = self.interactor.get_page("/suite/")
+        # Redirect is handled automatically, so we need to look at the url the response was sent to
+        redirect_location: str = redirect_resp.request.path_url
+        if "tempo" in redirect_location:
+            landing_site_stub = TEMPO_SITE_STUB
+        else:
+            landing_site_stub = redirect_location.split("/")[-1]
+
+        landing_site_nav_url = self.interactor.get_url_provider().get_site_nav_path(landing_site_stub)
         headers = self._setup_headers_with_sail_json()
-        url = self.interactor.get_url_provider().get_page_nav_path(TEMPO_NEWS_PAGE)
-        all_site_resp = self.interactor.get_page(url, headers=headers, label="Sites.SiteNames")
+        all_site_resp = self.interactor.get_page(landing_site_nav_url, headers=headers, label="Sites.SiteNames")
         all_site_json = all_site_resp.json()
+        all_site_stubs = []
         for site_info in extract_values(all_site_json, '#t', 'SitePageLink'):
             if 'siteUrlStub' in site_info:
-                site_url_stub = site_info['siteUrlStub']
-                self.get_site_data_by_site_name(site_url_stub)
-        return self._sites
+                all_site_stubs.append(site_info["siteUrlStub"])
+        if landing_site_stub != TEMPO_SITE_STUB:
+            all_site_stubs.append(landing_site_stub)
+        return all_site_stubs
 
     def get_site_data_by_site_name(self, site_name: str) -> Site:
         """
@@ -127,7 +143,7 @@ class _Sites(_Base):
         """
         headers = self._setup_headers_with_accept()
         # First get site pages
-        initial_nav_resp = self.interactor.get_page(f"/suite/rest/a/sites/latest/{site_name}/nav",
+        initial_nav_resp = self.interactor.get_page(self.interactor.get_url_provider().get_site_nav_path(site_name),
                                                     headers=headers,
                                                     label=f"Sites.{site_name}.Nav")
         initial_nav_json = initial_nav_resp.json()

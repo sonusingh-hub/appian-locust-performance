@@ -118,3 +118,10 @@ class TestUrlProvider(TestCase):
 
         args, _ = expand_mock.call_args_list[0]
         self.assertEqual(args[0], URL_PATTERN_V1["x-data-request-site-nested-start-process-page"])
+
+    @patch("appian_locust.utilities.url_provider.expand")
+    def test_get_site_nav_path(self, expand_mock: MagicMock) -> None:
+        URL_PROVIDER_V1.get_site_nav_path("site_name")
+
+        args, _ = expand_mock.call_args_list[0]
+        self.assertEqual(args[0], URL_PATTERN_V1["x-data-request-site-nav"])

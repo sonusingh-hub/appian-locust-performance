@@ -17,6 +17,7 @@ URL_PATTERN_V0 = {
     "x-data-request-task-form": "https://pattern.net/suite/rest/a/task/latest/{taskId}/form",
     "x-data-request-site-page-redirect": "https://pattern.net/suite/rest/a/applications/latest/legacy/sites/{siteUrlStub}/page/{pageUrlStub}",
     "x-data-request-site-top-level-start-process-page": "https://pattern.net/suite/rest/a/sites/latest/{siteUrlStub}/page/p.{pageUrlStub}/startProcess/{processModelOpaqueId}?cacheKey={cacheKey}",
+    "x-data-request-site-nav": "https://pattern.net/suite/rest/a/sites/latest/{siteUrlStub}/nav"
 }
 
 URL_PATTERN_V1 = {
@@ -36,6 +37,7 @@ URL_PATTERN_V1 = {
     "x-data-request-site-page-redirect": "https://pattern.net/suite/rest/a/applications/latest/legacy/sites/{siteUrlStub}/page/{pageUrlStub}",
     "x-data-request-site-top-level-start-process-page": "https://pattern.net/suite/rest/a/sites/latest/{siteUrlStub}/page/p.{pageUrlStub}/startProcess/{processModelOpaqueId}?cacheKey={cacheKey}",
     "x-data-request-site-nested-start-process-page": "https://pattern.net/suite/rest/a/sites/latest/{siteUrlStub}/page/g.{groupUrlStub}.p.{pageUrlStub}/startProcess/{processModelOpaqueId}?cacheKey={cacheKey}",
+    "x-data-request-site-nav": "https://pattern.net/suite/rest/a/sites/latest/{siteUrlStub}/nav"
 }
 
 class UrlProvider:
@@ -133,6 +135,11 @@ class UrlProvider:
         }
         start_process_url = expand(self.url_info[start_process_key], uri_template_variables)
         return start_process_url
+
+    def get_site_nav_path(self, site_name: str) -> str:
+        site_nav_key = "x-data-request-site-nav"
+        site_nav_path = expand(self.url_info[site_nav_key], {"siteUrlStub": site_name})
+        return site_nav_path
 
 
 URL_PROVIDER_V0 = UrlProvider(URL_PATTERN_V0)
