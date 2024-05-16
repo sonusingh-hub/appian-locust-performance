@@ -454,41 +454,21 @@ class _Interactor:
         dashboard = component.get('dashboard', "")
         if not dashboard:
             dashboard = "summary"
-        record_view_url_stub = f"/view/{dashboard}"
         if not record_ref:
             raise Exception("Cannot find _recordRef attribute in RecordLink component")
-        record_link_url_suffix = record_ref + record_view_url_stub
 
-        # Logic to construct record link URL in tempo and sites
-        if "tempo" in get_url:
-            record_link_url = "/suite/tempo/records/item/" + record_link_url_suffix
-        elif "sites" in get_url and "/record/" in get_url:
-            parse_pattern = "/record/"
-            record_link_url = get_url[:get_url.index(parse_pattern) + len(parse_pattern)] + record_link_url_suffix
-        elif match(r'.*\/page\/.*$', get_url):
-            record_link_url = get_url + "/record/" + record_link_url_suffix
-        # Support record links on site pages
-        elif "sites" in get_url and "/pages/" in get_url:
-            page_search = search(r'(?<=\/pages\/)(.+?)(?=\/)', get_url)
-            if page_search:
-                page_name = page_search.group(0)
+        site_name = component.get('siteUrlStub')
+        page_name = component.get('pageUrlStub')
+        if not site_name or not page_name:
+            site_and_page_names_from_url = search(r'([^\/]+)\/page\/([^\/]+)\/', get_url)
+            if not site_and_page_names_from_url:
+                site_name = TEMPO_SITE_STUB
+                page_name = "records"
             else:
-                raise Exception("Unexpected record link URL - couldn't find page name after /pages/")
-
-            parse_pattern = f"/{page_name}/"
-            url_prefix_index = get_url.index(parse_pattern) + len(parse_pattern)-1
-
-            record_link_url = get_url[:url_prefix_index].replace("/pages/",
-                                                                 "/page/") + "/record/" + record_link_url_suffix
-        # Support record view links from a record within a site
-        # Also supports record links on a task form (ex: /suite/rest/a/task/latest/JaUHEhaQ1jI7OMif0L/form)
-        # Most urls will get caught here
-        elif "record" in get_url or "task" in get_url:
-            site_name = component.get('siteUrlStub', TEMPO_SITE_STUB)
-            page_name = component.get('pageUrlStub', "p.tasks")
-            record_link_url = f"/suite/rest/a/sites/latest/{site_name}/page/{page_name}/record/{record_link_url_suffix}"
-        else:
-            raise Exception("Unexpected record link URL")
+                site_name = site_name or site_and_page_names_from_url.group(1)
+                page_name = page_name or site_and_page_names_from_url.group(2)
+        page_object = Page(page_name=page_name, page_type=PageType.RECORD, site_stub=site_name)
+        record_link_url = self.url_provider.get_record_path(page=page_object, opaque_id=record_ref, view=dashboard)
 
         if not get_url or not record_link_url:
             raise Exception("Cannot make Record Link request.")
