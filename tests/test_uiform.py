@@ -1297,7 +1297,7 @@ class TestSailUiForm(unittest.TestCase):
         sail_form = self.task_set.appian.visitor.visit_report(self.report_name, exact_match=False)
 
         self.custom_locust.set_response(
-            "/suite/rest/a/sites/latest/D6JMim/page/p.reports/record/lIBHer_bdD8Emw8hLLETeiApBrxq-qoA49oyo6ZbfRANWNchnXIC8_QQLHMvQo3q8_3W_uY-NIUjTsvBQt9hzZiRJbsXbp75nXNb4s_IQMGZzxV/view/summary",
+            "/suite/rest/a/sites/latest/D6JMim/page/reports/record/lIBHer_bdD8Emw8hLLETeiApBrxq-qoA49oyo6ZbfRANWNchnXIC8_QQLHMvQo3q8_3W_uY-NIUjTsvBQt9hzZiRJbsXbp75nXNb4s_IQMGZzxV/view/summary",
             200, read_mock_file("record_summary_view_response.json"))
         sail_form.click_grid_plaintext_record_link(grid_index=0, row_index=0, column_name="Customer")
 

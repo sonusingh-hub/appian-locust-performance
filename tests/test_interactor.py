@@ -29,6 +29,7 @@ class TestInteractor(unittest.TestCase):
     record_action_refresh_response = read_mock_file("record_action_refresh_response.json")
     site_with_record_search_button = read_mock_file("site_with_record_search_button.json")
     site_with_expression_editor = read_mock_file("site_with_expression_editor.json")
+    tempo_report_record_link = read_mock_file("tempo_report_record_link.json")
     cascading_picker_ui = read_mock_file_as_dict("cascading_picker.json")
     cascading_picker_ui_choices = read_mock_file_as_dict("cascading_picker_choices.json")
     default_user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36"
@@ -221,13 +222,13 @@ class TestInteractor(unittest.TestCase):
         record_link = find_component_by_attribute_in_dict("label", "Profile",
                                                           json.loads(self.form_content_2))
         self.custom_locust.set_response(
-            "/suite/sites/record/nkB0AwAXQzsQm2O6Of7dMdydaKrNT9uUisGhgFHLyZXpnCB2kjcXoiFJRK5SlL5Bt_GvQEcqlclEadcUWUJ9fCR6GnV1GcZA0cQDe2zoojxnd4W1rs06fDnxgqf" +
+            "/suite/rest/a/sites/latest/orders/page/page_name/record/nkB0AwAXQzsQm2O6Of7dMdydaKrNT9uUisGhgFHLyZXpnCB2kjcXoiFJRK5SlL5Bt_GvQEcqlclEadcUWUJ9fCR6GnV1GcZA0cQDe2zoojxnd4W1rs06fDnxgqf" +
             "-Pa9TcPwsNOpNrv_mvgEFfGrsSLB4BALxCD8JZ--/view/summary",
             200,
             "{}")
 
         output = self.task_set.appian._interactor.click_record_link(
-            "/suite/sites/record/some_long_record_id/view/summary", record_link, {}, "")
+            "/suite/rest/a/sites/latest/site_name/page/page_name/recordType/record_uuid/record/some_long_record_id/view/summary", record_link, {}, "")
         self.assertEqual(output, dict())
 
     def test_record_link_sites_record(self) -> None:
@@ -243,7 +244,7 @@ class TestInteractor(unittest.TestCase):
         mock.assert_called_once()
         # Assert get_page() called with first argument as the correct record link url
         recordRef = record_link.get("_recordRef")
-        expected_record_link_url = f"('/suite/sites/records/page/db/record/{recordRef}/view/summary',)"
+        expected_record_link_url = f"('/suite/rest/a/sites/latest/orders/page/db/record/{recordRef}/view/summary',)"
 
         self.assertEqual(f"{mock.call_args[0]}", expected_record_link_url)
 
@@ -285,18 +286,18 @@ class TestInteractor(unittest.TestCase):
         setattr(self.task_set.appian._interactor, 'get_page', mock)
 
         self.task_set.appian._interactor.click_record_link(
-            "/suite/sites/textcolumns/page/500", record_link, {}, "")
+            "/suite/rest/a/sites/latest/textcolumns/page/p.500", record_link, {}, "")
 
         mock.assert_called_once()
         # Assert get_page() called with first argument as the correct record link url
         recordRef = record_link.get("_recordRef")
-        expected_record_link_url = f"('/suite/sites/textcolumns/page/500/record/{recordRef}/view/summary',)"
+        expected_record_link_url = f"('/suite/rest/a/sites/latest/orders/page/orders/record/{recordRef}/view/summary',)"
 
         self.assertEqual(f"{mock.call_args[0]}", expected_record_link_url)
 
     def test_record_link_tempo_report(self) -> None:
-        record_link = find_component_by_attribute_in_dict("label", "DA0G-P2A6",
-                                                          json.loads(self.form_content_3))
+        record_link = find_component_by_attribute_in_dict("label", "Coconut",
+                                                          json.loads(self.tempo_report_record_link))
 
         mock = unittest.mock.Mock()
 
@@ -307,7 +308,7 @@ class TestInteractor(unittest.TestCase):
         mock.assert_called_once()
         # Assert get_page() called with first argument as the correct record link url
         recordRef = record_link.get("_recordRef")
-        expected_record_link_url = f"('/suite/tempo/records/item/{recordRef}/view/summary',)"
+        expected_record_link_url = f"('/suite/rest/a/sites/latest/D6JMim/page/reports/record/{recordRef}/view/summary',)"
 
         self.assertEqual(f"{mock.call_args[0]}", expected_record_link_url)
 
