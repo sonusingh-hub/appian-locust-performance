@@ -40,6 +40,7 @@ class Page:
             return False
         return True
 
+
 TEMPO_SITE_STUB = "D6JMim"
 TEMPO_ACTIONS_PAGE = Page("actions", PageType.INTERFACE, TEMPO_SITE_STUB)
 TEMPO_NEWS_PAGE = Page("news", PageType.INTERFACE, TEMPO_SITE_STUB)

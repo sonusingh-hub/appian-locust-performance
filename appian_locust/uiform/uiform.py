@@ -1104,7 +1104,7 @@ class SailUiForm:
 
         return self._reconcile_state(new_state)
 
-    def upload_document_to_upload_field(self, label: str, file_path: str, locust_request_label: str = "") -> 'SailUiForm':
+    def upload_document_to_upload_field(self, label: str, file_path: str, index: int = 1, locust_request_label: str = "") -> 'SailUiForm':
         """
         Uploads a document to a named upload field
         There are two steps to this which can fail, one is the document upload, the other
@@ -1115,6 +1115,7 @@ class SailUiForm:
             file_path(str): File path to the document
 
         Keyword Args:
+            index(int): Index of the field to fill if more than one match the attribute and attribute_value criteria (default: 1)
             locust_request_label(str): Label used to identify the request for locust statistics
 
         Returns (SailUiForm): The latest state of the UiForm
@@ -1130,6 +1131,7 @@ class SailUiForm:
             type="FileUploadWidget",
             attribute="label",
             value=label,
+            index=index,
             raise_error=False
         )
 
@@ -1145,7 +1147,7 @@ class SailUiForm:
         if component.get('#t') != 'FileUploadWidget':
             if component.get('#t') == "MultipleFileUploadWidget":
                 print("Selected FileUploadWidget is instead MultipleFileUploadWidget, continuing automatically")
-                return self.upload_documents_to_multiple_file_upload_field(label, [file_path], locust_request_label)
+                return self.upload_documents_to_multiple_file_upload_field(label, [file_path], index, locust_request_label)
             else:
                 raise Exception(f"Provided component was not a FileUploadWidget, was instead of type '{component.get('#t')}'")
 
@@ -1166,7 +1168,7 @@ class SailUiForm:
                 f"No response returned when trying to upload file to field '{label}'")
         return self._reconcile_state(new_state)
 
-    def upload_documents_to_multiple_file_upload_field(self, label: str, file_paths: List[str], locust_request_label: str = "") -> 'SailUiForm':
+    def upload_documents_to_multiple_file_upload_field(self, label: str, file_paths: List[str], index: int = 1, locust_request_label: str = "") -> 'SailUiForm':
         """
         Uploads multiple documents to a named upload field
         There are two steps to this which can fail, one is the document uploads, the other
@@ -1177,6 +1179,7 @@ class SailUiForm:
             file_paths(list): List of document file paths in string form
 
         Keyword Args:
+            index(int): Index of the field to fill if more than one match the attribute and attribute_value criteria (default: 1)
             locust_request_label(str): Label used to identify the request for locust statistics
 
         Returns (SailUiForm): The latest state of the UiForm
@@ -1191,6 +1194,7 @@ class SailUiForm:
             type="MultipleFileUploadWidget",
             attribute="label",
             value=label,
+            index=index,
             raise_error=False
         )
 
@@ -1206,7 +1210,7 @@ class SailUiForm:
         if component.get('#t') != 'MultipleFileUploadWidget':
             if component.get('#t') == "FileUploadWidget":
                 print("Selected MultipleFileUploadWidget is instead FileUploadWidget, continuing automatically")
-                return self.upload_document_to_upload_field(label, file_paths[0], locust_request_label)
+                return self.upload_document_to_upload_field(label, file_paths[0], index, locust_request_label)
             raise Exception(f"Provided component was not a MultipleFileUploadWidget, was instead of type '{component.get('#t')}'")
 
         is_encrypted = component.get("isEncrypted", False)
@@ -1640,7 +1644,7 @@ class SailUiForm:
         new_value = {
             "#t": "Variant?list",
             "#v": [component["identifiers"][index - 1]]
-            }
+        }
         new_state = self._interactor.click_generic_element(
             reeval_url, component, self.context, self.uuid, new_value=new_value, label=context_label)
         if not new_state:

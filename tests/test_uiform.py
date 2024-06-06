@@ -485,6 +485,21 @@ class TestSailUiForm(unittest.TestCase):
         sail_form = SailUiForm(self.task_set.appian._interactor, ui)
         sail_form.upload_documents_to_multiple_file_upload_field(label, ['fake_file'])
         mock_upload_document_to_upload_field.assert_called_once()
+        args, _ = mock_upload_document_to_upload_field.call_args_list[0]
+
+    @patch('os.path.exists', return_value=True)
+    @patch('appian_locust._interactor._Interactor.upload_document_to_field')
+    @patch('appian_locust._interactor._Interactor.upload_document_to_server')
+    def test_multi_upload_duplicate_label(self, mock_upload_document_to_server: MagicMock, mock_upload_document_to_field: MagicMock,  mock_os_path_exists: MagicMock) -> None:
+        ui = json.loads(read_mock_file("upload_field_multi_index.json"))
+        label = "ASE"
+        sail_form = SailUiForm(self.task_set.appian._interactor, ui)
+
+        sail_form.upload_documents_to_multiple_file_upload_field(label, ['fake_file'], index=2)
+
+        args, _ = mock_upload_document_to_field.call_args_list[0]
+        component = args[1]
+        self.assertEqual(component["_cId"], "6727f939a82122fcf913822c444b7464")
 
     def test_click_related_action_on_record_form(self) -> None:
         self.custom_locust.set_response('/suite/rest/a/record/latest/BE5pSw/ioBHer_bdD8Emw8hMSiA_CnpxaK0CVK61sPetEqM0lI_pHvjAsXVOlJtUo/actions/'
@@ -628,7 +643,7 @@ class TestSailUiForm(unittest.TestCase):
         test_new_value = {
             "#t": "Variant?list",
             "#v": [component["identifiers"][index - 1]]
-            }
+        }
         test_form.select_card_choice_field_by_label("Card Choices", index, locust_request_label=self.locust_label)
         mock_radio_select_component.assert_called_once()
         args, kwargs = mock_radio_select_component.call_args_list[0]

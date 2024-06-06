@@ -6,6 +6,7 @@ from ..uiform import SailUiForm
 
 from ..utilities.helper import (find_component_by_attribute_in_dict)
 
+
 class DesignObjectUiForm(SailUiForm):
 
     def __init__(self, interactor: _Interactor, state: Dict[str, Any], breadcrumb: str = "DesignObjectUi"):
