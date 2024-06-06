@@ -27,6 +27,3 @@ class UserActor(HttpUser):
     tasks = [RecordsTaskSet]
     host = 'https://mysitename.net'
     auth = ["myusername", "mypassword"]
-
-
-

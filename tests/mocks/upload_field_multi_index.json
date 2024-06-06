@@ -1,0 +1,3760 @@
+{
+    "_cId": "468e5e23b2dc6831255d0528e158736b",
+    "links": [
+        {
+            "href": "https://site.net/suite/rest/a/sites/latest/D6JMim/pages/p.reports/report/J7GZ1A/reportlink",
+            "rel": "update",
+            "title": "Update"
+        },
+        {
+            "href": "https://site.net/suite/rest/a/sites/latest/D6JMim/pages/p.reports/report/J7GZ1A/reportlink",
+            "rel": "self",
+            "method": "POST"
+        },
+        {
+            "href": "https://site.net/suite/api/tempo/file",
+            "rel": "upload",
+            "method": "POST"
+        }
+    ],
+    "actions": [
+        {
+            "_cId": "8333cdbab40a98c14806ddac91e84583",
+            "_actionName": "sail:record-action-trigger",
+            "label": "updateRecordActionRefresh",
+            "saveInto": [
+                "<<ww0EAwMCeVBSqKpFgFMB0n0BmlWRIH2/qXK4708X0I73bxWRRZKMgMfm0tI4OfLVUMdNcDwVSqAo\r\nTIvNncAnHhL/3IXxLFb1LZGGHz883w8Uazyit5BGoRYpRM3wO5LJz8lOQEULSkv7lOt8pJyIXfmJ\r\ncuWv2HnMXd0F2TkSpxT5lm5oh3hVplzxZCA1Wg==\r\n>>"
+            ],
+            "tooltip": "",
+            "href": "",
+            "#t": "DynamicLink"
+        },
+        {
+            "_cId": "4713416ca9ec5e98a7be1d09b03bc84f",
+            "_actionName": "sail:update-form-factor",
+            "label": "updateFormFactor",
+            "saveInto": [
+                "<<ww0EAwMCeVBSqKpFgFMB0oEBmlWRIH2/qXK4708X0I73bxWRRZKMgMfmudUMOfHVVMcrVW/4QfdM\r\nbSA+vCilr/OgNluu5iJoQyXuWaM+c1MbimtzULorHGr8Xl0jK0/7FNsuUzh9sWqzibVebGFxiNoC\r\njcfDtYwuTt31VfCOaeX2Txr0YzNsMEbCVUwwEMTIhiU=\r\n>>"
+            ],
+            "tooltip": "",
+            "href": "",
+            "#t": "DynamicLink"
+        },
+        {
+            "_cId": "44a7926bb6f6110edd4075eab3f01b36",
+            "_actionName": "sail:toggle-sites-xray",
+            "label": "toggleSitesXray",
+            "saveInto": [
+                "<<ww0EAwMCeVBSqKpFgFMB0n0BmlWRIH2/qXK4708X0I73bxWRRZKMgMfm0tIcOfLVUMfG9iJcPIuo\r\n6y7mNJRsYwrX9gXPy/AK+IBw+RbJpyqVZe80NZW7TEOrjDv9H8S7lgdOwEBoGWHDE0WulA18wTgG\r\nYlgFtc8QDGLzpRkg03SX853XifEYrX7oSbxKiA==\r\n>>"
+            ],
+            "tooltip": "",
+            "href": "",
+            "#t": "DynamicLink"
+        },
+        {
+            "_cId": "d9d6f55c2aaabb5fd3a32c4e02258640",
+            "_actionName": "sail:update-async-event-streams",
+            "label": "",
+            "saveInto": [
+                "<<ww0EAwMCeVBSqKpFgFMB0n0BmlWRIH2/qXK4708X0I73bxWRRZKMgMfm0tIcOfLVUMfG9iJcPIuO\r\n6xcb7sso4f7MExKyCq9TPnb3Nqpr2oBP1TSc5Ib0ezcu6vFYbtqEVB3KRZJ7KeDju66K0B+CNiHm\r\nSMC3N//Zh3Kok1+HZdpRvUePXrxk+u/JZOTIzw==\r\n>>"
+            ],
+            "tooltip": "",
+            "href": "",
+            "#t": "DynamicLink"
+        }
+    ],
+    "triggers": [],
+    "ui": {
+        "_cId": "afe84c2d39e03f78f2af4e4e914312ce",
+        "_dirty": "false",
+        "contents": [
+            {
+                "_cId": "db514cbca1f73f04151b311efebf7e23",
+                "label": "",
+                "labelPosition": "COLLAPSED",
+                "instructions": "",
+                "value": {
+                    "_cId": "96348c57887ded0add0de47117efcf71",
+                    "values": [
+                        {
+                            "values": [
+                                {
+                                    "#v": "report",
+                                    "#t": "string"
+                                }
+                            ],
+                            "#t": "TitleText"
+                        }
+                    ],
+                    "#t": "FormattedText"
+                },
+                "valueAlignment": "",
+                "helpTooltip": "",
+                "accessibilityText": "",
+                "preventWrapping": false,
+                "tooltip": "",
+                "marginAbove": "",
+                "marginBelow": "",
+                "removeBrowserTooltip": false,
+                "#t": "RichTextDisplayField"
+            },
+            {
+                "_cId": "5bbb8c2af6ce1a399710e562286d3d1a",
+                "contents": {
+                    "_cId": "ee568e91cf756219d53191454bfaeeea",
+                    "label": "ASE",
+                    "maxSelections": -1,
+                    "saveInto": [
+                        "<<ww0EAwMCeVBSqKpFgFMB0pEBmlWRIH2/qXK4708X0I73bxWRRZKMgMfpyXH65Ord4tWVKWvTgL2e\r\n4ocMvFDniiUg9hpdyUAnCvanptD7tJaEok+4dp7mtegjl/J3F9MWTr9u7M1pfvrDGsDdDhP1e9/c\r\n8NJkIDGnWQgJFXPy5+5EZYlXCCSj7rvAbWs12hnoD9Nlye/mt4jsA5LXYrq5jNga\r\n>>"
+                    ],
+                    "buttonSize": "SMALL",
+                    "buttonStyle": "SECONDARY",
+                    "buttonColor": "",
+                    "uploadLabel": "Upload",
+                    "virusScanningText": "Scanning for viruses…",
+                    "addFileLabel": "Add file",
+                    "buttonIcon": "",
+                    "validateExtension": true,
+                    "buttonDisplay": "",
+                    "placeholder": "",
+                    "#t": "MultipleFileUploadWidget"
+                },
+                "label": "ASE",
+                "labelPosition": "ABOVE",
+                "instructions": "",
+                "instructionsPosition": "",
+                "helpTooltip": "",
+                "requiredStyle": "",
+                "skinName": "",
+                "marginBelow": "",
+                "accessibilityText": "",
+                "marginAbove": "",
+                "helpTooltipPosition": "",
+                "#t": "FieldLayout"
+            },
+            {
+                "_cId": "773c3b7103cd2b1170a31db884125a5d",
+                "contents": {
+                    "_cId": "6727f939a82122fcf913822c444b7464",
+                    "label": "ASE",
+                    "maxSelections": -1,
+                    "saveInto": [
+                        "<<ww0EAwMCeVBSqKpFgFMB0pEBmlWRIH2/qXK4708X0I73bxWRRZKMgMfpyXG95Ovd4tXSeeCe7vob\r\nwlPOdcFnkASlh8Pci6q2WoMeeRlNnmhpLN1vmqLQB6OYwjuqwUWVezSQzZVL0N4IUlAiKbiJJQhz\r\n5rOlzQQiHJKs/YFCA3AeuB+azJCQdz1qs1tMsa0oDYUS6nwyvnRvRmEjTI7QVMPy\r\n>>"
+                    ],
+                    "buttonSize": "SMALL",
+                    "buttonStyle": "SECONDARY",
+                    "buttonColor": "",
+                    "uploadLabel": "Upload",
+                    "virusScanningText": "Scanning for viruses…",
+                    "addFileLabel": "Add file",
+                    "buttonIcon": "",
+                    "validateExtension": true,
+                    "buttonDisplay": "",
+                    "placeholder": "",
+                    "#t": "MultipleFileUploadWidget"
+                },
+                "label": "ASE",
+                "labelPosition": "ABOVE",
+                "instructions": "",
+                "instructionsPosition": "",
+                "helpTooltip": "",
+                "requiredStyle": "",
+                "skinName": "",
+                "marginBelow": "",
+                "accessibilityText": "",
+                "marginAbove": "",
+                "helpTooltipPosition": "",
+                "#t": "FieldLayout"
+            }
+        ],
+        "padding": "",
+        "topLevelBackgroundColor": "",
+        "accessibilityRole": "",
+        "#t": "ContentLayout"
+    },
+    "context": {
+        "type": "stateful",
+        "value": "ww0EAwMCeVBSqKpFgFMB0rIBb2WNpo0zqN3NKrnqP6h6/epqpVM4UGLfdOUOypzHSvSA6YJU2EJn\r\nl4urlRojvdp3ZdHqzuMF7MSllGzpyNsOj7VwRpxXnIHqEN+fuW8SXm+KPW3uj705fqdqSVFfEUWu\r\nw48uyRc7S+8s2MyNlEawN0nOgaRe8JO6q184QsY/5Ywg0B+CMY0OO7ce3m4sCiNv5t3e5mGWzVVr\r\ngj2ckqNG9pKBZBmR9xmo2G1K815uhYIh\r\n",
+        "#t": "Map"
+    },
+    "uuid": "afd9e0aa-c8b9-4034-b37c-320275afbdd9",
+    "i18nInfo": {
+        "locale": "en-US",
+        "timezoneId": "GMT",
+        "calendarId": "gregorian",
+        "decimalSeparator": ".",
+        "groupingSeparator": ",",
+        "isRtl": false,
+        "isLtr": true
+    },
+    "timers": {
+        "#t": "Dictionary"
+    },
+    "formFactors": [],
+    "lastEvaluatedFormFactor": "DESKTOP",
+    "uiExpression": "",
+    "asyncEventStreams": [],
+    "validationLifeCycleId": 0,
+    "#t": "UiConfig",
+    "#s": {
+        "#v": [
+            {
+                "id": 704,
+                "uuid": "{http://www.appian.com/ae/types/2009}DynamicLink",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "DynamicLink",
+                "description": "",
+                "base": 694,
+                "foundation": 95,
+                "typeof": 704,
+                "list": 705,
+                "flags": 12,
+                "instanceProperties": [
+                    {
+                        "name": "@attributes",
+                        "value": {
+                            "#t": 710
+                        }
+                    },
+                    {
+                        "name": "label",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "value",
+                        "value": {
+                            "#t": "Variant"
+                        }
+                    },
+                    {
+                        "name": "saveInto",
+                        "value": {
+                            "#t": "Save?list"
+                        }
+                    },
+                    {
+                        "name": "actions",
+                        "value": {
+                            "#t": "Variant?list"
+                        }
+                    },
+                    {
+                        "name": "tooltip",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "href",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "icon",
+                        "value": {
+                            "#t": "RichTextFontAwesomeIcon"
+                        }
+                    },
+                    {
+                        "name": "disabled",
+                        "value": {
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "typeProperties": [
+                    {
+                        "name": "namespaces",
+                        "value": {
+                            "#v": [
+                                "http://www.appian.com/ae/types/internal",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009"
+                            ],
+                            "#t": "Text?list"
+                        }
+                    },
+                    {
+                        "name": "isNillable",
+                        "value": {
+                            "#v": [
+                                false,
+                                false,
+                                false,
+                                true,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false
+                            ],
+                            "#t": "Boolean?list"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 710,
+                "uuid": "{http://www.appian.com/ae/types/2009}",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "",
+                "description": "Attributes record for type 704 (DynamicLink)",
+                "base": 95,
+                "foundation": 95,
+                "typeof": 710,
+                "list": 711,
+                "flags": 12,
+                "instanceProperties": [
+                    {
+                        "name": "@anyAttribute",
+                        "value": {
+                            "#t": "Dictionary"
+                        }
+                    },
+                    {
+                        "name": "@nil",
+                        "value": {
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "typeProperties": [
+                    {
+                        "name": "namespaces",
+                        "value": {
+                            "#v": [
+                                "http://www.appian.com/ae/types/internal",
+                                "http://www.appian.com/ae/types/internal"
+                            ],
+                            "#t": "Text?list"
+                        }
+                    },
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 97,
+                "uuid": "{http://www.appian.com/ae/types/2009}Variant",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "Variant",
+                "description": "Any type and value.",
+                "base": 97,
+                "foundation": 97,
+                "typeof": 97,
+                "list": 197,
+                "flags": 12,
+                "instanceProperties": [
+                    {
+                        "name": "data",
+                        "value": {
+                            "#t": "Variant"
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "value": {
+                            "#t": "int"
+                        }
+                    }
+                ],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 193,
+                "uuid": "{http://www.appian.com/ae/types/2009}Save?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "Save?list",
+                "description": "List of Save",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 192,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 197,
+                "uuid": "{http://www.appian.com/ae/types/2009}Variant?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "Variant?list",
+                "description": "List of Variant",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 97,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 706,
+                "uuid": "{http://www.appian.com/ae/types/2009}RichTextFontAwesomeIcon",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "RichTextFontAwesomeIcon",
+                "description": "",
+                "base": 694,
+                "foundation": 95,
+                "typeof": 706,
+                "list": 707,
+                "flags": 12,
+                "instanceProperties": [
+                    {
+                        "name": "@attributes",
+                        "value": {
+                            "#t": 708
+                        }
+                    },
+                    {
+                        "name": "iconId",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "icon",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "size",
+                        "value": {
+                            "#t": "int"
+                        }
+                    },
+                    {
+                        "name": "color",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "flip",
+                        "value": {
+                            "#t": "boolean"
+                        }
+                    },
+                    {
+                        "name": "actions",
+                        "value": {
+                            "#t": "Variant?list"
+                        }
+                    }
+                ],
+                "typeProperties": [
+                    {
+                        "name": "namespaces",
+                        "value": {
+                            "#v": [
+                                "http://www.appian.com/ae/types/internal",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009"
+                            ],
+                            "#t": "Text?list"
+                        }
+                    },
+                    {
+                        "name": "isNillable",
+                        "value": {
+                            "#v": [
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false
+                            ],
+                            "#t": "Boolean?list"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 705,
+                "uuid": "{http://www.appian.com/ae/types/2009}DynamicLink?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "DynamicLink?list",
+                "description": "List of DynamicLink",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 704,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 694,
+                "uuid": "{http://www.appian.com/ae/types/2009}Component",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "Component",
+                "description": "",
+                "base": 95,
+                "foundation": 95,
+                "typeof": 694,
+                "list": 695,
+                "flags": 12,
+                "instanceProperties": [
+                    {
+                        "name": "@attributes",
+                        "value": {
+                            "#t": 696
+                        }
+                    }
+                ],
+                "typeProperties": [
+                    {
+                        "name": "namespaces",
+                        "value": {
+                            "#v": [
+                                "http://www.appian.com/ae/types/internal"
+                            ],
+                            "#t": "Text?list"
+                        }
+                    },
+                    {
+                        "name": "isNillable",
+                        "value": {
+                            "#v": [
+                                false
+                            ],
+                            "#t": "Boolean?list"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 94,
+                "uuid": "{http://www.appian.com/ae/types/2009}Dictionary",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "Dictionary",
+                "description": "Dictionary is mapping of keys to values.",
+                "base": 94,
+                "foundation": 94,
+                "typeof": 97,
+                "list": 194,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 711,
+                "uuid": "{http://www.appian.com/ae/types/2009}",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "",
+                "description": "List of ",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 710,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 95,
+                "uuid": "{http://www.appian.com/ae/types/2009}Record",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "Record",
+                "description": "Record is a list of named values.",
+                "base": 95,
+                "foundation": 95,
+                "typeof": 0,
+                "list": 195,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 103,
+                "uuid": "{http://www.appian.com/ae/types/2009}Text?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "Text?list",
+                "description": "List of Text String",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 3,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 192,
+                "uuid": "{http://www.appian.com/ae/types/2009}Save",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "Save",
+                "description": "A Save specifies the variables where end user values are saved. Values may be modified prior to saving by using the << operator. This applies to SAIL components.",
+                "base": 3,
+                "foundation": 3,
+                "typeof": 192,
+                "list": 193,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 708,
+                "uuid": "{http://www.appian.com/ae/types/2009}",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "",
+                "description": "Attributes record for type 706 (RichTextFontAwesomeIcon)",
+                "base": 95,
+                "foundation": 95,
+                "typeof": 708,
+                "list": 709,
+                "flags": 12,
+                "instanceProperties": [
+                    {
+                        "name": "@anyAttribute",
+                        "value": {
+                            "#t": "Dictionary"
+                        }
+                    },
+                    {
+                        "name": "@nil",
+                        "value": {
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "typeProperties": [
+                    {
+                        "name": "namespaces",
+                        "value": {
+                            "#v": [
+                                "http://www.appian.com/ae/types/internal",
+                                "http://www.appian.com/ae/types/internal"
+                            ],
+                            "#t": "Text?list"
+                        }
+                    },
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 707,
+                "uuid": "{http://www.appian.com/ae/types/2009}RichTextFontAwesomeIcon?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "RichTextFontAwesomeIcon?list",
+                "description": "List of RichTextFontAwesomeIcon",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 706,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 126,
+                "uuid": "{http://www.appian.com/ae/types/2009}Boolean?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "Boolean?list",
+                "description": "List of Boolean",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 26,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 696,
+                "uuid": "{http://www.appian.com/ae/types/2009}",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "",
+                "description": "Attributes record for type 694 (Component)",
+                "base": 95,
+                "foundation": 95,
+                "typeof": 696,
+                "list": 697,
+                "flags": 12,
+                "instanceProperties": [
+                    {
+                        "name": "@anyAttribute",
+                        "value": {
+                            "#t": "Dictionary"
+                        }
+                    },
+                    {
+                        "name": "@nil",
+                        "value": {
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "typeProperties": [
+                    {
+                        "name": "namespaces",
+                        "value": {
+                            "#v": [
+                                "http://www.appian.com/ae/types/internal",
+                                "http://www.appian.com/ae/types/internal"
+                            ],
+                            "#t": "Text?list"
+                        }
+                    },
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 695,
+                "uuid": "{http://www.appian.com/ae/types/2009}Component?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "Component?list",
+                "description": "List of Component",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 694,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 194,
+                "uuid": "{http://www.appian.com/ae/types/2009}Dictionary?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "Dictionary?list",
+                "description": "List of Dictionary",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 94,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 195,
+                "uuid": "{http://www.appian.com/ae/types/2009}Record?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "Record?list",
+                "description": "List of Record",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 95,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 101,
+                "uuid": "{http://www.appian.com/ae/types/2009}Integer?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "Integer?list",
+                "description": "List of Number (Integer)",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 1,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 709,
+                "uuid": "{http://www.appian.com/ae/types/2009}",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "",
+                "description": "List of ",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 708,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 697,
+                "uuid": "{http://www.appian.com/ae/types/2009}",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "",
+                "description": "List of ",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 696,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 3640,
+                "uuid": "{http://www.appian.com/ae/types/2009}TitleText",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "TitleText",
+                "description": "",
+                "base": 95,
+                "foundation": 95,
+                "typeof": 3640,
+                "list": 3641,
+                "flags": 12,
+                "instanceProperties": [
+                    {
+                        "name": "values",
+                        "value": {
+                            "#t": "Variant?list"
+                        }
+                    }
+                ],
+                "typeProperties": [
+                    {
+                        "name": "namespaces",
+                        "value": {
+                            "#v": [
+                                "http://www.appian.com/ae/types/2009"
+                            ],
+                            "#t": "Text?list"
+                        }
+                    },
+                    {
+                        "name": "isNillable",
+                        "value": {
+                            "#v": [
+                                false
+                            ],
+                            "#t": "Boolean?list"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 3641,
+                "uuid": "{http://www.appian.com/ae/types/2009}TitleText?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "TitleText?list",
+                "description": "List of TitleText",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 3640,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 1972,
+                "uuid": "{http://www.appian.com/ae/types/2009}FormattedText",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "FormattedText",
+                "description": "",
+                "base": 694,
+                "foundation": 95,
+                "typeof": 1972,
+                "list": 1973,
+                "flags": 12,
+                "instanceProperties": [
+                    {
+                        "name": "@attributes",
+                        "value": {
+                            "#t": 1974
+                        }
+                    },
+                    {
+                        "name": "values",
+                        "value": {
+                            "#t": "Variant?list"
+                        }
+                    },
+                    {
+                        "name": "actions",
+                        "value": {
+                            "#t": "Variant?list"
+                        }
+                    }
+                ],
+                "typeProperties": [
+                    {
+                        "name": "namespaces",
+                        "value": {
+                            "#v": [
+                                "http://www.appian.com/ae/types/internal",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009"
+                            ],
+                            "#t": "Text?list"
+                        }
+                    },
+                    {
+                        "name": "isNillable",
+                        "value": {
+                            "#v": [
+                                false,
+                                false,
+                                false
+                            ],
+                            "#t": "Boolean?list"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 1974,
+                "uuid": "{http://www.appian.com/ae/types/2009}",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "",
+                "description": "Attributes record for type 1972 (FormattedText)",
+                "base": 95,
+                "foundation": 95,
+                "typeof": 1974,
+                "list": 1975,
+                "flags": 12,
+                "instanceProperties": [
+                    {
+                        "name": "@anyAttribute",
+                        "value": {
+                            "#t": "Dictionary"
+                        }
+                    },
+                    {
+                        "name": "@nil",
+                        "value": {
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "typeProperties": [
+                    {
+                        "name": "namespaces",
+                        "value": {
+                            "#v": [
+                                "http://www.appian.com/ae/types/internal",
+                                "http://www.appian.com/ae/types/internal"
+                            ],
+                            "#t": "Text?list"
+                        }
+                    },
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 1973,
+                "uuid": "{http://www.appian.com/ae/types/2009}FormattedText?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "FormattedText?list",
+                "description": "List of FormattedText",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 1972,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 1975,
+                "uuid": "{http://www.appian.com/ae/types/2009}",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "",
+                "description": "List of ",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 1974,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 3074,
+                "uuid": "{http://www.appian.com/ae/types/2009}RichTextDisplayField",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "RichTextDisplayField",
+                "description": "",
+                "base": 694,
+                "foundation": 95,
+                "typeof": 3074,
+                "list": 3075,
+                "flags": 12,
+                "instanceProperties": [
+                    {
+                        "name": "@attributes",
+                        "value": {
+                            "#t": 3076
+                        }
+                    },
+                    {
+                        "name": "label",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "labelPosition",
+                        "value": {
+                            "#t": "LabelPosition"
+                        }
+                    },
+                    {
+                        "name": "instructions",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "value",
+                        "value": {
+                            "#t": "Variant"
+                        }
+                    },
+                    {
+                        "name": "valueAlignment",
+                        "value": {
+                            "#t": "ValueAlignment"
+                        }
+                    },
+                    {
+                        "name": "actions",
+                        "value": {
+                            "#t": "Variant?list"
+                        }
+                    },
+                    {
+                        "name": "helpTooltip",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "accessibilityText",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "preventWrapping",
+                        "value": {
+                            "#t": "boolean"
+                        }
+                    },
+                    {
+                        "name": "tooltip",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "marginAbove",
+                        "value": {
+                            "#t": "MarginBelow"
+                        }
+                    },
+                    {
+                        "name": "marginBelow",
+                        "value": {
+                            "#t": "MarginBelow"
+                        }
+                    },
+                    {
+                        "name": "numberOfLines",
+                        "value": {
+                            "#t": "int"
+                        }
+                    },
+                    {
+                        "name": "removeBrowserTooltip",
+                        "value": {
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "typeProperties": [
+                    {
+                        "name": "namespaces",
+                        "value": {
+                            "#v": [
+                                "http://www.appian.com/ae/types/internal",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009"
+                            ],
+                            "#t": "Text?list"
+                        }
+                    },
+                    {
+                        "name": "isNillable",
+                        "value": {
+                            "#v": [
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false
+                            ],
+                            "#t": "Boolean?list"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 3076,
+                "uuid": "{http://www.appian.com/ae/types/2009}",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "",
+                "description": "Attributes record for type 3074 (RichTextDisplayField)",
+                "base": 95,
+                "foundation": 95,
+                "typeof": 3076,
+                "list": 3077,
+                "flags": 12,
+                "instanceProperties": [
+                    {
+                        "name": "@anyAttribute",
+                        "value": {
+                            "#t": "Dictionary"
+                        }
+                    },
+                    {
+                        "name": "@nil",
+                        "value": {
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "typeProperties": [
+                    {
+                        "name": "namespaces",
+                        "value": {
+                            "#v": [
+                                "http://www.appian.com/ae/types/internal",
+                                "http://www.appian.com/ae/types/internal"
+                            ],
+                            "#t": "Text?list"
+                        }
+                    },
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 748,
+                "uuid": "{http://www.appian.com/ae/types/2009}LabelPosition",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "LabelPosition",
+                "description": "",
+                "base": 3,
+                "foundation": 3,
+                "typeof": 3,
+                "list": 749,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 1108,
+                "uuid": "{http://www.appian.com/ae/types/2009}ValueAlignment",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "ValueAlignment",
+                "description": "",
+                "base": 3,
+                "foundation": 3,
+                "typeof": 3,
+                "list": 1109,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 916,
+                "uuid": "{http://www.appian.com/ae/types/2009}MarginBelow",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "MarginBelow",
+                "description": "",
+                "base": 3,
+                "foundation": 3,
+                "typeof": 3,
+                "list": 917,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 3075,
+                "uuid": "{http://www.appian.com/ae/types/2009}RichTextDisplayField?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "RichTextDisplayField?list",
+                "description": "List of RichTextDisplayField",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 3074,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 3077,
+                "uuid": "{http://www.appian.com/ae/types/2009}",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "",
+                "description": "List of ",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 3076,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 749,
+                "uuid": "{http://www.appian.com/ae/types/2009}LabelPosition?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "LabelPosition?list",
+                "description": "List of LabelPosition",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 748,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 1109,
+                "uuid": "{http://www.appian.com/ae/types/2009}ValueAlignment?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "ValueAlignment?list",
+                "description": "List of ValueAlignment",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 1108,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 917,
+                "uuid": "{http://www.appian.com/ae/types/2009}MarginBelow?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "MarginBelow?list",
+                "description": "List of MarginBelow",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 916,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 2482,
+                "uuid": "{http://www.appian.com/ae/types/2009}MultipleFileUploadWidget",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "MultipleFileUploadWidget",
+                "description": "",
+                "base": 694,
+                "foundation": 95,
+                "typeof": 2482,
+                "list": 2483,
+                "flags": 12,
+                "instanceProperties": [
+                    {
+                        "name": "@attributes",
+                        "value": {
+                            "#t": 2484
+                        }
+                    },
+                    {
+                        "name": "actions",
+                        "value": {
+                            "#t": "Variant?list"
+                        }
+                    },
+                    {
+                        "name": "disabled",
+                        "value": {
+                            "#t": "boolean"
+                        }
+                    },
+                    {
+                        "name": "value",
+                        "value": {
+                            "#t": "FileMetadata?list"
+                        }
+                    },
+                    {
+                        "name": "maxSelections",
+                        "value": {
+                            "#t": "int"
+                        }
+                    },
+                    {
+                        "name": "required",
+                        "value": {
+                            "#t": "boolean"
+                        }
+                    },
+                    {
+                        "name": "saveInto",
+                        "value": {
+                            "#t": "Save?list"
+                        }
+                    },
+                    {
+                        "name": "buttonSize",
+                        "value": {
+                            "#t": "MultipleFileUploadButtonSize"
+                        }
+                    },
+                    {
+                        "name": "buttonStyle",
+                        "value": {
+                            "#t": "MultipleFileUploadButtonStyle"
+                        }
+                    },
+                    {
+                        "name": "buttonColor",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "target",
+                        "value": {
+                            "#t": "CollaborationDocumentOrFolder"
+                        }
+                    },
+                    {
+                        "name": "uploadLabel",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "validations",
+                        "value": {
+                            "#t": "ValidationMessage?list"
+                        }
+                    },
+                    {
+                        "name": "virusScanningText",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "addFileLabel",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "buttonIcon",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "validateExtension",
+                        "value": {
+                            "#t": "boolean"
+                        }
+                    },
+                    {
+                        "name": "uploadMethods",
+                        "value": {
+                            "#t": "MultipleFileUploadMethod?list"
+                        }
+                    },
+                    {
+                        "name": "clientErrors",
+                        "value": {
+                            "#t": "ValidationMessage?list"
+                        }
+                    },
+                    {
+                        "name": "buttonDisplay",
+                        "value": {
+                            "#t": "MultipleFileUploadButtonDisplay"
+                        }
+                    },
+                    {
+                        "name": "placeholder",
+                        "value": {
+                            "#t": "string"
+                        }
+                    }
+                ],
+                "typeProperties": [
+                    {
+                        "name": "namespaces",
+                        "value": {
+                            "#v": [
+                                "http://www.appian.com/ae/types/internal",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009"
+                            ],
+                            "#t": "Text?list"
+                        }
+                    },
+                    {
+                        "name": "isNillable",
+                        "value": {
+                            "#v": [
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                true,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false
+                            ],
+                            "#t": "Boolean?list"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 2484,
+                "uuid": "{http://www.appian.com/ae/types/2009}",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "",
+                "description": "Attributes record for type 2482 (MultipleFileUploadWidget)",
+                "base": 95,
+                "foundation": 95,
+                "typeof": 2484,
+                "list": 2485,
+                "flags": 12,
+                "instanceProperties": [
+                    {
+                        "name": "@anyAttribute",
+                        "value": {
+                            "#t": "Dictionary"
+                        }
+                    },
+                    {
+                        "name": "@nil",
+                        "value": {
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "typeProperties": [
+                    {
+                        "name": "namespaces",
+                        "value": {
+                            "#v": [
+                                "http://www.appian.com/ae/types/internal",
+                                "http://www.appian.com/ae/types/internal"
+                            ],
+                            "#t": "Text?list"
+                        }
+                    },
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 1919,
+                "uuid": "{http://www.appian.com/ae/types/2009}FileMetadata?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "FileMetadata?list",
+                "description": "List of FileMetadata",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 1918,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 2470,
+                "uuid": "{http://www.appian.com/ae/types/2009}MultipleFileUploadButtonSize",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "MultipleFileUploadButtonSize",
+                "description": "",
+                "base": 3,
+                "foundation": 3,
+                "typeof": 3,
+                "list": 2471,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 2472,
+                "uuid": "{http://www.appian.com/ae/types/2009}MultipleFileUploadButtonStyle",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "MultipleFileUploadButtonStyle",
+                "description": "",
+                "base": 3,
+                "foundation": 3,
+                "typeof": 3,
+                "list": 2473,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 28,
+                "uuid": "{http://www.appian.com/ae/types/2009}CollaborationDocumentOrFolder",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "CollaborationDocumentOrFolder",
+                "description": "Document or Folder.",
+                "base": 96,
+                "foundation": 96,
+                "typeof": 97,
+                "list": 128,
+                "flags": 8,
+                "instanceProperties": [
+                    {
+                        "name": "data",
+                        "value": {
+                            "#t": "Variant"
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "value": {
+                            "#t": "int"
+                        }
+                    }
+                ],
+                "typeProperties": [
+                    {
+                        "name": "types",
+                        "value": {
+                            "#v": [
+                                13,
+                                12
+                            ],
+                            "#t": "Integer?list"
+                        }
+                    },
+                    {
+                        "name": "keys",
+                        "value": {
+                            "#v": [
+                                "document",
+                                "folder"
+                            ],
+                            "#t": "Text?list"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 879,
+                "uuid": "{http://www.appian.com/ae/types/2009}ValidationMessage?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "ValidationMessage?list",
+                "description": "List of ValidationMessage",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 878,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 2481,
+                "uuid": "{http://www.appian.com/ae/types/2009}MultipleFileUploadMethod?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "MultipleFileUploadMethod?list",
+                "description": "List of MultipleFileUploadMethod",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 2480,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 2468,
+                "uuid": "{http://www.appian.com/ae/types/2009}MultipleFileUploadButtonDisplay",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "MultipleFileUploadButtonDisplay",
+                "description": "",
+                "base": 3,
+                "foundation": 3,
+                "typeof": 3,
+                "list": 2469,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 2483,
+                "uuid": "{http://www.appian.com/ae/types/2009}MultipleFileUploadWidget?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "MultipleFileUploadWidget?list",
+                "description": "List of MultipleFileUploadWidget",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 2482,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 2485,
+                "uuid": "{http://www.appian.com/ae/types/2009}",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "",
+                "description": "List of ",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 2484,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 1918,
+                "uuid": "{http://www.appian.com/ae/types/2009}FileMetadata",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "FileMetadata",
+                "description": "",
+                "base": 95,
+                "foundation": 95,
+                "typeof": 1918,
+                "list": 1919,
+                "flags": 12,
+                "instanceProperties": [
+                    {
+                        "name": "fileName",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "fileDescription",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "extension",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "loadedBytes",
+                        "value": {
+                            "#t": "int"
+                        }
+                    },
+                    {
+                        "name": "name",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "fileSizeDisplay",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "fileSizeBytes",
+                        "value": {
+                            "#t": "int"
+                        }
+                    },
+                    {
+                        "name": "clearFileLabel",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "documentId",
+                        "value": {
+                            "#t": "CollaborationDocument"
+                        }
+                    },
+                    {
+                        "name": "clientUuid",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "uri",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "signature",
+                        "value": {
+                            "#t": "string"
+                        }
+                    }
+                ],
+                "typeProperties": [
+                    {
+                        "name": "namespaces",
+                        "value": {
+                            "#v": [
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009"
+                            ],
+                            "#t": "Text?list"
+                        }
+                    },
+                    {
+                        "name": "isNillable",
+                        "value": {
+                            "#v": [
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false
+                            ],
+                            "#t": "Boolean?list"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 2471,
+                "uuid": "{http://www.appian.com/ae/types/2009}MultipleFileUploadButtonSize?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "MultipleFileUploadButtonSize?list",
+                "description": "List of MultipleFileUploadButtonSize",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 2470,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 2473,
+                "uuid": "{http://www.appian.com/ae/types/2009}MultipleFileUploadButtonStyle?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "MultipleFileUploadButtonStyle?list",
+                "description": "List of MultipleFileUploadButtonStyle",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 2472,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 13,
+                "uuid": "{http://www.appian.com/ae/types/2009}CollaborationDocument",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "CollaborationDocument",
+                "description": "A document is any file that a user has stored on the system.  Typically this value will be provided from a Process Variable.",
+                "base": 52,
+                "foundation": 52,
+                "typeof": 52,
+                "list": 113,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 12,
+                "uuid": "{http://www.appian.com/ae/types/2009}CollaborationFolder",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "CollaborationFolder",
+                "description": "A folder is an object used to store documents that are on the system.  Typically this value will be provided from a Process Variable.",
+                "base": 52,
+                "foundation": 52,
+                "typeof": 52,
+                "list": 112,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 128,
+                "uuid": "{http://www.appian.com/ae/types/2009}CollaborationDocumentOrFolder?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "CollaborationDocumentOrFolder?list",
+                "description": "List of Document or Folder",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 28,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 96,
+                "uuid": "{http://www.appian.com/ae/types/2009}Union",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "Union",
+                "description": "Union is a particular value from a list of valid types.",
+                "base": 96,
+                "foundation": 96,
+                "typeof": 0,
+                "list": 196,
+                "flags": 12,
+                "instanceProperties": [
+                    {
+                        "name": "data",
+                        "value": {
+                            "#t": "Variant"
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "value": {
+                            "#t": "int"
+                        }
+                    }
+                ],
+                "typeProperties": [
+                    {
+                        "name": "types",
+                        "value": {
+                            "#t": "int"
+                        }
+                    },
+                    {
+                        "name": "keys",
+                        "value": {
+                            "#t": "string"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 878,
+                "uuid": "{http://www.appian.com/ae/types/2009}ValidationMessage",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "ValidationMessage",
+                "description": "",
+                "base": 95,
+                "foundation": 95,
+                "typeof": 878,
+                "list": 879,
+                "flags": 12,
+                "instanceProperties": [
+                    {
+                        "name": "@attributes",
+                        "value": {
+                            "#t": 880
+                        }
+                    },
+                    {
+                        "name": "message",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "actions",
+                        "value": {
+                            "#t": "Variant?list"
+                        }
+                    }
+                ],
+                "typeProperties": [
+                    {
+                        "name": "namespaces",
+                        "value": {
+                            "#v": [
+                                "http://www.appian.com/ae/types/internal",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009"
+                            ],
+                            "#t": "Text?list"
+                        }
+                    },
+                    {
+                        "name": "isNillable",
+                        "value": {
+                            "#v": [
+                                false,
+                                false,
+                                false
+                            ],
+                            "#t": "Boolean?list"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 2480,
+                "uuid": "{http://www.appian.com/ae/types/2009}MultipleFileUploadMethod",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "MultipleFileUploadMethod",
+                "description": "",
+                "base": 3,
+                "foundation": 3,
+                "typeof": 3,
+                "list": 2481,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 2469,
+                "uuid": "{http://www.appian.com/ae/types/2009}MultipleFileUploadButtonDisplay?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "MultipleFileUploadButtonDisplay?list",
+                "description": "List of MultipleFileUploadButtonDisplay",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 2468,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 113,
+                "uuid": "{http://www.appian.com/ae/types/2009}CollaborationDocument?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "CollaborationDocument?list",
+                "description": "List of Document",
+                "base": 152,
+                "foundation": 93,
+                "typeof": 13,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 52,
+                "uuid": "{http://www.appian.com/ae/types/2009}IntegerKey",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "IntegerKey",
+                "description": "Key (Integer)",
+                "base": 52,
+                "foundation": 52,
+                "typeof": 52,
+                "list": 152,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 112,
+                "uuid": "{http://www.appian.com/ae/types/2009}CollaborationFolder?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "CollaborationFolder?list",
+                "description": "List of Folder",
+                "base": 152,
+                "foundation": 93,
+                "typeof": 12,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 196,
+                "uuid": "{http://www.appian.com/ae/types/2009}Union?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "Union?list",
+                "description": "###TYPE_LIST_OF_UNION_DSCR",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 96,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 880,
+                "uuid": "{http://www.appian.com/ae/types/2009}",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "",
+                "description": "Attributes record for type 878 (ValidationMessage)",
+                "base": 95,
+                "foundation": 95,
+                "typeof": 880,
+                "list": 881,
+                "flags": 12,
+                "instanceProperties": [
+                    {
+                        "name": "@anyAttribute",
+                        "value": {
+                            "#t": "Dictionary"
+                        }
+                    },
+                    {
+                        "name": "@nil",
+                        "value": {
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "typeProperties": [
+                    {
+                        "name": "namespaces",
+                        "value": {
+                            "#v": [
+                                "http://www.appian.com/ae/types/internal",
+                                "http://www.appian.com/ae/types/internal"
+                            ],
+                            "#t": "Text?list"
+                        }
+                    },
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 152,
+                "uuid": "{http://www.appian.com/ae/types/2009}IntegerKey?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "IntegerKey?list",
+                "description": "List of Key (Integer)",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 52,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 881,
+                "uuid": "{http://www.appian.com/ae/types/2009}",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "",
+                "description": "List of ",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 880,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 1908,
+                "uuid": "{http://www.appian.com/ae/types/2009}FieldLayout",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "FieldLayout",
+                "description": "",
+                "base": 694,
+                "foundation": 95,
+                "typeof": 1908,
+                "list": 1909,
+                "flags": 12,
+                "instanceProperties": [
+                    {
+                        "name": "@attributes",
+                        "value": {
+                            "#t": 1916
+                        }
+                    },
+                    {
+                        "name": "contents",
+                        "value": {
+                            "#t": "Variant"
+                        }
+                    },
+                    {
+                        "name": "label",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "labelPosition",
+                        "value": {
+                            "#t": "FieldLayoutLabelPosition"
+                        }
+                    },
+                    {
+                        "name": "instructions",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "instructionsPosition",
+                        "value": {
+                            "#t": "FieldLayoutInstructionsPosition"
+                        }
+                    },
+                    {
+                        "name": "helpTooltip",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "requiredStyle",
+                        "value": {
+                            "#t": "FieldLayoutRequiredStyle"
+                        }
+                    },
+                    {
+                        "name": "skinName",
+                        "value": {
+                            "#t": "FieldLayoutSkin"
+                        }
+                    },
+                    {
+                        "name": "actions",
+                        "value": {
+                            "#t": "Variant?list"
+                        }
+                    },
+                    {
+                        "name": "marginBelow",
+                        "value": {
+                            "#t": "MarginBelow"
+                        }
+                    },
+                    {
+                        "name": "accessibilityText",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "marginAbove",
+                        "value": {
+                            "#t": "MarginBelow"
+                        }
+                    },
+                    {
+                        "name": "helpTooltipPosition",
+                        "value": {
+                            "#t": "string"
+                        }
+                    }
+                ],
+                "typeProperties": [
+                    {
+                        "name": "namespaces",
+                        "value": {
+                            "#v": [
+                                "http://www.appian.com/ae/types/internal",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009"
+                            ],
+                            "#t": "Text?list"
+                        }
+                    },
+                    {
+                        "name": "isNillable",
+                        "value": {
+                            "#v": [
+                                false,
+                                true,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false
+                            ],
+                            "#t": "Boolean?list"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 1916,
+                "uuid": "{http://www.appian.com/ae/types/2009}",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "",
+                "description": "Attributes record for type 1908 (FieldLayout)",
+                "base": 95,
+                "foundation": 95,
+                "typeof": 1916,
+                "list": 1917,
+                "flags": 12,
+                "instanceProperties": [
+                    {
+                        "name": "@anyAttribute",
+                        "value": {
+                            "#t": "Dictionary"
+                        }
+                    },
+                    {
+                        "name": "@nil",
+                        "value": {
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "typeProperties": [
+                    {
+                        "name": "namespaces",
+                        "value": {
+                            "#v": [
+                                "http://www.appian.com/ae/types/internal",
+                                "http://www.appian.com/ae/types/internal"
+                            ],
+                            "#t": "Text?list"
+                        }
+                    },
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 1910,
+                "uuid": "{http://www.appian.com/ae/types/2009}FieldLayoutLabelPosition",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "FieldLayoutLabelPosition",
+                "description": "",
+                "base": 3,
+                "foundation": 3,
+                "typeof": 3,
+                "list": 1911,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 862,
+                "uuid": "{http://www.appian.com/ae/types/2009}FieldLayoutInstructionsPosition",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "FieldLayoutInstructionsPosition",
+                "description": "",
+                "base": 3,
+                "foundation": 3,
+                "typeof": 3,
+                "list": 863,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 1912,
+                "uuid": "{http://www.appian.com/ae/types/2009}FieldLayoutRequiredStyle",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "FieldLayoutRequiredStyle",
+                "description": "",
+                "base": 3,
+                "foundation": 3,
+                "typeof": 3,
+                "list": 1913,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 1914,
+                "uuid": "{http://www.appian.com/ae/types/2009}FieldLayoutSkin",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "FieldLayoutSkin",
+                "description": "",
+                "base": 3,
+                "foundation": 3,
+                "typeof": 3,
+                "list": 1915,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 1909,
+                "uuid": "{http://www.appian.com/ae/types/2009}FieldLayout?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "FieldLayout?list",
+                "description": "List of FieldLayout",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 1908,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 1917,
+                "uuid": "{http://www.appian.com/ae/types/2009}",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "",
+                "description": "List of ",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 1916,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 1911,
+                "uuid": "{http://www.appian.com/ae/types/2009}FieldLayoutLabelPosition?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "FieldLayoutLabelPosition?list",
+                "description": "List of FieldLayoutLabelPosition",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 1910,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 863,
+                "uuid": "{http://www.appian.com/ae/types/2009}FieldLayoutInstructionsPosition?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "FieldLayoutInstructionsPosition?list",
+                "description": "List of FieldLayoutInstructionsPosition",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 862,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 1913,
+                "uuid": "{http://www.appian.com/ae/types/2009}FieldLayoutRequiredStyle?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "FieldLayoutRequiredStyle?list",
+                "description": "List of FieldLayoutRequiredStyle",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 1912,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 1915,
+                "uuid": "{http://www.appian.com/ae/types/2009}FieldLayoutSkin?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "FieldLayoutSkin?list",
+                "description": "List of FieldLayoutSkin",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 1914,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 1256,
+                "uuid": "{http://www.appian.com/ae/types/2009}ContentLayout",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "ContentLayout",
+                "description": "",
+                "base": 694,
+                "foundation": 95,
+                "typeof": 1256,
+                "list": 1257,
+                "flags": 12,
+                "instanceProperties": [
+                    {
+                        "name": "@attributes",
+                        "value": {
+                            "#t": 1258
+                        }
+                    },
+                    {
+                        "name": "contents",
+                        "value": {
+                            "#t": "Variant?list"
+                        }
+                    },
+                    {
+                        "name": "padding",
+                        "value": {
+                            "#t": "ContentLayoutPadding"
+                        }
+                    },
+                    {
+                        "name": "actions",
+                        "value": {
+                            "#t": "Variant?list"
+                        }
+                    },
+                    {
+                        "name": "isTopLevelComponent",
+                        "value": {
+                            "#t": "boolean"
+                        }
+                    },
+                    {
+                        "name": "topLevelBackgroundColor",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "accessibilityRole",
+                        "value": {
+                            "#t": "AccessibilityRole"
+                        }
+                    }
+                ],
+                "typeProperties": [
+                    {
+                        "name": "namespaces",
+                        "value": {
+                            "#v": [
+                                "http://www.appian.com/ae/types/internal",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009"
+                            ],
+                            "#t": "Text?list"
+                        }
+                    },
+                    {
+                        "name": "isNillable",
+                        "value": {
+                            "#v": [
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false
+                            ],
+                            "#t": "Boolean?list"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 1258,
+                "uuid": "{http://www.appian.com/ae/types/2009}",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "",
+                "description": "Attributes record for type 1256 (ContentLayout)",
+                "base": 95,
+                "foundation": 95,
+                "typeof": 1258,
+                "list": 1259,
+                "flags": 12,
+                "instanceProperties": [
+                    {
+                        "name": "@anyAttribute",
+                        "value": {
+                            "#t": "Dictionary"
+                        }
+                    },
+                    {
+                        "name": "@nil",
+                        "value": {
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "typeProperties": [
+                    {
+                        "name": "namespaces",
+                        "value": {
+                            "#v": [
+                                "http://www.appian.com/ae/types/internal",
+                                "http://www.appian.com/ae/types/internal"
+                            ],
+                            "#t": "Text?list"
+                        }
+                    },
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 900,
+                "uuid": "{http://www.appian.com/ae/types/2009}ContentLayoutPadding",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "ContentLayoutPadding",
+                "description": "",
+                "base": 3,
+                "foundation": 3,
+                "typeof": 3,
+                "list": 901,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 700,
+                "uuid": "{http://www.appian.com/ae/types/2009}AccessibilityRole",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "AccessibilityRole",
+                "description": "",
+                "base": 3,
+                "foundation": 3,
+                "typeof": 3,
+                "list": 701,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 1257,
+                "uuid": "{http://www.appian.com/ae/types/2009}ContentLayout?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "ContentLayout?list",
+                "description": "List of ContentLayout",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 1256,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 1259,
+                "uuid": "{http://www.appian.com/ae/types/2009}",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "",
+                "description": "List of ",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 1258,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 901,
+                "uuid": "{http://www.appian.com/ae/types/2009}ContentLayoutPadding?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "ContentLayoutPadding?list",
+                "description": "List of ContentLayoutPadding",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 900,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 701,
+                "uuid": "{http://www.appian.com/ae/types/2009}AccessibilityRole?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "AccessibilityRole?list",
+                "description": "List of AccessibilityRole",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 700,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 252,
+                "uuid": "{http://www.appian.com/ae/types/2009}Map",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "Map",
+                "description": "Map",
+                "base": 252,
+                "foundation": 252,
+                "typeof": 252,
+                "list": 253,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 253,
+                "uuid": "{http://www.appian.com/ae/types/2009}Map?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "Map?list",
+                "description": "List of Map",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 252,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 1990,
+                "uuid": "{http://www.appian.com/ae/types/2009}UiConfig",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "UiConfig",
+                "description": "",
+                "base": 694,
+                "foundation": 95,
+                "typeof": 1990,
+                "list": 1991,
+                "flags": 12,
+                "instanceProperties": [
+                    {
+                        "name": "@attributes",
+                        "value": {
+                            "#t": 1998
+                        }
+                    },
+                    {
+                        "name": "links",
+                        "value": {
+                            "#t": "Link?list"
+                        }
+                    },
+                    {
+                        "name": "actions",
+                        "value": {
+                            "#t": "Variant?list"
+                        }
+                    },
+                    {
+                        "name": "triggers",
+                        "value": {
+                            "#t": "Variant?list"
+                        }
+                    },
+                    {
+                        "name": "redirect",
+                        "value": {
+                            "#t": "Variant"
+                        }
+                    },
+                    {
+                        "name": "ui",
+                        "value": {
+                            "#t": "Variant"
+                        }
+                    },
+                    {
+                        "name": "context",
+                        "value": {
+                            "#t": "Variant"
+                        }
+                    },
+                    {
+                        "name": "updates",
+                        "value": {
+                            "#t": "Variant"
+                        }
+                    },
+                    {
+                        "name": "identifier",
+                        "value": {
+                            "#t": "Variant"
+                        }
+                    },
+                    {
+                        "name": "uuid",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "i18nInfo",
+                        "value": {
+                            "#t": "I18NInfo"
+                        }
+                    },
+                    {
+                        "name": "uriInfo",
+                        "value": {
+                            "#t": "Variant"
+                        }
+                    },
+                    {
+                        "name": "shortcuts",
+                        "value": {
+                            "#t": "Variant?list"
+                        }
+                    },
+                    {
+                        "name": "timers",
+                        "value": {
+                            "#t": "Variant"
+                        }
+                    },
+                    {
+                        "name": "formFactors",
+                        "value": {
+                            "#t": "Text?list"
+                        }
+                    },
+                    {
+                        "name": "lastEvaluatedFormFactor",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "uiExpression",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "worldState",
+                        "value": {
+                            "#t": "WorldState"
+                        }
+                    },
+                    {
+                        "name": "asyncEventStreams",
+                        "value": {
+                            "#t": "Text?list"
+                        }
+                    },
+                    {
+                        "name": "validationLifeCycleId",
+                        "value": {
+                            "#t": "int"
+                        }
+                    }
+                ],
+                "typeProperties": [
+                    {
+                        "name": "namespaces",
+                        "value": {
+                            "#v": [
+                                "http://www.appian.com/ae/types/internal",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009"
+                            ],
+                            "#t": "Text?list"
+                        }
+                    },
+                    {
+                        "name": "isNillable",
+                        "value": {
+                            "#v": [
+                                false,
+                                true,
+                                true,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                true,
+                                false,
+                                false
+                            ],
+                            "#t": "Boolean?list"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 1998,
+                "uuid": "{http://www.appian.com/ae/types/2009}",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "",
+                "description": "Attributes record for type 1990 (UiConfig)",
+                "base": 95,
+                "foundation": 95,
+                "typeof": 1998,
+                "list": 1999,
+                "flags": 12,
+                "instanceProperties": [
+                    {
+                        "name": "@anyAttribute",
+                        "value": {
+                            "#t": "Dictionary"
+                        }
+                    },
+                    {
+                        "name": "@nil",
+                        "value": {
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "typeProperties": [
+                    {
+                        "name": "namespaces",
+                        "value": {
+                            "#v": [
+                                "http://www.appian.com/ae/types/internal",
+                                "http://www.appian.com/ae/types/internal"
+                            ],
+                            "#t": "Text?list"
+                        }
+                    },
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 957,
+                "uuid": "{http://www.appian.com/ae/types/2009}Link?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "Link?list",
+                "description": "List of Link",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 956,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 1992,
+                "uuid": "{http://www.appian.com/ae/types/2009}I18NInfo",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "I18NInfo",
+                "description": "",
+                "base": 694,
+                "foundation": 95,
+                "typeof": 1992,
+                "list": 1993,
+                "flags": 12,
+                "instanceProperties": [
+                    {
+                        "name": "@attributes",
+                        "value": {
+                            "#t": 1994
+                        }
+                    },
+                    {
+                        "name": "locale",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "timezoneId",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "calendarId",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "actions",
+                        "value": {
+                            "#t": "Variant?list"
+                        }
+                    },
+                    {
+                        "name": "decimalSeparator",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "groupingSeparator",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "isRtl",
+                        "value": {
+                            "#t": "boolean"
+                        }
+                    },
+                    {
+                        "name": "isLtr",
+                        "value": {
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "typeProperties": [
+                    {
+                        "name": "namespaces",
+                        "value": {
+                            "#v": [
+                                "http://www.appian.com/ae/types/internal",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009",
+                                "http://www.appian.com/ae/types/2009"
+                            ],
+                            "#t": "Text?list"
+                        }
+                    },
+                    {
+                        "name": "isNillable",
+                        "value": {
+                            "#v": [
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false
+                            ],
+                            "#t": "Boolean?list"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 1996,
+                "uuid": "{http://www.appian.com/ae/types/2009}WorldState",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "WorldState",
+                "description": "",
+                "base": 95,
+                "foundation": 95,
+                "typeof": 1996,
+                "list": 1997,
+                "flags": 12,
+                "instanceProperties": [
+                    {
+                        "name": "clock",
+                        "value": {
+                            "#t": "dateTime"
+                        }
+                    }
+                ],
+                "typeProperties": [
+                    {
+                        "name": "namespaces",
+                        "value": {
+                            "#v": [
+                                "http://www.appian.com/ae/types/2009"
+                            ],
+                            "#t": "Text?list"
+                        }
+                    },
+                    {
+                        "name": "isNillable",
+                        "value": {
+                            "#v": [
+                                false
+                            ],
+                            "#t": "Boolean?list"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 1991,
+                "uuid": "{http://www.appian.com/ae/types/2009}UiConfig?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "UiConfig?list",
+                "description": "List of UiConfig",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 1990,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 1999,
+                "uuid": "{http://www.appian.com/ae/types/2009}",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "",
+                "description": "List of ",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 1998,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 956,
+                "uuid": "{http://www.appian.com/ae/types/2009}Link",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "Link",
+                "description": "",
+                "base": 95,
+                "foundation": 95,
+                "typeof": 956,
+                "list": 957,
+                "flags": 12,
+                "instanceProperties": [
+                    {
+                        "name": "@attributes",
+                        "value": {
+                            "#t": 958
+                        }
+                    }
+                ],
+                "typeProperties": [
+                    {
+                        "name": "namespaces",
+                        "value": {
+                            "#v": [
+                                "http://www.appian.com/ae/types/internal"
+                            ],
+                            "#t": "Text?list"
+                        }
+                    },
+                    {
+                        "name": "isNillable",
+                        "value": {
+                            "#v": [
+                                false
+                            ],
+                            "#t": "Boolean?list"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 1994,
+                "uuid": "{http://www.appian.com/ae/types/2009}",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "",
+                "description": "Attributes record for type 1992 (I18NInfo)",
+                "base": 95,
+                "foundation": 95,
+                "typeof": 1994,
+                "list": 1995,
+                "flags": 12,
+                "instanceProperties": [
+                    {
+                        "name": "@anyAttribute",
+                        "value": {
+                            "#t": "Dictionary"
+                        }
+                    },
+                    {
+                        "name": "@nil",
+                        "value": {
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "typeProperties": [
+                    {
+                        "name": "namespaces",
+                        "value": {
+                            "#v": [
+                                "http://www.appian.com/ae/types/internal",
+                                "http://www.appian.com/ae/types/internal"
+                            ],
+                            "#t": "Text?list"
+                        }
+                    },
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 1993,
+                "uuid": "{http://www.appian.com/ae/types/2009}I18NInfo?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "I18NInfo?list",
+                "description": "List of I18NInfo",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 1992,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 1997,
+                "uuid": "{http://www.appian.com/ae/types/2009}WorldState?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "WorldState?list",
+                "description": "List of WorldState",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 1996,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 958,
+                "uuid": "{http://www.appian.com/ae/types/2009}",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "",
+                "description": "Attributes record for type 956 (Link)",
+                "base": 95,
+                "foundation": 95,
+                "typeof": 958,
+                "list": 959,
+                "flags": 12,
+                "instanceProperties": [
+                    {
+                        "name": "href",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "rel",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "title",
+                        "value": {
+                            "#t": "string"
+                        }
+                    },
+                    {
+                        "name": "@anyAttribute",
+                        "value": {
+                            "#t": "Dictionary"
+                        }
+                    },
+                    {
+                        "name": "@nil",
+                        "value": {
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "typeProperties": [
+                    {
+                        "name": "namespaces",
+                        "value": {
+                            "#v": [
+                                "",
+                                "",
+                                "",
+                                "http://www.appian.com/ae/types/internal",
+                                "http://www.appian.com/ae/types/internal"
+                            ],
+                            "#t": "Text?list"
+                        }
+                    },
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 1995,
+                "uuid": "{http://www.appian.com/ae/types/2009}",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "",
+                "description": "List of ",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 1994,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            },
+            {
+                "id": 109,
+                "uuid": "{http://www.appian.com/ae/types/2009}Datetime?list",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "Datetime?list",
+                "description": "List of Timestamp",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 9,
+                "flags": 8,
+                "instanceProperties": [],
+                "typeProperties": [],
+                "listViewMapping": ""
+            },
+            {
+                "id": 959,
+                "uuid": "{http://www.appian.com/ae/types/2009}",
+                "namespace": "http://www.appian.com/ae/types/2009",
+                "localPart": "",
+                "description": "List of ",
+                "base": 93,
+                "foundation": 93,
+                "typeof": 958,
+                "flags": 12,
+                "instanceProperties": [],
+                "typeProperties": [
+                    {
+                        "name": "autoGenerated",
+                        "value": {
+                            "#v": true,
+                            "#t": "boolean"
+                        }
+                    }
+                ],
+                "listViewMapping": ""
+            }
+        ],
+        "#t": "DataType?list"
+    },
+    "shortcuts": [],
+    "#u": "<https://site.net/suite/rest/a/applications/latest/legacy/>; rel=\"x-sasa-app\"; dt=\"UiConfig\",<https://site.net/suite/components/ping.do>; rel=\"x-resume-session\"; dt=\"UiConfig\",<https://site.net/suite/rest/a/applications/latest/app{/appName}{/path*}{?params*}>; rel=\"x-sail-application\"; dt=\"UiConfig\",<https://site.net/suite/applications/img/{image}>; rel=\"x-web-design-app-object-img\"; dt=\"UiConfig\",<https://site.net/suite/rest/a/sites/latest/all>; rel=\"x-sites-all\"; dt=\"UiConfig\",<https://site.net/suite/sites{/urlStub}/tasks/task/{id}>; rel=\"x-site-task\"; dt=\"UiConfig\",<https://site.net/suite/rest/a/interfacedesigner/latest/evaluateComponentTemplateAndPreview{/templateId}>; rel=\"x-ifcdesigner-evaluatecomponenttemplateandpreview\"; dt=\"UiConfig\",<https://site.net/suite/sites{/urlStub}/page/{pageUrlStub}/task/{id}>; rel=\"x-site-task-page\"; dt=\"UiConfig\",<https://site.net/suite/rest/a/rpacomponent/latest/editor>; rel=\"x-rpa-expression-editor\"; dt=\"UiConfig\",<https://site.net/suite/rest/a/appiannavigator/latest/navigator>; rel=\"x-appian-navigator\"; dt=\"UiConfig\",<https://site.net/suite/rest/a/applications/latest/legacy/sites{/urlStub}/page{/pageUrlStub}/nav>; rel=\"x-site-page-navattributes\"; dt=\"UiConfig\",<https://site.net/suite/cors>; rel=\"x-cors\"; dt=\"UiConfig\",<https://site.net/suite/rest/a/applications/latest/evalWithContext/processModelSail/{viewName}>; rel=\"x-modeler-view\"; dt=\"UiConfig\",<https://site.net/suite/rest/a/content/latest/{opaqueContentId}/o>; rel=\"x-attachment-temp\"; type=\"application/vnd.appian.tv+json\"; dt=\"CollaborationDocument\",<https://site.net/suite/rest/a/sites/latest/{siteUrlStub}/pages/{pageUrlStub}/report>; rel=\"x-sites-report\"; dt=\"UiConfig\",<https://site.net/suite/rest/a/applications/latest/legacy/sites{/urlStub}/nav>; rel=\"x-site-navattributes\"; dt=\"UiConfig\",<https://site.net/suite/sites>; rel=\"x-site-main\"; dt=\"UiConfig\",<https://site.net/suite/rest/a/task/latest/{taskId}/attributes>; rel=\"x-task-attributes\"; dt=\"UiConfig\",<https://site.net/suite/internal/webapi/releaselockbyuisource/{uiSourceUuid}>; rel=\"x-data-release-object-lock-uisource\"; dt=\"UiConfig\",<https://site.net/suite/internal/webapi/releaselock/{objectUuid}/{uiSourceUuid}>; rel=\"x-data-release-object-lock\"; dt=\"UiConfig\""
+}

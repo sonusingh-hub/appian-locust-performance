@@ -75,8 +75,7 @@ class TestHelper(unittest.TestCase):
                                 "xmlns": ""
                             },
                             "children": ['{ "name":"Sam"}']
-                        }
-                    ]
+                    }]
                 }]
             }}
         obj = _records_helper.get_record_header_response(form_dict)
@@ -113,8 +112,7 @@ class TestHelper(unittest.TestCase):
                                 "xmlns": ""
                             },
                             "children": ['{ "name":"Sam"}']
-                        }
-                    ]
+                    }]
                 }]
             }}
         exception_msg = ("Parser was not able to find embedded SAIL code within JSON response for the requested Record "
@@ -154,8 +152,7 @@ class TestHelper(unittest.TestCase):
                                 "xmlns": ""
                             },
                             "children": ['{ "name":"Sam"}']
-                        }
-                    ]
+                    }]
                 }]
             }
         }
@@ -193,8 +190,7 @@ class TestHelper(unittest.TestCase):
                                 "xmlns": ""
                             },
                             "children": []
-                        }
-                    ]
+                    }]
                 }]
             }
         }

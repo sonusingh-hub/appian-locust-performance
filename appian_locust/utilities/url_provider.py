@@ -40,6 +40,7 @@ URL_PATTERN_V1 = {
     "x-data-request-site-nav": "https://pattern.net/suite/rest/a/sites/latest/{siteUrlStub}/nav"
 }
 
+
 class UrlProvider:
 
     def __init__(self, url_info: Dict[str, str]) -> None:
@@ -54,7 +55,6 @@ class UrlProvider:
             if query:
                 url += f"?{query}"
             self.url_info[key] = url
-
 
     def get_page_nav_path(self, page: Page) -> str:
         site_nav_key = "x-data-request-site-nav-nested-page" if page.group_name else "x-data-request-site-nav-top-level-page"

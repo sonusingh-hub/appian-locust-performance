@@ -22,7 +22,6 @@
      DS_DEFAULT_ANALYZERS: "gemnasium-python"
    allow_failure: true
    artifacts:
-     public: false
      when: on_failure
      paths:
        - gl-dependency-scanning-report.json
