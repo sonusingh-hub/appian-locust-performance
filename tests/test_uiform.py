@@ -57,6 +57,7 @@ class TestSailUiForm(unittest.TestCase):
     actions_interface = read_mock_file("actions_interface.json")
     actions_nav = read_mock_file("actions_nav.json")
     actions_feed = read_mock_file("actions_feed.json")
+    duplicate_date_field = read_mock_file("duplicate_date_field.json")
 
     def setUp(self) -> None:
         self.custom_locust = CustomLocust(User(ENV))
@@ -708,6 +709,16 @@ class TestSailUiForm(unittest.TestCase):
         self.assertEqual(self.date_task_uri, last_request['path'])
         self.assertEqual('1990-01-05Z', self._unwrap_value(last_request['data']))
 
+    @patch("appian_locust._interactor._Interactor.update_date_field")
+    def test_fill_datefield_duplicate(self, mock_update_datefield: MagicMock) -> None:
+        test_form = SailUiForm(self.task_set.appian._interactor, json.loads(self.duplicate_date_field))
+
+        test_form.fill_date_field('ASE', datetime.date(1990, 1, 5), 2)
+
+        args, _ = mock_update_datefield.call_args_list[0]
+
+        self.assertEqual(args[1]["_cId"], "f007b725f8b0903f70179b3307fa0b96")
+
     def test_get_dropdown_choices_multiple(self) -> None:
         resp_json = read_mock_file(file_name='dropdown_test_ui.json')
         ui_form = SailUiForm(self.task_set.appian._interactor, json.loads(resp_json))
@@ -754,6 +765,16 @@ class TestSailUiForm(unittest.TestCase):
         self.assertEqual('post', last_request['method'])
         self.assertEqual(self.date_task_uri, last_request['path'])
         self.assertEqual('1990-01-02T01:30:00Z', self._unwrap_value(last_request['data']))
+
+    @patch("appian_locust._interactor._Interactor.update_datetime_field")
+    def test_fill_datetimefield_duplicate(self, mock_update_datetimefield: MagicMock) -> None:
+        test_form = SailUiForm(self.task_set.appian._interactor, json.loads(self.duplicate_date_field))
+
+        test_form.fill_datetime_field('ASE', datetime.datetime(1990, 1, 2, 1, 30, 50), 2)
+
+        args, _ = mock_update_datetimefield.call_args_list[0]
+
+        self.assertEqual(args[1]["_cId"], "edd49aa24df6d7888f8cd02a818fcc0e")
 
     def _setup_grid_form(self) -> SailUiForm:
         uri = self.sites_task_uri
