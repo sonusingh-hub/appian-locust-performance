@@ -1229,7 +1229,7 @@ class SailUiForm:
                 f"No response returned when trying to upload file(s) to field '{label}'")
         return self._reconcile_state(new_state)
 
-    def fill_date_field(self, label: str, date_input: datetime.date, locust_request_label: str = "") -> 'SailUiForm':
+    def fill_date_field(self, label: str, date_input: datetime.date, index: int = 1, locust_request_label: str = "") -> 'SailUiForm':
         """
         Fills a date field with the specified date
 
@@ -1238,6 +1238,7 @@ class SailUiForm:
             date_input(date): Date used to fill the field
 
         Keyword Args:
+            index(int): Index of the field to fill if more than one match the attribute and attribute_value criteria (default: 1)
             locust_request_label(str): Label used to identify the request for locust statistics
 
         Returns (SailUiForm): The latest state of the UiForm
@@ -1249,7 +1250,7 @@ class SailUiForm:
 
         """
         field_type = 'DatePickerField'
-        date_field = find_component_by_label_and_type_dict('label', label, field_type, self._state)
+        date_field = find_component_by_type_and_attribute_and_index_in_dict(self._state, field_type, 'label', label, index)
 
         locust_label = locust_request_label or f'{self.breadcrumb}.FillDateField'
         reeval_url = self._get_update_url_for_reeval(self._state)
@@ -1263,7 +1264,7 @@ class SailUiForm:
 
         return self._reconcile_state(new_state)
 
-    def fill_datetime_field(self, label: str, datetime_input: datetime.datetime, locust_request_label: str = "") -> 'SailUiForm':
+    def fill_datetime_field(self, label: str, datetime_input: datetime.datetime, index: int = 1, locust_request_label: str = "") -> 'SailUiForm':
         """
         Fills a datetime field with the specified datetime
 
@@ -1276,6 +1277,7 @@ class SailUiForm:
             datetime_input(date): Date time used to fill the field
 
         Keyword Args:
+            index(int): Index of the field to fill if more than one match the attribute and attribute_value criteria (default: 1)
             locust_request_label(str): Label used to identify the request for locust statistics
 
         Returns (SailUiForm): The latest state of the UiForm
@@ -1287,7 +1289,7 @@ class SailUiForm:
 
         """
         field_type = 'DateTimePickerField'
-        datetime_field = find_component_by_label_and_type_dict('label', label, field_type, self._state)
+        datetime_field = find_component_by_type_and_attribute_and_index_in_dict(self._state, field_type, 'label', label, index)
 
         locust_label = locust_request_label or f'{self.breadcrumb}.FillDateTimeField'
         reeval_url = self._get_update_url_for_reeval(self._state)
