@@ -28,7 +28,6 @@ KEY_UUID = "uuid"
 KEY_CONTEXT = "context"
 START_PROCESS_LINK_TYPE = 'StartProcessLink'
 PROCESS_TASK_LINK_TYPE = 'ProcessTaskLink'
-COMPONENTS_THAT_CAN_BE_FILLED = ["ParagraphField", "TextField", "SearchBoxWidget"]
 
 log = logger.getLogger(__name__)
 
@@ -103,9 +102,6 @@ class SailUiForm:
 
         """
         component = find_component_by_attribute_and_index_in_dict(attribute, attribute_value, index, self._state)
-
-        if component.get("#t", "") not in COMPONENTS_THAT_CAN_BE_FILLED:
-            raise Exception(f"The Component with '{attribute}' = '{attribute_value}' is not a component that can be filled")
 
         reeval_url = self._get_update_url_for_reeval(self._state)
         locust_label = locust_request_label or f"{self.breadcrumb}.FillTextFieldByAttribute.{attribute}"
