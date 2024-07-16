@@ -11,8 +11,3 @@ Currently *unsupported* Appian Interactions
 
 * Multiple links with the same name on the same page, use labels to differentiate
 * Legacy forms
-
-Limitations when running Locust
-**********************************
-
-* On Windows, running locust in distributed mode is not supported
