@@ -880,22 +880,28 @@ class _Interactor:
         return response["#v"]
 
     def initialize_cascading_pickerfield_request(self, pickerfield_component: Dict[str, Any]) -> List:
+        nestedChoicesPayload = pickerfield_component["nestedChoicesEndpointPayload"]
+        # NestedChoiceMenu.jsx
         request_payload = [
             "RECORD_TYPE_UUID_PLACEHOLDER",
             "RELATIONSHIP_PATH_PLACEHOLDER",
             "SELECTION_LABEL_PLACEHOLDER",
-            None,
-            pickerfield_component["nestedChoicesEndpointPayload"]["relationshipTypes"],
-            pickerfield_component["nestedChoicesEndpointPayload"]["allowedTypes"],
-            None,
-            pickerfield_component["nestedChoicesEndpointPayload"]["omitQueryTimeCustomFields"],
-            [],
-            pickerfield_component["nestedChoicesEndpointPayload"]["requiredRelationshipType"],
-            pickerfield_component["nestedChoicesEndpointPayload"]["topRecordType"],
+            nestedChoicesPayload.get("maxRelationshipDepth"),
+            nestedChoicesPayload.get("relationshipTypes"),
+            nestedChoicesPayload.get("allowedTypes"),
+            nestedChoicesPayload.get("excludeTypeInfo"),
+            nestedChoicesPayload.get("omitQueryTimeCustomFields"),
+            nestedChoicesPayload.get("selectedLabels"),
+            nestedChoicesPayload.get("requiredRelationshipType"),
+            nestedChoicesPayload.get("topRecordType"),
             "BASE_RECORD_TYPE_UUID_PLACEHOLDER",
-            pickerfield_component["nestedChoicesEndpointPayload"]["shouldUseFriendlyName"],
-            None,
-            pickerfield_component["nestedChoicesEndpointPayload"]["checkAccess"]
+            nestedChoicesPayload.get("shouldUseFriendlyName"),
+            nestedChoicesPayload.get("filterRecordTypesNotVisibleInDataFabric"),
+            nestedChoicesPayload.get("checkAccess"),
+            nestedChoicesPayload.get("omitAllCustomFields"),
+            nestedChoicesPayload.get("excludedRelationshipUuids"),
+            nestedChoicesPayload.get("includeTransformationRecordTypes"),
+            nestedChoicesPayload.get("requireDataStewardAccess")
         ]
         return request_payload
 
