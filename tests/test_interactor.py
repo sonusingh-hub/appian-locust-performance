@@ -639,7 +639,11 @@ class TestInteractor(unittest.TestCase):
             "BASE_RECORD_TYPE_UUID_PLACEHOLDER",
             picker["nestedChoicesEndpointPayload"]["shouldUseFriendlyName"],
             None,
-            picker["nestedChoicesEndpointPayload"]["checkAccess"]
+            picker["nestedChoicesEndpointPayload"]["checkAccess"],
+            None,
+            None,
+            None,
+            None
         ]
 
         self.assertEqual(payload, correct_picker)
