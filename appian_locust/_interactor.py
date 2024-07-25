@@ -599,6 +599,36 @@ class _Interactor:
     click_button = click_component
     click_link = click_component
 
+    def send_expression_editor_update(self, post_url: str, value: str, editor: Dict[str, Any], context: Dict[str, Any],
+                                      uuid: str, label: Optional[str] = None) -> Dict[str, Any]:
+        new_value = {
+          "#t": "Dictionary",
+          "#v": {
+            "value": {
+              "#t": "Text",
+              "#v": value
+            },
+            "usageMetricsKeys": {
+              "#t": "Text?list",
+              "#v": []
+            }
+          }
+        }
+
+        payload = (save_builder()
+                   .component(editor)
+                   .context(context)
+                   .uuid(uuid)
+                   .value(new_value)
+                   .build())
+
+        locust_label = label or f'Select \'{editor["label"]}\' Dropdown'
+
+        resp = self.post_page(
+            self.get_interaction_host() + post_url, payload=payload, label=locust_label
+        )
+        return resp.json()
+
     def send_dropdown_update(self, post_url: str, dropdown: Dict[str, Any], context: Dict[str, Any],
                              uuid: str, index: int, identifier: Optional[Dict[str, Any]] = None, label: Optional[str] = None) -> Dict[str, Any]:
         '''
