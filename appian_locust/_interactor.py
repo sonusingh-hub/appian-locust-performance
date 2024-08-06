@@ -212,7 +212,7 @@ class _Interactor:
                 self.write_response_to_lib_folder(label, resp)
             return resp
 
-    def login(self, auth: Optional[list] = None, retry: bool = True, check_login: bool = True) -> Tuple[HttpSession, Response]:
+    def login(self, auth: Optional[list] = None, retry: bool = True, raise_error: bool = True) -> Tuple[HttpSession, Response]:
         if auth is not None:
             self.auth = auth
         """
@@ -259,7 +259,8 @@ class _Interactor:
             payload=urllib.parse.urlencode(payload),
             headers=headers,
             label="Login.SubmitAuth",
-            raise_error=check_login)
+            raise_error=raise_error,
+            check_login=False)
         if not resp or not resp.ok:
             raise BadCredentialsException()
         elif "__appianMultipartCsrfToken" not in self.client.cookies:

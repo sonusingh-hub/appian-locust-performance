@@ -132,7 +132,7 @@ class AppianClient:
         return self._system_operator
 
     def login(self, auth: Optional[list] = None, check_login: bool = True) -> Tuple[HttpSession, Response]:
-        return self._interactor.login(auth, check_login=check_login)
+        return self._interactor.login(auth, raise_error=check_login)
 
     def logout(self) -> None:
         """
