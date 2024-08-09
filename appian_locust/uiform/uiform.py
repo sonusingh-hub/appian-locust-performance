@@ -15,7 +15,7 @@ from .._grid_interactor import GridInteractor
 from .._interactor import _Interactor, TEMPO_SITE_STUB
 from .._task_opener import _TaskOpener
 from .._ui_reconciler import UiReconciler
-from ..exceptions import InvalidComponentException, InvalidDateRangeException, ChoiceNotFoundException
+from ..exceptions import InvalidComponentException, InvalidDateRangeException, ChoiceNotFoundException, DisabledComponentException
 from ..utilities.helper import (extract_all_by_label, find_component_by_attribute_and_index_in_dict,
                                 find_component_by_attribute_in_dict, find_component_by_index_in_dict,
                                 find_component_by_label_and_type_dict, find_component_by_type_and_attribute_and_index_in_dict)
@@ -419,6 +419,10 @@ class SailUiForm:
         attribute_to_find = 'testLabel' if is_test_label else 'label'
 
         component = find_component_by_attribute_and_index_in_dict(attribute_to_find, label, index, self._state)
+
+        disabled = component.get("disabled", False)
+        if (disabled == True):
+            raise DisabledComponentException(label=label)
 
         locust_label = locust_request_label or f"{self.breadcrumb}.Click.{label}"
         new_state = self._dispatch_click(component=component, locust_label=locust_label)
@@ -1865,6 +1869,24 @@ class SailUiForm:
             raise Exception(f"No response returned when trying to click record search button at index '{index}'")
 
         return self._reconcile_state(new_state)
+    
+    def check_if_component_disabled(self, label: str, is_test_label: bool = False) -> bool:
+        """
+        Checks if a component is disabled
+
+        Args:
+            label(str): Label of the component
+            is_test_label(bool): If you are referencing a component via a test label instead of a label, set this boolean to true
+            
+        Returns (bool): True or False reflecting if disabled
+
+        Examples:
+
+            >>> form.check_if_component_disabled('myLabel')
+        """
+        attribute_to_find = 'testLabel' if is_test_label else 'label'
+        component = find_component_by_attribute_in_dict(attribute=attribute_to_find, value=label, component_tree=self._state)
+        return component.get("disabled", False)
 
     def _reconcile_state(self, new_state: dict) -> 'SailUiForm':
         self._interactor.datatype_cache.cache(new_state)

@@ -13,7 +13,8 @@ from appian_locust.utilities.url_provider import URL_PROVIDER_V1, URL_PROVIDER_V
 from appian_locust.uiform import PROCESS_TASK_LINK_TYPE
 from appian_locust.exceptions import (InvalidComponentException,
                                       ChoiceNotFoundException,
-                                      InvalidDateRangeException)
+                                      InvalidDateRangeException,
+                                      DisabledComponentException)
 from locust import TaskSet, User
 from requests.exceptions import HTTPError
 
@@ -1448,6 +1449,12 @@ class TestSailUiForm(unittest.TestCase):
             # this index is in bounds IFF menu dividers are counted, so we want to ensure it still fails
             sail_form.click_menu_item_by_choice_index(label="menuWithDividers", choice_index=4, is_test_label=True,
                                                       locust_request_label="testLabel with index valid find")
+
+    def test_disabled_component_click(self) -> None:
+        report_body = read_mock_file_as_dict("disabled_button.json")
+        sail_form = SailUiForm(interactor=self.task_set.appian._interactor, state=report_body)
+        with self.assertRaises(DisabledComponentException):
+            sail_form.click("test")
 
 
 if __name__ == '__main__':

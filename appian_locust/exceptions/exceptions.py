@@ -25,7 +25,7 @@ class IncorrectDesignAccessException(Exception):
 
 
 class MissingUrlProviderException(Exception):
-    def __int__(self) -> None:
+    def __init__(self) -> None:
         super().__init__("Url Provider not initialized in Interactor")
 
 
@@ -33,7 +33,10 @@ class InvalidDateRangeException(Exception):
     def __init__(self, start_date: date, end_date: date) -> None:
         super().__init__(
             f"Start Date of {start_date.isoformat()} occurs after End Date of {end_date.isoformat()}")
-
+        
+class DisabledComponentException(Exception):
+    def __init__(self, label: str) -> None:
+        super().__init__(f"Cannot interact with disabled component with label '{label}'")
 
 class ComponentNotFoundException(Exception):
     pass
