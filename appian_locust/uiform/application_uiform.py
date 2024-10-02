@@ -111,7 +111,7 @@ class ApplicationUiForm(SailUiForm):
             search_str, self._get_update_url_for_reeval(self._state), self._state, self.context, self.uuid,
             locust_label if locust_label else f"{self.breadcrumb}.ObjectSearch"
         )
-        self._reconcile_state(new_state)
+        self._reconcile_state(new_state, skipValidations=True)
         return self
 
     def filter_design_objects(self, design_object_types: list[DesignObjectType]) -> 'ApplicationUiForm':

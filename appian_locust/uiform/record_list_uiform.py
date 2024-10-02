@@ -91,7 +91,7 @@ class RecordListUiForm(SailUiForm):
         locust_request_label = locust_request_label or f"RecordListUiform.ClickAction.{label}"
         new_state = self._interactor.click_record_list_action(component_label=label, process_model_uuid=process_model_uuid,
                                                               cache_key=cache_key, locust_request_label=locust_request_label)
-        self._reconcile_state(new_state)
+        self._reconcile_state(new_state, skipValidations=True)
         return self
 
     def _get_record_list_identifier(self) -> Optional[Dict[str, Any]]:

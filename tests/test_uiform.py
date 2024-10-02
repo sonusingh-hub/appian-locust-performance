@@ -14,7 +14,8 @@ from appian_locust.uiform import PROCESS_TASK_LINK_TYPE
 from appian_locust.exceptions import (InvalidComponentException,
                                       ChoiceNotFoundException,
                                       InvalidDateRangeException,
-                                      DisabledComponentException)
+                                      DisabledComponentException,
+                                      IgnoredValidationException)
 from locust import TaskSet, User
 from requests.exceptions import HTTPError
 
@@ -38,6 +39,8 @@ class TestSailUiForm(unittest.TestCase):
     file_upload_initial = read_mock_file("multiple_file_upload_widget.json")
     radio_button_initial = read_mock_file("radio_button_selector.json")
     card_choice_initial = read_mock_file("cardchoice_layout_interface.json")
+    validations_not_present = read_mock_file("validations_not_present.json")
+    validations_present = read_mock_file("validations_present.json")
     record_action_launch_form_before_refresh = read_mock_file("record_action_launch_form_before_refresh.json")
     record_action_refresh_response = read_mock_file("record_action_refresh_response.json")
     site_with_record_search_button = read_mock_file("site_with_record_search_button.json")
@@ -46,6 +49,7 @@ class TestSailUiForm(unittest.TestCase):
     report_link_uri = "/suite/rest/a/sites/latest/D6JMim/pages/p.reports/report/nXLBqg/reportlink"
     date_task_uri = '/suite/rest/a/task/latest/EMlJYSQyFKe2tvm5/form'
     sites_task_uri = '/suite/rest/a/sites/latest/tst-site/pages/action/action'
+    validations_uri = '/suite/rest/a/model/latest/232/form'
     multi_dropdown_uri = "/suite/rest/a/sites/latest/io/page/onboarding-requests/action/34"
     report_name = "Batch Query Report"
     picker_label = '1. Select a Customer'
@@ -1328,7 +1332,8 @@ class TestSailUiForm(unittest.TestCase):
         self.custom_locust.set_response("/suite/rest/a/sites/latest/process-hq/pages/home/interface", 200, good_response)
         sail_form.click_grid_rich_text_link(grid_label="Processes", row_index=0, column_name="Name")
 
-    def test_click_grid_plaintext_link(self) -> None:
+    @patch('appian_locust.uiform.SailUiForm.assert_no_validations_present')
+    def test_click_grid_plaintext_link(self, validations_generic_mock: MagicMock) -> None:
         report_body = read_mock_file("plaintext_grid_field.json")
         self.custom_locust.set_response(path=self.report_link_uri, status_code=200, body=report_body)
         sail_form = self.task_set.appian.visitor.visit_report(self.report_name, exact_match=False)
@@ -1337,6 +1342,7 @@ class TestSailUiForm(unittest.TestCase):
             "/suite/rest/a/sites/latest/D6JMim/page/reports/record/lIBHer_bdD8Emw8hLLETeiApBrxq-qoA49oyo6ZbfRANWNchnXIC8_QQLHMvQo3q8_3W_uY-NIUjTsvBQt9hzZiRJbsXbp75nXNb4s_IQMGZzxV/view/summary",
             200, read_mock_file("record_summary_view_response.json"))
         sail_form.click_grid_plaintext_record_link(grid_index=0, row_index=0, column_name="Customer")
+        validations_generic_mock.assert_not_called()
 
     @patch('appian_locust._interactor._Interactor.click_generic_element')
     def test_select_date_range_user_filter(self, click_generic_mock: MagicMock) -> None:
@@ -1455,6 +1461,20 @@ class TestSailUiForm(unittest.TestCase):
         sail_form = SailUiForm(interactor=self.task_set.appian._interactor, state=report_body)
         with self.assertRaises(DisabledComponentException):
             sail_form.click("test")
+
+    def test_validation_button_click_exception(self) -> None:
+        sail_form = SailUiForm(interactor=self.task_set.appian._interactor, state=json.loads(self.validations_not_present))
+        self.custom_locust.set_response(path=self.validations_uri, status_code=200, body=self.validations_present)
+        with self.assertRaises(IgnoredValidationException):
+            sail_form.click("Create")
+
+    def test_validation_text_field_exception(self) -> None:
+        sail_form = SailUiForm(interactor=self.task_set.appian._interactor, state=json.loads(self.validations_not_present))
+        self.custom_locust.set_response(path=self.validations_uri, status_code=200, body=self.validations_present)
+        with self.assertRaises(IgnoredValidationException):
+            label = 'Phone Num'
+            value = '12345678910'
+            sail_form.fill_text_field(label, value)
 
 
 if __name__ == '__main__':

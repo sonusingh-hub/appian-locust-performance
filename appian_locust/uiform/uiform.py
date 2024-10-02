@@ -15,7 +15,7 @@ from .._grid_interactor import GridInteractor
 from .._interactor import _Interactor, TEMPO_SITE_STUB
 from .._task_opener import _TaskOpener
 from .._ui_reconciler import UiReconciler
-from ..exceptions import InvalidComponentException, InvalidDateRangeException, ChoiceNotFoundException, DisabledComponentException
+from ..exceptions import InvalidComponentException, InvalidDateRangeException, ChoiceNotFoundException, DisabledComponentException, IgnoredValidationException
 from ..utilities.helper import (extract_all_by_label, find_component_by_attribute_and_index_in_dict,
                                 find_component_by_attribute_in_dict, find_component_by_index_in_dict,
                                 find_component_by_label_and_type_dict, find_component_by_type_and_attribute_and_index_in_dict)
@@ -475,7 +475,7 @@ class SailUiForm:
             raise Exception(f"No response returned when trying to click card layout at index '{index}'")
 
         reeval_url = self._get_update_url_for_reeval(new_state)
-        return self._reconcile_state(new_state)
+        return self._reconcile_state(new_state, skipValidations=True)
 
     def click_record_link_by_attribute_and_index(self, attribute: str = "", attribute_value: str = "", index: int = 1, locust_request_label: str = "") -> 'RecordInstanceUiForm':
         """
@@ -599,7 +599,7 @@ class SailUiForm:
         locust_label = locust_request_label or f"{self.breadcrumb}.ClickStartProcessLink.{label}"
         new_state = self._click_start_process_link(site_name, page_name, group_name, is_mobile, component, locust_request_label=locust_label)
 
-        return self._reconcile_state(new_state)
+        return self._reconcile_state(new_state, skipValidations=True)
 
     def click_start_process_link_on_mobile(self, label: str, site_name: str, page_name: str, locust_request_label: str = "") -> 'SailUiForm':
         """
@@ -666,7 +666,7 @@ class SailUiForm:
             label=locust_request_label
         )
 
-        return self._reconcile_state(new_state)
+        return self._reconcile_state(new_state, skipValidations=True)
 
     def _click_start_process_link(self, site_name: str, page_name: str, group_name: Optional[str], is_mobile: bool,
                                   component: Dict[str, Any], locust_request_label: str) -> Dict[str, Any]:
@@ -781,7 +781,7 @@ class SailUiForm:
         new_state = self._interactor.click_related_action(component, record_type_stub=record_type_stub, opaque_record_id=opaque_record_id,
                                                           opaque_related_action_id=opaque_related_action_id,
                                                           locust_request_label=locust_label, open_in_a_dialog=open_action_in_a_dialog)
-        return self._reconcile_state(new_state)
+        return self._reconcile_state(new_state, skipValidations=True)
 
     def click_menu_item_by_name(self, label: str, choice_name: str, is_test_label: bool = False,
                                 locust_request_label: str = "") -> 'SailUiForm':
@@ -1102,7 +1102,7 @@ class SailUiForm:
                 inside the TabButtonGroup component with testLabel: '{tab_group_test_label}'''
             )
 
-        return self._reconcile_state(new_state)
+        return self._reconcile_state(new_state, skipValidations=True)
 
     def upload_document_to_upload_field(self, label: str, file_path: str, index: int = 1, locust_request_label: str = "") -> 'SailUiForm':
         """
@@ -1332,7 +1332,7 @@ class SailUiForm:
         reeval_url = self._get_update_url_for_reeval(self._state)
         new_state = self._interactor.update_grid_from_sail_form(reeval_url, grid, new_grid_save,
                                                                 self.context, self.uuid, context_label=context_label)
-        return self._reconcile_state(new_state)
+        return self._reconcile_state(new_state, skipValidations=True)
 
     def move_to_end_of_paging_grid(self, label: Optional[str] = None, index: Optional[int] = None, locust_request_label: str = "") -> 'SailUiForm':
         """
@@ -1361,7 +1361,7 @@ class SailUiForm:
         reeval_url = self._get_update_url_for_reeval(self._state)
         new_state = self._interactor.update_grid_from_sail_form(reeval_url, grid, new_grid_save,
                                                                 self.context, self.uuid, context_label=context_label)
-        return self._reconcile_state(new_state)
+        return self._reconcile_state(new_state, skipValidations=True)
 
     def move_to_beginning_of_paging_grid(self, label: Optional[str] = None, index: Optional[int] = None, locust_request_label: str = "") -> 'SailUiForm':
         """
@@ -1387,7 +1387,7 @@ class SailUiForm:
         reeval_url = self._get_update_url_for_reeval(self._state)
         new_state = self._interactor.update_grid_from_sail_form(reeval_url, grid, new_grid_save,
                                                                 self.context, self.uuid, context_label=context_label)
-        return self._reconcile_state(new_state)
+        return self._reconcile_state(new_state, skipValidations=True)
 
     def move_to_left_in_paging_grid(self, label: Optional[str] = None, index: Optional[int] = None, locust_request_label: str = "") -> 'SailUiForm':
         """
@@ -1417,7 +1417,7 @@ class SailUiForm:
         reeval_url = self._get_update_url_for_reeval(self._state)
         new_state = self._interactor.update_grid_from_sail_form(reeval_url, grid, new_grid_save,
                                                                 self.context, self.uuid, context_label=context_label)
-        return self._reconcile_state(new_state)
+        return self._reconcile_state(new_state, skipValidations=True)
 
     def move_to_right_in_paging_grid(self, label: Optional[str] = None, index: Optional[int] = None, locust_request_label: str = "") -> 'SailUiForm':
         """
@@ -1447,7 +1447,7 @@ class SailUiForm:
         reeval_url = self._get_update_url_for_reeval(self._state)
         new_state = self._interactor.update_grid_from_sail_form(reeval_url, grid, new_grid_save,
                                                                 self.context, self.uuid, context_label=context_label)
-        return self._reconcile_state(new_state)
+        return self._reconcile_state(new_state, skipValidations=True)
 
     def sort_paging_grid(self, label: Optional[str] = None, index: Optional[int] = None, field_name: str = "", ascending: bool = False, locust_request_label: str = "") -> 'SailUiForm':
         """
@@ -1484,7 +1484,7 @@ class SailUiForm:
         reeval_url = self._get_update_url_for_reeval(self._state)
         new_state = self._interactor.update_grid_from_sail_form(reeval_url, grid, new_grid_save,
                                                                 self.context, self.uuid, context_label=context_label)
-        return self._reconcile_state(new_state)
+        return self._reconcile_state(new_state, skipValidations=True)
 
     def click_grid_rich_text_link(self, column_name: str, row_index: int, grid_label: Optional[str] = None, grid_index: Optional[int] = None, locust_request_label: str = "") -> 'SailUiForm':
         """
@@ -1513,7 +1513,7 @@ class SailUiForm:
             raise Exception(f"Column with name {column_name} not found in grid with identifier {grid_label or grid_index}")
 
         new_state = self._dispatch_click(component=link_component, locust_label=locust_request_label)
-        return self._reconcile_state(new_state)
+        return self._reconcile_state(new_state, skipValidations=True)
 
     def click_grid_rich_text_record_link(self, column_name: str, row_index: int, grid_label: Optional[str] = None,
                                          grid_index: Optional[int] = None, locust_request_label: str = "") -> 'RecordInstanceUiForm':
@@ -1581,7 +1581,7 @@ class SailUiForm:
             raise Exception(f"Column with name {column_name} not found in grid with identifier {grid_label or grid_index}")
 
         new_state = self._dispatch_click(component=link_component, locust_label=locust_request_label)
-        return self._reconcile_state(new_state)
+        return self._reconcile_state(new_state, skipValidations=True)
 
     def click_grid_plaintext_record_link(self, column_name: str, row_index: int, grid_label: Optional[str] = None,
                                          grid_index: Optional[int] = None, locust_request_label: str = "") -> 'RecordInstanceUiForm':
@@ -1779,7 +1779,7 @@ class SailUiForm:
         if not new_state:
             raise Exception(
                 f"No response returned when navigating to next page on record list '{reeval_url}'")
-        return self._reconcile_state(new_state)
+        return self._reconcile_state(new_state, skipValidations=True)
 
     def assert_no_validations_present(self) -> 'SailUiForm':
         """
@@ -1794,7 +1794,7 @@ class SailUiForm:
                 log.error(f'Validations were found in the form {self.breadcrumb}, validation: {validation}')
                 validation_present = True
         if validation_present:
-            raise Exception(f"At least one validation was found in the form {self.breadcrumb}")
+            raise IgnoredValidationException(self.breadcrumb)
         return self
 
     def refresh_after_record_action(self, label: str, is_test_label: bool = False, locust_request_label: str = "") -> 'SailUiForm':
@@ -1839,7 +1839,7 @@ class SailUiForm:
         if not new_state:
             raise Exception(f"No response returned when trying to refresh after record action '{label}'")
 
-        return self._reconcile_state(new_state)
+        return self._reconcile_state(new_state, skipValidations=True)
 
     def click_record_search_button_by_index(self, index: int = 1, locust_request_label: str = "") -> 'SailUiForm':
         """
@@ -1868,7 +1868,7 @@ class SailUiForm:
         if not new_state:
             raise Exception(f"No response returned when trying to click record search button at index '{index}'")
 
-        return self._reconcile_state(new_state)
+        return self._reconcile_state(new_state, skipValidations=True)
     
     def check_if_component_disabled(self, label: str, is_test_label: bool = False) -> bool:
         """
@@ -1888,12 +1888,14 @@ class SailUiForm:
         component = find_component_by_attribute_in_dict(attribute=attribute_to_find, value=label, component_tree=self._state)
         return component.get("disabled", False)
 
-    def _reconcile_state(self, new_state: dict) -> 'SailUiForm':
+    def _reconcile_state(self, new_state: dict, skipValidations: bool = False) -> 'SailUiForm':
         self._interactor.datatype_cache.cache(new_state)
         self._state = self.reconciler.reconcile_ui(self._state, new_state)
         self.form_url = self._get_update_url_for_reeval(self._state)
         self.uuid = self._state.get(KEY_UUID) or self.uuid
         self.context = self._state.get(KEY_CONTEXT) or self.context
+        if not skipValidations:
+            self.assert_no_validations_present()
         return self
 
     def _get_update_url_for_reeval(self, state: Dict[str, Any]) -> str:

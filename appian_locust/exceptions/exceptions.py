@@ -38,6 +38,10 @@ class DisabledComponentException(Exception):
     def __init__(self, label: str) -> None:
         super().__init__(f"Cannot interact with disabled component with label '{label}'")
 
+class IgnoredValidationException(Exception):
+    def __init__(self, breadcrumb: str) -> None:
+        super().__init__(f"At least one validation was found in the form {breadcrumb}")
+
 class ComponentNotFoundException(Exception):
     pass
 
