@@ -21,7 +21,7 @@ class RecordInstanceUiForm(SailUiForm):
         Returns (RecordInstanceUiForm): UiForm updated to summary view
 
         """
-        self._reconcile_state(get_record_summary_view_response(self.__feed_state))
+        self._reconcile_state(get_record_summary_view_response(self.__feed_state), skipValidations=True)
         return self
 
     def get_header_view(self) -> 'RecordInstanceUiForm':
@@ -30,5 +30,5 @@ class RecordInstanceUiForm(SailUiForm):
         Returns (RecordInstanceUiForm): UiForm updated to header view
 
         """
-        self._reconcile_state(get_record_header_response(self.__feed_state))
+        self._reconcile_state(get_record_header_response(self.__feed_state), skipValidations=True)
         return self

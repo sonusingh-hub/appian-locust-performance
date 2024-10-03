@@ -177,7 +177,6 @@ class _Design:
         return ui_form.click(link_name)\
             .fill_text_field('Name', object_name)\
             .click('Create')\
-            .assert_no_validations_present()\
             .click('Save')
 
     def create_ai_skill_object(self, ui_form: SailUiForm, ai_skill_name: str, ai_skill_type: AISkillObjectType) -> SailUiForm:
@@ -195,10 +194,9 @@ class _Design:
                                          ai_skill_id=ai_skill_temp_id)
         ai_skill_ui_form.click_card_layout_by_index(index=ai_skill_type.value)
         ai_skill_ui_form.fill_text_field(label="Name", value=ai_skill_name)
-        ai_skill_ui_form.assert_no_validations_present()\
-            .click_button(label="Create")
+        ai_skill_ui_form.click_button(label="Create")
         creation_save_dialog_ui_form = SailUiForm(interactor=self.interactor,
                                                   state=rdo_interactor.fetch_ai_skill_creation_save_dialog_json(state=ui_form.get_latest_state(), rdo_state=ai_skill_ui_form.get_latest_state()))
-        creation_save_dialog_ui_form.assert_no_validations_present().click("Save", locust_request_label="AiSkill.Save")
-        ui_form._reconcile_state(creation_save_dialog_ui_form.get_latest_state())
+        creation_save_dialog_ui_form.click("Save", locust_request_label="AiSkill.Save")
+        ui_form._reconcile_state(creation_save_dialog_ui_form.get_latest_state(), skipValidations=True)
         return ui_form

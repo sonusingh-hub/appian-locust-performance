@@ -1,0 +1,390 @@
+{
+    "_cId": "d89a8cb43ef3c87096d1c399769acf07",
+    "focusFieldId": "4799a014cea1dca48c79dcaf8b581fb5",
+    "mobileEnabled": "true",
+    "empty": "false",
+    "formType": "START_FORM",
+    "links": [
+        {
+            "href": "https://appian.appian-sites.net/suite/rest/a/model/latest/232/form",
+            "rel": "update",
+            "title": "Update",
+            "type": "application/vnd.appian.tv.ui+json; c=2; t=START_FORM",
+            "method": "POST"
+        },
+        {
+            "href": "https://appian.appian-sites.net/suite/rest/a/model/latest/232/form",
+            "rel": "self",
+            "title": "Update",
+            "type": "application/vnd.appian.tv.ui+json; c=2; t=START_FORM",
+            "method": "GET"
+        },
+        {
+            "href": "https://appian.appian-sites.net/suite/rest/a/model/latest/232/form",
+            "rel": "self",
+            "title": "Update",
+            "type": "application/vnd.appian.tv.ui+json; c=2; t=START_FORM",
+            "method": "POST"
+        },
+        {
+            "href": "https://appian.appian-sites.net/suite/api/tempo/file",
+            "rel": "upload",
+            "method": "POST"
+        },
+        {
+            "href": "https://appian.appian-sites.net/suite/tempo/file-web/",
+            "rel": "upload-web",
+            "method": "POST"
+        }
+    ],
+    "actions": [
+        {
+            "_cId": "8333cdbab40a98c14806ddac91e84583",
+            "_actionName": "sail:record-action-trigger",
+            "label": "updateRecordActionRefresh",
+            "saveInto": [
+                "<<ww0EAwMCoCANU10hiRsB0n0Bwsg68/URSaZCCpJkEOV7hOeVEd+AffJ3wvESPRstf4MCuEnSDuGf\r\nw+6bXJeJevwzDK6fS5QPphG0p5k5culnlNYKCJsSGOsNm+vV3R1E4I8ulgZaLWy4CTSAVVCQJdCb\r\nA59rteEC0VvSloLyuMt3VNc9zZul5ARQEPL0MQ==\r\n>>"
+            ],
+            "tooltip": "",
+            "href": "",
+            "#t": "DynamicLink"
+        },
+        {
+            "_cId": "4713416ca9ec5e98a7be1d09b03bc84f",
+            "_actionName": "sail:update-form-factor",
+            "label": "updateFormFactor",
+            "saveInto": [
+                "<<ww0EAwMCoCANU10hiRsB0oEBwsg68/URSaZCCpJkEOV7hOeVEd+AffJ3qfYCPRstf4MgaMfKkQX1\r\n+naLlVh5RwHzPuCirx+FOAZChInLsqT2l4Xk1k8NJXRaheynAKh5rY6fEDPna//Ubja7xq4w9Rdu\r\n3Wx1dZ5am2UF3GO8MxwBWJVMzgc8psy34FkJNXW0SOc=\r\n>>"
+            ],
+            "tooltip": "",
+            "href": "",
+            "#t": "DynamicLink"
+        },
+        {
+            "_cId": "44a7926bb6f6110edd4075eab3f01b36",
+            "_actionName": "sail:toggle-sites-xray",
+            "label": "toggleSitesXray",
+            "saveInto": [
+                "<<ww0EAwMCoCANU10hiRsB0n0Bwsg68/URSaZCCpJkEOV7hOeVEd+AffJ3wvEcPm4tf4M26AsQzp8o\r\ng24lEEmCvffJp5L56t6F+ZcWdScyaA/w8cQZ25ZMctZm1KNlzLVIW0yn4+pIRxIWQHMQ2FveLyFd\r\nMR3wpUflS1A/NdftBymfsGzzP87F5bnWkjFYmg==\r\n>>"
+            ],
+            "tooltip": "",
+            "href": "",
+            "#t": "DynamicLink"
+        },
+        {
+            "_cId": "d9d6f55c2aaabb5fd3a32c4e02258640",
+            "_actionName": "sail:update-async-event-streams",
+            "label": "",
+            "saveInto": [
+                "<<ww0EAwMCoCANU10hiRsB0n0Bwsg68/URSaZCCpJkEOV7hOeVEd+AffJ3wvESPRstf4MCuEnSDuGf\r\n/37S1SUzwqFT273f4CrVWWudazFm2YiNxE8wdPLHRQ7nhJiTNGOwoNEkD0Www//8kp1mK76B4IO8\r\nZYemAzDMt7a59cXSOh9Q8CskFXmp0UA+AI9mjg==\r\n>>"
+            ],
+            "tooltip": "",
+            "href": "",
+            "#t": "DynamicLink"
+        }
+    ],
+    "triggers": [],
+    "ui": {
+        "#t": "UiComponentsDelta",
+        "modifiedComponents": [
+            {
+                "_cId": "af159bd0eb614b91f37e9d35dee16014",
+                "_isAppianInjected": "true",
+                "_dirty": "true",
+                "contents": [
+                    {
+                        "_cId": "c613cfe391e8b226c7b626299b61a2e4",
+                        "focusFieldId": "4799a014cea1dca48c79dcaf8b581fb5",
+                        "label": "Create Employees",
+                        "instructions": "",
+                        "buttons": {
+                            "_cId": "e547388225f16351da5b7bc6cb385251",
+                            "primaryButtons": [
+                                {
+                                    "_cId": "0c54185197ba01ac3d1dbbbfd9487801",
+                                    "isFlat": "false",
+                                    "enableRecaptcha": "false",
+                                    "action": "SUBMIT",
+                                    "validate": "true",
+                                    "label": "Create",
+                                    "style": "",
+                                    "confirmHeader": "",
+                                    "confirmMessage": "",
+                                    "confirmButtonLabel": "",
+                                    "confirmButtonStyle": "SOLID",
+                                    "cancelButtonLabel": "",
+                                    "value": {
+                                        "#v": "",
+                                        "#t": "string"
+                                    },
+                                    "saveInto": [
+                                        "<<ww0EAwMCoCANU10hiRsB0pEBwsg68/URSaZCCpJkEOV7hOeVEd+AffJ4fKCy3EyKvC+EBSbZJ2F4\r\ninEZL8k91V50YNbRIL/Wg4S1H5mAkdBW1/HdQrDv973twnSvkDz5cCTp2+RmerLUyKvJ6k1x9HdP\r\nFWitkqpN7SbMgmUUXGkY6a8x7OqSZIWm3e+wdulOFOXuN+Zgno03mNgnGg/jJuuK\r\n>>"
+                                    ],
+                                    "size": "",
+                                    "icon": "",
+                                    "buttonStyle": "SOLID",
+                                    "ariaLabel": "",
+                                    "skinName": "",
+                                    "tooltipStyle": "",
+                                    "tooltipVerticalPosition": "",
+                                    "tooltipWidth": "",
+                                    "accessibilityText": "",
+                                    "shape": "",
+                                    "width": "",
+                                    "iconPosition": "",
+                                    "color": "",
+                                    "buttonVersion": 1,
+                                    "cancelButtonColor": ""
+                                }
+                            ],
+                            "secondaryButtons": [
+                                {
+                                    "_cId": "337564800afb95a6d63b2037e43960e1",
+                                    "isFlat": "false",
+                                    "enableRecaptcha": "false",
+                                    "action": "SUBMIT",
+                                    "validate": "false",
+                                    "label": "Cancel",
+                                    "style": "",
+                                    "confirmHeader": "",
+                                    "confirmMessage": "",
+                                    "confirmButtonLabel": "",
+                                    "confirmButtonStyle": "SOLID",
+                                    "cancelButtonLabel": "",
+                                    "value": {
+                                        "#v": "",
+                                        "#t": "string"
+                                    },
+                                    "saveInto": [
+                                        "<<ww0EAwMCoCANU10hiRsB0pEBwsg68/URSaZCCpJkEOV7hOeVEd+AffJ4fKCy3EyKvC+EBSbZJ2F4\r\ninEZL8k91V50YNbRIL/WgK6spikXthhA4JA6T0iWeKD8Zo67uijDyhJuMK3fYfOOoj5k/eHca3fp\r\n3Lungf4ebVtkjdfgdYYwzMCtd2crNpaMbzAs66qiS8qy8BsNrDEAdSGSejq8zlBG\r\n>>"
+                                    ],
+                                    "size": "",
+                                    "icon": "",
+                                    "buttonStyle": "OUTLINE",
+                                    "ariaLabel": "",
+                                    "skinName": "",
+                                    "tooltipStyle": "",
+                                    "tooltipVerticalPosition": "",
+                                    "tooltipWidth": "",
+                                    "accessibilityText": "",
+                                    "shape": "",
+                                    "width": "",
+                                    "iconPosition": "",
+                                    "color": "",
+                                    "buttonVersion": 1,
+                                    "cancelButtonColor": ""
+                                }
+                            ],
+                            "marginBelow": "",
+                            "align": "",
+                            "accessibilityText": "",
+                            "marginAbove": ""
+                        },
+                        "validations": [],
+                        "contents": [
+                            {
+                                "_cId": "19da73c734c5fd14bea0699427fd4166",
+                                "columns": [
+                                    {
+                                        "_cId": "9307856d34d56790167f6fcdca62a570",
+                                        "contents": [
+                                            {
+                                                "_cId": "87bf6f04c406e3ded34fffec11d90363",
+                                                "columns": [
+                                                    {
+                                                        "_cId": "f32f4379ee45a55ac11064afbf35d14f",
+                                                        "contents": [
+                                                            {
+                                                                "_cId": "4799a014cea1dca48c79dcaf8b581fb5",
+                                                                "label": "First Name",
+                                                                "instructions": "",
+                                                                "required": true,
+                                                                "placeholder": "",
+                                                                "value": "",
+                                                                "validations": [
+                                                                    {
+                                                                        "message": "A value is required"
+                                                                    }
+                                                                ],
+                                                                "saveInto": [
+                                                                    "<<ww0EAwMCoCANU10hiRsB0o0Bwsg68/URSaZCCpJkEOV7hOeVEd+AffJ4FqGy+TSKvD8TuRWBfv8z\r\nFDPNDW0T43boV6McGzHFZdJolfW2sAH1E8tWXNsliK9qfHer7gHR8Bmm4P38cGAsyzmxFXT/ujCE\r\n8/ARunkZULkz26V9IFkqWZm/bjiX28RWvuL9KCfwpaudUmNKXCj60rp7mS0=\r\n>>"
+                                                                ],
+                                                                "refreshAfter": "UNFOCUS",
+                                                                "keyboard": "STANDARD",
+                                                                "labelPosition": "ABOVE",
+                                                                "align": "DEFAULT",
+                                                                "helpTooltip": "",
+                                                                "accessibilityText": "",
+                                                                "inputPurpose": "",
+                                                                "characterLimit": 255,
+                                                                "helpTooltipPosition": "",
+                                                                "#t": "TextField"
+                                                            },
+                                                            {
+                                                                "_cId": "0879faa6ed86d91d181a1fc6482c0e77",
+                                                                "label": "Department",
+                                                                "instructions": "",
+                                                                "required": true,
+                                                                "placeholder": "",
+                                                                "value": "",
+                                                                "validations": [
+                                                                    {
+                                                                        "message": "A value is required"
+                                                                    }
+                                                                ],
+                                                                "saveInto": [
+                                                                    "<<ww0EAwMCoCANU10hiRsB0o0Bwsg68/URSaZCCpJkEOV7hOeVEd+AffJ4c6H5+TmKvC/9R/ocPHsZ\r\nTvR1ybN3lK397qSkWiQNC1hcabytEvdSaeUdcPD31irgSFG3X9RvJ5V+1vh5IEAOHpondGXg/zTT\r\n73KJ9aVyVc/y1c85iHv5GDidhlYiCfuF6xTA8Yx03CL8SQUxd95I9yIBpoc=\r\n>>"
+                                                                ],
+                                                                "refreshAfter": "UNFOCUS",
+                                                                "keyboard": "STANDARD",
+                                                                "labelPosition": "ABOVE",
+                                                                "align": "DEFAULT",
+                                                                "helpTooltip": "",
+                                                                "accessibilityText": "",
+                                                                "inputPurpose": "",
+                                                                "characterLimit": 255,
+                                                                "helpTooltipPosition": "",
+                                                                "#t": "TextField"
+                                                            },
+                                                            {
+                                                                "_cId": "fbe9f4010b334b62c9f420cae7057059",
+                                                                "label": "Phone Num",
+                                                                "instructions": "",
+                                                                "required": false,
+                                                                "placeholder": "",
+                                                                "value": "230948123941239847123948",
+                                                                "validations": [
+                                                                    {
+                                                                        "message": "Phone num too long"
+                                                                    }
+                                                                ],
+                                                                "saveInto": [
+                                                                    "<<ww0EAwMCoCANU10hiRsB0o0Bwsg68/URSaZCCpJkEOV7hOeVEd+AffJ4c6H5+TmKvC/9R/ocPHsZ\r\nTvVr3Z5u9q3AcSYJjX7xz2iz6GbDzKmJDytXW+p5zeBDsoheH/cSLzVk3nWqWpGBhhUmqRxxxyHo\r\n2xfjzGXX92y1UjGdgiko9nNHAJcgGqu9xil9BemN1zPl2R8V+CHYgcdNUtw=\r\n>>"
+                                                                ],
+                                                                "refreshAfter": "UNFOCUS",
+                                                                "keyboard": "STANDARD",
+                                                                "labelPosition": "ABOVE",
+                                                                "align": "DEFAULT",
+                                                                "helpTooltip": "",
+                                                                "accessibilityText": "",
+                                                                "inputPurpose": "",
+                                                                "characterLimit": 255,
+                                                                "helpTooltipPosition": "",
+                                                                "#t": "TextField"
+                                                            }
+                                                        ],
+                                                        "align": "",
+                                                        "width": ""
+                                                    },
+                                                    {
+                                                        "_cId": "4f44c5525f9345cd293c085d3de4d8d2",
+                                                        "contents": [
+                                                            {
+                                                                "_cId": "501af77ab3d9c8793c56315e9ce81ea0",
+                                                                "label": "Last Name",
+                                                                "instructions": "",
+                                                                "required": true,
+                                                                "placeholder": "",
+                                                                "value": "",
+                                                                "validations": [
+                                                                    {
+                                                                        "message": "A value is required"
+                                                                    }
+                                                                ],
+                                                                "saveInto": [
+                                                                    "<<ww0EAwMCoCANU10hiRsB0o0Bwsg68/URSaZCCpJkEOV7hOeVEd+AffJ55EVpmUfUnu1nABcaPs4E\r\nvvjWpA7HXqsP0FkPYlt2tbhue0IeaZEFXsWwBBsD5mDSNrtFxWlZjEmXCwXcRiRcSS1klWGYZVWJ\r\nuBSaENE+3B66ObCvWKdkebWZtmPGcuu71mPL00GYJHB9QPkSd2z4z75E2YM=\r\n>>"
+                                                                ],
+                                                                "refreshAfter": "UNFOCUS",
+                                                                "keyboard": "STANDARD",
+                                                                "labelPosition": "ABOVE",
+                                                                "align": "DEFAULT",
+                                                                "helpTooltip": "",
+                                                                "accessibilityText": "",
+                                                                "inputPurpose": "",
+                                                                "characterLimit": 255,
+                                                                "helpTooltipPosition": "",
+                                                                "#t": "TextField"
+                                                            },
+                                                            {
+                                                                "_cId": "a93324710f59e03cd430ab135b18a3fd",
+                                                                "label": "Title",
+                                                                "instructions": "",
+                                                                "required": false,
+                                                                "placeholder": "",
+                                                                "value": "",
+                                                                "saveInto": [
+                                                                    "<<ww0EAwMCoCANU10hiRsB0pEBwsg68/URSaZCCpJkEOV7hOeVEd+AffJ4fKH3+TmKvC9I8mK2zT2B\r\nBqAicWGyIgryWNM+NZkhwaGveJLbr/XmS5pNdP26A5AoXQteVPyd2gMbS6KT2f4cZKv8gIK7OYhZ\r\nekWXZZenz1dSTj1ijaXF07L7RXR1qenyubFLgmBJZrS8y+DcyQY8jE4l+RPPqgaB\r\n>>"
+                                                                ],
+                                                                "refreshAfter": "UNFOCUS",
+                                                                "keyboard": "STANDARD",
+                                                                "labelPosition": "ABOVE",
+                                                                "align": "DEFAULT",
+                                                                "helpTooltip": "",
+                                                                "accessibilityText": "",
+                                                                "inputPurpose": "",
+                                                                "characterLimit": 255,
+                                                                "helpTooltipPosition": "",
+                                                                "#t": "TextField"
+                                                            }
+                                                        ],
+                                                        "align": "",
+                                                        "width": ""
+                                                    }
+                                                ],
+                                                "alignVertical": "TOP",
+                                                "marginBelow": "",
+                                                "spacing": "",
+                                                "marginAbove": "",
+                                                "#t": "MultiColumnLayout"
+                                            }
+                                        ],
+                                        "align": "",
+                                        "width": ""
+                                    }
+                                ],
+                                "alignVertical": "",
+                                "layout": "",
+                                "minHeight": "",
+                                "isTopLevelComponent": true,
+                                "#t": "ColumnArrayLayout"
+                            }
+                        ],
+                        "layout": "",
+                        "width": "",
+                        "#t": "FormLayout"
+                    }
+                ],
+                "padding": "STANDARD",
+                "topLevelBackgroundColor": "",
+                "accessibilityRole": "",
+                "#t": "ContentLayout"
+            }
+        ]
+    },
+    "context": {
+        "type": "stateful",
+        "value": "ww0EAwMCoCANU10hiRsB0pgBp5GG6VmZhmWWvhVuBBdSluoVlLdiLBtcwVwD1aLiEB+b0keQslJ1\r\nrsiAA+94e6eKNfZB+zMpmKxuIxaZnSzmmc7qKCPMzDTFsn8RVvnSsHGDyxMlJWhP1FO+Y7FTu6uD\r\nEKsUqhMewZmnE4C2u91qabhHmUfpTv1KTu5rCzt87tkW2+J6hk5mGykJPXGLEWsc9kpmzJNlkQ==\r\n",
+        "#t": "Map"
+    },
+    "uuid": "267ada28-a03c-4466-818d-5822db3db590",
+    "i18nInfo": {
+        "locale": "en-US",
+        "timezoneId": "GMT",
+        "calendarId": "gregorian",
+        "decimalSeparator": ".",
+        "groupingSeparator": ",",
+        "isRtl": false,
+        "isLtr": true
+    },
+    "timers": {
+        "#t": "Dictionary"
+    },
+    "formFactors": [],
+    "lastEvaluatedFormFactor": "TABLET_LANDSCAPE",
+    "uiExpression": "",
+    "asyncEventStreams": [],
+    "validationLifeCycleId": 1,
+    "#t": "UiConfig",
+    "shortcuts": [],
+    "#u": "<https://appian.appian-sites.net/suite/rest/a/applications/latest/legacy/>; rel=\"x-sasa-app\"; dt=\"UiConfig\",<https://appian.appian-sites.net/suite/components/ping.do>; rel=\"x-resume-session\"; dt=\"UiConfig\",<https://appian.appian-sites.net/suite/rest/a/applications/latest/app{/appName}{/path*}{?params*}>; rel=\"x-sail-application\"; dt=\"UiConfig\",<https://appian.appian-sites.net/suite/applications/img/{image}>; rel=\"x-web-design-app-object-img\"; dt=\"UiConfig\",<https://appian.appian-sites.net/suite/rest/a/sites/latest/all>; rel=\"x-sites-all\"; dt=\"UiConfig\",<https://appian.appian-sites.net/suite/sites{/urlStub}/tasks/task/{id}>; rel=\"x-site-task\"; dt=\"UiConfig\",<https://appian.appian-sites.net/suite/rest/a/interfacedesigner/latest/evaluateComponentTemplateAndPreview{/templateId}>; rel=\"x-ifcdesigner-evaluatecomponenttemplateandpreview\"; dt=\"UiConfig\",<https://appian.appian-sites.net/suite/sites{/urlStub}/page/{pageUrlStub}/task/{id}>; rel=\"x-site-task-page\"; dt=\"UiConfig\",<https://appian.appian-sites.net/suite/rest/a/rpacomponent/latest/editor>; rel=\"x-rpa-expression-editor\"; dt=\"UiConfig\",<https://appian.appian-sites.net/suite/rest/a/applications/latest/legacy/sites{/urlStub}/page{/pageUrlStub}/nav>; rel=\"x-site-page-navattributes\"; dt=\"UiConfig\",<https://appian.appian-sites.net/suite/cors/ping>; rel=\"x-cors\"; dt=\"UiConfig\",<https://appian.appian-sites.net/suite/rest/a/applications/latest/evalWithContext/processModelSail/{viewName}>; rel=\"x-modeler-view\"; dt=\"UiConfig\",<https://appian.appian-sites.net/suite/rest/a/sites/latest/{siteUrlStub}/pages/{pageUrlStub}/report>; rel=\"x-sites-report\"; dt=\"UiConfig\",<https://appian.appian-sites.net/suite/rest/a/applications/latest/legacy/sites{/urlStub}/nav>; rel=\"x-site-navattributes\"; dt=\"UiConfig\",<https://appian.appian-sites.net/suite/sites>; rel=\"x-site-main\"; dt=\"UiConfig\",<https://appian.appian-sites.net/suite/rest/a/task/latest/{taskId}/attributes>; rel=\"x-task-attributes\"; dt=\"UiConfig\",<https://appian.appian-sites.net/suite/internal/webapi/releaselockbyuisource/{uiSourceUuid}>; rel=\"x-data-release-object-lock-uisource\"; dt=\"UiConfig\",<https://appian.appian-sites.net/suite/internal/webapi/releaselock/{objectUuid}/{uiSourceUuid}>; rel=\"x-data-release-object-lock\"; dt=\"UiConfig\""
+}

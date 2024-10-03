@@ -22,7 +22,7 @@ class DesignObjectUiForm(SailUiForm):
         new_state = self._interactor.send_expression_editor_update(
             reeval_url, value, component, self.context, self.uuid, locust_label)
 
-        self._reconcile_state(new_state)
+        self._reconcile_state(new_state, skipValidations=True)
         return self
 
     def launch_query_editor(self) -> 'DesignObjectUiForm':
@@ -34,7 +34,7 @@ class DesignObjectUiForm(SailUiForm):
 
         """
         query_editor_json = self.__design.click_expression_editor_toolbar_button("LaunchVQD", self.form_url, self._state, self.context, self.uuid)
-        self._reconcile_state(query_editor_json)
+        self._reconcile_state(query_editor_json, skipValidations=True)
         return self
 
     # existing __init__ and other methods...

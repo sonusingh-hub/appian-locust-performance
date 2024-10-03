@@ -75,8 +75,6 @@ class DesignUiForm(SailUiForm):
             log.info("Simply importing the package")
             self.click_button("Import")
 
-        self.assert_no_validations_present()
-
         self.click_button("Close")
 
     def search_applications(self, search_str: str, locust_label: Optional[str] = None) -> 'DesignUiForm':
@@ -93,7 +91,7 @@ class DesignUiForm(SailUiForm):
             search_str, self._get_update_url_for_reeval(self._state), self._state, self.context, self.uuid,
             locust_label if locust_label else f"{self.breadcrumb}.ApplicationSearch"
         )
-        self._reconcile_state(new_state)
+        self._reconcile_state(new_state, skipValidations=True)
         return self
 
     def search_objects(self, search_str: str, locust_label: Optional[str] = None) -> 'DesignUiForm':
@@ -110,7 +108,7 @@ class DesignUiForm(SailUiForm):
             search_str, self._get_update_url_for_reeval(self._state), self._state, self.context, self.uuid,
             locust_label if locust_label else f"{self.breadcrumb}.ObjectSearch"
         )
-        self._reconcile_state(new_state)
+        self._reconcile_state(new_state, skipValidations=True)
         return self
 
     def get_available_applications(self) -> Dict[str, Application]:
