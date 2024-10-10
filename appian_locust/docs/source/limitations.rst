@@ -10,4 +10,5 @@ Currently *unsupported* Appian Interactions
 ********************************************
 
 * Multiple links with the same name on the same page, use labels to differentiate
+* SafeLinks, since they can link to locations external to an Appian Instance
 * Legacy forms
