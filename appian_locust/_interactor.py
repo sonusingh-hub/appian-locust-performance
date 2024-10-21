@@ -337,7 +337,7 @@ class _Interactor:
         with self.client.get(uri, **kwargs) as resp:  # type: ResponseContextManager
             if check_login and not self.portals_mode:
                 self.check_login(resp)
-            username = get_username(self.auth)
+            username = "No-auth User" if self.portals_mode else get_username(self.auth)
             test_response_for_error(
                 resp,
                 uri,
