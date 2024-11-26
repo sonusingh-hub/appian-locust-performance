@@ -17,6 +17,12 @@ Appian Locust Library documentation
 
 .. toctree::
     :maxdepth: 1
+    :caption: Record Appian Locust Tests
+
+    appian_locust_companion
+
+.. toctree::
+    :maxdepth: 1
     :caption: How to Run Tests
 
     how_to_run_locust

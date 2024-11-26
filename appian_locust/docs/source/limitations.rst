@@ -1,6 +1,6 @@
-################
-Limitations
-################
+######################
+Library Limitations
+######################
 
 .. include:: ../../../README.rst
     :start-after: disclaimer-inclusion-begin-do-not-remove
