@@ -36,7 +36,8 @@ release = 'latest'
 # ones.
 extensions = ['sphinx.ext.napoleon', 'sphinx.ext.autosectionlabel']
 
-html_favicon = 'favicon-32x32.png'
+html_favicon = '../assets/Appian_Locust_FINAL_NAVY_CIRCLE_Reversed.svg'
+html_logo = '../assets/Appian_Locust_FINAL_NAVY_CIRCLE_Reversed.svg'
 html_static_path = ['_static']
 
 # List of patterns, relative to source directory, that match files and
