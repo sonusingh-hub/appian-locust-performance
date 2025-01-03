@@ -5,7 +5,7 @@ from ._rdo_interactor import _RDOInteractor
 from .exceptions import IncorrectDesignAccessException
 from .objects import DesignObject, AISkillObjectType
 from .objects.ai_skill import AiSkill
-from .utilities import find_component_by_label_and_type_dict, find_component_by_type_and_attribute_and_index_in_dict, find_component_by_attribute_in_dict
+from .utilities import find_component_by_attribute_and_type_in_dict, find_component_by_type_and_attribute_and_index_in_dict, find_component_by_attribute_in_dict
 from .uiform import SailUiForm, AISkillUiForm
 from urllib.parse import urlparse
 
@@ -14,8 +14,8 @@ AI_SKILL_DESCRIPTOR: str = "AI Skill"
 
 
 def get_available_design_objects(state: Dict[str, Any]) -> Dict[str, DesignObject]:
-    name_column = find_component_by_label_and_type_dict(type="GridFieldColumn", attribute="label", value="Name",
-                                                        component_tree=state)
+    name_column = find_component_by_attribute_and_type_in_dict(type="GridFieldColumn", attribute="label", value="Name",
+                                                               component_tree=state)
     design_objects = {}
     for element in name_column["data"]:
         link = element["contents"]["items"][0]["item"]["value"]["values"][0]["link"]

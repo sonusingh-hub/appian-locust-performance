@@ -8,7 +8,7 @@ from appian_locust import AppianTaskSet, ComponentNotFoundException
 from appian_locust.uiform import SailUiForm, RecordInstanceUiForm
 from appian_locust.utilities.helper import (ENV, find_component_by_attribute_in_dict,
                                             find_component_by_index_in_dict,
-                                            find_component_by_label_and_type_dict)
+                                            find_component_by_attribute_and_type_in_dict)
 from appian_locust.utilities.url_provider import URL_PROVIDER_V1, URL_PROVIDER_V0
 from appian_locust.uiform import PROCESS_TASK_LINK_TYPE
 from appian_locust.exceptions import (InvalidComponentException,
@@ -35,6 +35,7 @@ class TestSailUiForm(unittest.TestCase):
     sites_task_report_resp = read_mock_file("sites_task_report.json")
     date_response = read_mock_file("date_task.json")
     multi_dropdown_response = read_mock_file("dropdown_test_ui.json")
+    checkbox_initial = read_mock_file("checkbox_link_duplicate_label.json")
     sail_ui_actions_response = read_mock_file("sail_ui_actions_cmf.json")
     file_upload_initial = read_mock_file("multiple_file_upload_widget.json")
     radio_button_initial = read_mock_file("radio_button_selector.json")
@@ -579,7 +580,7 @@ class TestSailUiForm(unittest.TestCase):
         test_form_state = test_form.get_latest_state()
         self.assertIsNotNone(test_form_state, "Unexpected behavior: test form state is None")
         if test_form_state is not None:
-            component = find_component_by_label_and_type_dict('label', 'Request Pass', 'StartProcessLink', test_form_state)
+            component = find_component_by_attribute_and_type_in_dict('label', 'Request Pass', 'StartProcessLink', test_form_state)
         test_form.click_card_layout_by_index(1, locust_request_label=self.locust_label)
 
         mock_click_spl.assert_called_once()
@@ -755,6 +756,21 @@ class TestSailUiForm(unittest.TestCase):
         self.assertEqual('post', last_request['method'])
         self.assertEqual(self.multi_dropdown_uri, last_request['path'])
         self.assertEqual([1, 2], self._unwrap_value(last_request["data"]))
+
+    @patch('appian_locust._interactor._Interactor.select_checkbox_item')
+    def test_check_checkbox_by_label(self, mock_select_checkbox_item: MagicMock) -> None:
+        test_form = SailUiForm(self.task_set.appian._interactor, json.loads(self.checkbox_initial))
+        test_context = test_form.context
+        test_uuid = test_form.uuid
+        test_form.check_checkbox_by_label("Label 1", [1])
+
+        mock_select_checkbox_item.assert_called_once()
+        args, _ = mock_select_checkbox_item.call_args_list[0]
+        component = args[1]
+        assert component.get(
+            '#t') == 'CheckboxField', f"Expected component type to be 'CheckboxField', but got component type {component.get('#t')} in the following arguments: {component}"
+        self.assertEqual(args[2], test_context)
+        self.assertEqual(args[3], test_uuid)
 
     def test_fill_datetimefield_not_found(self) -> None:
         test_form = self._setup_date_form()

@@ -3,7 +3,7 @@ from urllib.parse import quote
 
 from .._interactor import _Interactor
 from .._records_helper import get_all_records_from_json, get_records_from_json_by_column
-from ..utilities.helper import find_component_by_label_and_type_dict
+from ..utilities.helper import find_component_by_attribute_and_type_in_dict
 from .uiform import SailUiForm, START_PROCESS_LINK_TYPE
 
 IDENTIFIER_CONTEXT = "identifier"
@@ -80,7 +80,7 @@ class RecordListUiForm(SailUiForm):
         Returns: UiForm with action clicked
 
         """
-        component = find_component_by_label_and_type_dict('label', label, START_PROCESS_LINK_TYPE, self._state)
+        component = find_component_by_attribute_and_type_in_dict('label', label, START_PROCESS_LINK_TYPE, self._state)
         process_model_uuid = component.get("pmUuid", "")
         cache_key = component.get("cacheKey", "")
         if not process_model_uuid:
