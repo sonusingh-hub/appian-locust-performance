@@ -2,7 +2,7 @@
 
 CURRENT_DIR=$(dirname "$0")
 
-pip install -U twine
+pip install -U twine setuptools
 
 python ${CURRENT_DIR}/../setup.py sdist bdist_wheel
 
