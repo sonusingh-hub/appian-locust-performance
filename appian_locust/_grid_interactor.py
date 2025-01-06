@@ -1,6 +1,6 @@
 from typing import Any, Dict, List, Optional
 
-from .utilities.helper import extract_values_multiple_key_values, find_component_by_label_and_type_dict, extract_all_by_label
+from .utilities.helper import extract_values_multiple_key_values, find_component_by_attribute_and_type_in_dict, extract_all_by_label
 
 from .utilities import logger
 
@@ -13,10 +13,10 @@ class GridInteractor:
     """
 
     def find_grid_by_label(self, label: str, form: Dict[str, Any]) -> Dict[str, Any]:
-        grid = find_component_by_label_and_type_dict('testLabel', f"PagingGrid-{label}", 'PagingGridLayout', form, raise_error=False)
+        grid = find_component_by_attribute_and_type_in_dict('testLabel', f"PagingGrid-{label}", 'PagingGridLayout', form, raise_error=False)
         # Try the non-record powered grid field
         if not grid:
-            grid = find_component_by_label_and_type_dict('label', label, 'GridField', form, raise_error=False)
+            grid = find_component_by_attribute_and_type_in_dict('label', label, 'GridField', form, raise_error=False)
         if not grid:
             raise Exception(f"Grid with label '{label}' not found in form")
         grid_type = grid['#t']

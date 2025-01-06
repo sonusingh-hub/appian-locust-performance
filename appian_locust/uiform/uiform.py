@@ -18,7 +18,7 @@ from .._ui_reconciler import UiReconciler
 from ..exceptions import InvalidComponentException, InvalidDateRangeException, ChoiceNotFoundException, DisabledComponentException, IgnoredValidationException
 from ..utilities.helper import (extract_all_by_label, find_component_by_attribute_and_index_in_dict,
                                 find_component_by_attribute_in_dict, find_component_by_index_in_dict,
-                                find_component_by_label_and_type_dict, find_component_by_type_and_attribute_and_index_in_dict)
+                                find_component_by_attribute_and_type_in_dict, find_component_by_type_and_attribute_and_index_in_dict)
 from .._records_helper import _is_grid
 
 if TYPE_CHECKING:
@@ -234,7 +234,7 @@ class SailUiForm:
             test_label = label
         else:
             test_label = f'test-{label}'
-        component = find_component_by_label_and_type_dict('testLabel', test_label, 'PickerWidget', self._state)
+        component = find_component_by_attribute_and_type_in_dict('testLabel', test_label, 'PickerWidget', self._state)
 
         locust_label = fill_request_label or f"{self.breadcrumb}.FillPickerField.{label}"
         new_state = self._interactor.fill_pickerfield_text(
@@ -245,7 +245,7 @@ class SailUiForm:
 
         self._reconcile_state(new_state)
 
-        component = find_component_by_label_and_type_dict('testLabel', test_label, 'PickerWidget', self._state)
+        component = find_component_by_attribute_and_type_in_dict('testLabel', test_label, 'PickerWidget', self._state)
 
         suggestions_list = extract_all_by_label(component, 'suggestions')
 
@@ -297,7 +297,7 @@ class SailUiForm:
             test_label = label
         else:
             test_label = f'test-{label}'
-        component = find_component_by_label_and_type_dict('testLabel', test_label, 'PickerWidget', self._state)
+        component = find_component_by_attribute_and_type_in_dict('testLabel', test_label, 'PickerWidget', self._state)
 
         locust_request_label = locust_request_label or f"{self.breadcrumb}.SelectCascadingPickerField.{label}"
         choices = component["inlineChoices"]
@@ -591,7 +591,7 @@ class SailUiForm:
 
         """
         attribute_to_find = 'testLabel' if is_test_label else 'label'
-        component = find_component_by_label_and_type_dict(attribute_to_find, label, START_PROCESS_LINK_TYPE, self._state)
+        component = find_component_by_attribute_and_type_in_dict(attribute_to_find, label, START_PROCESS_LINK_TYPE, self._state)
         site_name = component["siteUrlStub"]
         page_name = component["sitePageUrlStub"]
         group_name = component.get("siteGroupUrlStub", None)
@@ -805,7 +805,7 @@ class SailUiForm:
         """
         attribute_to_find = 'testLabel' if is_test_label else 'label'
         menu = find_component_by_attribute_in_dict(attribute_to_find, label, self._state)
-        menu_item = find_component_by_label_and_type_dict(
+        menu_item = find_component_by_attribute_and_type_in_dict(
             type="MenuItem", attribute="primaryText", value=choice_name, component_tree=menu)
         link_test_label = menu_item.get("link").get("testLabel")
         return self.click_link(label=link_test_label, is_test_label=True, locust_request_label=locust_request_label)
@@ -1008,8 +1008,7 @@ class SailUiForm:
 
         Returns (SailUiForm): The latest state of the UiForm
         """
-        component = find_component_by_attribute_in_dict(attribute, value_for_attribute, self._state,
-                                                        throw_attribute_exception=True)
+        component = find_component_by_attribute_and_type_in_dict(attribute, value_for_attribute, "CheckboxField", self._state)
 
         locust_label = locust_request_label or f'{self.breadcrumb}.CheckCheckboxByAttribute.{attribute}'
         reeval_url = self._get_update_url_for_reeval(self._state)

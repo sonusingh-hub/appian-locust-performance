@@ -1,6 +1,7 @@
 import functools
 import random
 import re
+import warnings
 from typing import Any, Callable, Dict, Generator, List, Union, Optional
 from ..exceptions import ComponentNotFoundException
 
@@ -215,8 +216,16 @@ def find_component_by_attribute_in_dict(attribute: str, value: str, component_tr
     return component
 
 
+# Remove this function on June 6, 2025
 def find_component_by_label_and_type_dict(attribute: str, value: str, type: str, component_tree: Dict[str, Any],
                                           raise_error: bool = True) -> Any:
+    warnings.warn("find_component_by_label_and_type_dict() is deprecated and will be removed on June 6, 2025. "
+                  "Use find_component_by_attribute_and_type_in_dict() instead.", DeprecationWarning, stacklevel=2)
+    return find_component_by_attribute_and_type_in_dict(attribute, value, type, component_tree, raise_error)
+
+
+def find_component_by_attribute_and_type_in_dict(attribute: str, value: str, type: str, component_tree: Dict[str, Any],
+                                                 raise_error: bool = True) -> Any:
     """
     Find a UI component by the given attribute (like label) in a dictionary, and the type of the component as well.
     (`#t` should match the type value passed in)
@@ -226,8 +235,8 @@ def find_component_by_label_and_type_dict(attribute: str, value: str, type: str,
     component cannot be found.
 
     Args:
-        label: label of the component to search
-        value: the value of the label
+        attribute: attribute of the component to search
+        value: the value of the attribute
         type: Type of the component (TextField, StartProcessLink etc.)
         component_tree: the json response.
         raise_error: If set to False, will return None instead of raising an error. (Default: True)
@@ -239,7 +248,7 @@ def find_component_by_label_and_type_dict(attribute: str, value: str, type: str,
         ComponentNotFoundException if the component cannot be found.
 
     Example:
-        >>> find_component_by_label_and_type_dict('label', 'MyLabel', 'StartProcessLink', self.json_response)
+        >>> find_component_by_attribute_and_type_in_dict('label', 'MyLabel', 'StartProcessLink', self.json_response)
 
     """
     component = find_component_by_type_and_attribute_and_index_in_dict(component_tree, type=type, attribute=attribute,
