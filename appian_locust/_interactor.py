@@ -33,6 +33,8 @@ PICKERFIELD_RELATIONSHIP_PATH_INDEX = 1
 PICKERFIELD_SELECTION_LABEL_INDEX = 2
 PICKERFIELD_BASE_RECORD_TYPE_UUID_INDEX = 11
 
+USER_AGENT_DESKTOP = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+USER_AGENT_MOBILE = "Mozilla/5.0 (Android 15; Mobile; rv:68.0) Gecko/68.0 Firefox/134.0"
 
 class _Interactor:
     def __init__(self, session: HttpSession, host: str, portals_mode: bool = False, request_timeout: int = 300) -> None:
@@ -63,10 +65,10 @@ class _Interactor:
 
     # GENERIC UTILITY METHODS
     def set_user_agent_to_desktop(self) -> None:
-        self.user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36"
+        self.user_agent = USER_AGENT_DESKTOP if not hasattr(self.client, "user_agent_desktop") else getattr(self.client, "user_agent_desktop")
 
     def set_user_agent_to_mobile(self) -> None:
-        self.user_agent = "AppianAndroid/20.2 (Google AOSP on IA Emulator, 9; Build 0-SNAPSHOT; AppianPhone)"
+        self.user_agent = USER_AGENT_MOBILE if not hasattr(self.client, "user_agent_mobile") else getattr(self.client, "user_agent_mobile")
 
     def set_url_provider(self, provider: UrlProvider) -> None:
         self.url_provider = provider
@@ -249,7 +251,7 @@ class _Interactor:
             "Content-Type": "application/x-www-form-urlencoded",
             "Upgrade-Insecure-Requests": "1",
             "Referer": self.host,
-            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36",
+            "User-Agent": self.user_agent,
         }
         login_url = uri + "auth?appian_environment=tempo"
         log.info(f"Logging in at {self.replace_base_path_if_appropriate(login_url)}")
