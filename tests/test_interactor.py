@@ -32,8 +32,8 @@ class TestInteractor(unittest.TestCase):
     tempo_report_record_link = read_mock_file("tempo_report_record_link.json")
     cascading_picker_ui = read_mock_file_as_dict("cascading_picker.json")
     cascading_picker_ui_choices = read_mock_file_as_dict("cascading_picker_choices.json")
-    default_user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36"
-    mobile_user_agent = "AppianAndroid/20.2 (Google AOSP on IA Emulator, 9; Build 0-SNAPSHOT; AppianPhone)"
+    default_user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+    mobile_user_agent = "Mozilla/5.0 (Android 15; Mobile; rv:68.0) Gecko/68.0 Firefox/134.0"
 
     def setUpWithPath(self, base_path_override: Optional[str] = None) -> None:
         self.base_netloc = "test-site.net"
