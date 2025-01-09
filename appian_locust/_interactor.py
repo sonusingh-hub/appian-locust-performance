@@ -32,9 +32,11 @@ PICKERFIELD_RECORD_TYPE_UUID_INDEX = 0
 PICKERFIELD_RELATIONSHIP_PATH_INDEX = 1
 PICKERFIELD_SELECTION_LABEL_INDEX = 2
 PICKERFIELD_BASE_RECORD_TYPE_UUID_INDEX = 11
+
 # Default user agents
 USER_AGENT_DESKTOP = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
 USER_AGENT_MOBILE = "Mozilla/5.0 (Android 15; Mobile; rv:68.0) Gecko/68.0 Firefox/134.0"
+
 
 class _Interactor:
     def __init__(self, session: HttpSession, host: str, portals_mode: bool = False, request_timeout: int = 300) -> None:
