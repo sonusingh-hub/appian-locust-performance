@@ -35,7 +35,7 @@ PICKERFIELD_BASE_RECORD_TYPE_UUID_INDEX = 11
 
 # Default user agents
 USER_AGENT_DESKTOP = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
-USER_AGENT_MOBILE = "Mozilla/5.0 (Android 15; Mobile; rv:68.0) Gecko/68.0 Firefox/134.0"
+USER_AGENT_MOBILE = "AppianAndroid/24.4 (Google AOSP on IA Emulator, 9; Build 0-SNAPSHOT; AppianPhone)"
 
 
 class _Interactor:
@@ -67,10 +67,10 @@ class _Interactor:
 
     # GENERIC UTILITY METHODS
     def set_user_agent_to_desktop(self) -> None:
-        self.user_agent = USER_AGENT_DESKTOP if not hasattr(self.client, "user_agent_desktop") else getattr(self.client, "user_agent_desktop")
+        self.user_agent = getattr(self.client, "user_agent_desktop", USER_AGENT_DESKTOP)
 
     def set_user_agent_to_mobile(self) -> None:
-        self.user_agent = USER_AGENT_MOBILE if not hasattr(self.client, "user_agent_mobile") else getattr(self.client, "user_agent_mobile")
+        self.user_agent = getattr(self.client, "user_agent_mobile", USER_AGENT_MOBILE)
 
     def set_url_provider(self, provider: UrlProvider) -> None:
         self.url_provider = provider
