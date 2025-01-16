@@ -27,6 +27,7 @@ Appian Locust Library documentation
 
     how_to_run_locust
     debugging
+    useragent
     limitations
 
 .. toctree::

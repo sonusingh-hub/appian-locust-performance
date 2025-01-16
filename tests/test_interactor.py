@@ -32,8 +32,10 @@ class TestInteractor(unittest.TestCase):
     tempo_report_record_link = read_mock_file("tempo_report_record_link.json")
     cascading_picker_ui = read_mock_file_as_dict("cascading_picker.json")
     cascading_picker_ui_choices = read_mock_file_as_dict("cascading_picker_choices.json")
-    default_user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36"
-    mobile_user_agent = "AppianAndroid/20.2 (Google AOSP on IA Emulator, 9; Build 0-SNAPSHOT; AppianPhone)"
+    default_desktop_user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+    default_mobile_user_agent = "AppianAndroid/24.4 (Google AOSP on IA Emulator, 9; Build 0-SNAPSHOT; AppianPhone)"
+    desktop_override_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 14.7; rv:134.0) Gecko/20100101 Firefox/134.0"
+    mobile_override_agent = "Mozilla/5.0 (iPhone; CPU iPhone OS 17_7_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4.1 Mobile/15E148 Safari/604.1"
 
     def setUpWithPath(self, base_path_override: Optional[str] = None) -> None:
         self.base_netloc = "test-site.net"
@@ -383,18 +385,18 @@ class TestInteractor(unittest.TestCase):
     def test_change_user_to_mobile(self) -> None:
         # Given
         default_header = self.task_set.appian._interactor.setup_request_headers()
-        self.assertEqual(default_header["User-Agent"], self.default_user_agent)
+        self.assertEqual(default_header["User-Agent"], self.default_desktop_user_agent)
 
         # When
         self.task_set.appian._interactor.set_user_agent_to_mobile()
         new_header = self.task_set.appian._interactor.setup_request_headers()
         self.assertNotEqual(new_header, default_header)
-        self.assertEqual(new_header["User-Agent"], self.mobile_user_agent)
+        self.assertEqual(new_header["User-Agent"], self.default_mobile_user_agent)
 
     def test_change_default_user_to_desktop(self) -> None:
         # Given
         default_header = self.task_set.appian._interactor.setup_request_headers()
-        self.assertEqual(default_header["User-Agent"], self.default_user_agent)
+        self.assertEqual(default_header["User-Agent"], self.default_desktop_user_agent)
 
         # When
         self.task_set.appian._interactor.set_user_agent_to_desktop()
@@ -406,13 +408,13 @@ class TestInteractor(unittest.TestCase):
     def test_change_mobile_user_to_desktop(self) -> None:
         # Given
         default_header = self.task_set.appian._interactor.setup_request_headers()
-        self.assertEqual(default_header["User-Agent"], self.default_user_agent)
+        self.assertEqual(default_header["User-Agent"], self.default_desktop_user_agent)
 
         # Switch to mobile
         self.task_set.appian._interactor.set_user_agent_to_mobile()
         new_header = self.task_set.appian._interactor.setup_request_headers()
         self.assertNotEqual(new_header, default_header)
-        self.assertEqual(new_header["User-Agent"], self.mobile_user_agent)
+        self.assertEqual(new_header["User-Agent"], self.default_mobile_user_agent)
 
         # Switch back to desktop
         self.task_set.appian._interactor.set_user_agent_to_desktop()
@@ -420,6 +422,34 @@ class TestInteractor(unittest.TestCase):
 
         # Then
         self.assertEqual(new_header, default_header)
+
+    def test_override_default_mobile_user_agent(self) -> None:
+        # Given
+        default_header = self.task_set.appian._interactor.setup_request_headers()
+        self.assertEqual(default_header["User-Agent"], self.default_desktop_user_agent)
+
+        # When
+        self.task_set.client.user_agent_mobile = self.mobile_override_agent
+        self.task_set.appian._interactor.set_user_agent_to_mobile()
+        new_header = self.task_set.appian._interactor.setup_request_headers()
+
+        # Then
+        self.assertNotEqual(new_header, default_header)
+        self.assertEqual(new_header["User-Agent"], self.mobile_override_agent)
+
+    def test_override_desktop_user_agent(self) -> None:
+        # Given
+        default_header = self.task_set.appian._interactor.setup_request_headers()
+        self.assertEqual(default_header["User-Agent"], self.default_desktop_user_agent)
+
+        # When
+        self.task_set.client.user_agent_desktop = self.desktop_override_agent
+        self.task_set.appian._interactor.set_user_agent_to_desktop()
+        new_header = self.task_set.appian._interactor.setup_request_headers()
+
+        # Then
+        self.assertNotEqual(new_header, default_header)
+        self.assertEqual(new_header["User-Agent"], self.desktop_override_agent)
 
     def test_click_record_search_button(self) -> None:
         component = find_component_by_index_in_dict("SearchBoxWidget", 1, json.loads(self.site_with_record_search_button))

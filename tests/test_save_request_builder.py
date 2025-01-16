@@ -21,8 +21,8 @@ class TestSaveRequestBuilder(unittest.TestCase):
     record_action_launch_form_before_refresh = read_mock_file("record_action_launch_form_before_refresh.json")
     record_action_component_payload_json = read_mock_file("record_action_component_payload.json")
     record_action_trigger_payload_json = read_mock_file("record_action_trigger_payload.json")
-    default_user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36"
-    mobile_user_agent = "AppianAndroid/20.2 (Google AOSP on IA Emulator, 9; Build 0-SNAPSHOT; AppianPhone)"
+    default_user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+    mobile_user_agent = "AppianAndroid/24.4 (Google AOSP on IA Emulator, 9; Build 0-SNAPSHOT; AppianPhone)"
 
     def setUpWithPath(self, base_path_override: Optional[str] = None) -> None:
         self.custom_locust = CustomLocust(Locust())
