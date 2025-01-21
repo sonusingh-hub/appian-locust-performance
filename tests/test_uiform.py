@@ -558,7 +558,7 @@ class TestSailUiForm(unittest.TestCase):
         sail_ui_record_action = json.loads(self.record_action_launch_form_before_refresh)
         sail_form = SailUiForm(self.task_set.appian._interactor, sail_ui_record_action)
 
-        sail_form.evaluate_record_action_field_security(security_on_demand_accessibility_text="my-record-action-field-access-text-21")
+        sail_form.evaluate_record_action_field_security(accessibility_text="my-record-action-field-access-text-21")
 
         args, kwargs = mock_trigger_security.call_args_list[0]
 
