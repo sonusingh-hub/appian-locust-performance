@@ -27,6 +27,7 @@ class TestInteractor(unittest.TestCase):
     response_with_start_process_link = read_mock_file("start_process_link_response.json")
     record_action_launch_form_before_refresh = read_mock_file("record_action_launch_form_before_refresh.json")
     record_action_refresh_response = read_mock_file("record_action_refresh_response.json")
+    record_action_field_before_security_eval = read_mock_file_as_dict("record_action_field_before_security_eval.json")
     site_with_record_search_button = read_mock_file("site_with_record_search_button.json")
     site_with_expression_editor = read_mock_file("site_with_expression_editor.json")
     tempo_report_record_link = read_mock_file("tempo_report_record_link.json")
@@ -604,6 +605,25 @@ class TestInteractor(unittest.TestCase):
         resp_json = self.task_set.appian._interactor.click_record_list_action("label", pm_id, cache_key)
 
         self.assertEqual(resp_json, json.loads(correct_json))
+    
+    @patch('appian_locust._interactor._Interactor.post_page')
+    def test_trigger_record_action_security_on_demand(self, post_page_mock: MagicMock) -> None:
+        component = self.record_action_field_before_security_eval
+        context = {
+            "fake": "context"
+        }
+        self.task_set.appian._interactor.trigger_record_action_security_on_demand(
+                                "https://fake_url",
+                                component,
+                                context,
+                                "fake-uuid"
+                            )
+
+        args, kwargs = post_page_mock.call_args_list[0]
+
+        payload = kwargs['payload']
+
+        self.assertTrue(find_component_by_attribute_in_dict("#t", "RecordActionWidget", payload))
 
     def test_clean_filename(self) -> None:
         cleaned_str = self.task_set.appian._interactor._clean_filename("\\<>:\"/|?*")

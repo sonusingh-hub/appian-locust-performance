@@ -237,7 +237,92 @@
             "accessibilityText": "",
             "browserTooltip": "",
             "#t": "CardLayout"
-          }],
+          },{
+            "_cId": "55e6c715022fb4394b8001d34be02a7dqqq",
+            "contents": [{
+              "_cId": "95cd2ac0a6c8c91b7001cc472499cc56qqq",
+              "contents": [{
+                "_cId": "52aeca816275c37e7028b1b19a41cc07qqq",
+                "label": "",
+                "instructions": "",
+                "readOnly": "True",
+                "placeholder": "",
+                "value": "Record action field testing",
+                "saveInto": ["<<jA0EAwMCQEUt6Rt/8kgB0okB482I9i38DTGaWUPimS7SisAwenb68ghp8JQAbbbN5JpqCsaXzfQd\r\nMXJ/lBBeH4FJmss804Bgnyqy1OccMDnn3MGhwNe85n2Jk676jSMgi80YMRdi0Z2LfgXeXqc4q2W0\r\nDzMKti0SE8iwg8ac8ONePASdJZhLoHtVsKU/NrxrBJ6JE/Kgq6R97w==\r\n>>"],
+                "refreshAfter": "UNFOCUS",
+                "keyboard": "STANDARD",
+                "labelPosition": "ABOVE",
+                "align": "DEFAULT",
+                "helpTooltip": "",
+                "accessibilityText": "",
+                "inputPurpose": "",
+                "#t": "TextField"
+              }, {
+                "_cId": "440d6b1479a460096f7c23d7b19d0477qqq",
+                "contents": {
+                  "_cId": "c5d475751b05967c681daebde0a86159qqq",
+                  "recordActions": [{
+                    "containsComponents": "true",
+                    "testLabel": "my-record-action-test-label",
+                    "recordAction": {
+                      "_cId": "c845898d52ccec938e5d7dc13e8c2e67qqq",
+                      "label": "My record action label",
+                      "description": "",
+                      "openActionsIn": "DIALOG",
+                      "source": {
+                        "_cId": "6f954dab0f6715a28967649219117f78",
+                        "opaqueRecordRef": "lEBFPRMPwJJcLTreJo3pK8rAF7qyovlBpjM75yFqJlNRo6BqEG0ZVK6zsFkX15h66wjCUXgDfe3aTSZwe3ao7mqH1D72V7NOHV53aRvjKCtHMM",
+                        "recordTypeStub": "GjMakA",
+                        "opaqueRecordId": "ikBFPRMPwJJcLTreO9-kqY0NTFn5whVSpbTYD_QnqEYxqLlNIr9IFMZNA",
+                        "opaqueRelatedActionId": "ikBFPRMPwJJcLTreO9-kqY0NTFi5wgf__Kpm5XYdFeZGFnZlV0cYvNf_A",
+                        "recordId": "",
+                        "processModelUuid": "",
+                        "#t": "InternalRelatedActionLink"
+                      },
+                      "onSubmitSaveInto": ["<<jA0EAwMCQEUt6Rt/8kgB0qEB482I9i38DTGaWUPimS7SisAwenb68ghpmp1LS7XN5IngYD0V+q4h\r\nhIkw80VZQR9g/Ycjr9lisb6vxJunguuKVw6w333BgZ38uTnWNLl8BbRiVrWHfU9si+GYuEfXZp9M\r\nrY6pgkBFRGjnOnUaa7VLLEMuFMNCQ08ro38jegSb6iTRZxABETu1lCP70ux60OITsD0Iy0yj8njw\r\nCDzhdEINYg==\r\n>>"],
+                      "#t": "RelatedActionLink"
+                    },
+                    "icon": "search-plus",
+                    "tooltip": "My record action tooltip",
+                    "#t": "RecordActionItem"
+                  }],
+                  "size": "",
+                  "componentStyle": "MENU_ICON",
+                  "labelStyle": "LABEL_AND_ICON",
+                  "orientation": "HORIZONTAL",
+                  "align": "",
+                  "securityOnDemand": true,
+                  "value": {
+                    "#v": 1,
+                    "#t": "int"
+                  },
+                  "saveInto": ["<<-a-fake-save-into-jA0EAwMCQEUt6Rt/8kgB0okB482I9i38DTGaWUPimS7SisAwenb68ghp8JQAbbbN5JpqCsaXzfQd\r\nMXJ/lBBeH4FJmss804Bgnyqy1OccMDnn3MGhwNe85n2Jk676jSMgi80YMRdi0Z2LfgXeXqc4q2W0\r\nDzMKti0SE8iwg8ac8ONePASdJZhLoHtVsKU/NrxrBJ6JE/Kgq6R97w==\r\n>>"],
+                  "#t": "RecordActionWidget"
+                },
+                "label": "",
+                "labelPosition": "COLLAPSED",
+                "instructions": "",
+                "instructionsPosition": "",
+                "helpTooltip": "",
+                "requiredStyle": "",
+                "skinName": "",
+                "marginBelow": "",
+                "accessibilityText": "my-record-action-field-access-text-21",
+                "#t": "FieldLayout"
+              }],
+              "padding": "LESS",
+              "topLevelBackgroundColor": "",
+              "#t": "ContentLayout"
+            }],
+            "height": "",
+            "width": "FIT",
+            "style": "",
+            "tooltip": "",
+            "marginBelow": "",
+            "accessibilityText": "",
+            "browserTooltip": "",
+            "#t": "CardLayout"        
+        }],
           "align": "",
           "width": ""
         }],

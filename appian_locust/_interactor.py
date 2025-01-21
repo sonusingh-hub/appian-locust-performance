@@ -1370,6 +1370,33 @@ class _Interactor:
             self.get_interaction_host() + post_url, payload=record_action_payload, label=label
         )
         return resp.json()
+    
+    def trigger_record_action_security_on_demand(self, post_url: str, record_action_field_component: Dict[str, Any],
+                                                 context: Dict[str, Any], uuid: str, label: Optional[str] = None) -> Dict[str, Any]:
+        """
+            Calls the post operation to evaluate security for a record action field a!recordActionField.
+            Required when securityOnDemand is set to true on the record action field.
+
+            Args:
+                post_url: the url (not including the host and domain) to post to
+                record_action_field_component: the JSON representing the relevant record action component
+                context: the Sail context parsed from the json response
+                uuid: the uuid parsed from the json response
+
+            Returns: the response of post operation as json
+        """
+        # Get the payload for the record action security on demand request
+        record_action_payload = save_builder() \
+            .component(record_action_field_component) \
+            .context(context) \
+            .uuid(uuid) \
+            .value(record_action_field_component["value"]) \
+            .build()
+
+        resp = self.post_page(
+            self.get_interaction_host() + post_url, payload=record_action_payload, label=label
+        )
+        return resp.json()
 
     def click_record_search_button(self, post_url: str, component: Dict[str, Any], context: Dict[str, Any],
                                    uuid: str, label: Optional[str] = None) -> Dict[str, Any]:
