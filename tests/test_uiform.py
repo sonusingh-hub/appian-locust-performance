@@ -539,6 +539,17 @@ class TestSailUiForm(unittest.TestCase):
         dropdown_component = find_component_by_attribute_in_dict('label', 'Document Type', record_instance_related_action_form.get_latest_state())
         self.assertEqual(dropdown_component.get("#t"), "DropdownField")
 
+    @patch('appian_locust._interactor._Interactor.click_related_action')
+    def test_click_related_action_with_test_label(self, mock_click_related_action: MagicMock) -> None:
+        sail_ui_record_action = json.loads(self.record_action_launch_form_before_refresh)
+        sail_form = SailUiForm(self.task_set.appian._interactor, sail_ui_record_action)
+
+        sail_form.click_related_action("updateTable1-1", is_test_label=True)
+
+        args, _ = mock_click_related_action.call_args_list[0]
+
+        self.assertEqual(args[0]['label'], "Update Table 1 (Dup) (PSF)")
+    
     @patch('appian_locust._interactor._Interactor.click_start_process_link')
     def test_click_start_process_link(self, mock_click_spl: MagicMock) -> None:
         test_form = SailUiForm(self.task_set.appian._interactor, json.loads(self.spl_response))

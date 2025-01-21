@@ -791,7 +791,7 @@ class SailUiForm:
             new_state = self._interactor.click_component(self.form_url, component, self.context, self.uuid, label=locust_label)
         return new_state
 
-    def click_related_action(self, label: str, locust_request_label: str = "") -> 'SailUiForm':
+    def click_related_action(self, label: str, locust_request_label: str = "", is_test_label: bool = False) -> 'SailUiForm':
         """
         Clicks a related action (either a related action button or link) on the form by label
         If no link is found, throws a ComponentNotFoundException
@@ -801,6 +801,7 @@ class SailUiForm:
 
         Keyword Args:
             locust_request_label(str): Label used to identify the request for locust statistics
+            is_test_label: If this label is a test label
 
         Returns (SailUiForm): The latest state of the UiForm
 
@@ -820,7 +821,11 @@ class SailUiForm:
             >>> header_form.click_related_action('Request upgrade')
 
         """
-        component = find_component_by_attribute_in_dict('label', label, self._state)
+        attribute_to_find = 'testLabel' if is_test_label else 'label'
+        component = find_component_by_attribute_in_dict(attribute_to_find, label, self._state)
+
+        if is_test_label:
+            component = component["recordAction"]
 
         # Support scenario where related action label is found within outer "ButtonWidget" rather than directly in "RelatedActionLink" component
         if "source" not in component:
@@ -844,6 +849,9 @@ class SailUiForm:
                                                           opaque_related_action_id=opaque_related_action_id,
                                                           locust_request_label=locust_label, open_in_a_dialog=open_action_in_a_dialog)
         return self._reconcile_state(new_state, skipValidations=True)
+    
+    # Alias for click_related_action
+    click_record_action = click_related_action
 
     def click_menu_item_by_name(self, label: str, choice_name: str, is_test_label: bool = False,
                                 locust_request_label: str = "") -> 'SailUiForm':
