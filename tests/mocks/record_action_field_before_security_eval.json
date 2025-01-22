@@ -1,0 +1,15 @@
+{
+  "_cId": "c5d475751b05967c681daebde0a86159qqq",  
+  "size": "",
+  "componentStyle": "MENU_ICON",
+  "labelStyle": "LABEL_AND_ICON",
+  "orientation": "HORIZONTAL",
+  "align": "",
+  "securityOnDemand": true,
+  "value": {
+    "#v": 1,
+    "#t": "int"
+  },
+  "saveInto": ["<<-a-fake-save-into-jA0EAwMCQEUt6Rt/8kgB0okB482I9i38DTGaWUPimS7SisAwenb68ghp8JQAbbbN5JpqCsaXzfQd\r\nMXJ/lBBeH4FJmss804Bgnyqy1OccMDnn3MGhwNe85n2Jk676jSMgi80YMRdi0Z2LfgXeXqc4q2W0\r\nDzMKti0SE8iwg8ac8ONePASdJZhLoHtVsKU/NrxrBJ6JE/Kgq6R97w==\r\n>>"],
+  "#t": "RecordActionWidget"
+}
