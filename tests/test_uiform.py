@@ -551,14 +551,32 @@ class TestSailUiForm(unittest.TestCase):
         self.assertEqual(args[0]['label'], "Update Table 1 (Dup) (PSF)")
     
     @patch('appian_locust.uiform.SailUiForm._reconcile_state')
-    @patch('appian_locust._interactor._Interactor.trigger_record_action_security_on_demand')
-    def test_evaluate_record_action_field_security(self,
+    @patch('appian_locust._interactor._Interactor.click_generic_element')
+    def test_evaluate_record_action_field_security_by_accessibility_text(self,
                                                    mock_trigger_security: MagicMock,
                                                    mock_reconcile_state: MagicMock) -> None:
         sail_ui_record_action = json.loads(self.record_action_launch_form_before_refresh)
         sail_form = SailUiForm(self.task_set.appian._interactor, sail_ui_record_action)
 
         sail_form.evaluate_record_action_field_security(accessibility_text="my-record-action-field-access-text-21")
+
+        args, kwargs = mock_trigger_security.call_args_list[0]
+
+        # trigger method should have record_action_field as a param
+        record_action_field_cid = "c5d475751b05967c681daebde0a86159qqq"
+
+        self.assertEqual(args[1]['_cId'], record_action_field_cid)
+        self.assertTrue(args[1]['securityOnDemand'])
+    
+    @patch('appian_locust.uiform.SailUiForm._reconcile_state')
+    @patch('appian_locust._interactor._Interactor.click_generic_element')
+    def test_evaluate_record_action_field_security_by_index(self,
+                                                   mock_trigger_security: MagicMock,
+                                                   mock_reconcile_state: MagicMock) -> None:
+        sail_ui_record_action = json.loads(self.record_action_launch_form_before_refresh)
+        sail_form = SailUiForm(self.task_set.appian._interactor, sail_ui_record_action)
+
+        sail_form.evaluate_record_action_field_security(index=2)
 
         args, kwargs = mock_trigger_security.call_args_list[0]
 

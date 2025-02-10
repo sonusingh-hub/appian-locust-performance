@@ -853,7 +853,7 @@ class SailUiForm:
     # Alias for click_related_action
     click_record_action = click_related_action
 
-    def evaluate_record_action_field_security(self, locust_request_label: str = "", accessibility_text: str = "") -> 'SailUiForm':
+    def evaluate_record_action_field_security(self, locust_request_label: str = "", index: int = None, accessibility_text: str = "") -> 'SailUiForm':
         """
         Triggers security evaluation to reveal record action items for a record action field
 
@@ -861,37 +861,50 @@ class SailUiForm:
 
         Keyword Args:
             locust_request_label(str): Label used to identify the request for locust statistics
+            index: Index of the record action field to evaluate security for (default: None)
             accessibility_text: Value of a record action field's accessibilityText attribute
                 used to locate record action field with securityOnDemand to enable security evaluation prior
-                to action item click
+                to action item click. If provided, index is ignored. (default: "")
 
         Returns (SailUiForm): The latest state of the UiForm
 
         Examples:
             How to use evaluate_record_action_field_security():
-
+            >>> my_form.evaluate_record_action_field_security(index=2)
+            
             >>> my_form.evaluate_record_action_field_security(accessibility_text="my-action-field-accessibility-text")
 
         """
+        print("************************* NEW ONE!!!! *************************")
         locust_label = locust_request_label or f"{self.breadcrumb}.EvaluateRecordActionFieldSecurity"
 
-        # Find the record action field FieldLayout by accessibility_text
-        # and get the RecordActionWidget from its contents attribute.
-        action_field_layout_component = find_component_by_attribute_in_dict("accessibilityText",
-                                                                            accessibility_text, self._state)
-        action_field_component = action_field_layout_component["contents"]
+        if accessibility_text:
+            # Find the record action field FieldLayout by accessibility_text
+            # and get the RecordActionWidget from its contents attribute.
+            action_field_layout_component = find_component_by_attribute_in_dict("accessibilityText",
+                                                                                accessibility_text, self._state)
+            action_field_component = action_field_layout_component["contents"]
+        elif index is not None:
+            action_field_component = find_component_by_index_in_dict(component_type="RecordActionWidget", index=index, component_tree=self._state)
+        else:
+            raise Exception("Either index or accessibility_text must be provided to evaluate_record_action_field_security")
+
         if not action_field_component["#t"] == "RecordActionWidget":
-            raise Exception(f"RecordActionWidget not found in component with accessibilityText '{accessibility_text}'")
+            raise Exception(f"RecordActionWidget not found in component with accessibilityText '{accessibility_text}'" if 
+                            accessibility_text else f"RecordActionWidget not found at index {index}")
         if not action_field_component["securityOnDemand"]:
-            raise Exception(f"RecordActionWidget found accessibilityText '{accessibility_text}' but securityOnDemand is not true")
+            raise Exception(f"RecordActionWidget found but securityOnDemand is not true")
+        
         reeval_url = self._get_update_url_for_reeval(self._state)
-        # Then trigger security on demand and refresh the SailUiForm state
-        new_state = self._interactor.trigger_record_action_security_on_demand(
-                                                                        reeval_url, action_field_component, 
-                                                                        self.context, self.uuid, 
-                                                                        label=f"{locust_label}.securityOnDemand")
+        
+        new_state = self._interactor.click_generic_element(
+                                                            reeval_url, action_field_component, 
+                                                            self.context, self.uuid, 
+                                                            action_field_component["value"],
+                                                            label=f"{locust_label}.securityOnDemand")
+        
         if not new_state:
-            raise Exception(f"No response returned when triggering security on demand for action field with accessibilityText '{accessibility_text}'")
+            raise Exception(f"No response returned when triggering security on demand for action field [index: {index}, accessibilityText: '{accessibility_text}']")
         return self._reconcile_state(new_state)
 
     def click_menu_item_by_name(self, label: str, choice_name: str, is_test_label: bool = False,
