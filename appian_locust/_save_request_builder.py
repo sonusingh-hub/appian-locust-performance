@@ -1,4 +1,4 @@
-from typing import Dict, Any, Union, Optional
+from typing import Dict, Any, Union, Optional, List, cast
 
 
 def save_builder() -> '_SaveRequestBuilder':
@@ -77,6 +77,11 @@ class _SaveRequestBuilder:
                 ],
             },
         }
+        # We need to add the label for dynamicLink: async_timer for it to be evaluated as an async request
+        if self._component.get('label') == 'async_timer':
+            updates = cast(Dict[str, Any], payload["updates"])
+            v_list = cast(List[Dict[str, Any]], updates["#v"])
+            v_list[0].update({"label": self._component["label"]})
         if self._identifier:
             payload.update(
                 {"identifier": self._identifier}

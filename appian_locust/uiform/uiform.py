@@ -704,7 +704,7 @@ class SailUiForm:
         else:
             link_component = component.get('link', {})
             link_type = link_component.get('#t')
-
+        
         if link_type == START_PROCESS_LINK_TYPE:
             site_name = link_component["siteUrlStub"] or TEMPO_SITE_STUB
             page_name = link_component["sitePageUrlStub"]
@@ -725,6 +725,17 @@ class SailUiForm:
             new_state = self.task_opener.visit_by_task_id(task_name, task_id, extra_headers=headers)
         elif link_component:
             new_state = self._interactor.click_component(self.form_url, link_component, self.context, self.uuid, label=locust_label)
+
+        # Add special handling for async_timer
+        # A None here represents a 204 status code returned from the reevaluation request for the timer
+        # When a 204/None is returned, the async operation has not finished yet, so the state should not change.
+        # In this case, set the "new" state to be the current state
+        elif component.get('label') == 'async_timer':
+            timer_result = self._interactor.click_async_timer(self.form_url, component, self.context, self.uuid, label=locust_label)
+            if timer_result is None:
+                new_state = self._state
+            else:
+                new_state = timer_result
         else:
             new_state = self._interactor.click_component(self.form_url, component, self.context, self.uuid, label=locust_label)
         return new_state

@@ -151,7 +151,7 @@ class MockClient:
 
         response = MockResponse()
         response.status_code = status_code
-        content = str.encode(body)
+        content = str.encode(body) if body is not None else b""
         response.content = content
         response.raw = NoOpReadCloser(content)
         response.cookies = requests.cookies.cookiejar_from_dict(cookies) if cookies else self.cookies
