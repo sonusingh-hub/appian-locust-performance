@@ -13,9 +13,12 @@ class DesignObjectUiForm(SailUiForm):
         super().__init__(interactor, state, breadcrumb)
         self.__design = _Design(interactor)
 
-    def edit_expression_rule(self, value: str, locust_request_label: str = "") -> 'DesignObjectUiForm':
+    def edit_expression_rule(self, value: str, locust_request_label: str = "", label: str = "",
+                             is_test_label: bool = False) -> 'DesignObjectUiForm':
+        test_label = label if is_test_label else 'expression-editor'
+
         component = find_component_by_attribute_in_dict(
-            attribute='testLabel', value='expression-editor', component_tree=self._state)
+            attribute='testLabel', value=test_label, component_tree=self._state)
         locust_label = locust_request_label or f'{self.breadcrumb}.ExpressionEditor.update'
         reeval_url = self._get_update_url_for_reeval(self._state)
 
