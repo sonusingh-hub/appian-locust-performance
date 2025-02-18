@@ -1,5 +1,6 @@
 from typing import Any, Dict, Optional
 
+from .InterfaceDesignerUiForm import InterfaceDesignerUiForm
 from .._design import _Design, get_available_design_objects, validate_design_object_access_method
 from .._rdo_interactor import _RDOInteractor
 from .._interactor import _Interactor
@@ -17,6 +18,13 @@ class ApplicationUiForm(SailUiForm):
         super().__init__(interactor, state, breadcrumb)
         self.__design = _Design(interactor)
 
+    def __get_design_object_info(self, design_object_name: str, locust_request_label: Optional[str] = None) -> tuple[str, Dict[str, Any]]:
+        opaque_id = self.__design.find_design_object_opaque_id_in_grid(design_object_name, self._state)
+        locust_request_label = locust_request_label or f"Application.Object.{opaque_id[:10]}.Click"
+        design_object_json = self.__design.fetch_design_object_json(opaque_id, locust_request_label=locust_request_label)
+        validate_design_object_access_method(design_object_json, _RDO_TYPE_TO_APPLICATION_METHOD)
+        return opaque_id, design_object_json
+
     def click_design_object(self, design_object_name: str, locust_request_label: Optional[str] = None) -> DesignObjectUiForm:
         """
         Click on a design object in the design object grid. The current view of the grid must contain the object you wish
@@ -27,12 +35,24 @@ class ApplicationUiForm(SailUiForm):
         Returns (DesignObjectUiForm): UiForm representing UI of design object
 
         """
-        opaque_id = self.__design.find_design_object_opaque_id_in_grid(design_object_name, self._state)
-        locust_request_label = locust_request_label or f"Application.Object.{opaque_id[:10]}.Click"
+        opaque_id, design_object_json = self.__get_design_object_info(design_object_name, locust_request_label)
         breadcrumb = f"Design.SelectedObject.{opaque_id[:10]}.SailUi"
-        design_object_json = self.__design.fetch_design_object_json(opaque_id, locust_request_label=locust_request_label)
-        validate_design_object_access_method(design_object_json, _RDO_TYPE_TO_APPLICATION_METHOD)
         return DesignObjectUiForm(self._interactor, design_object_json, breadcrumb)
+
+    def click_interface(self, interface_name: str, locust_request_label: Optional[str] = None) -> InterfaceDesignerUiForm:
+        """
+        Click on an interface design object in the design object grid. The grid is filtered to only show interface before
+        clicking on the object.
+        Args:
+            interface_name: The name of the interface to click on
+            locust_request_label: A locust request label to use in place of the default
+
+        Returns (InterfaceDesignerUiForm): UiForm representing the UI of Interface Designer
+        """
+        self.filter_design_objects([DesignObjectType.INTERFACE])
+        opaque_id, design_object_json = self.__get_design_object_info(interface_name, locust_request_label)
+        breadcrumb = f"Design.SelectedInterface.{opaque_id[:10]}.SailUi"
+        return InterfaceDesignerUiForm(self._interactor, design_object_json, breadcrumb)
 
     def click_ai_skill(self, ai_skill_name: str, locust_request_label: Optional[str] = None) -> AISkillUiForm:
         """
