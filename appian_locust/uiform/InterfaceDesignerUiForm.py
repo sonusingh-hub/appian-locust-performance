@@ -2,6 +2,7 @@ from enum import Enum
 from typing import Any, Dict, Optional
 
 from .._interactor import _Interactor
+from ..client_mode import ClientMode
 from ..uiform import DesignObjectUiForm
 
 from ..utilities.helper import (find_component_by_attribute_in_dict, find_component_by_type_and_attribute_and_index_in_dict)
@@ -20,6 +21,7 @@ class InterfaceDesignerUiForm(DesignObjectUiForm):
 
     def __init__(self, interactor: _Interactor, state: Dict[str, Any], breadcrumb: str = "InterfaceDesignerUi"):
         super().__init__(interactor, state, breadcrumb)
+        interactor.set_client_mode(client_mode=ClientMode.INTERFACE_DESIGN)
 
     def select_component(self, component_label: str) -> None:
         component_id, _ = self.__get_live_view_component_info(component_label)
