@@ -21,6 +21,7 @@ from ._reports import _Reports
 from ._sites import _Sites
 from ._admin import _Admin
 from ._tasks import _Tasks
+from .uiform.InterfaceDesignerUiForm import InterfaceDesignerUiForm
 from .utilities.helper import format_label
 from .objects import DesignObjectType, PageType
 
@@ -170,6 +171,20 @@ class Visitor:
         design_object_json = self.__design.fetch_design_object_json(opaque_id, locust_request_label)
         validate_design_object_access_method(design_object_json, _RDO_TYPE_TO_VISITOR_METHOD)
         return DesignObjectUiForm(self.__interactor, design_object_json, breadcrumb)
+
+    def visit_interface_object_by_id(self, opaque_id: str, locust_request_label: Optional[str] = None) -> InterfaceDesignerUiForm:
+        """
+        Visit an interface object by its opaque id. This does not validate that the given opaque_id actually refers to an interface.
+        Args:
+            opaque_id (str): opaque id of the interface object
+            locust_request_label (str, optional): label to be used within locust
+
+        Returns (InterfaceDesignerUiForm): UiForm representing interface object
+        """
+        breadcrumb = "Design.SelectedInterface." + opaque_id[0:10] + ".SailUi"
+        design_object_json = self.__design.fetch_design_object_json(opaque_id, locust_request_label)
+        validate_design_object_access_method(design_object_json, _RDO_TYPE_TO_VISITOR_METHOD)
+        return InterfaceDesignerUiForm(self.__interactor, design_object_json, breadcrumb)
 
     def visit_design_object_by_name(self, object_name: str, object_type: DesignObjectType, locust_request_label: Optional[str] = None) -> DesignObjectUiForm:
         """

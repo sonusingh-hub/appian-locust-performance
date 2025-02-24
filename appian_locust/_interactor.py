@@ -10,6 +10,7 @@ from typing import Any, Dict, List, Optional, Set, Tuple, Union
 from locust.clients import HttpSession, ResponseContextManager
 from requests import Response
 
+from .client_mode import ClientMode
 from .utilities import logger
 from ._locust_error_handler import test_response_for_error
 from ._save_request_builder import save_builder
@@ -59,6 +60,7 @@ class _Interactor:
         self.datatype_cache = DataTypeCache()
         self.user_agent = ""
         self.portals_mode = portals_mode
+        self.client_mode = ClientMode.TEMPO
         self._request_timeout = request_timeout
         # Set to default as desktop request.
         self.set_user_agent_to_desktop()
@@ -68,6 +70,9 @@ class _Interactor:
     # GENERIC UTILITY METHODS
     def set_user_agent_to_desktop(self) -> None:
         self.user_agent = getattr(self.client, "user_agent_desktop", USER_AGENT_DESKTOP)
+
+    def set_client_mode(self, client_mode: ClientMode) -> None:
+        self.client_mode = client_mode
 
     def set_user_agent_to_mobile(self) -> None:
         self.user_agent = getattr(self.client, "user_agent_mobile", USER_AGENT_MOBILE)
@@ -127,6 +132,8 @@ class _Interactor:
         if self.portals_mode:
             headers["X-Client-Mode"] = "SERVERLESS"
             headers["Referer"] = self.host
+        elif self.client_mode:
+            headers["X-Client-Mode"] = self.client_mode.value
 
         return headers
 
