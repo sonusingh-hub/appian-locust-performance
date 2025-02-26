@@ -30,6 +30,10 @@ class UiReconciler:
 
             # Pass context forward as well, for stateless mode
             old_state_copy['context'] = new_state['context']
+
+            # The timers also have to be updated to the ones in the new UI
+            if 'timers' in new_state:
+                old_state_copy['timers'] = new_state['timers']
             return old_state_copy
         else:
             # Simply return the new_state, as we are most likely on a new form

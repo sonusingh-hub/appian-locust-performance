@@ -36,6 +36,7 @@ class TestInteractor(unittest.TestCase):
     default_mobile_user_agent = "AppianAndroid/24.4 (Google AOSP on IA Emulator, 9; Build 0-SNAPSHOT; AppianPhone)"
     desktop_override_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 14.7; rv:134.0) Gecko/20100101 Firefox/134.0"
     mobile_override_agent = "Mozilla/5.0 (iPhone; CPU iPhone OS 17_7_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4.1 Mobile/15E148 Safari/604.1"
+    gridfield_async = read_mock_file("gridfield_async.json")
 
     def setUpWithPath(self, base_path_override: Optional[str] = None) -> None:
         self.base_netloc = "test-site.net"
@@ -1070,3 +1071,11 @@ class TestInteractor(unittest.TestCase):
 
         _, kwargs = post_page_mock.call_args_list[0]
         self.assertEqual(expected_payload, kwargs["payload"])
+
+    def test_click_async_timer(self) -> None:
+        async_timer = find_component_by_attribute_in_dict("label", "async_timer", json.loads(self.gridfield_async))
+        url = "/suite/rest/a/sites/latest/api-dashboard/pages/api-dashboard/interface"
+        # Set the body to something other than None to prove that we return None as a result of the 204 error code
+        self.custom_locust.set_response(url, 204, "anything")
+        response = self.task_set.appian._interactor.click_async_timer(url, async_timer, {}, "")
+        self.assertIsNone(response)

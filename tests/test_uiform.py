@@ -64,6 +64,7 @@ class TestSailUiForm(unittest.TestCase):
     actions_nav = read_mock_file("actions_nav.json")
     actions_feed = read_mock_file("actions_feed.json")
     duplicate_date_field = read_mock_file("duplicate_date_field.json")
+    gridfield_async = read_mock_file("gridfield_async.json")
 
     def setUp(self) -> None:
         self.custom_locust = CustomLocust(User(ENV))
@@ -1039,7 +1040,8 @@ class TestSailUiForm(unittest.TestCase):
         self.custom_locust.set_response('/suite/rest/a/model/latest/228/form',
                                         200,
                                         '{"context": "12345","links": [{"href": "https://instance.host.net/suite/form","rel": "update","title": "Update", \
-                                        "type": "application/vnd.appian.tv.ui+json; c=2; t=START_FORM","method": "POST"}], "ui": {"#t": "UiComponentsDelta","modifiedComponents": []}}')
+                                        "type": "application/vnd.appian.tv.ui+json; c=2; t=START_FORM","method": "POST"}], "ui": {"#t": "UiComponentsDelta","modifiedComponents": []}, \
+                                          "timers": {"#t": "Dictionary"}}')
         sail_form: SailUiForm = self.task_set.appian.visitor.visit_action(
             "Create a Case", False)
 
@@ -1061,7 +1063,7 @@ class TestSailUiForm(unittest.TestCase):
             '/suite/rest/a/model/latest/228/form',
             200,
             '{"context": "12345","links": [{"href": "https://instance.host.net/suite/form","rel": "update","title": "Update", \
-            "type": "application/vnd.appian.tv.ui+json; c=2; t=START_FORM","method": "POST"}], "ui": {"#t": "UiComponentsDelta","modifiedComponents": []}}')
+            "type": "application/vnd.appian.tv.ui+json; c=2; t=START_FORM","method": "POST"}], "ui": {"#t": "UiComponentsDelta","modifiedComponents": []}, "timers": {"#t": "Dictionary"}}')
         sail_form: SailUiForm = self.task_set.appian.visitor.visit_action("Create a Case")
 
         label = 'Title'
@@ -1491,6 +1493,13 @@ class TestSailUiForm(unittest.TestCase):
             label = 'Phone Num'
             value = '12345678910'
             sail_form.fill_text_field(label, value)
+
+    def test_dispatch_click_async_timer_link(self) -> None:
+        gridfield_async_form = SailUiForm(self.task_set.appian._interactor, json.loads(self.gridfield_async))
+        original_state = gridfield_async_form.get_latest_state()
+        self.custom_locust.client.set_response("/suite/rest/a/sites/latest/api-dashboard/pages/api-dashboard/interface", 204, None)
+        async_timer_response = gridfield_async_form.click_link("async_timer")
+        self.assertEqual(original_state, async_timer_response.get_latest_state(), "Unexpected state change")
 
 
 if __name__ == '__main__':

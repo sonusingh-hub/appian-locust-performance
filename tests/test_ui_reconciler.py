@@ -22,7 +22,7 @@ class TestUiReconciler(unittest.TestCase):
         # Given
         old_component = {'_cId': '12345', 'value': "This is what it used to be"}
         new_component = {'_cId': '12345', 'value': "This is what it is now"}
-        old_state = {'context': 'abc', "ui": {'#t': 'abc', 'contents': [old_component]}}
+        old_state = {'context': 'abc', "ui": {'#t': 'abc', 'contents': [old_component]}, "timers": {"#t": "Dictionary"}}
         new_state = {'context': '123', "ui": {'#t': UiReconciler.COMPONENT_DELTA_TYPE, 'modifiedComponents': [new_component]}}
 
         # When
@@ -38,7 +38,7 @@ class TestUiReconciler(unittest.TestCase):
         old_component = {'_cId': '12345', 'value': "This is what it used to be"}
         old_unchanged_component = {'_cId': '55555', 'value': "This is what it used to be"}
         new_component = {'_cId': '12345', 'value': "This is what it is now"}
-        old_state = {'context': 'abc', "ui": {'#t': 'abc', 'contents': [{'contents': [old_component, old_unchanged_component]}]}}
+        old_state = {'context': 'abc', "ui": {'#t': 'abc', 'contents': [{'contents': [old_component, old_unchanged_component]}]}, "timers": {"#t": "Dictionary"}}
         new_state = {'context': '123', "ui": {'#t': UiReconciler.COMPONENT_DELTA_TYPE, 'modifiedComponents': [new_component]}}
 
         # When

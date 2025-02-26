@@ -602,10 +602,44 @@ class _Interactor:
                    .build())
 
         locust_label = label or f'Click \'{component["label"]}\' Component'
-
         resp = self.post_page(
             uri=self.get_interaction_host() + post_url, payload=payload, label=locust_label
         )
+        return resp.json()
+
+    def click_async_timer(self, post_url: str, component: Dict[str, Any], context: Dict[str, Any],
+                          uuid: str, label: Optional[str] = None, headers: Optional[Dict[str, Any]] = None,
+                          client_mode: Optional[str] = None) -> Optional[Dict[str, Any]]:
+        '''
+            Calls the post operation to click async timer link
+
+            Args:
+                post_url: the url (not including the host and domain) to post to
+                component: the JSON code for the desired component
+                context: the Sail context parsed from the json response
+                uuid: the uuid parsed from the json response
+                label: the label to be displayed by locust for this action
+                headers: header for the REST API call
+
+            Returns: the response of post operation as json
+        '''
+        if "link" in component:
+            wrapper_label = component["label"]
+            component = component["link"]
+            component["label"] = wrapper_label
+
+        payload = (save_builder()
+                   .component(component)
+                   .context(context)
+                   .uuid(uuid)
+                   .build())
+
+        locust_label = label or f'Click \'{component["label"]}\' Component'
+        resp = self.post_page(
+            uri=self.get_interaction_host() + post_url, payload=payload, label=locust_label
+        )
+        if resp.status_code == 204:
+            return None
         return resp.json()
 
     # Aliases for click_component to preserve backwards compatibiltiy and increase readability
