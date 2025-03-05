@@ -69,7 +69,8 @@ class InterfaceDesignerUiForm(DesignObjectUiForm):
         if component_palette_button is None:
             raise Exception(f"Could not find {source_palette_label} in the Component Palette")
         template_id = component_palette_button["templateId"]
-        template_component_type = component_palette_button["templateComponentType"]
+        # Design Library Interfaces do not have templateComponentType and default to null
+        template_component_type = component_palette_button.get("templateComponentType")
         return template_id, template_component_type
 
     def __get_live_view_component_info(self, component_label: str) -> tuple[str, str]:
