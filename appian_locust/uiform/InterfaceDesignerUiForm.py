@@ -23,6 +23,14 @@ class InterfaceDesignerUiForm(DesignObjectUiForm):
         super().__init__(interactor, state, breadcrumb)
         interactor.set_client_mode(client_mode=ClientMode.INTERFACE_DESIGN)
 
+    def delete_component(self, component_label: str) -> None:
+        component_id, _ = self.__get_live_view_component_info(component_label)
+        new_value = {
+            "action": "DELETE",
+            "targetNodeId": component_id
+        }
+        self.__send_interface_designer_manager_request(new_value, f"Delete {component_label}")
+
     def select_component(self, component_label: str) -> None:
         component_id, _ = self.__get_live_view_component_info(component_label)
         new_value = {

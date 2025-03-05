@@ -29,6 +29,25 @@ class TestInterfaceDesignerUiform(unittest.TestCase):
         self.task_set.on_stop()
 
     @patch("appian_locust._interactor._Interactor.click_generic_element")
+    def test_delete_component(self, click_generic_mock: MagicMock) -> None:
+        design_object_id = "lIBLQLGU6pYkw0C5Zw-W_VRdOG8QydZTNHKPYN7YYjELPPHq3PtfIzFB0V3aMzJ1SphH2Cl4Q1aC6sDsSlZb3-Hz5qLB5eP4s0_7OUSTm6TP3vP"
+        # Visit the interface
+        self.custom_locust.set_response(
+            f"/suite/rest/a/applications/latest/app/design/{ design_object_id }", 200, self.interface_designer_simple_interface)
+        sail_form = self.task_set.appian.visitor.visit_interface_object_by_id(design_object_id)
+        # Delete Text
+        sail_form.delete_component("Text")
+        _, kwargs = click_generic_mock.call_args_list[0]
+        value = kwargs["new_value"]
+        self.assertEqual(value, {
+            "#t": "Dictionary",
+            "#v": {
+                "action": "DELETE",
+                "targetNodeId": "31"
+            }
+        })
+
+    @patch("appian_locust._interactor._Interactor.click_generic_element")
     def test_select_component(self, click_generic_mock: MagicMock) -> None:
         design_object_id = "lIBLQLGU6pYkw0C5Zw-W_VRdOG8QydZTNHKPYN7YYjELPPHq3PtfIzFB0V3aMzJ1SphH2Cl4Q1aC6sDsSlZb3-Hz5qLB5eP4s0_7OUSTm6TP3vP"
         # Visit the interface
