@@ -20,7 +20,7 @@ Things you can use to get more information:
         self.client.record_mode = True
 
 5. Use ``run_single_user`` from locust to debug using IDE breakpoints. Please refer https://docs.locust.io/en/stable/running-in-debugger.html
-   for more details on run_single_user. For IDE settings, refer https://docs.google.com/document/d/18SsM_8tv9b3E3ciZ16wtnLFh3VbOW7EsTdsz77gUPZ0/edit?tab=t.0
+   for more details on run_single_user.
 
 .. code-block:: python
 
