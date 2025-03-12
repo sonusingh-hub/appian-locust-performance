@@ -114,4 +114,6 @@ Troubleshooting
 
   * Add ``self.client.record_mode = True`` to your ``HttpUser`` subclass.  Files will be placed in ``/record_responses`` where the runner is executed.
 
+  * Use ``run_single_user`` method of locust to run in debugger mode.
+
 .. quick_start-inclusion-end-do-not-remove
