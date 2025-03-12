@@ -333,6 +333,57 @@ class SailUiForm:
 
         return self._reconcile_state(new_state)
 
+    def fill_cascading_pickerfield_with_attribute(self, attribute: str, attribute_value: str,
+                                                  selections: List[str],
+                                                  locust_request_label: str = "") -> 'SailUiForm':
+        """
+        Select a choice for a cascading pickerfield using any attribute, one where multiple choices can be chained
+        together
+        Args:
+            attribute(str): Name of the component to fill
+            attribute_value(str): Value for the attribute passed in to this function
+            selections(str): The series of options to select through
+
+        Keyword Args:
+            locust_request_label(str): Label to associate in locust statistics with selecting the picker choice
+        """
+        # pickerFieldCustom will add a test-Label at the level where the suggestions/saveInto exist
+        component = find_component_by_attribute_and_type_in_dict(attribute, attribute_value, 'PickerWidget', self._state)
+
+        locust_request_label = locust_request_label or f"{self.breadcrumb}.SelectCascadingPickerFieldWithAttribute{attribute}"
+        choices = component["inlineChoices"]
+
+        for selection in selections[:-1]:
+            selection_details = self._interactor.find_selection_from_choices(selection, choices)
+
+            if not selection_details:
+                raise ChoiceNotFoundException(f"Selection {selection} not found among choices for cascading pickerfield having attribute: {attribute} with value {attribute_value}")
+
+            request_payload = self._interactor.initialize_cascading_pickerfield_request(component)
+            request_payload = self._interactor.fill_cascading_pickerfield_request(request_payload, selection_details)
+
+            choices = self._interactor.fetch_new_cascading_pickerfield_selection(request_payload, locust_request_label)
+
+        # At this point, we should have the final list of choices
+        selection_details = self._interactor.find_selection_from_choices(selections[-1], choices)
+        if not selection_details:
+            raise ChoiceNotFoundException(
+                f"Selection {selections[-1]} not found among choices for cascading pickerfield having attribute: {attribute} with value {attribute_value}")
+
+        new_state = self._interactor.select_pickerfield_suggestion(
+            self.form_url,
+            component,
+            selection_details["id"],
+            self.context,
+            self.uuid,
+            label=locust_request_label
+        )
+
+        if not new_state:
+            raise Exception(f"No response returned when trying to update selection for pickerfield having attribute: {attribute} with value {attribute_value}")
+
+        return self._reconcile_state(new_state)
+
     def click(self, label: str, is_test_label: bool = False, locust_request_label: str = "", index: int = 1) -> 'SailUiForm':
         """
         Clicks on a component on the form, if there is one present with the following label (case sensitive)
