@@ -1142,8 +1142,6 @@ class SailUiForm:
         Args:
             tab_label(str): Label of the tab to select
             tab_group_test_label(str): Test Label of the tab group (tab is part of a tab group)
-
-        Keyword Args:
             locust_request_label(str): Label used to identify the request for locust statistics
 
         Returns (SailUiForm): The latest state of the UiForm
@@ -1156,7 +1154,7 @@ class SailUiForm:
 
         tab_group_component = find_component_by_attribute_in_dict('testLabel', tab_group_test_label, self._state)
         new_state = self._interactor.click_selected_tab(
-            reeval_url, tab_group_component, tab_label, self.context, self.uuid)
+            reeval_url, tab_group_component, tab_label, self.context, self.uuid, locust_request_label)
         if not new_state:
             raise Exception(
                 f'''No response returned when trying to click a tab with label: '{tab_label}'

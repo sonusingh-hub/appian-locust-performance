@@ -19,9 +19,11 @@ class DropType(Enum):
 
 class InterfaceDesignerUiForm(DesignObjectUiForm):
 
-    def __init__(self, interactor: _Interactor, state: Dict[str, Any], breadcrumb: str = "InterfaceDesignerUi"):
+    def __init__(self, interactor: _Interactor, state: Dict[str, Any], label_prefix: str = "",
+                 breadcrumb: str = "InterfaceDesignerUi"):
         super().__init__(interactor, state, breadcrumb)
         interactor.set_client_mode(client_mode=ClientMode.INTERFACE_DESIGN)
+        self.label_prefix = label_prefix
 
     def delete_component(self, component_label: str) -> None:
         component_id, _ = self.__get_live_view_component_info(component_label)
@@ -185,5 +187,5 @@ class InterfaceDesignerUiForm(DesignObjectUiForm):
                                                            context=self.context,
                                                            uuid=self.uuid,
                                                            new_value=new_value_dictionary,
-                                                           label=locust_label)
+                                                           label=f"{self.label_prefix}{' ' if self.label_prefix else ''}{locust_label}")
         self._reconcile_state(new_state, skipValidations=True)

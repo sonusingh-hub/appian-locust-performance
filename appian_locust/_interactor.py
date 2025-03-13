@@ -1032,7 +1032,7 @@ class _Interactor:
         return resp.json()
 
     def click_selected_tab(self, post_url: str, tab_group_component: Dict[str, Any], tab_label: str,
-                           context: Dict[str, Any], uuid: str) -> Dict[str, Any]:
+                           context: Dict[str, Any], uuid: str, locust_request_label: str = "") -> Dict[str, Any]:
         '''
             Calls the post operation to send an update to a tabgroup to select a tab
 
@@ -1042,7 +1042,7 @@ class _Interactor:
                 tab_label: Label of the tab to select
                 context: the Sail context parsed from the json response
                 uuid: the uuid parsed from the json response
-                label: the label of the tab to select. It is one of the tabs inside TabButtonGroup
+                locust_request_label: the label used to identify the request for locust statistics
 
             Returns: the response of post operation as json
         '''
@@ -1072,7 +1072,7 @@ class _Interactor:
                    .value(new_value)
                    .build())
 
-        locust_label = f"Selecting tab with label: '{tab_label}' inside TabButtonGroup component"
+        locust_label = locust_request_label if locust_request_label else f"Selecting tab with label: '{tab_label}' inside TabButtonGroup component"
 
         resp = self.post_page(
             self.get_interaction_host() + post_url, payload=payload, label=locust_label
