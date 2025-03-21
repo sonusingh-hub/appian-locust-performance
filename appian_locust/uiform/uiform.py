@@ -791,7 +791,7 @@ class SailUiForm:
             new_state = self._interactor.click_component(self.form_url, component, self.context, self.uuid, label=locust_label)
         return new_state
 
-    def click_related_action(self, label: str, locust_request_label: str = "", is_test_label: bool = False) -> 'SailUiForm':
+    def click_related_action(self, label: str, is_test_label: bool = False, locust_request_label: str = "") -> 'SailUiForm':
         """
         Clicks a related action (either a related action button or link) on the form by label
         If no link is found, throws a ComponentNotFoundException
@@ -800,8 +800,8 @@ class SailUiForm:
             label(str): Label of the related action
 
         Keyword Args:
-            locust_request_label(str): Label used to identify the request for locust statistics
             is_test_label: If this label is a test label
+            locust_request_label(str): Label used to identify the request for locust statistics
 
         Returns (SailUiForm): The latest state of the UiForm
 
@@ -823,7 +823,7 @@ class SailUiForm:
         """
         attribute_to_find = 'testLabel' if is_test_label else 'label'
         component = find_component_by_attribute_in_dict(attribute_to_find, label, self._state)
-
+        
         if is_test_label:
             component = component["recordAction"]
 
@@ -853,45 +853,45 @@ class SailUiForm:
     # Alias for click_related_action
     click_record_action = click_related_action
 
-    def evaluate_record_action_field_security(self, locust_request_label: str = "", index: int = None, accessibility_text: str = "") -> 'SailUiForm':
+    def evaluate_record_action_field_security(self, test_label: str = "", format_test_label: bool = True, index: int = 1, locust_request_label: str = "") -> 'SailUiForm':
         """
         Triggers security evaluation to reveal record action items for a record action field
 
         Args:
 
         Keyword Args:
-            locust_request_label(str): Label used to identify the request for locust statistics
-            index: Index of the record action field to evaluate security for (default: None)
-            accessibility_text: Value of a record action field's accessibilityText attribute
+            test_label: Value of a record action field's testLabel attribute
                 used to locate record action field with securityOnDemand to enable security evaluation prior
-                to action item click. If provided, index is ignored. (default: "")
+                to action item click. Appian will use accessibility text if it is defined to create this testLabel.
+            format_test_label(bool): If you don't want to prepend a ``"test_recordActionWidget_"`` to the testLabel, set this to False
+            index: Index of the record action field to evaluate security for (default: 1).  If no test_label is provided only index will be used.
+            locust_request_label(str): Label used to identify the request for locust statistics
 
         Returns (SailUiForm): The latest state of the UiForm
 
         Examples:
             How to use evaluate_record_action_field_security():
-            >>> my_form.evaluate_record_action_field_security(index=2)
-            
-            >>> my_form.evaluate_record_action_field_security(accessibility_text="my-action-field-accessibility-text")
+
+            >>> my_form.evaluate_record_action_field_security(index=2)            
+            >>> my_form.evaluate_record_action_field_security(test_label="my-action-field-accessibility-text")
+            >>> my_form.evaluate_record_action_field_security(format_test_label=False, test_label="test_recordActionWidget_my-action-field-accessibility-text")
 
         """
-        print("************************* NEW ONE!!!! *************************")
-        locust_label = locust_request_label or f"{self.breadcrumb}.EvaluateRecordActionFieldSecurity"
+        
+        locust_label = locust_request_label or f"{self.breadcrumb}.EvaluateRecordActionFieldSecurity"        
 
-        if accessibility_text:
-            # Find the record action field FieldLayout by accessibility_text
+        if test_label:            
+            # Find the record action field FieldLayout by test_label and index
             # and get the RecordActionWidget from its contents attribute.
-            action_field_layout_component = find_component_by_attribute_in_dict("accessibilityText",
-                                                                                accessibility_text, self._state)
+            if format_test_label: test_label = f'test_recordActionWidget_{test_label}'
+            action_field_layout_component = find_component_by_attribute_and_index_in_dict(attribute="testLabel", value=test_label, index=index, component_tree=self._state)
             action_field_component = action_field_layout_component["contents"]
-        elif index is not None:
-            action_field_component = find_component_by_index_in_dict(component_type="RecordActionWidget", index=index, component_tree=self._state)
         else:
-            raise Exception("Either index or accessibility_text must be provided to evaluate_record_action_field_security")
-
+            action_field_component = find_component_by_index_in_dict(component_type="RecordActionWidget", index=index, component_tree=self._state)
+        
         if not action_field_component["#t"] == "RecordActionWidget":
-            raise Exception(f"RecordActionWidget not found in component with accessibilityText '{accessibility_text}'" if 
-                            accessibility_text else f"RecordActionWidget not found at index {index}")
+            raise Exception(f"RecordActionWidget not found in component with testLabel '{test_label}'" if 
+                            test_label else f"RecordActionWidget not found at index {index}")
         if not action_field_component["securityOnDemand"]:
             raise Exception(f"RecordActionWidget found but securityOnDemand is not true")
         
@@ -904,7 +904,7 @@ class SailUiForm:
                                                             label=f"{locust_label}.securityOnDemand")
         
         if not new_state:
-            raise Exception(f"No response returned when triggering security on demand for action field [index: {index}, accessibilityText: '{accessibility_text}']")
+            raise Exception(f"No response returned when triggering security on demand for action field [index: {index}, testLabel: '{test_label}']")
         return self._reconcile_state(new_state)
 
     def click_menu_item_by_name(self, label: str, choice_name: str, is_test_label: bool = False,

@@ -604,7 +604,7 @@ class TestInteractor(unittest.TestCase):
         resp_json = self.task_set.appian._interactor.click_record_list_action("label", pm_id, cache_key)
 
         self.assertEqual(resp_json, json.loads(correct_json))
-    
+
     def test_clean_filename(self) -> None:
         cleaned_str = self.task_set.appian._interactor._clean_filename("\\<>:\"/|?*")
         self.assertEqual(cleaned_str, ".........")

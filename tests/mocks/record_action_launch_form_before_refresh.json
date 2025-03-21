@@ -276,6 +276,7 @@
                 },
                 "label": "",
                 "labelPosition": "COLLAPSED",
+                "testLabel": "test_recordActionWidget_my-record-action-field-access-text-21",
                 "instructions": "",
                 "instructionsPosition": "",
                 "helpTooltip": "",
