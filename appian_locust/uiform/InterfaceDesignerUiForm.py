@@ -41,17 +41,17 @@ class InterfaceDesignerUiForm(DesignObjectUiForm):
         }
         self.__send_interface_designer_manager_request(new_value, f"Select {component_label}")
 
-    def drag_and_drop_from_palette_to_empty_live_view(self, source_palette_label: str) -> None:
-        new_value = self.__get_palette_to_empty_live_view_save_value(source_palette_label)
+    def drag_and_drop_from_palette_to_empty_live_view(self, source_palette_label: str, is_user_interface: bool = False) -> None:
+        new_value = self.__get_palette_to_empty_live_view_save_value(source_palette_label, is_user_interface)
         self.__send_interface_designer_manager_request(new_value,f"Drag '{source_palette_label}' from the Palette and drop in Empty Live View")
 
-    def drag_and_drop_from_palette_to_component(self, source_palette_label: str, target_component: str, add_above: bool) -> None:
-        new_value = self.__get_palette_to_component_save_value(source_palette_label, target_component, add_above)
+    def drag_and_drop_from_palette_to_component(self, source_palette_label: str, target_component: str, add_above: bool, is_user_interface: bool = False) -> None:
+        new_value = self.__get_palette_to_component_save_value(source_palette_label, target_component, add_above, is_user_interface)
         direction = "above" if add_above else "below"
         self.__send_interface_designer_manager_request(new_value,f"Drag '{source_palette_label}' from the Palette and drop {direction} {target_component}")
 
-    def drag_and_drop_from_palette_to_placeholder(self, source_palette_label: str, parent_target_component: str) -> None:
-        new_value = self.__get_palette_to_placeholder_save_value(source_palette_label, parent_target_component)
+    def drag_and_drop_from_palette_to_placeholder(self, source_palette_label: str, parent_target_component: str, is_user_interface: bool = False) -> None:
+        new_value = self.__get_palette_to_placeholder_save_value(source_palette_label, parent_target_component, is_user_interface)
         self.__send_interface_designer_manager_request(new_value,f"Drag '{source_palette_label}' from the Palette and drop in the placeholder of {parent_target_component}")
 
     def drag_and_drop_from_live_view_to_component(self, source_component: str, target_component: str, add_above: bool) -> None:
@@ -101,13 +101,13 @@ class InterfaceDesignerUiForm(DesignObjectUiForm):
             "sourceComponentTypes": [source_component_type]
         }
 
-    def __get_palette_to_empty_live_view_save_value(self, source_palette_label: str) -> Dict[str, Any]:
+    def __get_palette_to_empty_live_view_save_value(self, source_palette_label: str, is_user_interface: bool) -> Dict[str, Any]:
         template_id, template_component_type = self.__get_palette_component_info(source_palette_label)
         temp_id = "1-2"
         base_value = self.__get_base_drag_and_drop_save_value(temp_id, template_component_type, "UPDATE", SourceType.PALETTE, DropType.EMPTY_LIVE_VIEW)
         new_value = base_value | {
             "paletteSearchTerm": "",
-            "isUserInterface": False,
+            "isUserInterface": is_user_interface,
             "tempNodeMap": {
                 temp_id: []
             },
@@ -115,7 +115,7 @@ class InterfaceDesignerUiForm(DesignObjectUiForm):
         }
         return new_value
 
-    def __get_palette_to_component_save_value(self, source_palette_label: str, target_component: str, add_above: bool) -> Dict[str, Any]:
+    def __get_palette_to_component_save_value(self, source_palette_label: str, target_component: str, add_above: bool, is_user_interface: bool) -> Dict[str, Any]:
         template_id, template_component_type = self.__get_palette_component_info(source_palette_label)
         target_component_id, target_component_type = self.__get_live_view_component_info(target_component)
         temp_id = "1-2"
@@ -124,7 +124,7 @@ class InterfaceDesignerUiForm(DesignObjectUiForm):
                                                               DropType.COMPONENT)
         new_value = base_value | {
             "paletteSearchTerm": "",
-            "isUserInterface": False,
+            "isUserInterface": is_user_interface,
             "tempNodeMap": {
                 temp_id: []
             },
@@ -134,7 +134,7 @@ class InterfaceDesignerUiForm(DesignObjectUiForm):
         }
         return new_value
 
-    def __get_palette_to_placeholder_save_value(self, source_palette_label: str, parent_target_component: str) -> Dict[str, Any]:
+    def __get_palette_to_placeholder_save_value(self, source_palette_label: str, parent_target_component: str, is_user_interface: bool) -> Dict[str, Any]:
         template_id, template_component_type = self.__get_palette_component_info(source_palette_label)
         placeholder_id = self.__get_child_placeholder_info(parent_target_component)
         temp_id = "1-2"
@@ -142,7 +142,7 @@ class InterfaceDesignerUiForm(DesignObjectUiForm):
                                                               DropType.COMPONENT)
         new_value = base_value | {
             "paletteSearchTerm": "",
-            "isUserInterface": False,
+            "isUserInterface": is_user_interface,
             "tempNodeMap": {
                 temp_id: []
             },
