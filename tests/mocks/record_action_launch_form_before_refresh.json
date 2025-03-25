@@ -237,7 +237,68 @@
             "accessibilityText": "",
             "browserTooltip": "",
             "#t": "CardLayout"
-          }],
+          },{
+            "_cId": "55e6c715022fb4394b8001d34be02a7dqqq",
+            "contents": [{
+              "_cId": "95cd2ac0a6c8c91b7001cc472499cc56qqq",
+              "contents": [{
+                "_cId": "52aeca816275c37e7028b1b19a41cc07qqq",
+                "label": "",
+                "instructions": "",
+                "readOnly": "True",
+                "placeholder": "",
+                "value": "Record action field testing",
+                "saveInto": ["<<jA0EAwMCQEUt6Rt/8kgB0okB482I9i38DTGaWUPimS7SisAwenb68ghp8JQAbbbN5JpqCsaXzfQd\r\nMXJ/lBBeH4FJmss804Bgnyqy1OccMDnn3MGhwNe85n2Jk676jSMgi80YMRdi0Z2LfgXeXqc4q2W0\r\nDzMKti0SE8iwg8ac8ONePASdJZhLoHtVsKU/NrxrBJ6JE/Kgq6R97w==\r\n>>"],
+                "refreshAfter": "UNFOCUS",
+                "keyboard": "STANDARD",
+                "labelPosition": "ABOVE",
+                "align": "DEFAULT",
+                "helpTooltip": "",
+                "accessibilityText": "",
+                "inputPurpose": "",
+                "#t": "TextField"
+              }, {
+                "_cId": "440d6b1479a460096f7c23d7b19d0477qqq",
+                "contents": {
+                  "_cId": "c5d475751b05967c681daebde0a86159qqq",  
+                  "size": "",
+                  "componentStyle": "MENU_ICON",
+                  "labelStyle": "LABEL_AND_ICON",
+                  "orientation": "HORIZONTAL",
+                  "align": "",
+                  "securityOnDemand": true,
+                  "value": {
+                    "#v": 1,
+                    "#t": "int"
+                  },
+                  "saveInto": ["<<-a-fake-save-into-jA0EAwMCQEUt6Rt/8kgB0okB482I9i38DTGaWUPimS7SisAwenb68ghp8JQAbbbN5JpqCsaXzfQd\r\nMXJ/lBBeH4FJmss804Bgnyqy1OccMDnn3MGhwNe85n2Jk676jSMgi80YMRdi0Z2LfgXeXqc4q2W0\r\nDzMKti0SE8iwg8ac8ONePASdJZhLoHtVsKU/NrxrBJ6JE/Kgq6R97w==\r\n>>"],
+                  "#t": "RecordActionWidget"
+                },
+                "label": "",
+                "labelPosition": "COLLAPSED",
+                "testLabel": "test_recordActionWidget_my-record-action-field-access-text-21",
+                "instructions": "",
+                "instructionsPosition": "",
+                "helpTooltip": "",
+                "requiredStyle": "",
+                "skinName": "",
+                "marginBelow": "",
+                "accessibilityText": "my-record-action-field-access-text-21",
+                "#t": "FieldLayout"
+              }],
+              "padding": "LESS",
+              "topLevelBackgroundColor": "",
+              "#t": "ContentLayout"
+            }],
+            "height": "",
+            "width": "FIT",
+            "style": "",
+            "tooltip": "",
+            "marginBelow": "",
+            "accessibilityText": "",
+            "browserTooltip": "",
+            "#t": "CardLayout"        
+        }],
           "align": "",
           "width": ""
         }],
