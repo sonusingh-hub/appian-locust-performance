@@ -885,7 +885,10 @@ class SailUiForm:
             # and get the RecordActionWidget from its contents attribute.
             if format_test_label: test_label = f'test_recordActionWidget_{test_label}'
             action_field_layout_component = find_component_by_attribute_and_index_in_dict(attribute="testLabel", value=test_label, index=index, component_tree=self._state)
-            action_field_component = action_field_layout_component["contents"]
+            if action_field_layout_component["#t"] == "RecordActionWidget":
+                action_field_component = action_field_layout_component
+            else:
+                action_field_component = action_field_layout_component["contents"]
         else:
             action_field_component = find_component_by_index_in_dict(component_type="RecordActionWidget", index=index, component_tree=self._state)
         
