@@ -3,6 +3,7 @@ import uuid
 from typing import List, Generator
 
 from locust import SequentialTaskSet, TaskSet
+from requests import JSONDecodeError
 
 from .utilities import logger
 from .feature_flag import FeatureFlag
@@ -51,7 +52,6 @@ class AppianTaskSet(TaskSet):
             self.appian.login(self.auth)
             resp = self.appian._interactor.get_page(self.host + '/suite/rest/a/sites/latest/locust-templates', check_login=False)
             if not resp.ok:
-                # TODO: Remove on 4/4/25, we just need to hit endpoint at that point
                 resp = self.appian._interactor.get_page(uri=self.host + "/suite/tempo/news")
                 test = r'\\\\\\/suite\\\\\\/rest\\\\\\/a\\\\\\/sites\\\\\\/latest\\\\\\/D6JMim\\\\\\/page\\\\\\/(.+)\\\\\\'
                 m = re.search(test, resp.text)
@@ -62,9 +62,15 @@ class AppianTaskSet(TaskSet):
                     # new way
                     self.appian._interactor.set_url_provider(URL_PROVIDER_V1)
                 else:
-                    log.error("appian-locust could not determine appian interaction url pattern.  Please upgrade to the latest version.")
+                    log.warning("appian-locust could not determine appian interaction url pattern.  Defaulting to v1.  If errors persist, you may explicitly try v0.")
+                    self.appian._interactor.set_url_provider(URL_PROVIDER_V1)
             else:
-                self.appian._interactor.set_url_provider(UrlProvider(resp.json()))
+                try:
+                    self.appian._interactor.set_url_provider(UrlProvider(resp.json()))
+                except (JSONDecodeError, ValueError):
+                    log.warning("appian-locust could not determine appian interaction url pattern.  Defaulting to v1.  If errors persist, you may explicitly try v0.")
+                    log.warning(f"content of the url pattern response: {resp.text}")
+                    self.appian._interactor.set_url_provider(URL_PROVIDER_V1)
 
         self.appian.get_client_feature_toggles()
 

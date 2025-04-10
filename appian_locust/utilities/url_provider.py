@@ -9,7 +9,7 @@ URL_PATTERN_V0 = {
     "x-data-request-site-top-level-record-instance-page": "https://pattern.net/suite/rest/a/sites/latest/{siteUrlStub}/page/{pageUrlStub}/record/{opaqueRecordReference}/view/{viewUrlStub}",
     "x-data-request-site-top-level-report-link": "https://pattern.net/suite/rest/a/sites/latest/{siteUrlStub}/pages/p.{pageUrlStub}/report{/reportUrlStub}/reportlink",
     "x-data-request-site-top-level-interface-page": "https://pattern.net/suite/rest/a/sites/latest/{siteUrlStub}/page/p.{pageUrlStub}",
-    "x-data-request-site-top-level-record-type-page": "https://patern.net/suite/rest/a/sites/latest/{siteUrlStub}/pages/{pageUrlStub}/recordType",
+    "x-data-request-site-top-level-record-type-page": "https://pattern.net/suite/rest/a/sites/latest/{siteUrlStub}/pages/{pageUrlStub}/recordType",
     "x-data-request-site-top-level-action-page": "https://pattern.net/suite/rest/a/sites/latest/{siteUrlStub}/pages/{pageUrlStub}/action",
     "x-data-request-site-top-level-report-page": "https://pattern.net/suite/rest/a/sites/latest/{siteUrlStub}/pages/{pageUrlStub}/report",
     "x-data-request-task-attributes": "https://pattern.net/suite/rest/a/task/latest/{taskId}/attributes",
@@ -17,7 +17,7 @@ URL_PATTERN_V0 = {
     "x-data-request-task-form": "https://pattern.net/suite/rest/a/task/latest/{taskId}/form",
     "x-data-request-site-page-redirect": "https://pattern.net/suite/rest/a/applications/latest/legacy/sites/{siteUrlStub}/page/{pageUrlStub}",
     "x-data-request-site-top-level-start-process-page": "https://pattern.net/suite/rest/a/sites/latest/{siteUrlStub}/page/p.{pageUrlStub}/startProcess/{processModelOpaqueId}?cacheKey={cacheKey}",
-    "x-data-request-site-nav": "https://pattern.net/suite/rest/a/sites/latest/{siteUrlStub}/nav"
+    "x-data-request-site-nav": "https://pattern.net/suite/rest/a/sites/latest/{siteUrlStub}/nav",
 }
 
 URL_PATTERN_V1 = {
@@ -28,7 +28,7 @@ URL_PATTERN_V1 = {
     "x-data-request-site-top-level-report-link": "https://pattern.net/suite/rest/a/sites/latest/{siteUrlStub}/pages/p.{pageUrlStub}/report{/reportUrlStub}/reportlink",
     "x-data-request-site-nested-interface-page": "https://pattern.net/suite/rest/a/sites/latest/{siteUrlStub}/page/g.{groupUrlStub}.p.{pageUrlStub}",
     "x-data-request-site-top-level-interface-page": "https://pattern.net/suite/rest/a/sites/latest/{siteUrlStub}/page/p.{pageUrlStub}",
-    "x-data-request-site-top-level-record-type-page": "https://patern.net/suite/rest/a/sites/latest/{siteUrlStub}/pages/{pageUrlStub}/recordType",
+    "x-data-request-site-top-level-record-type-page": "https://pattern.net/suite/rest/a/sites/latest/{siteUrlStub}/pages/{pageUrlStub}/recordType",
     "x-data-request-site-top-level-action-page": "https://pattern.net/suite/rest/a/sites/latest/{siteUrlStub}/pages/{pageUrlStub}/action",
     "x-data-request-site-top-level-report-page": "https://pattern.net/suite/rest/a/sites/latest/{siteUrlStub}/pages/{pageUrlStub}/report",
     "x-data-request-task-attributes": "https://pattern.net/suite/rest/a/task/latest/{taskId}/attributes",
@@ -37,7 +37,10 @@ URL_PATTERN_V1 = {
     "x-data-request-site-page-redirect": "https://pattern.net/suite/rest/a/applications/latest/legacy/sites/{siteUrlStub}/page/{pageUrlStub}",
     "x-data-request-site-top-level-start-process-page": "https://pattern.net/suite/rest/a/sites/latest/{siteUrlStub}/page/p.{pageUrlStub}/startProcess/{processModelOpaqueId}?cacheKey={cacheKey}",
     "x-data-request-site-nested-start-process-page": "https://pattern.net/suite/rest/a/sites/latest/{siteUrlStub}/page/g.{groupUrlStub}.p.{pageUrlStub}/startProcess/{processModelOpaqueId}?cacheKey={cacheKey}",
-    "x-data-request-site-nav": "https://pattern.net/suite/rest/a/sites/latest/{siteUrlStub}/nav"
+    "x-data-request-site-nav": "https://pattern.net/suite/rest/a/sites/latest/{siteUrlStub}/nav",
+    "x-data-request-site-group-page": "https://pattern.net/suite/rest/a/sites/latest/{siteUrlStub}/page/g.{groupUrlStub}",
+    "x-data-request-site-nav-group-page": "https://pattern.net/suite/rest/a/sites/latest/{siteUrlStub}/page/g.{groupUrlStub}/nav",
+    "x-data-request-site-nested-report-link": "https://pattern.net/suite/rest/a/sites/latest/{siteUrlStub}/pages/g.{groupUrlStub}.p.{pageUrlStub}/report{/reportUrlStub}/reportlink",
 }
 
 
