@@ -3333,6 +3333,35 @@
                                                   "marginAbove": "",
                                                   "marginBelow": "",
                                                   "#t": "TextField"
+                                                },
+                                                {
+                                                  "_cId": "5b09db894fd03379a5d4f78b2d065cab",
+                                                  "_iddesign_id": "310",
+                                                  "_iddesign_componentType": "component",
+                                                  "_iddesign_label": "Text",
+                                                  "_iddesign_path": "{\"contents\",1,\"contents\",2}",
+                                                  "_iddesign_listIds": "32",
+                                                  "_iddesign_listLabels": "Contents",
+                                                  "_iddesign_listParentLabels": "Section|Layout",
+                                                  "_iddesign_listPaths": "{\"contents\",1,\"contents\"}",
+                                                  "label": "Text",
+                                                  "instructions": "",
+                                                  "placeholder": "",
+                                                  "value": "",
+                                                  "saveInto": [
+                                                    "<<ww0EAwMCoZ8FuXqbWG4B0sAjAdtO8Ie2ts5D2VEKJ69JE2XE1Bl9eqtZIgV9E+AdcUlqJUlEHX41\r\nP0Qh2ddlx4RWJYl9SK7jMsRp4hf6qMDHEgmcV/4hg48qDA6PLF/FfOJwxE8lzHg+m5kSf/6C57O5\r\n/vZwKiOhElEeYmxuss/BdyYMKOTDOs/Zo7BSEimzzQXbDaXgLwHBEOz/LqWMlQt2MzUnO5Z3Uh4c\r\nWOn20A/E5+lyWmUaPffWcV8nigjDvy6OnGx1JcaJO7d2cb2qJCQcPHEGvcZBDET80/ZUhJ/IrChL\r\niqtinekBCIWRxeQtSE8I5ys=\r\n>>"
+                                                  ],
+                                                  "refreshAfter": "UNFOCUS",
+                                                  "keyboard": "STANDARD",
+                                                  "labelPosition": "ABOVE",
+                                                  "align": "DEFAULT",
+                                                  "helpTooltip": "",
+                                                  "accessibilityText": "",
+                                                  "inputPurpose": "",
+                                                  "helpTooltipPosition": "",
+                                                  "marginAbove": "",
+                                                  "marginBelow": "",
+                                                  "#t": "TextField"
                                                 }
                                               ],
                                               "align": "",

@@ -50,14 +50,14 @@ class TestInterfaceDesignerUiform(unittest.TestCase):
     def test_select_component(self, click_generic_mock: MagicMock) -> None:
         sail_form = self.get_interface_sail_form()
         # Select Text
-        sail_form.select_component("Text")
+        sail_form.select_component("Text", index=2)
         _, kwargs = click_generic_mock.call_args_list[0]
         value = kwargs["new_value"]
         self.assertEqual(value, {
             "#t": "Dictionary",
             "#v": {
                 "action": "HIGHLIGHT_COMPONENT",
-                "id": "31"
+                "id": "310"
             }
         })
 
@@ -236,15 +236,16 @@ class TestInterfaceDesignerUiform(unittest.TestCase):
     def test_drag_and_drop_from_live_view_to_component_below(self, click_generic_mock: MagicMock) -> None:
         sail_form = self.get_interface_sail_form()
         # Drag Text to below Paragraph
-        sail_form.drag_and_drop_from_live_view_to_component("Text", "Paragraph", False)
+        sail_form.drag_and_drop_from_live_view_to_component("Text", "Paragraph",
+                                                            False, source_index=2, target_index=1)
         _, kwargs = click_generic_mock.call_args_list[0]
         value = kwargs["new_value"]
         self.assertEqual(value, {
             "#t": "Dictionary",
             "#v": {
                 "action": "CUT_PASTE_BELOW",
-                "cutNodeId": "31",
-                "newHighlightId": "31",
+                "cutNodeId": "310",
+                "newHighlightId": "310",
                 "shouldClearTempIds": True,
                 "sourceComponentTypes": ["TextField"],
                 "sourceType": "LIVE_VIEW",
