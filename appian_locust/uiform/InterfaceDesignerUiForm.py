@@ -26,6 +26,13 @@ class InterfaceDesignerUiForm(DesignObjectUiForm):
         self.label_prefix = label_prefix
 
     def delete_component(self, component_label: str) -> None:
+        """
+            Delete a component from the live view area in Interface Designer.
+            Args:
+                component_label (str): The component type/label to delete. E.g., "Box Layout".
+            Returns: None
+        """
+
         component_id, _ = self.__get_live_view_component_info(component_label)
         new_value = {
             "action": "DELETE",
@@ -33,8 +40,16 @@ class InterfaceDesignerUiForm(DesignObjectUiForm):
         }
         self.__send_interface_designer_manager_request(new_value, f"Delete {component_label}")
 
-    def select_component(self, component_label: str) -> None:
-        component_id, _ = self.__get_live_view_component_info(component_label)
+    def select_component(self, component_label: str, index: int = 1) -> None:
+        """
+            Select a component in the live view area in Interface Designer.
+            Args:
+                component_label (str): The component type/label to select. E.g., "Box Layout".
+                index (str): the index of the component to select in the case where there are multiple components of the
+                same type exist in the live view. Default is set to 1.
+            Returns: None
+        """
+        component_id, _ = self.__get_live_view_component_info(component_label, index)
         new_value = {
             "action": "HIGHLIGHT_COMPONENT",
             "id": component_id
@@ -42,24 +57,69 @@ class InterfaceDesignerUiForm(DesignObjectUiForm):
         self.__send_interface_designer_manager_request(new_value, f"Select {component_label}")
 
     def drag_and_drop_from_palette_to_empty_live_view(self, source_palette_label: str, is_user_interface: bool = False) -> None:
+        """
+            Drag a component from the palette area and drop it to the empty live view area in Interface Designer.
+            Args:
+                source_palette_label (str): The component type to drag and drop into the live view. E.g., "Box Layout".
+                is_user_interface (bool): whether the component to drag and drop is an user defined interface.
+            Returns: None
+        """
         new_value = self.__get_palette_to_empty_live_view_save_value(source_palette_label, is_user_interface)
         self.__send_interface_designer_manager_request(new_value,f"Drag '{source_palette_label}' from the Palette and drop in Empty Live View")
 
     def drag_and_drop_from_palette_to_component(self, source_palette_label: str, target_component: str, add_above: bool, is_user_interface: bool = False) -> None:
+        """
+            Drag a component from the palette area and drop it next to a component in the live view area in Interface
+            Designer.
+            Args:
+                source_palette_label (str): The component type to drag and drop into the live view. E.g., "Box Layout".
+                target_component (str): The existing component in the live view to drop the new component to.
+                add_above (str): If True, drop the new component on top of the existing component, if False, drop it below.
+                is_user_interface (bool): whether the component to drag and drop is an user defined interface.
+            Returns: None
+        """
         new_value = self.__get_palette_to_component_save_value(source_palette_label, target_component, add_above, is_user_interface)
         direction = "above" if add_above else "below"
         self.__send_interface_designer_manager_request(new_value,f"Drag '{source_palette_label}' from the Palette and drop {direction} {target_component}")
 
     def drag_and_drop_from_palette_to_placeholder(self, source_palette_label: str, parent_target_component: str, is_user_interface: bool = False) -> None:
+        """
+            Drag a component from the palette area and drop it into an existing component holder in the live view area in
+            Interface Designer.
+            Args:
+                source_palette_label (str): The component type to drag and drop into the live view. E.g., "Box Layout".
+                parent_target_component (str): The existing component holder in the live view to drop the new component into.
+                is_user_interface (bool): whether the component to drag and drop is an user defined interface.
+            Returns: None
+        """
         new_value = self.__get_palette_to_placeholder_save_value(source_palette_label, parent_target_component, is_user_interface)
         self.__send_interface_designer_manager_request(new_value,f"Drag '{source_palette_label}' from the Palette and drop in the placeholder of {parent_target_component}")
 
-    def drag_and_drop_from_live_view_to_component(self, source_component: str, target_component: str, add_above: bool) -> None:
-        new_value = self.__get_live_view_to_component_save_value(source_component, target_component, add_above)
+    def drag_and_drop_from_live_view_to_component(self, source_component: str, target_component: str, add_above: bool, source_index: int = 1, target_index: int = 1) -> None:
+        """
+            Drag a component from the live view area and drop it next to an existing component in the live view area in
+            Interface Designer.
+            Args:
+                source_component (str): The source component type to drag and drop in the live view. E.g., "Box Layout".
+                target_component (str): The component in the live view to drop the source component to.
+                add_above (bool): If True, drop the new component on top of the existing component, if False, drop it below.
+                source_index (int): the index of the source component to select in the case where there are multiple
+                components of the same type. Default is set to 1.
+                target_index (int): the index of the target component to select in the case where there are multiple
+                components of the same type. Default is set to 1.
+        """
+        new_value = self.__get_live_view_to_component_save_value(source_component, target_component, add_above, source_index, target_index)
         direction = "above" if add_above else "below"
         self.__send_interface_designer_manager_request(new_value,f"Drag {source_component} from the Live View and drop {direction} {target_component}")
 
     def drag_and_drop_from_live_view_to_placeholder(self, source_component: str, parent_target_component: str) -> None:
+        """
+           Drag a component from the live view area and drop it into an existing component holder in the live view area in
+           Interface Designer.
+           Args:
+               source_component (str): The source component type to drag and drop in the live view. E.g., "Box Layout".
+              parent_target_component (str): The existing component holder in the live view to drop the new component into.
+       """
         new_value = self.__get_live_view_to_placeholder_save_value(source_component, parent_target_component)
         self.__send_interface_designer_manager_request(new_value,f"Drag {source_component} from the Live View and drop in the placeholder of {parent_target_component}")
 
@@ -75,8 +135,10 @@ class InterfaceDesignerUiForm(DesignObjectUiForm):
         template_component_type = component_palette_button.get("templateComponentType")
         return template_id, template_component_type
 
-    def __get_live_view_component_info(self, component_label: str) -> tuple[str, str]:
-        component_selector = find_component_by_attribute_in_dict("_iddesign_label", component_label, self._state)
+    def __get_live_view_component_info(self, component_label: str, index: int = 1) -> tuple[str, str]:
+        component_selector = find_component_by_type_and_attribute_and_index_in_dict(component_tree=self._state,
+                                                                                    attribute="_iddesign_label",
+                                                                                    value=component_label, index=index)
         if component_selector is None:
             raise Exception(f"Could not find {component_label} in the Live View")
         component_id = component_selector["_iddesign_id"]
@@ -152,11 +214,13 @@ class InterfaceDesignerUiForm(DesignObjectUiForm):
         }
         return new_value
 
-    def __get_live_view_to_component_save_value(self, source_component: str, target_component: str, add_above: bool) -> Dict[str, Any]:
-        source_component_id, source_component_type = self.__get_live_view_component_info(source_component)
-        target_component_id, target_component_type = self.__get_live_view_component_info(target_component)
+    def __get_live_view_to_component_save_value(self, source_component: str, target_component: str, add_above: bool,
+                                                source_index: int, target_index: int) -> Dict[str, Any]:
+        source_component_id, source_component_type = self.__get_live_view_component_info(source_component, source_index)
+        target_component_id, target_component_type = self.__get_live_view_component_info(target_component, target_index)
         action = "CUT_PASTE_ABOVE" if add_above else "CUT_PASTE_BELOW"
-        base_value = self.__get_base_drag_and_drop_save_value(source_component_id, source_component_type, action, SourceType.LIVE_VIEW, DropType.COMPONENT)
+        base_value = self.__get_base_drag_and_drop_save_value(source_component_id, source_component_type, action,
+                                                              SourceType.LIVE_VIEW, DropType.COMPONENT)
         new_value = base_value | {
             "targetComponentTypes": [target_component_type],
             "targetNodeId": target_component_id,
