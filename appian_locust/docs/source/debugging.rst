@@ -15,7 +15,7 @@ Things you can use to get more information:
 
 .. code-block:: python
     
-    class MyClass(HttpUser):
+    class DoSomeThing(AppianTaskSequence):
 
         def __init__(self, environment) -> None:
             super().__init__(environment)
