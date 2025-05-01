@@ -32,8 +32,7 @@ class TestInterfaceDesignerUiform(unittest.TestCase):
 
     @patch("appian_locust._interactor._Interactor.click_generic_element")
     def test_delete_component(self, click_generic_mock: MagicMock) -> None:
-        design_object_id = "lIBLQLGU6pYkw0C5Zw-W_VRdOG8QydZTNHKPYN7YYjELPPHq3PtfIzFB0V3aMzJ1SphH2Cl4Q1aC6sDsSlZb3-Hz5qLB5eP4s0_7OUSTm6TP3vP"
-        sail_form = self.get_interface_sail_form(design_object_id)
+        sail_form = self.get_interface_sail_form()
         # Delete Text
         sail_form.delete_component("Text")
         _, kwargs = click_generic_mock.call_args_list[0]
@@ -43,6 +42,23 @@ class TestInterfaceDesignerUiform(unittest.TestCase):
             "#v": {
                 "action": "DELETE",
                 "targetNodeId": "31"
+            }
+        })
+
+    @patch("appian_locust._interactor._Interactor.click_generic_element")
+    def test_duplicate_component(self, click_generic_mock: MagicMock) -> None:
+        sail_form = self.get_interface_sail_form()
+        # Duplicate Text
+        sail_form.duplicate_component("Text")
+        _, kwargs = click_generic_mock.call_args_list[0]
+        value = kwargs["new_value"]
+        self.assertEqual(value, {
+            "#t": "Dictionary",
+            "#v": {
+                "action": "DUPLICATE",
+                "newHighlightId": "31",
+                "targetNodeId": "31",
+                "tempNodeMap": {}
             }
         })
 
