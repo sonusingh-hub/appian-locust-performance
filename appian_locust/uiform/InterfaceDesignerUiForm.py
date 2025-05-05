@@ -27,21 +27,45 @@ class InterfaceDesignerUiForm(DesignObjectUiForm):
         super().__init__(interactor, state, breadcrumb)
         interactor.set_client_mode(client_mode=ClientMode.INTERFACE_DESIGN)
 
-    def delete_component(self, component_label: str, locust_request_label: str = "") -> None:
+    def delete_component(self, component_label: str,  index: int = 1, locust_request_label: str = "") -> None:
         """
             Delete a component from the live view area in Interface Designer.
             Args:
                 component_label (str): The component type/label to delete. E.g., "Box Layout".
+                index (str): the index of the component to select in the case where there are multiple components of the
+                same type or same label exist in the live view. Default is set to 1
                 locust_request_label(str): Label used to identify the request for locust statistics
             Returns: None
         """
 
-        component_id, _ = self.__get_live_view_component_info(component_label)
+        component_id, _ = self.__get_live_view_component_info(component_label, index)
         new_value = {
             "action": "DELETE",
             "targetNodeId": component_id
         }
         locust_label = locust_request_label or f"Delete {component_label}"
+        self.__send_interface_designer_manager_request(new_value, locust_label)
+
+    def duplicate_component(self, component_label: str, index: int = 1, locust_request_label: str = "") -> None:
+        """
+            Duplicate a component in the live view area in Interface Designer.
+            Args:
+                component_label (str): The component type/label to Duplicate. E.g., "Box Layout".
+                index (str): the index of the component to select in the case where there are multiple components of the
+                same type or same label exist in the live view. Default is set to 1
+                locust_request_label(str): Label used to identify the request for locust statistics
+            Returns: None
+        """
+
+        component_id, _ = self.__get_live_view_component_info(component_label, index)
+
+        new_value = {
+            "action": "DUPLICATE",
+            "tempNodeMap": {},
+            "targetNodeId": component_id,
+            "newHighlightId": f"{component_id}"
+        }
+        locust_label = locust_request_label or f"Duplicate {component_label}"
         self.__send_interface_designer_manager_request(new_value, locust_label)
 
     def select_component(self, component_label: str, index: int = 1, locust_request_label: str = "") -> None:
@@ -50,7 +74,7 @@ class InterfaceDesignerUiForm(DesignObjectUiForm):
             Args:
                 component_label (str): The component type/label to select. E.g., "Box Layout".
                 index (str): the index of the component to select in the case where there are multiple components of the
-                same type exist in the live view. Default is set to 1.
+                same type or same label exist in the live view. Default is set to 1.
                 locust_request_label(str): Label used to identify the request for locust statistics
             Returns: None
         """
@@ -125,9 +149,9 @@ class InterfaceDesignerUiForm(DesignObjectUiForm):
                 target_component (str): The component in the live view to drop the source component to.
                 add_above (bool): If True, drop the new component on top of the existing component, if False, drop it below.
                 source_index (int): the index of the source component to select in the case where there are multiple
-                components of the same type. Default is set to 1.
+                components of the same type or same label. Default is set to 1.
                 target_index (int): the index of the target component to select in the case where there are multiple
-                components of the same type. Default is set to 1.
+                components of the same type or same label. Default is set to 1.
                 locust_request_label(str): Label used to identify the request for locust statistics
         """
         new_value = self.__get_live_view_to_component_save_value(source_component, target_component, add_above,

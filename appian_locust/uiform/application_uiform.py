@@ -99,6 +99,16 @@ class ApplicationUiForm(SailUiForm):
         self.__design.create_object(self, link_name='Record Type', object_name=record_type_name)
         return self
 
+    def create_interface(self, interface_name: str) -> 'ApplicationUiForm':
+        """
+        Creates an interface with the given name
+
+        Returns: The SAIL UI Form after the interface is created
+
+        """
+        self.click('Interface').fill_text_field('Name', interface_name).click('Create')
+        return self
+
     def create_report(self, report_name: str) -> 'ApplicationUiForm':
         """
         Creates a report with the given name
