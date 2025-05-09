@@ -69,7 +69,7 @@ class _SaveRequestBuilder:
                 "#v": [
                     {
                         "_cId": self._component["_cId"],
-                        "model": self._component,
+                        "model": {"#t": self._component.get("#t")},
                         "value": self._value,
                         "saveInto": save_into,
                         "saveType": "PRIMARY",
