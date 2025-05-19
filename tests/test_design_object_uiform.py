@@ -32,11 +32,11 @@ class TestDesignObjectUiform(unittest.TestCase):
     def test_launch_vqd_editor(self) -> None:
         design_object_id = "koBGwdcAdRO6tHOqesC5VrRQaOImjMHbae8gSHbTkBgcBzQ9tfWwA5Uy5XbNCjSc7OdVCy8-cbbmM1spiLkA9ZnNKmMrbGI6cSJqA"
         self.custom_locust.set_response(
-            f"/suite/rest/a/applications/latest/app/design/{ design_object_id }", 200, self.site_with_expression_editor)
+            f"/suite/rest/a/applications/latest/app/design/{design_object_id}", 200, self.site_with_expression_editor)
         sail_form = self.task_set.appian.visitor.visit_design_object_by_id(design_object_id)
         result_dict = '{"ase": "ase2", "saveInto": "whatever"}'
         self.custom_locust.set_response(
-            f"/suite/rest/a/applications/latest/app/design/{ design_object_id }", 200, result_dict)
+            f"/suite/rest/a/applications/latest/app/design/{design_object_id}", 200, result_dict)
         sail_form.launch_query_editor()
         self.assertEqual(sail_form.get_latest_state(), json.loads(result_dict))
 
@@ -45,7 +45,7 @@ class TestDesignObjectUiform(unittest.TestCase):
         design_object_id = "koBHhnlH6FVusQ4yRwpEkTWNA7yg1f0HA7nK6eVL9FOxAr9cMU0Ygi-5qZsepPcq1rSjlV57X1QWHnI5Usbdf2qurMQqG4tK334ew"
         # Visit the record type
         self.custom_locust.set_response(
-            f"/suite/rest/a/applications/latest/app/design/{ design_object_id }", 200, self.record_with_application_navigation_tab)
+            f"/suite/rest/a/applications/latest/app/design/{design_object_id}", 200, self.record_with_application_navigation_tab)
         sail_form = self.task_set.appian.visitor.visit_design_object_by_id(design_object_id)
         # Click action
         page_to_visit = "Actions"
