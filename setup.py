@@ -29,8 +29,8 @@ setup(
         ]
     },
     install_requires=[
-        "locust==2.15.1",
-        "uritemplate==4.1.1"
+        "locust>=2.37.3",
+        "uritemplate>=4.1.1"
     ],
     license='Apache 2.0'
 )
