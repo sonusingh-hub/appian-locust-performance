@@ -2,13 +2,13 @@ from enum import Enum
 
 
 class ClientMode(Enum):
-    TEMPO: str = "TEMPO"
-    EMBEDDED: str = "EMBEDDED"
-    SITES: str = "SITES"
-    ADMIN: str = "ADMIN"
-    DESIGN: str = "DESIGN"
-    INTERFACE_DESIGN: str = "INTERFACE_DESIGN"
-    PORTALS: str = "PORTALS"
-    SAIL_LIBRARY: str = "SAIL_LIBRARY"
-    DOCS_REPL: str = "DOCS_REPL"
-    PROCESS_HQ: str = "PROCESS_HQ"
+    TEMPO = "TEMPO"
+    EMBEDDED = "EMBEDDED"
+    SITES = "SITES"
+    ADMIN = "ADMIN"
+    DESIGN = "DESIGN"
+    INTERFACE_DESIGN = "INTERFACE_DESIGN"
+    PORTALS = "PORTALS"
+    SAIL_LIBRARY = "SAIL_LIBRARY"
+    DOCS_REPL = "DOCS_REPL"
+    PROCESS_HQ = "PROCESS_HQ"

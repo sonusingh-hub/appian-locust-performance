@@ -77,7 +77,7 @@ class TestRecords(unittest.TestCase):
         )
         self.custom_locust.set_response("/suite/rest/a/applications/latest/app/records/view/all", 200,
                                         temp_record_types)
-        with(self.assertRaisesRegex(Exception, "Unexpected response on Get call of All Records")):
+        with (self.assertRaisesRegex(Exception, "Unexpected response on Get call of All Records")):
             self.record_interactor.get_all()
 
     def test_records_get_corrupt_records(self) -> None:

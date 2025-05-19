@@ -104,8 +104,8 @@ class _Records(_Base):
         headers['X-Appian-Features-Extended'] = 'e4bc'
         headers["Accept"] = "application/vnd.appian.tv.ui+json"
         response = self.interactor.get_page(uri=uri, headers=headers, label=locust_request_label)
-        if not(self._is_response_good(response.text)):
-            raise(Exception("Unexpected response on Get call of All Records"))
+        if not (self._is_response_good(response.text)):
+            raise (Exception("Unexpected response on Get call of All Records"))
         return response.json()
 
     def get_all_records_of_record_type(self, record_type: str, column_index: Optional[int] = None, search_string: Optional[str] = None) -> Dict[str, Any]:

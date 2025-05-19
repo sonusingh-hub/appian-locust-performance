@@ -4,18 +4,18 @@ verify_ssl = true
 name = 'pypi'
 
 [packages]
-locust = "==2.15.1"
-pycodestyle = "==2.5.0"
-mypy = "==1.0.1"
+locust = "==2.37.3"
+pycodestyle = "==2.13.0"
+mypy = "==1.15.0"
 uritemplate = "==4.1.1"
 
 [dev-packages]
-pytest-cov = "==2.7.1"
-autopep8 = "==1.4.4"
+pytest-cov = "==6.1.1"
+autopep8 = "==2.3.2"
 #appian-locust = {editable = true,path = "."}
-twine = "==2.0.0"
-types-requests = "==2.28.11.15"
-types-urllib3 = "==1.26.25.8"
+twine = "==6.1.0"
+types-requests = "==2.32.0.20250515"
+types-urllib3 = "==1.26.25.14"
 
 [requires]
-python_version = "3.10"
+python_version = "3.13"

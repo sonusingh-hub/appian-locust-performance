@@ -3,10 +3,10 @@ from typing import Optional
 
 
 class PageType(Enum):
-    ACTION: str = "action"
-    REPORT: str = "report"
-    RECORD: str = "recordType"
-    INTERFACE: str = "interface"
+    ACTION = "action"
+    REPORT = "report"
+    RECORD = "recordType"
+    INTERFACE = "interface"
 
 
 class Page:

@@ -217,7 +217,7 @@ class TestVisitor(unittest.TestCase):
     def test_visit_application(self) -> None:
         app_id = "thisIsAnAppId"
         self.custom_locust.set_response(
-            f"/suite/rest/a/applications/latest/app/design/app/{ app_id }", 200, self.application_page)
+            f"/suite/rest/a/applications/latest/app/design/app/{app_id}", 200, self.application_page)
         ENV.stats.clear_all()
         sail_form = self.task_set.appian.visitor.visit_application_by_id(app_id)
         self.assertEqual(type(sail_form), ApplicationUiForm)
@@ -238,7 +238,7 @@ class TestVisitor(unittest.TestCase):
     def test_visit_design_object(self) -> None:
         design_object_id = "thisIsADesignObjectId"
         self.custom_locust.set_response(
-            f"/suite/rest/a/applications/latest/app/design/{ design_object_id }", 200, self.design_landing_page)
+            f"/suite/rest/a/applications/latest/app/design/{design_object_id}", 200, self.design_landing_page)
         ENV.stats.clear_all()
         sail_form = self.task_set.appian.visitor.visit_design_object_by_id(design_object_id)
         self.assertEqual(type(sail_form), DesignObjectUiForm)
@@ -251,7 +251,7 @@ class TestVisitor(unittest.TestCase):
         self.custom_locust.enqueue_response(200, read_mock_file("design_objects.json"))             # Search for "FTA_"
         design_object_id = "lIBvbWpmCW-DXb2Ymh0Z0BoA4mWVpvJiz89VdsTcjtGkRoZgOr6ytR1w9IzvBtl4UqC4SkzwXbxvgAnqiJbQX0k4x_-Dh8FA0svqT6RsalzjxaP"
         self.custom_locust.set_response(
-            f"/suite/rest/a/applications/latest/app/design/{ design_object_id }", 200, self.interface_page)
+            f"/suite/rest/a/applications/latest/app/design/{design_object_id}", 200, self.interface_page)
         ENV.stats.clear_all()
         design_form = self.task_set.appian.visitor.visit_design_object_by_name("FTA_", DesignObjectType.INTERFACE)
         self.assertEqual(type(design_form), DesignObjectUiForm)
@@ -273,7 +273,7 @@ class TestVisitor(unittest.TestCase):
         design_object_id = "thisIsADesignObjectId"
         self.setup_rdo_responses()
         self.custom_locust.set_response(
-            f"/suite/rest/a/applications/latest/app/design/{ design_object_id }", 200, self.ai_skill_design_object_response)
+            f"/suite/rest/a/applications/latest/app/design/{design_object_id}", 200, self.ai_skill_design_object_response)
         self.custom_locust.set_response(f"{RDO_HOST}/sail-server/SYSTEM_SYSRULES_aiSkillDesigner/ui", 200, "{\"this_is\": \"a_response\"}")
         ENV.stats.clear_all()
         ai_skill_form = self.task_set.appian.visitor.visit_ai_skill_by_id(design_object_id)
@@ -287,7 +287,7 @@ class TestVisitor(unittest.TestCase):
         self.custom_locust.enqueue_response(200, read_mock_file("design_objects.json"))             # Search for "FTA_"
         design_object_id = "lIBvbWpmCW-DXb2Ymh0Z0BoA4mWVpvJiz89VdsTcjtGkRoZgOr6ytR1w9IzvBtl4UqC4SkzwXbxvgAnqiJbQX0k4x_-Dh8FA0svqT6RsalzjxaP"
         self.custom_locust.set_response(
-            f"/suite/rest/a/applications/latest/app/design/{ design_object_id }", 200, self.ai_skill_design_object_response)
+            f"/suite/rest/a/applications/latest/app/design/{design_object_id}", 200, self.ai_skill_design_object_response)
         self.custom_locust.set_response(f"{RDO_HOST}/sail-server/SYSTEM_SYSRULES_aiSkillDesigner/ui", 200,
                                         "{\"this_is\": \"a_response\"}")
         ENV.stats.clear_all()
@@ -399,7 +399,7 @@ class TestVisitor(unittest.TestCase):
         expected_uuid = 'abc123'
         expected_context = '{"abc":"123"}'
         expected_url = f"/suite/rest/a/sites/latest/{site_name}/pages/{page_name}/{link_type}"
-        form_content = f'{{"context":{expected_context}, "uuid":"{expected_uuid}", "links":[{{"href": "{expected_url}", "rel": "update"}}]}}'
+        form_content = f'{{"context": {expected_context}, "uuid": " {expected_uuid}", "links": [{{"href": "{expected_url}", "rel": "update"}}]}}'
         self.custom_locust.set_response(expected_url,
                                         200,
                                         form_content)
@@ -417,7 +417,7 @@ class TestVisitor(unittest.TestCase):
         expected_uuid = 'abc123'
         expected_context = '{"abc":"123"}'
         expected_url = f"/suite/rest/a/sites/latest/{site_name}/pages/{page_name}/{link_type}"
-        form_content = f'{{"context":{expected_context}, "uuid":"{expected_uuid}", "links":[{{"href": "{expected_url}", "rel": "update"}}]}}'
+        form_content = f'{{"context": {expected_context}, "uuid": "{expected_uuid}", "links": [{{"href": "{expected_url}", "rel": "update"}}]}}'
         self.custom_locust.set_response(expected_url,
                                         200,
                                         form_content)
@@ -435,7 +435,7 @@ class TestVisitor(unittest.TestCase):
         expected_uuid = 'abc123'
         expected_context = '{"abc":"123"}'
         expected_url = f"/suite/rest/a/sites/latest/{site_name}/pages/{page_name}/{link_type}"
-        form_content = f'{{"context":{expected_context}, "uuid":"{expected_uuid}", "links":[{{"href": "{expected_url}", "rel": "update"}}]}}'
+        form_content = f'{{"context": {expected_context}, "uuid": "{expected_uuid}", "links": [{{"href": "{expected_url}", "rel": "update"}}]}}'
         self.custom_locust.set_response(expected_url,
                                         200,
                                         form_content)
