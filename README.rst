@@ -35,12 +35,17 @@ Please see the `Contributing <contributing.html>`__ section and feel free to rea
 Quick Installation Guide
 ************************
 
-This is a quick guide to getting up and running with the appian-locust library. You will need Python 3.10 installed on your machine before proceeding.
+This guide helps you get up and running with the ``appian-locust`` library quickly.
 
-Setup
+We strongly recommend using ``pipenv`` and ``pyenv`` to automatically manage Python versions and environments. This ensures a clean and reproducible setup for running and developing tests with Locust.
+
+.. note::
+  💡 If you don’t want to manage environments manually, jump to the *Automatic Setup* section below.
+
+Manual Setup
 ------------
 
-1. Install appian-locust using `pip`, for more comprehensive projects we recommend using `pipenv`.
+1. Install appian-locust using ``pip``, for more comprehensive projects we recommend using ``pipenv``.
 
 .. code-block:: bash
 
@@ -55,12 +60,78 @@ If using ``pipenv``, simply start from the following ``Pipfile``:
     appian-locust = {version = "*"}
 
     [requires]
-    python_version = "3.10"
+    python_version = "3.13"
 
     [pipenv]
     allow_prereleases = true
 
-2. Download the sample test `example_locustfile.py <https://gitlab.com/appian-oss/appian-locust/-/blob/main/examples/example_locustfile.py>`_ from the Appian Locust repo and run it.
+Build from source
+----------------------
+1. Clone the repository:
+
+.. code-block:: bash
+
+    git clone -o prod git@gitlab.com:appian-oss/appian-locust.git
+
+
+2a. Install the library globally:
+
+.. code-block:: bash
+
+    pip install -e appian-locust
+
+
+2b. Or within a virtual environment:
+
+.. code-block:: bash
+
+    pipenv install -e appian-locust
+
+Note: It’s highly recommended that you use a virtual environment when installing python artifacts. You can follow the instructions `here <https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/>`__ to install virtualenv and pip.
+
+If you have issues installing, make sure you have the proper prerequisites installed for Locust and its dependencies.
+If you're having trouble on Windows, check `here <https://github.com/locustio/locust/issues/1208#issuecomment-569693439>`__
+
+Automatic Setup
+---------------
+
+To simplify the setup process and avoid installing Python manually, use the provided `setup.sh <https://gitlab.com/appian-oss/appian-locust/-/blob/main/setup.sh>`_ script. It will:
+
+- Install ``pyenv`` and ``pipenv`` if they are missing.
+- Install the correct Python version from the ``Pipfile``.
+- Create a virtual environment.
+- Install all dependencies.
+
+1. Clone the repository:
+
+.. code-block:: bash
+
+    git clone -o prod git@gitlab.com:appian-oss/appian-locust.git
+
+
+2. Navigate to `appian-locust` directory and make the script `setup.sh` executable:
+
+.. code-block:: bash
+
+    cd appian-locust/
+    chmod +x setup.sh
+
+3. Run the setup:
+
+.. code-block:: bash
+
+    ./setup.sh
+
+4. After setup, activate the virtual environment:
+
+.. code-block:: bash
+
+    pipenv shell
+
+
+Test environment setup
+----------------------
+Download the sample test `example_locustfile.py <https://gitlab.com/appian-oss/appian-locust/-/blob/main/examples/example_locustfile.py>`_ from the Appian Locust repo and run it.
 
 .. code-block:: bash
 
@@ -71,28 +142,7 @@ If everything is set up correctly, you should see a link to the `Locust web inte
 * For more information about how to build the workflow for your locust test, see the `How to Write a Locust Test <how_to_write_locust_tests.html>`__ section.
 * For more information on running locust tests, see the `How to Run Locust <how_to_run_locust.html>`__ section.
 
-Build from source
-----------------------
-Clone the repository:
-
-.. code-block:: bash
-
-    git clone -o prod git@gitlab.com:appian-oss/appian-locust.git
-
-
-Install the library globally:
-
-.. code-block:: bash
-
-    pip install -e appian-locust
-
-
-If you’re using a virtualenv or a dependency management tool (e.g. ``pipenv``), you can do the same type of install, but you will want to be in the context of the virtualenv (i.e. source the virtualenv), and you’ll need to pass the path to the repository you cloned.
-
-Note: It’s highly recommended that you use a virtual environment when installing python artifacts. You can follow the instructions `here <https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/>`__ to install virtualenv and pip.
-
-If you have issues installing, make sure you have the proper prerequisites installed for Locust and its dependencies.
-If you're having trouble on Windows, check `here <https://github.com/locustio/locust/issues/1208#issuecomment-569693439>`__
+``appian-locust`` should now be ready to run your Locust performance tests!
 
 Troubleshooting
 ----------------
