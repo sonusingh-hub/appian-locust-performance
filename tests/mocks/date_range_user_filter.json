@@ -162,6 +162,31 @@
                                                                         "#t": "SearchBoxWidget"
                                                                     }
                                                                 },
+                                                                 {
+                                                                    "_cId": "4c4e48ceac4d3bcb8864094a86215002",
+                                                                    "item": {
+                                                                        "_cId": "79edcf499f46b7f4f87e0e319a8f213d",
+                                                                        "testLabel": "dateRangeWidget_88b199be-555d-4fcc-a784-71648f262952_1_1",
+                                                                        "hasPlaceholderLabel": "true",
+                                                                        "isListUserFilter": "true",
+                                                                        "choices": [
+                                                                            "Any",
+                                                                            "admin",
+                                                                            "other"
+                                                                        ],
+                                                                        "value": 1,
+                                                                        "inlineLabel": "name",
+                                                                        "saveInto": [
+                                                                            "<<ww0EAwMCZNrQrjeUd0IB0sATAQ0AZZDkB32ciLnn9B6SZ8xh+ns/+FWAc8mc29AiM+H+AzDP+xCI\r\n9z1OyD6gWc6Vmy+nKTXhKKI3J/utwiZmHy9arESYyAljZ8bpBgoRNjJk0GWuUrX6PvSXObP1R7nu\r\n28ujRi0CWth+8IsiQkeANWgVliV4potMi4yQSitYLDRoaAfqDutK9M8XaM8M7CnkjKvdTddXsu4r\r\ncssAkvcmHtmsR3vjfa2JHsQIYqPWybbr13Cx4fvIREe1NA6++seMfvDrnlW3Ky3jK68HszvNAUcB\r\nUg==\r\n>>"
+                                                                        ],
+                                                                        "width": "",
+                                                                        "showClearAllIcon": true,
+                                                                        "clearIconLabel": "",
+                                                                        "skinName": "",
+                                                                        "isSearchable": false,
+                                                                        "#t": "DropdownWidget"
+                                                                    }
+                                                                },
                                                                 {
                                                                     "_cId": "3b1b87241a5d5117e227b2ef5213c782",
                                                                     "item": {

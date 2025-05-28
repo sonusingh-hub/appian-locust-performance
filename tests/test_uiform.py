@@ -785,11 +785,11 @@ class TestSailUiForm(unittest.TestCase):
         ui_form = SailUiForm(self.task_set.appian._interactor, json.loads(resp_json))
         with self.assertRaises(ComponentNotFoundException):
             ui_form.get_dropdown_items("Dropdown that DNE")
-        with self.assertRaises(InvalidComponentException):
+        with self.assertRaises(ComponentNotFoundException):
             ui_form.get_dropdown_items("Domicile")
 
     def test_empty_get_dropdown_choices(self) -> None:
-        state = {'ui': [{'label': "Empty Dropdown", 'choices': []}]}
+        state = {'ui': [{'label': "Empty Dropdown", 'choices': [], '#t': 'DropdownField'}]}
         ui_form = SailUiForm(self.task_set.appian._interactor, state)
         self.assertEqual([], ui_form.get_dropdown_items("Empty Dropdown"))
 
@@ -1166,10 +1166,10 @@ class TestSailUiForm(unittest.TestCase):
         with self.assertRaises(ComponentNotFoundException) as context:
             sail_form.select_dropdown_item(dropdown_label, 'some choice')
         self.assertEqual(
-            context.exception.args[0], f"No components with label '{dropdown_label}' found on page")
+            context.exception.args[0], f"No components of type DropdownField or DropdownWidget with label '{dropdown_label}' found on page")
 
         dropdown_label = "Name"
-        with self.assertRaises(InvalidComponentException):
+        with self.assertRaises(ComponentNotFoundException):
             sail_form.select_dropdown_item(dropdown_label, 'some choice')
 
         dropdown_label = "Customer Type"
@@ -1282,7 +1282,7 @@ class TestSailUiForm(unittest.TestCase):
         with self.assertRaises(ComponentNotFoundException) as context:
             sail_form.select_multi_dropdown_item(dropdown_label, ["Asia"])
         self.assertEqual(
-            context.exception.args[0], f"No components with label '{dropdown_label}' found on page")
+            context.exception.args[0], f"No components of type MultipleDropdownField or MultipleDropdownWidget with label '{dropdown_label}' found on page")
 
         dropdown_label = "Regions"
         sail_form.select_multi_dropdown_item(dropdown_label, ["Asia"])
@@ -1309,7 +1309,7 @@ class TestSailUiForm(unittest.TestCase):
         mock_send_multiple_dropdown_update.assert_called_once()
         args, kwargs = mock_send_multiple_dropdown_update.call_args
 
-    @patch('appian_locust.uiform.uiform.find_component_by_attribute_in_dict')
+    @patch('appian_locust.uiform.uiform.find_component_by_attribute_and_type_in_dict')
     @patch('appian_locust._interactor._Interactor.select_radio_button')
     def test_actions_form_radio_button_by_label_success(self, mock_select_radio_button: MagicMock,
                                                         mock_find_component_by_label: MagicMock) -> None:

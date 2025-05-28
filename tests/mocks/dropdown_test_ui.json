@@ -267,6 +267,46 @@
                                                                                     "validations": [],
                                                                                     "items": [
                                                                                         {
+                                                                                            "_cId": "db6c0c94e1ebf8c83d6e8bc235c0bc7a",
+                                                                                            "item": {
+                                                                                                "testLabel": "test-radio-button",
+                                                                                                "instructions": "",
+                                                                                                "readOnly": false,
+                                                                                                "placeholder": "xxx-xx-xxxx",
+                                                                                                "value": "",
+                                                                                                "saveInto": [
+                                                                                                    "<<jA0EAwMCkRqYtxMwiXcB0oEBLCjy94kbCvrGxM52s1u5l672xIvAXXbHu/y9gFxdukvodvJaoKgg\r\nw0uciAmgNkJc7nFMQh7RWE517M7cuZuINd7ZpiG8VVGC1E701xI6aH4Yyb2pULwXNrlu1yQ5keg/\r\n56EGj0+/PkIjUCtDgZ7IAYKP0LuhiJF+Q7tN62lzhc8=\r\n>>"
+                                                                                                ],
+                                                                                                "refreshAfter": "UNFOCUS",
+                                                                                                "keyboard": "STANDARD",
+                                                                                                "labelPosition": "ABOVE",
+                                                                                                "align": "DEFAULT",
+                                                                                                "helpTooltip": "Duplicate_radio_button_testlabel",
+                                                                                                "accessibilityText": "",
+                                                                                                "#t": "TextField"
+                                                                                            }
+                                                                                        },
+                                                                                        {
+                                                                                            "_cId": "db6c0c94e1ebf8c83d6e8bc235c0bc7a",
+                                                                                            "item": {
+                                                                                                "label": "Qualified Institutional Buyer",
+                                                                                                "instructions": "",
+                                                                                                "readOnly": false,
+                                                                                                "placeholder": "xxx-xx-xxxx",
+                                                                                                "value": "",
+                                                                                                "saveInto": [
+                                                                                                    "<<jA0EAwMCkRqYtxMwiXcB0oEBLCjy94kbCvrGxM52s1u5l672xIvAXXbHu/y9gFxdukvodvJaoKgg\r\nw0uciAmgNkJc7nFMQh7RWE517M7cuZuINd7ZpiG8VVGC1E701xI6aH4Yyb2pULwXNrlu1yQ5keg/\r\n56EGj0+/PkIjUCtDgZ7IAYKP0LuhiJF+Q7tN62lzhc8=\r\n>>"
+                                                                                                ],
+                                                                                                "refreshAfter": "UNFOCUS",
+                                                                                                "keyboard": "STANDARD",
+                                                                                                "labelPosition": "ABOVE",
+                                                                                                "align": "DEFAULT",
+                                                                                                "helpTooltip": "Duplicate_radio_button_label",
+                                                                                                "accessibilityText": "",
+                                                                                                "#t": "TextField"
+                                                                                            }
+                                                                                        },
+                                                                                        {
                                                                                             "_cId": "8e8e2f0aac99feba7316abfdfc5a0ed3",
                                                                                             "item": {
                                                                                                 "_cId": "0d3b186cfe70c2a3af1b44bf11084d4c",
@@ -449,6 +489,44 @@
                                                                                     {
                                                                                         "_cId": "5809de8db606472b0438c1b416cbfad7",
                                                                                         "contents": [
+                                                                                            {
+                                                                                                "_cId": "4862b473e2134ad386eeac94a0e4a573",
+                                                                                                "label": "Customer Type",
+                                                                                                "instructions": "",
+                                                                                                "required": true,
+                                                                                                "readOnly": false,
+                                                                                                "placeholder": "",
+                                                                                                "value": "",
+                                                                                                "saveInto": [
+                                                                                                    "<<jA0EAwMCkRqYtxMwiXcB0oEBLCjy94kbCvrGxM52s1u5l672xIvAXXbHu/ybgFhdvkgkRXZuFUIP\r\nL7Roez2YUw+tAWyaz+Fb+cE45D0tbCFuO+QsaT0jBaYTZEQYJZ1dEI5wu0r4W0hRr+vxQ/Ws6A0P\r\nNVjszG8prNsW3KmWFE/I7venNp1RKHFixICjm3iXwio=\r\n>>"
+                                                                                                ],
+                                                                                                "refreshAfter": "UNFOCUS",
+                                                                                                "keyboard": "STANDARD",
+                                                                                                "labelPosition": "ABOVE",
+                                                                                                "align": "DEFAULT",
+                                                                                                "helpTooltip": "",
+                                                                                                "accessibilityText": "",
+                                                                                                "#t": "ParagraphField"
+                                                                                            },
+                                                                                            {
+                                                                                                "_cId": "4862b473e2134ad386eeac94a0e4a573",
+                                                                                                "label": "Regions",
+                                                                                                "instructions": "",
+                                                                                                "required": true,
+                                                                                                "readOnly": false,
+                                                                                                "placeholder": "",
+                                                                                                "value": "",
+                                                                                                "saveInto": [
+                                                                                                    "<<jA0EAwMCkRqYtxMwiXcB0oEBLCjy94kbCvrGxM52s1u5l672xIvAXXbHu/ybgFhdvkgkRXZuFUIP\r\nL7Roez2YUw+tAWyaz+Fb+cE45D0tbCFuO+QsaT0jBaYTZEQYJZ1dEI5wu0r4W0hRr+vxQ/Ws6A0P\r\nNVjszG8prNsW3KmWFE/I7venNp1RKHFixICjm3iXwio=\r\n>>"
+                                                                                                ],
+                                                                                                "refreshAfter": "UNFOCUS",
+                                                                                                "keyboard": "STANDARD",
+                                                                                                "labelPosition": "ABOVE",
+                                                                                                "align": "DEFAULT",
+                                                                                                "helpTooltip": "",
+                                                                                                "accessibilityText": "",
+                                                                                                "#t": "ParagraphField"
+                                                                                            },
                                                                                             {
                                                                                                 "_cId": "5ec13d71bc1b507bc7ebdb52b7927b43",
                                                                                                 "hasNoValue": "true",
