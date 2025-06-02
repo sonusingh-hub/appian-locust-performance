@@ -10,6 +10,7 @@ from typing import Any, Dict, List, Union, Optional, TYPE_CHECKING
 from urllib.parse import quote, urlparse
 from copy import deepcopy
 
+from .. import ComponentNotFoundException
 from ..utilities import logger
 from .._grid_interactor import GridInteractor
 from .._interactor import _Interactor, TEMPO_SITE_STUB
@@ -702,7 +703,7 @@ class SailUiForm:
         if filter_start_date > filter_end_date:
             raise InvalidDateRangeException(filter_start_date, filter_end_date)
         locust_request_label = locust_request_label or f"{self.breadcrumb}.SelectDateUserFilter.{filter_label}"
-        date_range_component = find_component_by_attribute_in_dict(attribute="testLabel", value=filter_label, component_tree=self._state)
+        date_range_component = find_component_by_attribute_and_type_in_dict(attribute="testLabel", value=filter_label, type="DateRangeWidget", component_tree=self._state)
         new_value = {
             "startDate": {"#t": "date", "#v": f"{filter_start_date.isoformat()}Z"},
             "endDate": {"#t": "date", "#v": f"{filter_end_date.isoformat()}Z"}
@@ -967,6 +968,7 @@ class SailUiForm:
         """
         Gets all dropdown items for the dropdown label provided on the form
         If no dropdown found, throws a NotFoundException
+        If no element found, throws a ChoiceNotFoundException
 
         Args:
             label(str): Label of the dropdown
@@ -981,8 +983,15 @@ class SailUiForm:
 
         """
         attribute_to_find = 'testLabel' if is_test_label else 'label'
-        component = find_component_by_attribute_in_dict(
-            attribute_to_find, label, self._state)
+        try:
+            component = find_component_by_attribute_and_type_in_dict(attribute_to_find, label, 'DropdownField',
+                                                                     self._state)
+        except ComponentNotFoundException:
+            try:
+                component = find_component_by_attribute_and_type_in_dict(attribute_to_find, label, 'DropdownWidget',
+                                                                         self._state)
+            except ComponentNotFoundException:
+                raise ComponentNotFoundException(f"No components of type DropdownField or DropdownWidget with label '{label}' found on page")
 
         choices: list = component.get('choices')
         if choices is None or not isinstance(choices, list):
@@ -1012,8 +1021,15 @@ class SailUiForm:
 
         """
         attribute_to_find = 'testLabel' if is_test_label else 'label'
-        component = find_component_by_attribute_in_dict(
-            attribute_to_find, label, self._state)
+        try:
+            component = find_component_by_attribute_and_type_in_dict(attribute_to_find, label, 'DropdownField',
+                                                                     self._state)
+        except ComponentNotFoundException:
+            try:
+                component = find_component_by_attribute_and_type_in_dict(attribute_to_find, label, 'DropdownWidget',
+                                                                     self._state)
+            except ComponentNotFoundException:
+                raise ComponentNotFoundException(f"No components of type DropdownField or DropdownWidget with label '{label}' found on page")
 
         locust_label = locust_request_label or f'{self.breadcrumb}.Dropdown.SelectByLabel.{label}'
         reeval_url = self._get_update_url_for_reeval(self._state)
@@ -1078,8 +1094,17 @@ class SailUiForm:
 
         """
         attribute_to_find = 'testLabel' if is_test_label else 'label'
-        component = find_component_by_attribute_in_dict(
-            attribute_to_find, label, self._state)
+        try:
+            component = find_component_by_attribute_and_type_in_dict(attribute_to_find, label, 'MultipleDropdownField',
+                                                                     self._state)
+        except ComponentNotFoundException:
+            try:
+                component = find_component_by_attribute_and_type_in_dict(attribute_to_find, label, 'MultipleDropdownWidget',
+                                                                         self._state)
+            except ComponentNotFoundException:
+                raise ComponentNotFoundException(
+                    f"No components of type MultipleDropdownField or MultipleDropdownWidget with label '{label}' found on page")
+
         locust_label = locust_request_label or f'{self.breadcrumb}.MultipleDropdown.SelectByLabel.{choice_label}'
         exception_label = f"label {label}"
         reeval_url = self._get_update_url_for_reeval(self._state)
@@ -1794,8 +1819,8 @@ class SailUiForm:
             >>> form.select_radio_button_by_test_label('myTestLabel', 1)  # selects the first item
 
         """
-        component = find_component_by_attribute_in_dict(
-            'testLabel', test_label, self._state)
+        component = find_component_by_attribute_and_type_in_dict(
+            'testLabel', test_label, 'RadioButtonField', self._state)
 
         reeval_url = self._get_update_url_for_reeval(self._state)
         context_label = locust_request_label or f"{self.breadcrumb}.RadioButton.SelectByTestLabel.{test_label}"
@@ -1825,8 +1850,8 @@ class SailUiForm:
             >>> form.select_radio_button_by_label('myLabel', 1)  # selects the first item
 
         """
-        component = find_component_by_attribute_in_dict(
-            'label', label, self._state)
+        component = find_component_by_attribute_and_type_in_dict(
+            'label', label, 'RadioButtonField', self._state)
 
         reeval_url = self._get_update_url_for_reeval(self._state)
         context_label = locust_request_label or f"{self.breadcrumb}.RadioButton.SelectByLabel.{label}"
@@ -1851,9 +1876,18 @@ class SailUiForm:
 
         Returns (SailUiForm): The latest state of the UiForm
         """
-        if is_test_label:
-            return self.select_radio_button_by_test_label(nav_group_label, index, locust_request_label)
-        return self.select_radio_button_by_label(nav_group_label, index, locust_request_label)
+        attribute_to_find = 'testLabel' if is_test_label else 'label'
+        component = find_component_by_attribute_and_index_in_dict(
+            attribute_to_find, nav_group_label, index, self._state)
+
+        reeval_url = self._get_update_url_for_reeval(self._state)
+        context_label = locust_request_label or f"{self.breadcrumb}.NavCard.{nav_group_label}"
+        new_state = self._interactor.select_radio_button(
+            reeval_url, component, self.context, self.uuid, index=index, context_label=context_label)
+        if not new_state:
+            raise Exception(
+                f"No response returned when trying to select nav card with label '{nav_group_label}' and index '{index}'")
+        return self._reconcile_state(new_state)
 
     def select_radio_button_by_index(self, field_index: int, index: int, locust_request_label: str = "") -> 'SailUiForm':
         """
