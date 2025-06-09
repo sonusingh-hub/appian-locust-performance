@@ -62,9 +62,6 @@ If using ``pipenv``, simply start from the following ``Pipfile``:
     [requires]
     python_version = "3.13"
 
-    [pipenv]
-    allow_prereleases = true
-
 Build from source
 ----------------------
 1. Clone the repository:
