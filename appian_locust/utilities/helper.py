@@ -216,14 +216,6 @@ def find_component_by_attribute_in_dict(attribute: str, value: str, component_tr
     return component
 
 
-# Remove this function on June 6, 2025
-def find_component_by_label_and_type_dict(attribute: str, value: str, type: str, component_tree: Dict[str, Any],
-                                          raise_error: bool = True) -> Any:
-    warnings.warn("find_component_by_label_and_type_dict() is deprecated and will be removed on June 6, 2025. "
-                  "Use find_component_by_attribute_and_type_in_dict() instead.", DeprecationWarning, stacklevel=2)
-    return find_component_by_attribute_and_type_in_dict(attribute, value, type, component_tree, raise_error)
-
-
 def find_component_by_attribute_and_type_in_dict(attribute: str, value: str, type: str, component_tree: Dict[str, Any],
                                                  raise_error: bool = True) -> Any:
     """
