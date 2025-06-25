@@ -13,10 +13,14 @@ CONFIG_UPDATED=false
 prompt_confirm() {
   while true; do
     read -rp "$1 [Y/n]: " response
-    response=${response,,}
-    if [[ "$response" =~ ^(y|yes|)$ ]]; then return 0
-    elif [[ "$response" =~ ^(n|no)$ ]]; then return 1
-    else echo "Please answer yes or no."; fi
+    response=$(echo "$response" | tr '[:upper:]' '[:lower:]')
+    if [[ "$response" = "y" || "$response" = "yes" ]]; then
+      return 0
+    elif [[ "$response" = "n" || "$response" = "no" ]]; then
+      return 1
+    else
+      echo "Please answer yes or no."
+    fi
   done
 }
 
