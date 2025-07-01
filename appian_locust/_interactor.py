@@ -575,8 +575,7 @@ class _Interactor:
         return resp.json()
 
     def click_component(self, post_url: str, component: Dict[str, Any], context: Dict[str, Any],
-                        uuid: str, label: Optional[str] = None, headers: Optional[Dict[str, Any]] = None,
-                        client_mode: Optional[str] = None) -> Dict[str, Any]:
+                        uuid: str, label: Optional[str] = None, value: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         '''
             Calls the post operation to click certain SAIL components such as Buttons and Dynamic Links
 
@@ -599,6 +598,7 @@ class _Interactor:
                    .component(component)
                    .context(context)
                    .uuid(uuid)
+                   .value(value)
                    .build())
 
         locust_label = label or f'Click \'{component["label"]}\' Component'
