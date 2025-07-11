@@ -124,7 +124,8 @@ class TestSites(unittest.TestCase):
         for type_pair in [('InternalActionLink', 'action'),
                           ('InternalReportLink', 'report'),
                           ('SiteRecordTypeLink', 'recordType'),
-                          ('SiteInterfaceLink', 'interface')]:
+                          ('SiteInterfaceLink', 'interface'),
+                          ('SiteDataFabricInsightsLink', 'processHQ')]:
             original_link_type = type_pair[0]
             expected_link_type = type_pair[1]
             link_full = f"{{http://www.host.net/ae/types/2009}}{original_link_type}"
