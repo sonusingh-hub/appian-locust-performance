@@ -10,7 +10,7 @@ This section will go over how to get started writing tasks and introduce the two
 Sample Workflow
 ********************************************
 
-For this workflow, we will use the **Employee Record Type** found in the Appian `documentation <https://docs.appian.com/suite/help/23.2/Records_Tutorial.html>`_.
+For this workflow, we will use the **Employee Record Type** found in the Appian `documentation <https://docs.appian.com/suite/help/latest/Records_Tutorial.html>`_.
 We will implement a Locust Task that will create a new Employee record. The specific workflow will be as follows:
 
 1. Navigate to the Employee Record List
