@@ -4,7 +4,7 @@ Locust Test Example: Grids
 
 An example of a Locust Test showing interaction with Appian Grids - `example_locust_test_grids.py <https://gitlab.com/appian-oss/appian-locust/-/blob/master/examples/example_locust_test_grids.py>`_.
 
-This test has a locust task defined that will interact with a read-only paging grid layout that contains an Employee directory. Configuration for this grid layout is inspired by Appian's `Grid Tutorial <https://docs.appian.com/suite/help/24.1/Grid_Tutorial.html>`_.
+This test has a locust task defined that will interact with a read-only paging grid layout that contains an Employee directory. Configuration for this grid layout is inspired by Appian's `Grid Tutorial <https://docs.appian.com/suite/help/latest/Grid_Tutorial.html>`_.
 The goal of this test is to select all Engineering employees and view the details for one of them.
 
 The first step in this workflow is to navigate our user to a report which is backed by an interface containing the grid:
