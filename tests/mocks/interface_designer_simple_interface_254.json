@@ -23,16 +23,12 @@
                                     "ancestorLink": {
                                         "_cId": "24e93b9eaaddd418749b30169b47b9fc",
                                         "label": "List of Any Type",
-                                        "value": {
-                                            "#v": "",
+                                        "idActionName": "ancestorNavigation",
+                                        "idActionData": {
+                                            "#v": "ancestorNavigationPath",
                                             "#t": "string"
                                         },
-                                        "saveInto": [
-                                            "<<ww0EAwMCzfm02cB+LzIB0sAnAR8Erq9ROCHpdkFJAq0kFtqsuww1YtMiRdXYZyM0mNoq3otXovPE\r\nJw60NZrXlJfyUt3t87aGB1symRqOWHaQDjQB7h7yz9gH/J9jeEDDhGjpLGtJ3J2FGDYr2xtWq0TZ\r\nbvttAnJZmSc4zPndhAR5sirIl0TNQmoi9jAPGT5ckksZnlc+oblgT7qNI1xof8Nj9ZvB1igeS+9e\r\nnpCneIttIkhv1iKFt+k4s31qa/zMnWyKXx5Bu1FIk8thN0CDcQfFrD1LUSVYxD0xM2d2M+YtmZ6v\r\nq3bvz6iQX8p9hsM9pb9DK2+WX5MP\r\n>>"
-                                        ],
-                                        "tooltip": "",
-                                        "href": "",
-                                        "#t": "DynamicLink"
+                                        "#t": "InterfaceDesignerManagerLink"
                                     },
                                     "title": "Text",
                                     "docInfoUri": "a!textField",
@@ -3668,6 +3664,99 @@
                                             "#t": "string"
                                         },
                                         "#t": "DesignViewEntryContainer"
+                                    },
+                                    {
+                                        "_cId": "2ac42c7f42fcc2ee689f8473396e54f5",
+                                        "title": "",
+                                        "contents": [
+                                            {
+                                                "_cId": "151030b056a7bdfd38f272a8465dcb8d",
+                                                "component": {
+                                                    "_cId": "edd763b774ac15bbea7a94d2c9a73f49",
+                                                    "contents": {
+                                                        "_cId": "d9c03ff1541215bb7ddf5ae3f1ef5cf4",
+                                                        "label": "",
+                                                        "labelPosition": "",
+                                                        "instructions": "",
+                                                        "helpTooltip": "",
+                                                        "items": [
+                                                            {
+                                                                "_cId": "a4f4dc5d22c321f554511aca1b7e064a",
+                                                                "item": {
+                                                                    "_cId": "19b41a6d6993ea731d26e979429a43fb",
+                                                                    "align": "",
+                                                                    "links": [
+                                                                        {
+                                                                            "_cId": "0f34cd32f64563b7053847d28c1fde50",
+                                                                            "link": {
+                                                                                "_cId": "c9804cb1b51bdc5745f28c177f079513",
+                                                                                "testLabel": "Side By Side Layout - {1}",
+                                                                                "label": "Side By Side Layout",
+                                                                                "idActionName": "navigation",
+                                                                                "idActionData": {
+                                                                                    "path": {
+                                                                                        "#v": "navigationPath",
+                                                                                        "#t": "string"
+                                                                                    }
+                                                                                },
+                                                                                "#t": "InterfaceDesignerManagerLink"
+                                                                            },
+                                                                            "#t": "DesignViewEntryContainerNavLinkWrapper"
+                                                                        }
+                                                                    ],
+                                                                    "#t": "LinkGroup"
+                                                                },
+                                                                "width": "",
+                                                                "#t": "SideBySideItem"
+                                                            }
+                                                        ],
+                                                        "spacing": "",
+                                                        "alignVertical": "",
+                                                        "#t": "SideBySideGroup"
+                                                    },
+                                                    "label": "",
+                                                    "labelPosition": "COLLAPSED",
+                                                    "instructions": "",
+                                                    "instructionsPosition": "",
+                                                    "helpTooltip": "",
+                                                    "requiredStyle": "",
+                                                    "skinName": "",
+                                                    "marginBelow": "",
+                                                    "accessibilityText": "",
+                                                    "marginAbove": "",
+                                                    "helpTooltipPosition": "",
+                                                    "#t": "FieldLayout"
+                                                },
+                                                "editLink": {
+                                                    "_cId": "c783c94860400916e076cbd6fe17cc10",
+                                                    "testLabel": "EDIT - {1}",
+                                                    "label": "Edit as Expression",
+                                                    "value": {
+                                                        "#v": "",
+                                                        "#t": "string"
+                                                    },
+                                                    "saveInto": [
+                                                        "<<ww0EAwMCf3Y1OovpCUQB0sBHAcXqLI44g1YpzkvbEW8au+2RE6X5YGHUSB69WnAcF/jwSWWM0bLJ\r\njs+Y69qaHl6RPIjMlxqSfLIlujrGDpqiqT1XMmMUyeMHWddYHfUmI/2Eah94DWOPJAw3UYRfWWgT\r\nKgf2HrzDTNtV/e8F/IbCpASL0podbJpAoZg+ewIxY6DhypWC66VmXGQJ7v/zueuBkCE8LvtPws6s\r\nXsRV2OEf+hi58fwldNoREUGau2XmSelcuBZU9nXQqwrwdqhC4zbvMXvyYPZI1RN47NmreAo27Fjb\r\ncu0NSYhyByrh/HVqcq0ZwBd9ViTJ6SpqP9CipPxeUc7LOi33vzhzrskaPTX6E5NkCO7cT8o=\r\n>>"
+                                                    ],
+                                                    "tooltip": "",
+                                                    "href": "",
+                                                    "#t": "DynamicLink"
+                                                },
+                                                "tooltip": "Edit as Expression",
+                                                "vqdLinkTooltip": "",
+                                                "linkTextTooltip": "",
+                                                "refreshLinkTooltip": "",
+                                                "translationLinkTooltip": "",
+                                                "#t": "EditLinkLayout"
+                                            }
+                                        ],
+                                        "style": "ID_DARK",
+                                        "actions": [],
+                                        "actionToolbar": {
+                                            "#v": "",
+                                            "#t": "string"
+                                        },
+                                        "#t": "DesignViewEntryContainer"
                                     }
                                 ],
                                 "resizerContext": "",
@@ -3973,6 +4062,16 @@
                 "testLabel": "clientViewModelLink",
                 "label": "",
                 "saveInto": ["cvmSaveInto"],
+                "tooltip": "",
+                "href": "",
+                "#t": "DynamicLink"
+            },
+            {
+                "_cId": "6ad00be9294c63d7bbfc5f17d3f76dfe",
+                "_actionName": "designViewNavigation",
+                "testLabel": "designViewNavigationLink",
+                "label": "",
+                "saveInto": ["dvNavSaveInto"],
                 "tooltip": "",
                 "href": "",
                 "#t": "DynamicLink"
