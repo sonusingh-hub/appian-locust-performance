@@ -214,6 +214,22 @@ class TestVisitor(unittest.TestCase):
         self.assertEqual(type(design_form), DesignUiForm)
         self.assertEqual(0, len(ENV.stats.errors))
 
+    def test_visit_data_fabric_success(self) -> None:
+        form = '{"context":123, "uuid":123}'
+        self.custom_locust.set_response("/suite/rest/a/applications/latest/app/process-hq",
+                                        200, form)
+
+        sail_form = self.task_set.appian.visitor.visit_data_fabric("process-hq")
+        self.assertTrue(isinstance(sail_form, SailUiForm))
+        self.assertEqual(sail_form.get_latest_state(), json.loads(form))
+        self.assertEqual(sail_form.breadcrumb, "DataFabric.SailUi")
+
+    def test_visit_data_fabric_error(self) -> None:
+        self.custom_locust.set_response("/suite/rest/a/applications/latest/app/process-hq",
+                                        400, '')
+        with self.assertRaises(Exception):
+            self.task_set.appian.visitor.visit_data_fabric("process-hq")
+
     def test_visit_application(self) -> None:
         app_id = "thisIsAnAppId"
         self.custom_locust.set_response(

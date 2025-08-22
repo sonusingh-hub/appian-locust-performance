@@ -3,8 +3,12 @@ from unittest.mock import Mock, ANY
 from requests import Response, HTTPError
 from typing import Optional, Callable
 
-from appian_locust._data_fabric import _DataFabric, DATA_FABRIC_URI_PATH, DATA_FABRIC_DASHBOARD_URI_PATH
+from appian_locust._data_fabric import _DataFabric, DATA_FABRIC_URI_PATH
 from appian_locust._interactor import _Interactor
+
+
+DATA_FABRIC_DASHBOARD_URI_PATH = f"{DATA_FABRIC_URI_PATH}/dashboard/"
+DATA_FABRIC_REPORT_URI_PATH = f"{DATA_FABRIC_URI_PATH}/report/"
 
 integration_url = ""
 auth = ["fake_user", ""]
@@ -32,7 +36,7 @@ class TestDataFabric(unittest.TestCase):
         setattr(self.interactor, 'get_page', get_page_mock)
         return get_page_mock
 
-    def test_fetch_design_json(self) -> None:
+    def test_fetch_data_fabric_json(self) -> None:
         expected_response = {"ase": "ase2"}
         get_page_mock = self.mock_get_page_with_response(expected_response)
 
@@ -40,24 +44,58 @@ class TestDataFabric(unittest.TestCase):
         self.assertEqual(output, expected_response)
         get_page_mock.assert_called_once_with(DATA_FABRIC_URI_PATH, headers=ANY, label="DataFabric.Ui")
 
-    def test_fetch_design_dashboard_not_null_uri_stub_json(self) -> None:
+    def test_fetch_dashboard_not_null_uri_stub_json(self) -> None:
         expected_response = {"ase": "ase2"}
-        encoded_uri_stub = "testEncodedUuid"
-        expected_uri = f"{DATA_FABRIC_DASHBOARD_URI_PATH}{encoded_uri_stub}"
+        additional_url_path = "testEncodedUuid"
+        expected_uri = f"{DATA_FABRIC_DASHBOARD_URI_PATH}{additional_url_path}"
         get_page_mock = self.mock_get_page_with_response(expected_response, expected_uri=expected_uri)
 
-        output = self.data_fabric_interactor.fetch_data_fabric_dashboard_json(encoded_uri_stub)
+        output = self.data_fabric_interactor.fetch_data_fabric_json(
+            additional_url_path=f"/dashboard/{additional_url_path}", locust_request_label="DataFabricDashboard.Ui")
         self.assertEqual(expected_response, output)
         get_page_mock.assert_called_once_with(expected_uri, headers=ANY, label="DataFabricDashboard.Ui")
 
-    def test_fetch_design_dashboard_null_uri_stub_json(self) -> None:
+    def test_fetch_dashboard_null_uri_stub_json(self) -> None:
         expected_response = {"ase": "ase2"}
         expected_uri = f"{DATA_FABRIC_DASHBOARD_URI_PATH}new"
         get_page_mock = self.mock_get_page_with_response(expected_response, expected_uri=expected_uri)
 
-        output = self.data_fabric_interactor.fetch_data_fabric_dashboard_json()
+        output = self.data_fabric_interactor.fetch_data_fabric_json(
+            additional_url_path="/dashboard/new", locust_request_label="DataFabricDashboard.Ui")
         self.assertEqual(output, {"ase": "ase2"})
         get_page_mock.assert_called_once_with(expected_uri, headers=ANY, label="DataFabricDashboard.Ui")
+
+    def test_fetch_report_not_null_uri_stub_json(self) -> None:
+        expected_response = {"ase": "ase2"}
+        additional_url_path = "testEncodedUuid"
+        expected_uri = f"{DATA_FABRIC_REPORT_URI_PATH}{additional_url_path}"
+        get_page_mock = self.mock_get_page_with_response(expected_response, expected_uri=expected_uri)
+
+        output = self.data_fabric_interactor.fetch_data_fabric_json(
+            additional_url_path=f"/report/{additional_url_path}", locust_request_label="DataFabricReport.Ui")
+        self.assertEqual(expected_response, output)
+        get_page_mock.assert_called_once_with(expected_uri, headers=ANY, label="DataFabricReport.Ui")
+
+    def test_fetch_data_fabric_without_leading_slash(self) -> None:
+        expected_response = {"ase": "ase2"}
+        additional_url_path = "testEncodedUuid"
+        expected_uri = f"{DATA_FABRIC_URI_PATH}/{additional_url_path}"
+        get_page_mock = self.mock_get_page_with_response(expected_response, expected_uri=expected_uri)
+
+        output = self.data_fabric_interactor.fetch_data_fabric_json(
+            additional_url_path=additional_url_path, locust_request_label="DataFabricReport.Ui")
+        self.assertEqual(expected_response, output)
+        get_page_mock.assert_called_once_with(expected_uri, headers=ANY, label="DataFabricReport.Ui")
+
+    def test_fetch_report_null_uri_stub_json(self) -> None:
+        expected_response = {"ase": "ase2"}
+        expected_uri = f"{DATA_FABRIC_REPORT_URI_PATH}new"
+        get_page_mock = self.mock_get_page_with_response(expected_response, expected_uri=expected_uri)
+
+        output = self.data_fabric_interactor.fetch_data_fabric_json(
+            additional_url_path="/report/new", locust_request_label="DataFabricReport.Ui")
+        self.assertEqual(output, {"ase": "ase2"})
+        get_page_mock.assert_called_once_with(expected_uri, headers=ANY, label="DataFabricReport.Ui")
 
     def test_fetch_design_json_with_custom_label(self) -> None:
         expected_response = {"ase": "ase2"}
