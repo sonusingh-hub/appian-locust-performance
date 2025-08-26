@@ -31,7 +31,7 @@ setup(
     install_requires=[
         "locust>=2.37.3",
         "uritemplate>=4.1.1",
-        "sseclient>=1.8.0"
+        "sseclient-py>=1.8.0"
     ],
     license='Apache 2.0'
 )
