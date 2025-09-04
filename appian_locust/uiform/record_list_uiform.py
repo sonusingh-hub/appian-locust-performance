@@ -81,16 +81,15 @@ class RecordListUiForm(SailUiForm):
 
         """
         component = find_component_by_attribute_and_type_in_dict('label', label, START_PROCESS_LINK_TYPE, self._state)
-        process_model_uuid = component.get("pmUuid", "")
+        open_actions_in = component.get("openActionsIn", "")
+        open_action_in_a_dialog = open_actions_in == "DIALOG"
         cache_key = component.get("cacheKey", "")
-        if not process_model_uuid:
-            raise Exception(f"Record List Action component does not have process model UUID set.")
-        elif not cache_key:
+        if not cache_key:
             raise Exception(f"Record List Action component does not have cache key set.")
 
         locust_request_label = locust_request_label or f"RecordListUiform.ClickAction.{label}"
-        new_state = self._interactor.click_record_list_action(component_label=label, process_model_uuid=process_model_uuid,
-                                                              cache_key=cache_key, locust_request_label=locust_request_label)
+        new_state = self._interactor.click_record_list_action(component=component, component_label=label, cache_key=cache_key,
+                                                              locust_request_label=locust_request_label, open_in_a_dialog=open_action_in_a_dialog)
         self._reconcile_state(new_state, skipValidations=True)
         return self
 

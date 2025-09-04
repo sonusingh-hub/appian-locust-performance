@@ -595,13 +595,50 @@ class TestInteractor(unittest.TestCase):
 
         self.assertEqual(resp, expected_response)
 
-    def test_click_record_list_action(self) -> None:
-        pm_id = "processModelId"
+    def test_click_record_list_action_dialog(self) -> None:
+        pm_uuid = "someProcessModelUuid"
         cache_key = "cacheKey"
+        component = {
+            "pmUuid": pm_uuid
+        }
         correct_json = '{"ase": "ase2"}'
-        self.custom_locust.set_response(f"/suite/rest/a/model/latest/{pm_id}/forminternal?cacheKey={cache_key}", 200, correct_json)
+        self.custom_locust.set_response(f"/suite/rest/a/model/latest/{pm_uuid}/forminternal?cacheKey={cache_key}", 200, correct_json)
 
-        resp_json = self.task_set.appian._interactor.click_record_list_action("label", pm_id, cache_key)
+        resp_json = self.task_set.appian._interactor.click_record_list_action(component=component, component_label="label", cache_key=cache_key, open_in_a_dialog=True)
+
+        self.assertEqual(resp_json, json.loads(correct_json))
+
+    def test_click_record_list_action_no_dialog_with_siteGroup(self) -> None:
+        process_mode_opaque_id = "someprocessModelOpaqueId"
+        cache_key = "cacheKey"
+        component = {
+            "siteUrlStub": "someSiteUrlStub",
+            "sitePageUrlStub": "somePageName",
+            "siteGroupUrlStub": "someSiteGroupUrlStub",
+            "processModelOpaqueId": process_mode_opaque_id
+        }
+        correct_json = '{"ase": "ase2"}'
+        self.custom_locust.set_response(f"/suite/rest/a/sites/latest/{component["siteUrlStub"]}/page/g.{component["siteGroupUrlStub"]}.p.{component["sitePageUrlStub"]}" +
+                                        f"/startProcess/{process_mode_opaque_id}?cacheKey={cache_key}", 200, correct_json)
+
+        resp_json = self.task_set.appian._interactor.click_record_list_action(component=component, component_label="label", cache_key=cache_key, open_in_a_dialog=False)
+
+        self.assertEqual(resp_json, json.loads(correct_json))
+
+    def test_click_record_list_action_no_dialog_without_siteGroup(self) -> None:
+        process_mode_opaque_id = "someprocessModelOpaqueId"
+        cache_key = "cacheKey"
+        component = {
+            "siteUrlStub": "someSiteUrlStub",
+            "sitePageUrlStub": "somePageName",
+            "siteGroupUrlStub": "",
+            "processModelOpaqueId": process_mode_opaque_id
+        }
+        correct_json = '{"ase": "ase2"}'
+        self.custom_locust.set_response(f"/suite/rest/a/sites/latest/{component["siteUrlStub"]}/page/p.{component["sitePageUrlStub"]}" +
+                                        f"/startProcess/{process_mode_opaque_id}?cacheKey={cache_key}", 200, correct_json)
+
+        resp_json = self.task_set.appian._interactor.click_record_list_action(component=component, component_label="label", cache_key=cache_key, open_in_a_dialog=False)
 
         self.assertEqual(resp_json, json.loads(correct_json))
 
