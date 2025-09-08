@@ -29,7 +29,7 @@ setup(
         ]
     },
     install_requires=[
-        "locust>=2.37.3",
+        "locust>=2.40.2",
         "uritemplate>=4.1.1",
         "sseclient-py>=1.8.0"
     ],
