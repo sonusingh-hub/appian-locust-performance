@@ -251,6 +251,7 @@ class TestAppianBase(unittest.TestCase):
         host = "https://my-fake-host.com"
         base_path_override = "/abc"
         resp = Mock()
+        resp.__exit__ = Mock(return_value=None)
         mock_send.return_value = resp
         resp.history = []
         resp.content = ""
