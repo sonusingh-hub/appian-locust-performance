@@ -563,15 +563,32 @@ class _Interactor:
             return self.post_page(self.get_interaction_host() + related_action_link_url, payload={}, headers=headers, label=locust_label).json()
         return json_response
 
-    def click_record_list_action(self, component_label: str, process_model_uuid: str,
-                                 cache_key: str, locust_request_label: Optional[str] = None) -> Dict[str, Any]:
-        record_list_action_url = f"/suite/rest/a/model/latest/{process_model_uuid}/forminternal?cacheKey={cache_key}"
-
-        headers = self.setup_sail_headers()
+    def click_record_list_action(self, component: Dict[str, Any], component_label: str, cache_key: str,
+                                 locust_request_label: Optional[str] = None, open_in_a_dialog: bool = False) -> Dict[str, Any]:
         locust_label = locust_request_label or f"Clicking RecordListAction: {component_label}"
-        resp = self.post_page(
-            self.get_interaction_host() + record_list_action_url, payload={}, headers=headers, label=locust_label
-        )
+        headers = self.setup_request_headers()
+        if open_in_a_dialog:
+            process_model_uuid = component.get("pmUuid", "")
+            if not process_model_uuid:
+                raise Exception(f"Record List Action component does not have process model UUID set")
+            headers["Accept"] = "application/vnd.appian.tv.ui+json"
+            record_list_action_url = f"/suite/rest/a/model/latest/{process_model_uuid}/forminternal?cacheKey={cache_key}"
+            resp = self.get_page(
+                uri=self.get_interaction_host() + record_list_action_url, headers=headers, label=locust_label
+            )
+        else:
+            process_model_opaque_id = component.get("processModelOpaqueId", "")
+            if not process_model_opaque_id:
+                raise Exception(f"Record List Action component does not have process model opaque ID set")
+            headers = self.setup_sail_headers()
+            site_name = component["siteUrlStub"]
+            page_name = component["sitePageUrlStub"]
+            group_name = component.get("siteGroupUrlStub", None)
+            page = Page(page_name, PageType.ACTION, site_name, group_name)
+            record_list_action_url = self.url_provider.get_site_start_process_path(page, process_model_opaque_id, cache_key)
+            resp = self.post_page(
+                uri=self.get_interaction_host() + record_list_action_url, payload={}, headers=headers, label=locust_label
+            )
         return resp.json()
 
     def click_component(self, post_url: str, component: Dict[str, Any], context: Dict[str, Any],

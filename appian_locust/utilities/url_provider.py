@@ -17,6 +17,7 @@ URL_PATTERN_V0 = {
     "x-data-request-task-form": "https://pattern.net/suite/rest/a/task/latest/{taskId}/form",
     "x-data-request-site-page-redirect": "https://pattern.net/suite/rest/a/applications/latest/legacy/sites/{siteUrlStub}/page/{pageUrlStub}",
     "x-data-request-site-top-level-start-process-page": "https://pattern.net/suite/rest/a/sites/latest/{siteUrlStub}/page/p.{pageUrlStub}/startProcess/{processModelOpaqueId}?cacheKey={cacheKey}",
+    "x-data-request-site-nested-start-process-page": "https://pattern.net/suite/rest/a/sites/latest/{siteUrlStub}/page/g.{groupUrlStub}.p.{pageUrlStub}/startProcess/{processModelOpaqueId}?cacheKey={cacheKey}",
     "x-data-request-site-nav": "https://pattern.net/suite/rest/a/sites/latest/{siteUrlStub}/nav",
 }
 
