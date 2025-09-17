@@ -44,14 +44,10 @@ Multiple User Types with Different Credentials
 
 You can create different types of users with different behaviors, credentials, and weights by defining multiple HttpUser classes. This is useful for simulating realistic user distributions where different user types have different access patterns.
 
+A complete example can ge found here - `example_multi_user_locustfile.py <https://gitlab.com/appian-oss/appian-locust/-/blob/master/examples/example_multi_user_locustfile.py>`_.
+
+
 .. code-block:: python
-
-    from locust import HttpUser, task, between
-    from appian_locust import AppianTaskSet
-    from appian_locust.utilities import loadDriverUtils
-
-    utls = loadDriverUtils()
-    utls.load_config()
 
     class RegularUserTaskSet(AppianTaskSet):
         @task
@@ -68,7 +64,8 @@ You can create different types of users with different behaviors, credentials, a
     class RegularUserActor(HttpUser):
         """
         Regular users that interact with standard interfaces.
-        Weight of 3 means 3 out of every 4 users will be regular users.
+        Weight will be relative to all defined weights, 4 in this example.
+        In this configuration we expect 3 regular users for every manager user.
         """
         tasks = [RegularUserTaskSet]
         host = f'https://{utls.c["host_address"]}'
@@ -79,7 +76,8 @@ You can create different types of users with different behaviors, credentials, a
     class ManagerUserActor(HttpUser):
         """
         Manager users with elevated privileges and different workflows.
-        Weight of 1 means 1 out of every 4 users will be manager users.
+        Weight will be relative to all defined weights, 4 in this example.
+        In this configuration we expect 3 regular users for every manager user.
         """
         tasks = [ManagerUserTaskSet]
         host = f'https://{utls.c["host_address"]}'
@@ -98,6 +96,29 @@ You can define multiple user credentials in a single ``config.json`` file:
             ["manager.user", "managerpass456"]
         ]
     }
+
+**Running**
+
+When running this locustfile, it is important to note that the user count specified at runtime are evenly and sequentially spread across the HttpUsers. 
+If you only specify one user to run when running locust, it will only choose one user actor to start:
+
+.. code-block:: bash
+
+    locust -f examples/example_multi_user_locustfile.py --headless -r 10 -t 3600 --users 1
+    ...
+    All users hatched: RegularUserActor: 1, ManagerUserActor: 0 (0 already running)
+
+
+Make sure to run the locustfile with at least as many users as required by how you have the `weights <https://docs.locust.io/en/stable/writing-a-locustfile.html#weight-attribute>`_ configured for each HttpUser.
+
+For the included sample, the weights are 3 and 1 respectively, meaning you'll have to spawn 4 users to get the ``ManagerUserActor`` to start up
+
+
+.. code-block:: bash
+
+    locust -f examples/example_multi_user_locustfile.py  --headless -r 10 -t 3600 --users 4
+    ...
+    All users hatched: RegularUserActor: 3, ManagerUserActor: 1 (0 already running)
 
 Procedurally Generated Credentials
 **********************************
@@ -160,10 +181,10 @@ This approach is ideal for testing scenarios where you have many similar users w
 Request Duration Assertions
 ***************************
 
-You can add timing assertions to ensure that specific operations complete within expected timeframes. This is useful for performance validation and catching regressions.
+You can add timing assertions to ensure that specific operations complete within expected timeframes. This is useful for performance validation of a specific request, however see the warning below:
 
-.. note::
-   We **strongly** recommend analyzing test results in _aggregate_ after the test has completed, instead of making assertions like this during the actual test run. Individual request timing assertions are less reliable than analyzing percentiles (p50, p95, p99) across the entire test run, which provide better insights into overall system performance.
+.. warning::
+   We **strongly** recommend analyzing test results in *aggregate* after the test has completed, instead of making assertions like this during the actual test run. Individual request timing assertions are less reliable than analyzing percentiles (p50, p95, p99) across the entire test run, which provide better insights into overall system performance.
 
 Add this context manager class to your test file:
 

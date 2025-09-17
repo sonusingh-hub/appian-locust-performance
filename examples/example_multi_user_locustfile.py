@@ -1,62 +1,42 @@
-import json
-import os
 from locust import HttpUser, task, between
-
 from appian_locust import AppianTaskSet
+from appian_locust.utilities import loadDriverUtils
 
-CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
+utls = loadDriverUtils()
+utls.load_config()
 
-
-class GetFrontPageTaskSet(AppianTaskSet):
+class RegularUserTaskSet(AppianTaskSet):
     @task
-    def get_front_page(self):
-        self.client.get('/suite/tempo')
+    def browse_records(self):
+        # Regular user workflow
+        self.appian.visitor.visit_site("support", "tickets")
 
-
-class GetAdminPageTaskSet(AppianTaskSet):
+class ManagerUserTaskSet(AppianTaskSet):
     @task
-    def get_admin_page(self):
-        self.client.get('/suite/admin')
+    def manager_operations(self):
+        # Manager-specific workflow with elevated permissions
+        self.appian.visitor.visit_site("manager", "overview")
 
-
-def get_config(file_name):
-    config_file = os.path.join(CURRENT_DIR, file_name)
-    if os.path.exists(config_file):
-        with open(config_file, 'r') as config_file:
-            return json.load(config_file)
-    else:
-        raise Exception("No config.json found")
-
-
-class FrontendUserActor(HttpUser):
+class RegularUserActor(HttpUser):
     """
-    This represents the user that will interact with the frontend
-    It uses the corresponding taskset that hits the basic tempo page
-
-    The weight parameter here means for every 4 users spun up, 3 will be a frontend user
-
-    The wait_time parameter is how long between tasks each simulated user will wait (half a second)
+    Regular users that interact with standard interfaces.
+    Weight will be relative to all defined weights, 4 in this example.
+    In this configuration we expect 3 regular users for every manager user.
     """
-    tasks = [GetFrontPageTaskSet]
-    config = get_config('example_config.json')
-    host = f'https://{config["host_address"]}'
-    auth = config["auth"]
-    wait_time = between(0.500, 0.500)
+    tasks = [RegularUserTaskSet]
+    host = f'https://{utls.c["host_address"]}'
+    auth = utls.c["auth"][0]  # First auth entry
+    wait_time = between(0.5, 1.0)
     weight = 3
 
-
-class AdminUserActor(HttpUser):
+class ManagerUserActor(HttpUser):
     """
-    This represents the user that will interact with the admin panel
-    It uses the corresponding taskset that hits the admin landing page and the config for the admin user (i.e. admin creds)
-
-    The weight parameter here means for every 4 users spun up, 1 will be an admin user
-
-    The wait_time parameter is how long between tasks each simulated user will wait (one second)
+    Manager users with elevated privileges and different workflows.
+    Weight will be relative to all defined weights, 4 in this example.
+    In this configuration we expect 3 regular users for every manager user.
     """
-    tasks = [GetAdminPageTaskSet]
-    config = get_config('example_admin_config.json')
-    host = f'https://{config["host_address"]}'
-    auth = config["auth"]
-    wait_time = between(1.000, 1.000)
+    tasks = [ManagerUserTaskSet]
+    host = f'https://{utls.c["host_address"]}'
+    auth = utls.c["auth"][1]  # Second auth entry
+    wait_time = between(1.0, 2.0)
     weight = 1
