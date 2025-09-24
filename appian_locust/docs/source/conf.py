@@ -14,6 +14,7 @@ import os
 import sys
 import re
 import itertools
+from datetime import datetime
 from pathlib import Path
 from textwrap import dedent
 sys.path.insert(0, os.path.abspath('../../..'))
@@ -22,7 +23,7 @@ sys.path.insert(0, os.path.abspath('../../..'))
 # -- Project information -----------------------------------------------------
 
 project = 'Appian-Locust (Appian-Locust)'
-copyright = '2020, Appian Corporation'
+copyright = f'{datetime.now().year}, Appian Corporation'
 author = 'Appian Corporation'
 
 # The full version, including alpha/beta/rc tags
