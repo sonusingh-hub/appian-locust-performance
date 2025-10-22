@@ -176,7 +176,7 @@ class _Interactor:
 
         Args:
             uri: API URI to be called
-            payload: Body of the API request. Can be either JSON or text input to allow for different payload types.
+            payload: Body of the API request. Can be either JSON, text, or bytes input to allow for different payload types.
             headers: header for the REST API Call
             label: the label to be displayed by locust
 
@@ -194,6 +194,8 @@ class _Interactor:
             post_payload = json.dumps(payload).encode()
         elif isinstance(payload, str):
             post_payload = payload.encode()
+        elif isinstance(payload, bytes):
+            post_payload = payload
         else:
             raise Exception("Cannot POST a payload that is not of type dict or string")
         with self.client.post(

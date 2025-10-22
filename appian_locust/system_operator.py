@@ -71,6 +71,7 @@ class SystemOperator:
         uri: str,
         headers: Optional[Dict[str, Any]] = None,
         locust_request_label: Optional[str] = None,
+        payload = None,
     ) -> Response:
         """
         Make a GET request to a web api endpoint
@@ -78,6 +79,7 @@ class SystemOperator:
             uri: API URI to be called
             headers: header for the REST API Call
             locust_request_label: the label to be displayed by locust
+            payload: Body of the API request. Can be either JSON, text, or bytes input to allow for different payload types.
 
         Returns: Json response of GET operation
 
@@ -86,7 +88,9 @@ class SystemOperator:
         >>> headers = {'Is-Admin': 'true'}
         ... self.appian.system_operator.post_webapi('/suite/webapi/headers', headers=headers)
         """
-        resp = self.__interactor.post_page(uri, headers=headers, label=locust_request_label)
+        if payload is None:
+            payload = {}
+        resp = self.__interactor.post_page(uri, headers=headers, payload=payload, label=locust_request_label)
         return resp
 
     def fetch_autosuggestions(
