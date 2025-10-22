@@ -71,7 +71,7 @@ class SystemOperator:
         uri: str,
         headers: Optional[Dict[str, Any]] = None,
         locust_request_label: Optional[str] = None,
-        payload = None,
+        payload: Optional[Any] = None,
     ) -> Response:
         """
         Make a GET request to a web api endpoint
