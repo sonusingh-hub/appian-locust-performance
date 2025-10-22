@@ -79,7 +79,7 @@ class SystemOperator:
             uri: API URI to be called
             headers: header for the REST API Call
             locust_request_label: the label to be displayed by locust
-            payload: Body of the API request. Can be either JSON, text, or bytes input to allow for different payload types.
+            payload: Body of the API request. Can be either JSON, text, or bytes input to allow for different payload types
 
         Returns: Json response of GET operation
 
