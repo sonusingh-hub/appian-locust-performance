@@ -1905,17 +1905,17 @@ class SailUiForm:
 
         Args:
             nav_group_label(str): Label of the navigation card group
-            index(int): Index of the element starting at 0
+            index(int): Index of the element within the navigation card group starting at 0
 
         Keyword Args:
-            is_test_label (bool): If this label is a test label
+            is_test_label(bool): If this label is a test label
             locust_request_label(str): Label used to identify the request for locust statistics
 
         Returns (SailUiForm): The latest state of the UiForm
         """
         attribute_to_find = 'testLabel' if is_test_label else 'label'
-        component = find_component_by_attribute_and_index_in_dict(
-            attribute_to_find, nav_group_label, index, self._state)
+
+        component = find_component_by_attribute_in_dict(attribute_to_find, nav_group_label, self._state)
 
         reeval_url = self._get_update_url_for_reeval(self._state)
         context_label = locust_request_label or f"{self.breadcrumb}.NavCard.{nav_group_label}"
