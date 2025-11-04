@@ -22,8 +22,14 @@ class TestUiReconciler(unittest.TestCase):
         # Given
         old_component = {'_cId': '12345', 'value': "This is what it used to be"}
         new_component = {'_cId': '12345', 'value': "This is what it is now"}
-        old_state = {'context': 'abc', "ui": {'#t': 'abc', 'contents': [old_component]}, "timers": {"#t": "Dictionary"}}
-        new_state = {'context': '123', "ui": {'#t': UiReconciler.COMPONENT_DELTA_TYPE, 'modifiedComponents': [new_component]}}
+        timer_type = "Dictionary"
+        trigger_link = "https://www.google.com/"
+        old_state = {'context': 'abc', "ui": {'#t': 'abc', 'contents': [old_component]},
+                     "triggers": []}
+        new_state = {'context': '123',
+                     "ui": {'#t': UiReconciler.COMPONENT_DELTA_TYPE, 'modifiedComponents': [new_component]},
+                     "timers": {"#t": timer_type},
+                     "triggers": [{"uri": trigger_link, "#t": "SafeLink"}]}
 
         # When
         reconciled_state = self.reconciler.reconcile_ui(old_state, new_state)
@@ -32,6 +38,8 @@ class TestUiReconciler(unittest.TestCase):
         self.assertNotEqual(reconciled_state, new_state)
         self.assertEqual('123', reconciled_state['context'])
         self.assertEqual(new_component, reconciled_state['ui']['contents'][0])
+        self.assertEqual(timer_type, reconciled_state['timers']["#t"])
+        self.assertEqual(trigger_link, reconciled_state['triggers'][0]["uri"])
 
     def test_reconcile_reconcile_two_levels_deep_replace(self) -> None:
         # Given
