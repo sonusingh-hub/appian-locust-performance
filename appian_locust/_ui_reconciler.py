@@ -28,12 +28,12 @@ class UiReconciler:
             cid_to_component = {comp[UiReconciler.CID_KEY]: comp for comp in component_list if UiReconciler.CID_KEY in comp}
             self._traverse_and_update_state(old_state_copy, cid_to_component)
 
-            # Pass context forward as well, for stateless mode
-            old_state_copy['context'] = new_state['context']
+            # copy the following keys from new state into old state
+            keys_to_copy = ['context', 'timers', 'triggers']
+            for key in keys_to_copy:
+                if key in new_state:
+                    old_state_copy[key] = new_state[key]
 
-            # The timers also have to be updated to the ones in the new UI
-            if 'timers' in new_state:
-                old_state_copy['timers'] = new_state['timers']
             return old_state_copy
         else:
             # Simply return the new_state, as we are most likely on a new form
