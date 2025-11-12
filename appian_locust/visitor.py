@@ -3,6 +3,7 @@ from urllib.parse import urlparse
 
 from ._actions import _Actions
 from ._data_fabric import _DataFabric
+from ._control_panel_workspace import _ControlPanelWorkspace
 from .uiform import (
     ApplicationUiForm,
     DesignUiForm,
@@ -48,6 +49,7 @@ class Visitor:
         self.__design = _Design(self.__interactor)
         self.__admin = _Admin(self.__interactor)
         self.__portals = _Portals(self.__interactor)
+        self.__cp_workspace = _ControlPanelWorkspace(self.__interactor)
 
     def visit_task(self, task_name: str, exact_match: bool = True, locust_request_label: Optional[str] = None) -> SailUiForm:
         """
@@ -138,6 +140,17 @@ class Visitor:
         return SailUiForm(self.__interactor,
                           self.__data_fabric.fetch_data_fabric_report_json(encoded_uri_stub, locust_request_label),
                           breadcrumb="DataFabricReport.SailUi")
+
+    def visit_control_panel_workspace(self, locust_request_label: Optional[str] = None) -> SailUiForm:
+        """
+        Navigate to Control Panel Workspace
+        Args:
+            locust_request_label (str, optional): label to be used within locust
+
+        Returns (SailUiForm): UiForm representing Control Panel Workspace
+
+        """
+        return SailUiForm(self.__interactor, self.__cp_workspace.fetch_cp_workspace_json(locust_request_label), breadcrumb="ControlPanel.SailUi")
 
     def visit_application_by_id(self, application_id: str, locust_request_label: Optional[str] = None) -> ApplicationUiForm:
         """

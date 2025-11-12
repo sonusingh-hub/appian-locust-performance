@@ -11,6 +11,7 @@ class DesignObjectType(Enum):
     SITE = "Site"
     WEB_API = "Web API"
     TRANSLATION_SET = "Translation Set"
+    CONTROL_PANEL = "Control Panel"
 
 
 class DesignObject:
