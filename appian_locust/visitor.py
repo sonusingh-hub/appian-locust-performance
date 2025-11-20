@@ -100,20 +100,29 @@ class Visitor:
         """
         return DesignUiForm(self.__interactor, self.__design.fetch_design_json(locust_request_label), breadcrumb="Design.ApplicationList.SailUi")
 
-    def visit_data_fabric(self, locust_request_label: Optional[str] = None) -> SailUiForm:
+    def visit_data_fabric(self, locust_request_label: Optional[str] = None, additional_url_path: str = "",
+                          breadcrumb: str = "") -> SailUiForm:
         """
         Navigate to Data Fabric
+
         Args:
             locust_request_label (str, optional): label to be used within locust
+            additional_url_path (str): optional string to specify a link within Process HQ
+            breadcrumb (str): optional string to set as the request breadcrumb instead of 'DataFabric.SailUI'
 
         Returns (SailUiForm): UiForm representing Data Fabric
 
         """
-        return SailUiForm(self.__interactor, self.__data_fabric.fetch_data_fabric_json(locust_request_label), breadcrumb="DataFabric.SailUi")
+        validated_breadcrumb = breadcrumb or "DataFabric.SailUi"
+        return SailUiForm(self.__interactor, self.__data_fabric.fetch_data_fabric_json(
+            locust_request_label=locust_request_label, additional_url_path=additional_url_path
+        ), breadcrumb=validated_breadcrumb)
 
     def visit_data_fabric_dashboard(self, encoded_uri_stub: str = "new", locust_request_label: Optional[str] = None) -> SailUiForm:
         """
+        [DEPRECATED]: Please use visit_data_fabric now since it can take in any additional url path within PHQ.
         Navigate to a Data Fabric Dashboard
+
         Args:
             encoded_uri_stub (str): encoded uri stub of the dashboard to load. Defaults to "new" if not provided,
             bringing the user to an empty dashboard.
@@ -122,13 +131,15 @@ class Visitor:
         Returns (SailUiForm): UiForm representing a Data Fabric Dashboard
 
         """
-        return SailUiForm(self.__interactor,
-                          self.__data_fabric.fetch_data_fabric_dashboard_json(encoded_uri_stub, locust_request_label),
-                          breadcrumb="DataFabricDashboard.SailUi")
+        return self.visit_data_fabric(locust_request_label=locust_request_label,
+                                      additional_url_path=f"/dashboard/{encoded_uri_stub}",
+                                      breadcrumb="DataFabricDashboard.SailUi")
 
     def visit_data_fabric_report(self, encoded_uri_stub: str = "new", locust_request_label: Optional[str] = None) -> SailUiForm:
         """
+        [DEPRECATED]: Please use visit_data_fabric now since it can take in any additional url path within PHQ.
         Navigate to a Data Fabric Report
+
         Args:
             encoded_uri_stub (str): encoded uri stub of the report to load. Defaults to "new" if not provided,
             bringing the user to an empty report.
@@ -137,9 +148,9 @@ class Visitor:
         Returns (SailUiForm): UiForm representing a Data Fabric Report
 
         """
-        return SailUiForm(self.__interactor,
-                          self.__data_fabric.fetch_data_fabric_report_json(encoded_uri_stub, locust_request_label),
-                          breadcrumb="DataFabricReport.SailUi")
+        return self.visit_data_fabric(locust_request_label=locust_request_label,
+                                      additional_url_path=f"/report/{encoded_uri_stub}",
+                                      breadcrumb="DataFabricReport.SailUi")
 
     def visit_control_panel_workspace(self, locust_request_label: Optional[str] = None) -> SailUiForm:
         """
