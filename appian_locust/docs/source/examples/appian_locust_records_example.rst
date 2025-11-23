@@ -2,7 +2,7 @@
 Locust Test Example: Records
 ############################
 
-An example of a Locust Test showing interaction with Appian Records - `example_locust_test_records.py <https://gitlab.com/appian-oss/appian-locust/-/blob/master/examples/example_locust_test_records.py>`_.
+An example of a Locust Test showing interaction with Appian Records - `example_locust_test_records.py <https://gitlab.com/appian-oss/appian-locust/-/blob/main/examples/example_locust_test_records.py>`_.
 
 This test has 2 locust tasks defined and it will execute all three for each spawned locust user for the duration of the test.
 
@@ -46,10 +46,10 @@ For example: If there are two tasks with weights 3 and 6 then second task will h
 
         @task(X)
         # this task visits a random record type list and return the SAIL form.
-        def visit_random_record_type_list(self):
+        def visit_employee_record_type_list(self):
             if "list" in self.endpoint_type:
-                record_list = self.appian.records.visit_record_type_and_get_form()
-                record_list.filter_records_using_searchbox("Favorite Record Name")
+              record_list = self.appian.visitor.visit_record_type("Employees")
+              record_list.filter_records_using_searchbox("Janet Coleman")
 
 - By calling super().on_start() inside the on_start() function of the locust test you get access to the appian client which allows
   you to call *self.appian.visitor, self.appian.system_operator* etc. These properties allow us to navigate to a specific
