@@ -1,7 +1,9 @@
 {
     "host_address": "site-name.appiancloud.com",
     "auth": [
-        "adminusername",
-        "adminpassword"
-    ]
+        ["adminusername", "adminpassword"],
+        ["frontend.user", "frontenduserpassword"]
+    ],
+    "endpoint_type":"view,list"
 }
+

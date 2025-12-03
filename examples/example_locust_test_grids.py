@@ -1,7 +1,16 @@
+import sys
 from appian_locust import AppianTaskSet
-from locust import HttpUser, task
+from locust import HttpUser, task,between
+from appian_locust.utilities.loadDriverUtils import loadDriverUtils
+from appian_locust.utilities import logger
 
+# loadDriverUtils looks for a configuration file in your test's directory named 'config.json'.
+# You can alter this behavior by passing your configuration file name into load_config. Eg: load_config(config_file='<your-config-file.json>')
+utls = loadDriverUtils()
+utls.load_config()
+CONFIG = utls.c
 
+logger = logger.getLogger(__file__)
 class GridTaskSet(AppianTaskSet):
 
     @task
@@ -21,11 +30,16 @@ class GridTaskSet(AppianTaskSet):
         # Select the first row on the second page of the grid
         report_uiform.select_rows_in_grid(rows=[0], label="Employee Directory", append_to_existing_selected=True)
 
-        # Click on the row with a record link with the given label
-        report_uiform.click_record_link(label="William")
+        # Click on the row with a record link with the given label (Change label name below with the one that presents in UI after above steps)
+        report_uiform.click_record_link(label="Paul Martin")
 
-
-class UserActor(HttpUser):
+class GridUserActor(HttpUser):
     tasks = [GridTaskSet]
-    host = 'https://mysitename.net'
-    auth = ["myusername", "mypassword"]
+
+    # These determine how long each user waits between @task runs.
+    # A random wait time will be chosen between min_wait and max_wait
+    # for each task run, ie this script has no waiting by default.
+    wait_time = between(0.500, 0.500)
+
+    host = "https://" + CONFIG['host_address']
+    auth = CONFIG["auth"]

@@ -2,7 +2,7 @@
 Locust Test Example: Grids
 ############################
 
-An example of a Locust Test showing interaction with Appian Grids - `example_locust_test_grids.py <https://gitlab.com/appian-oss/appian-locust/-/blob/master/examples/example_locust_test_grids.py>`_.
+An example of a Locust Test showing interaction with Appian Grids - `example_locust_test_grids.py <https://gitlab.com/appian-oss/appian-locust/-/blob/main/examples/example_locust_test_grids.py>`_.
 
 This test has a locust task defined that will interact with a read-only paging grid layout that contains an Employee directory. Configuration for this grid layout is inspired by Appian's `Grid Tutorial <https://docs.appian.com/suite/help/latest/Grid_Tutorial.html>`_.
 The goal of this test is to select all Engineering employees and view the details for one of them.
@@ -84,7 +84,7 @@ The interface will look similar to this:
 .. image:: ../_images/grid_select_first_row_second_page.png
   :alt: Selected first row in second page of grid
 
-The grid contains a *First Name* column which is a link to the employee record. Finally, we will click on the link for an employee *William*:
+The grid contains a *First Name Last Name* column which is a link to the employee record. Finally, we will click on the link for an employee *Paul Martin*:
 
 .. code-block:: python
 
@@ -106,11 +106,11 @@ The grid contains a *First Name* column which is a link to the employee record. 
         report_uiform.select_rows_in_grid(rows=[0], label="Employee Directory", append_to_existing_selected=True)
 
         # Click on the row with a record link with the given label
-        report_uiform.click_record_link(label="William")
+        report_uiform.click_record_link(label="Paul Martin")
 
 The user will be navigated to the employee's record which will look similar to this:
 
 .. image:: ../_images/grid_click_record_link_result.png
-  :alt: Record view for William Ross
+  :alt: Record view for Paul Martin
 
-You can see a full version of this locust test `here <https://gitlab.com/appian-oss/appian-locust/-/blob/master/examples/example_locust_test_grids.py>`_. There are other useful functions for interacting with grids that can be found in our `documentation <https://appian-locust.readthedocs.io/en/latest/_api/modules/uiform.html>`_.
+You can see a full version of this locust test `here <https://gitlab.com/appian-oss/appian-locust/-/blob/main/examples/example_locust_test_grids.py>`_. There are other useful functions for interacting with grids that can be found in our `documentation <https://appian-locust.readthedocs.io/en/latest/_api/modules/uiform.html>`_.

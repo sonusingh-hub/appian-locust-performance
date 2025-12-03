@@ -2,7 +2,7 @@
 Locust Test Example: Multiple Users
 ####################################
 
-An example of a Locust Test showing interaction with the frontend and admin pages - `example_multi_user_locustfile.py <https://gitlab.com/appian-oss/appian-locust/-/blob/master/examples/example_multi_user_locustfile.py>`_.
+An example of a Locust Test showing interaction with the frontend and admin pages - `example_multi_user_locustfile.py <https://gitlab.com/appian-oss/appian-locust/-/blob/main/examples/example_multi_user_locustfile.py>`_.
 
 This test has 2 locust TaskSets defined and 2 HttpUsers defined that simulate different login information.
 
