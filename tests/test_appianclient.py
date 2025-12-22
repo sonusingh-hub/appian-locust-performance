@@ -9,7 +9,7 @@ from appian_locust import (AppianClient,
                            MissingConfigurationException,
                            MissingCsrfTokenException,
                            appian_client_without_locust)
-from appian_locust.utilities import logger, setup_distributed_creds, procedurally_generate_credentials
+from appian_locust.utilities import logger, procedurally_generate_credentials
 from locust import Locust, TaskSet
 
 from .mock_client import CustomLocust, MockClient, SampleAppianTaskSequence
@@ -300,50 +300,6 @@ class TestAppianBase(unittest.TestCase):
         # When
         with self.assertRaisesRegex(MissingConfigurationException, '["procedural_credentials_prefix", "procedural_credentials_count", "procedural_credentials_password"]'):
             procedurally_generate_credentials(INCORRECT_CONFIG)
-
-    def test_setup_distributed_creds(self) -> None:
-        # Given
-        CONFIG = {"credentials": [['employee1', 'pass'], ['employee2', 'pass'], ['employee3', 'pass']]}
-        os.environ["STY"] = "64331.locustdriver-2-0"
-        expected_config = [['employee1', 'pass'], ['employee3', 'pass']]
-
-        # When
-        setup_distributed_creds(CONFIG)
-
-        # Then
-        self.assertEqual(CONFIG["credentials"], expected_config)
-
-    def test_setup_distributed_creds_2(self) -> None:
-        # Given
-        CONFIG = {"credentials": [['employee1', 'pass'], ['employee2', 'pass'], ['employee3', 'pass']]}
-        os.environ["STY"] = "64331.locustdriver-2-1"
-        expected_config = [['employee2', 'pass']]
-
-        # When
-        setup_distributed_creds(CONFIG)
-
-        # Then
-        self.assertEqual(CONFIG["credentials"], expected_config)
-
-    def test_setup_distributed_creds_fewer_credentials_than_workers(self) -> None:
-        # Given
-        CONFIG = {"credentials": [['employee1', 'pass']]}
-        os.environ["STY"] = "64331.locustdriver-2-1"
-        expected_config = [['employee1', 'pass']]
-
-        # When
-        setup_distributed_creds(CONFIG)
-
-        # Then
-        self.assertEqual(CONFIG["credentials"], expected_config)
-
-    def test_setup_distributed_creds_fails_missing_key(self) -> None:
-        # Given
-        CONFIG = {'unrelated': 'config'}
-
-        # When
-        with self.assertRaisesRegex(MissingConfigurationException, '["credentials"]'):
-            setup_distributed_creds(CONFIG)
 
 
 if __name__ == '__main__':

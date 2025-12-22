@@ -166,7 +166,7 @@ Then use the credential generation functions in your test script:
 
         # Alternatively set up distributed credentials for load testing (uncomment if running distributed)
         # this will ensure that credentials are evenly split across all locust instances.
-        # credentials = setup_distributed_creds(utls.c)
+        # see examples/example_distributed_creds.py for more information.
 
 **How it works:**
 
