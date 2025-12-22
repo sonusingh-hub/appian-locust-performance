@@ -88,7 +88,7 @@ class AppianTaskSet(TaskSet):
         repeatedly for all remaining logings.
 
         In distributed mode, if only "credentials" key exists, each load driver will use last pair of credentials in the subset
-        assigned to it via the setup_distributed_creds method.
+        assigned to it.
 
         For example, if there are 3 pairs of credentials and 5 users per driver:
             Load driver 1 user 1 will take credential pair 1
