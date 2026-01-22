@@ -6,12 +6,14 @@ from locust import TaskSet, Locust
 from .mock_client import CustomLocust
 from .mock_reader import read_mock_file
 from appian_locust import AppianTaskSet
-from appian_locust.uiform.InterfaceDesignerUiForm import InterfaceDesignerUiForm
+from appian_locust.uiform.interface_designer_uiform import InterfaceDesignerUiForm
 
 
 class TestInterfaceDesignerUiform(unittest.TestCase):
     interface_designer_simple_interface = read_mock_file("interface_designer_simple_interface.json")
     interface_designer_empty_interface = read_mock_file("interface_designer_empty_interface.json")
+    interface_designer_empty_interface_with_ai_mode = read_mock_file("interface_designer_empty_interface_with_ai_mode.json")
+    interface_designer_empty_interface_254 = read_mock_file("interface_designer_empty_interface_254.json")
     interface_designer_254_and_above = read_mock_file("interface_designer_simple_interface_254.json")
     default_object_id = "lIBLQLGU6pYkw0C5Zw-W_VRdOG8QydZTNbKM1Jnrko8WXRBdyVgpItPs0IjjSIHPfdUsgKHxzHW7K-WKYaM3Xi3H7ahNzAc2p6JHQiRJeko9xrc"
 
@@ -442,6 +444,86 @@ class TestInterfaceDesignerUiform(unittest.TestCase):
                 'value': 'ancestorNavigationPath'
             }
         })
+
+    @patch("appian_locust._interactor._Interactor.click_generic_element")
+    def test_switch_to_ai_mode(self, click_generic_element_mock: MagicMock) -> None:
+        sail_form = self.get_interface_sail_form('test-object-id', self.interface_designer_empty_interface_with_ai_mode)
+
+        sail_form.switch_to_ai_mode()
+        _, kwargs = click_generic_element_mock.call_args_list[0]
+
+        link_component = kwargs["component"]
+        self.assertEqual(link_component['_actionName'], 'switchViewMode')
+        self.assertEqual(link_component['#t'], 'DynamicLink')
+
+        value = kwargs["new_value"]
+        self.assertEqual(value, {
+            "#t": "string",
+            "#v": "ai"
+        })
+
+    def test_switch_to_ai_mode_254(self) -> None:
+        sail_form = self.get_interface_sail_form('test-object-id', self.interface_designer_empty_interface_254)
+
+        with self.assertRaises(Exception) as e:
+            sail_form.switch_to_ai_mode()
+        self.assertEqual(e.exception.__str__(), "AI mode is not available")
+
+    @patch("appian_locust._interactor._Interactor.click_generic_element")
+    def test_switch_to_design_mode(self, click_generic_element_mock: MagicMock) -> None:
+        sail_form = self.get_interface_sail_form('test-object-id', self.interface_designer_empty_interface)
+
+        sail_form.switch_to_design_mode()
+        _, kwargs = click_generic_element_mock.call_args_list[0]
+
+        link_component = kwargs["component"]
+        self.assertEqual(link_component['_actionName'], 'switchViewMode')
+        self.assertEqual(link_component['#t'], 'DynamicLink')
+
+        value = kwargs["new_value"]
+        self.assertEqual(value, {
+            "#t": "string",
+            "#v": "design"
+        })
+
+    @patch("appian_locust._interactor._Interactor.click_component")
+    def test_switch_to_design_mode_254(self, click_component_mock: MagicMock) -> None:
+        sail_form = self.get_interface_sail_form('test-object-id', self.interface_designer_empty_interface_254)
+
+        sail_form.switch_to_design_mode()
+        args, kwargs = click_component_mock.call_args_list[0]
+
+        link_component = args[1]
+        self.assertEqual(link_component['testLabel'], 'designViewButton')
+        self.assertEqual(link_component['#t'], 'ButtonWidget')
+
+    @patch("appian_locust._interactor._Interactor.click_generic_element")
+    def test_switch_to_expression_mode(self, click_generic_element_mock: MagicMock) -> None:
+        sail_form = self.get_interface_sail_form('test-object-id', self.interface_designer_empty_interface)
+
+        sail_form.switch_to_expression_mode()
+        _, kwargs = click_generic_element_mock.call_args_list[0]
+
+        link_component = kwargs["component"]
+        self.assertEqual(link_component['_actionName'], 'switchViewMode')
+        self.assertEqual(link_component['#t'], 'DynamicLink')
+
+        value = kwargs["new_value"]
+        self.assertEqual(value, {
+            "#t": "string",
+            "#v": "expression"
+        })
+
+    @patch("appian_locust._interactor._Interactor.click_component")
+    def test_switch_to_expression_mode_254(self, click_component_mock: MagicMock) -> None:
+        sail_form = self.get_interface_sail_form('test-object-id', self.interface_designer_empty_interface_254)
+
+        sail_form.switch_to_expression_mode()
+        args, kwargs = click_component_mock.call_args_list[0]
+
+        link_component = args[1]
+        self.assertEqual(link_component['testLabel'], 'expressionViewButton')
+        self.assertEqual(link_component['#t'], 'ButtonWidget')
 
     def get_interface_sail_form(self, design_object_id: str = default_object_id,
                                 interface: str = interface_designer_simple_interface) -> InterfaceDesignerUiForm:

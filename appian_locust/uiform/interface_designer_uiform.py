@@ -25,6 +25,12 @@ class DropType(Enum):
     COMPONENT = "COMPONENT"
 
 
+class IdMode(Enum):
+    AI = "ai"
+    DESIGN = "design"
+    EXPRESSION = "expression"
+
+
 class InterfaceDesignerUiForm(DesignObjectUiForm):
 
     def __init__(self, interactor: _Interactor, state: Dict[str, Any], breadcrumb: str = "InterfaceDesignerUi"):
@@ -472,3 +478,59 @@ class InterfaceDesignerUiForm(DesignObjectUiForm):
         if not new_state:
             raise Exception(f"No response returned when trying to activate the designViewNavigation link")
         self._reconcile_state(new_state)
+
+    # 26.1 and after
+    def _switch_mode_new(self, mode: IdMode, locust_request_label: str = '') -> None:
+        view_mode_link_component = \
+            find_component_by_attribute_in_dict("testLabel", "viewModeLink", self._state)
+        new_value_dictionary = {
+            "#t": "string",
+            "#v": mode.value
+        }
+        new_state = self._interactor.click_generic_element(post_url=self.form_url,
+                                                           component=view_mode_link_component,
+                                                           context=self.context,
+                                                           uuid=self.uuid,
+                                                           new_value=new_value_dictionary,
+                                                           label=locust_request_label)
+        self._reconcile_state(new_state)
+
+    def switch_to_ai_mode(self, locust_request_label: str = '') -> None:
+        """
+            Clicks on the AI Mode button in the header of Interface Designer.
+
+            Args:
+                locust_request_label(str): Label used to identify the request for locust statistics
+        """
+        try:
+            self._switch_mode_new(IdMode.AI, locust_request_label)
+        except ComponentNotFoundException:
+            raise Exception("AI mode is not available")
+
+    def switch_to_design_mode(self, locust_request_label: str = '') -> None:
+        """
+            Clicks on the Design Mode button in the header of Interface Designer.
+
+            Args:
+                locust_request_label(str): Label used to identify the request for locust statistics
+        """
+
+        try:  # 26.1 and after
+            self._switch_mode_new(IdMode.DESIGN, locust_request_label)
+        except ComponentNotFoundException:  # pre 26.1
+            self.click(label="designViewButton", is_test_label=True,
+                         locust_request_label=locust_request_label)
+
+    def switch_to_expression_mode(self, locust_request_label: str = '') -> None:
+        """
+            Clicks on the Expression Mode button in the header of Interface Designer.
+
+            Args:
+                locust_request_label(str): Label used to identify the request for locust statistics
+        """
+
+        try:  # 26.1 and after
+            self._switch_mode_new(IdMode.EXPRESSION, locust_request_label)
+        except ComponentNotFoundException:  # pre 26.1
+            self.click(label="expressionViewButton", is_test_label=True,
+                         locust_request_label=locust_request_label)

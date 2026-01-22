@@ -22,7 +22,7 @@ from ._reports import _Reports
 from ._sites import _Sites
 from ._admin import _Admin
 from ._tasks import _Tasks
-from .uiform.InterfaceDesignerUiForm import InterfaceDesignerUiForm
+from .uiform.interface_designer_uiform import InterfaceDesignerUiForm
 from .utilities.helper import format_label
 from .objects import DesignObjectType, PageType
 
