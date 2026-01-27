@@ -1,6 +1,6 @@
 from typing import Any, Dict, Optional
 
-from .InterfaceDesignerUiForm import InterfaceDesignerUiForm
+from .interface_designer_uiform import InterfaceDesignerUiForm
 from .._design import _Design, get_available_design_objects, validate_design_object_access_method
 from .._rdo_interactor import _RDOInteractor
 from .._interactor import _Interactor
