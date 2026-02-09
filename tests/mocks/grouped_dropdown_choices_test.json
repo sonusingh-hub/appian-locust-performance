@@ -1,0 +1,219 @@
+[
+    {
+        "choiceType": "DATA",
+        "groupId": 0,
+        "nodeIndex": 0,
+        "indexPath": [
+            0
+        ],
+        "label": "Id",
+        "selectionLabel": "Id",
+        "icon": {
+            "#v": "integer-bold",
+            "#t": "string"
+        },
+        "selectable": true,
+        "infoMap": {
+            "uuid": "5912dd99-6fc0-4f37-aec4-de98e917cbce",
+            "typeId": {
+                "uuid": "{http://www.appian.com/ae/types/2009}Integer",
+                "#t": "Type"
+            },
+            "baseRecordTypeUuid": "046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb",
+            "fieldReferenceString": "'recordType!{046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb}RE Item.fields.{5912dd99-6fc0-4f37-aec4-de98e917cbce}id'",
+            "queryInfo": "5912dd99-6fc0-4f37-aec4-de98e917cbce",
+            "isIndexable": false,
+            "relationshipDisplayPath": [
+                "Items"
+            ],
+            "#t": "Map"
+        },
+        "hidden": false
+    },
+    {
+        "choiceType": "DATA",
+        "groupId": 0,
+        "nodeIndex": 1,
+        "indexPath": [
+            1
+        ],
+        "label": "Name",
+        "selectionLabel": "Name",
+        "icon": {
+            "#v": "text-bold",
+            "#t": "string"
+        },
+        "selectable": true,
+        "infoMap": {
+            "uuid": "fe2a54c2-39d9-484a-900a-ce6b7c9e5bf6",
+            "typeId": {
+                "uuid": "{http://www.appian.com/ae/types/2009}Text",
+                "#t": "Type"
+            },
+            "baseRecordTypeUuid": "046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb",
+            "fieldReferenceString": "'recordType!{046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb}RE Item.fields.{fe2a54c2-39d9-484a-900a-ce6b7c9e5bf6}name'",
+            "queryInfo": "fe2a54c2-39d9-484a-900a-ce6b7c9e5bf6",
+            "isIndexable": false,
+            "relationshipDisplayPath": [
+                "Items"
+            ],
+            "#t": "Map"
+        },
+        "hidden": false
+    },
+    {
+        "choiceType": "DATA",
+        "groupId": 0,
+        "nodeIndex": 2,
+        "indexPath": [
+            2
+        ],
+        "label": "Price",
+        "selectionLabel": "Price",
+        "icon": {
+            "#v": "integer-bold",
+            "#t": "string"
+        },
+        "selectable": true,
+        "infoMap": {
+            "uuid": "1664b543-72f7-4993-b15f-b36a9b417d1d",
+            "typeId": {
+                "uuid": "{http://www.appian.com/ae/types/2009}Decimal",
+                "#t": "Type"
+            },
+            "baseRecordTypeUuid": "046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb",
+            "fieldReferenceString": "'recordType!{046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb}RE Item.fields.{1664b543-72f7-4993-b15f-b36a9b417d1d}price'",
+            "queryInfo": "1664b543-72f7-4993-b15f-b36a9b417d1d",
+            "isIndexable": false,
+            "relationshipDisplayPath": [
+                "Items"
+            ],
+            "#t": "Map"
+        },
+        "hidden": false
+    },
+    {
+        "choiceType": "DATA",
+        "groupId": 0,
+        "nodeIndex": 3,
+        "indexPath": [
+            3
+        ],
+        "label": "Data",
+        "selectionLabel": "Data",
+        "icon": {
+            "#v": "text-bold",
+            "#t": "string"
+        },
+        "selectable": true,
+        "infoMap": {
+            "uuid": "32f15093-61d4-4ba3-ae6b-ed6e9da69d97",
+            "typeId": {
+                "uuid": "{http://www.appian.com/ae/types/2009}Text",
+                "#t": "Type"
+            },
+            "baseRecordTypeUuid": "046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb",
+            "fieldReferenceString": "'recordType!{046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb}RE Item.fields.{32f15093-61d4-4ba3-ae6b-ed6e9da69d97}data'",
+            "queryInfo": "32f15093-61d4-4ba3-ae6b-ed6e9da69d97",
+            "isIndexable": false,
+            "relationshipDisplayPath": [
+                "Items"
+            ],
+            "#t": "Map"
+        },
+        "hidden": false
+    },
+    {
+        "choiceType": "DATA",
+        "groupId": 0,
+        "nodeIndex": 4,
+        "indexPath": [
+            4
+        ],
+        "label": "Invented Date",
+        "selectionLabel": "Invented Date",
+        "icon": {
+            "#v": "calendar-o",
+            "#t": "string"
+        },
+        "selectable": true,
+        "infoMap": {
+            "uuid": "831f606e-ac60-4347-b670-f8471bc9dd87",
+            "typeId": {
+                "uuid": "{http://www.appian.com/ae/types/2009}Date",
+                "#t": "Type"
+            },
+            "baseRecordTypeUuid": "046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb",
+            "fieldReferenceString": "'recordType!{046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb}RE Item.fields.{831f606e-ac60-4347-b670-f8471bc9dd87}inventedDate'",
+            "queryInfo": "831f606e-ac60-4347-b670-f8471bc9dd87",
+            "isIndexable": false,
+            "relationshipDisplayPath": [
+                "Items"
+            ],
+            "#t": "Map"
+        },
+        "hidden": false
+    },
+    {
+        "choiceType": "DATA",
+        "groupId": 0,
+        "nodeIndex": 5,
+        "indexPath": [
+            5
+        ],
+        "label": "Image Id",
+        "selectionLabel": "Image Id",
+        "icon": {
+            "#v": "integer-bold",
+            "#t": "string"
+        },
+        "selectable": true,
+        "infoMap": {
+            "uuid": "17c8b721-1d92-478e-a5d0-591bfde599c8",
+            "typeId": {
+                "uuid": "{http://www.appian.com/ae/types/2009}Integer",
+                "#t": "Type"
+            },
+            "baseRecordTypeUuid": "046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb",
+            "fieldReferenceString": "'recordType!{046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb}RE Item.fields.{17c8b721-1d92-478e-a5d0-591bfde599c8}imageId'",
+            "queryInfo": "17c8b721-1d92-478e-a5d0-591bfde599c8",
+            "isIndexable": false,
+            "relationshipDisplayPath": [
+                "Items"
+            ],
+            "#t": "Map"
+        },
+        "hidden": false
+    },
+    {
+        "choiceType": "DATA",
+        "groupId": 0,
+        "nodeIndex": 6,
+        "indexPath": [
+            6
+        ],
+        "label": "Created By",
+        "selectionLabel": "Created By",
+        "icon": {
+            "#v": "user-o",
+            "#t": "string"
+        },
+        "selectable": true,
+        "infoMap": {
+            "uuid": "0aa6d6ea-a9b0-46c4-91ad-9c5d5ae516fa",
+            "typeId": {
+                "uuid": "{http://www.appian.com/ae/types/2009}User",
+                "#t": "Type"
+            },
+            "baseRecordTypeUuid": "046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb",
+            "fieldReferenceString": "'recordType!{046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb}RE Item.fields.{0aa6d6ea-a9b0-46c4-91ad-9c5d5ae516fa}createdBy'",
+            "queryInfo": "0aa6d6ea-a9b0-46c4-91ad-9c5d5ae516fa",
+            "isIndexable": false,
+            "relationshipDisplayPath": [
+                "Items"
+            ],
+            "#t": "Map"
+        },
+        "hidden": false
+    }
+]
