@@ -812,6 +812,225 @@
                                                                     "instructions": "",
                                                                     "required": true,
                                                                     "disabled": false,
+                                                                    "choices": [
+                                                                        {
+                                                                            "choiceType": "DATA",
+                                                                            "groupId": 0,
+                                                                            "nodeIndex": 0,
+                                                                            "indexPath": [
+                                                                                0
+                                                                            ],
+                                                                            "label": "Id",
+                                                                            "selectionLabel": "Id",
+                                                                            "icon": {
+                                                                                "#v": "integer-bold",
+                                                                                "#t": "string"
+                                                                            },
+                                                                            "selectable": true,
+                                                                            "infoMap": {
+                                                                                "uuid": "5912dd99-6fc0-4f37-aec4-de98e917cbce",
+                                                                                "typeId": {
+                                                                                    "uuid": "{http://www.appian.com/ae/types/2009}Integer",
+                                                                                    "#t": "Type"
+                                                                                },
+                                                                                "baseRecordTypeUuid": "046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb",
+                                                                                "fieldReferenceString": "'recordType!{046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb}RE Item.fields.{5912dd99-6fc0-4f37-aec4-de98e917cbce}id'",
+                                                                                "queryInfo": "5912dd99-6fc0-4f37-aec4-de98e917cbce",
+                                                                                "isIndexable": false,
+                                                                                "relationshipDisplayPath": [
+                                                                                    "Items"
+                                                                                ],
+                                                                                "#t": "Map"
+                                                                            },
+                                                                            "hidden": false
+                                                                        },
+                                                                        {
+                                                                            "choiceType": "DATA",
+                                                                            "groupId": 0,
+                                                                            "nodeIndex": 1,
+                                                                            "indexPath": [
+                                                                                1
+                                                                            ],
+                                                                            "label": "Name",
+                                                                            "selectionLabel": "Name",
+                                                                            "icon": {
+                                                                                "#v": "text-bold",
+                                                                                "#t": "string"
+                                                                            },
+                                                                            "selectable": true,
+                                                                            "infoMap": {
+                                                                                "uuid": "fe2a54c2-39d9-484a-900a-ce6b7c9e5bf6",
+                                                                                "typeId": {
+                                                                                    "uuid": "{http://www.appian.com/ae/types/2009}Text",
+                                                                                    "#t": "Type"
+                                                                                },
+                                                                                "baseRecordTypeUuid": "046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb",
+                                                                                "fieldReferenceString": "'recordType!{046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb}RE Item.fields.{fe2a54c2-39d9-484a-900a-ce6b7c9e5bf6}name'",
+                                                                                "queryInfo": "fe2a54c2-39d9-484a-900a-ce6b7c9e5bf6",
+                                                                                "isIndexable": false,
+                                                                                "relationshipDisplayPath": [
+                                                                                    "Items"
+                                                                                ],
+                                                                                "#t": "Map"
+                                                                            },
+                                                                            "hidden": false
+                                                                        },
+                                                                        {
+                                                                            "choiceType": "DATA",
+                                                                            "groupId": 0,
+                                                                            "nodeIndex": 2,
+                                                                            "indexPath": [
+                                                                                2
+                                                                            ],
+                                                                            "label": "Price",
+                                                                            "selectionLabel": "Price",
+                                                                            "icon": {
+                                                                                "#v": "integer-bold",
+                                                                                "#t": "string"
+                                                                            },
+                                                                            "selectable": true,
+                                                                            "infoMap": {
+                                                                                "uuid": "1664b543-72f7-4993-b15f-b36a9b417d1d",
+                                                                                "typeId": {
+                                                                                    "uuid": "{http://www.appian.com/ae/types/2009}Decimal",
+                                                                                    "#t": "Type"
+                                                                                },
+                                                                                "baseRecordTypeUuid": "046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb",
+                                                                                "fieldReferenceString": "'recordType!{046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb}RE Item.fields.{1664b543-72f7-4993-b15f-b36a9b417d1d}price'",
+                                                                                "queryInfo": "1664b543-72f7-4993-b15f-b36a9b417d1d",
+                                                                                "isIndexable": false,
+                                                                                "relationshipDisplayPath": [
+                                                                                    "Items"
+                                                                                ],
+                                                                                "#t": "Map"
+                                                                            },
+                                                                            "hidden": false
+                                                                        },
+                                                                        {
+                                                                            "choiceType": "DATA",
+                                                                            "groupId": 0,
+                                                                            "nodeIndex": 3,
+                                                                            "indexPath": [
+                                                                                3
+                                                                            ],
+                                                                            "label": "Data",
+                                                                            "selectionLabel": "Data",
+                                                                            "icon": {
+                                                                                "#v": "text-bold",
+                                                                                "#t": "string"
+                                                                            },
+                                                                            "selectable": true,
+                                                                            "infoMap": {
+                                                                                "uuid": "32f15093-61d4-4ba3-ae6b-ed6e9da69d97",
+                                                                                "typeId": {
+                                                                                    "uuid": "{http://www.appian.com/ae/types/2009}Text",
+                                                                                    "#t": "Type"
+                                                                                },
+                                                                                "baseRecordTypeUuid": "046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb",
+                                                                                "fieldReferenceString": "'recordType!{046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb}RE Item.fields.{32f15093-61d4-4ba3-ae6b-ed6e9da69d97}data'",
+                                                                                "queryInfo": "32f15093-61d4-4ba3-ae6b-ed6e9da69d97",
+                                                                                "isIndexable": false,
+                                                                                "relationshipDisplayPath": [
+                                                                                    "Items"
+                                                                                ],
+                                                                                "#t": "Map"
+                                                                            },
+                                                                            "hidden": false
+                                                                        },
+                                                                        {
+                                                                            "choiceType": "DATA",
+                                                                            "groupId": 0,
+                                                                            "nodeIndex": 4,
+                                                                            "indexPath": [
+                                                                                4
+                                                                            ],
+                                                                            "label": "Invented Date",
+                                                                            "selectionLabel": "Invented Date",
+                                                                            "icon": {
+                                                                                "#v": "calendar-o",
+                                                                                "#t": "string"
+                                                                            },
+                                                                            "selectable": true,
+                                                                            "infoMap": {
+                                                                                "uuid": "831f606e-ac60-4347-b670-f8471bc9dd87",
+                                                                                "typeId": {
+                                                                                    "uuid": "{http://www.appian.com/ae/types/2009}Date",
+                                                                                    "#t": "Type"
+                                                                                },
+                                                                                "baseRecordTypeUuid": "046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb",
+                                                                                "fieldReferenceString": "'recordType!{046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb}RE Item.fields.{831f606e-ac60-4347-b670-f8471bc9dd87}inventedDate'",
+                                                                                "queryInfo": "831f606e-ac60-4347-b670-f8471bc9dd87",
+                                                                                "isIndexable": false,
+                                                                                "relationshipDisplayPath": [
+                                                                                    "Items"
+                                                                                ],
+                                                                                "#t": "Map"
+                                                                            },
+                                                                            "hidden": false
+                                                                        },
+                                                                        {
+                                                                            "choiceType": "DATA",
+                                                                            "groupId": 0,
+                                                                            "nodeIndex": 5,
+                                                                            "indexPath": [
+                                                                                5
+                                                                            ],
+                                                                            "label": "Image Id",
+                                                                            "selectionLabel": "Image Id",
+                                                                            "icon": {
+                                                                                "#v": "integer-bold",
+                                                                                "#t": "string"
+                                                                            },
+                                                                            "selectable": true,
+                                                                            "infoMap": {
+                                                                                "uuid": "17c8b721-1d92-478e-a5d0-591bfde599c8",
+                                                                                "typeId": {
+                                                                                    "uuid": "{http://www.appian.com/ae/types/2009}Integer",
+                                                                                    "#t": "Type"
+                                                                                },
+                                                                                "baseRecordTypeUuid": "046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb",
+                                                                                "fieldReferenceString": "'recordType!{046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb}RE Item.fields.{17c8b721-1d92-478e-a5d0-591bfde599c8}imageId'",
+                                                                                "queryInfo": "17c8b721-1d92-478e-a5d0-591bfde599c8",
+                                                                                "isIndexable": false,
+                                                                                "relationshipDisplayPath": [
+                                                                                    "Items"
+                                                                                ],
+                                                                                "#t": "Map"
+                                                                            },
+                                                                            "hidden": false
+                                                                        },
+                                                                        {
+                                                                            "choiceType": "DATA",
+                                                                            "groupId": 0,
+                                                                            "nodeIndex": 6,
+                                                                            "indexPath": [
+                                                                                6
+                                                                            ],
+                                                                            "label": "Created By",
+                                                                            "selectionLabel": "Created By",
+                                                                            "icon": {
+                                                                                "#v": "user-o",
+                                                                                "#t": "string"
+                                                                            },
+                                                                            "selectable": true,
+                                                                            "infoMap": {
+                                                                                "uuid": "0aa6d6ea-a9b0-46c4-91ad-9c5d5ae516fa",
+                                                                                "typeId": {
+                                                                                    "uuid": "{http://www.appian.com/ae/types/2009}User",
+                                                                                    "#t": "Type"
+                                                                                },
+                                                                                "baseRecordTypeUuid": "046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb",
+                                                                                "fieldReferenceString": "'recordType!{046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb}RE Item.fields.{0aa6d6ea-a9b0-46c4-91ad-9c5d5ae516fa}createdBy'",
+                                                                                "queryInfo": "0aa6d6ea-a9b0-46c4-91ad-9c5d5ae516fa",
+                                                                                "isIndexable": false,
+                                                                                "relationshipDisplayPath": [
+                                                                                    "Items"
+                                                                                ],
+                                                                                "#t": "Map"
+                                                                            },
+                                                                            "hidden": false
+                                                                        }
+                                                                    ],
                                                                     "value": [],
                                                                     "saveInto": [
                                                                         "<<ww0EAwMCf2MkVhpZ2FEB0sAnAX6yP5RZsviryDwABZ+a2vcoGqig9MXkdfxmJ1hGxPwLfCFsodaf\r\nHN5Kuz1ppzv6JoSGKIy5PcBvxqmmDjN/xxMAyjsSNQePywdh1I7oySvRSRPucWmTRNNJ+G0DDQXw\r\n/RBqhX2/ROcbMBhePTPww+aw/8Jr4H4J5U/RMlRyktENTPu3bRIQPpUo3Zbu6foYCxxMCElwR/2e\r\nw4/yqXGG0xNk7iuP55i6grJLBl2QXyRNV8LIOSAAstnfTXIkrfFquFf1e7UGejIxubqphUOt4AoG\r\nu+RbOyjLUMDbuZRmLIDikrY6ywC3\r\n>>"
@@ -901,8 +1120,12 @@
                                                                     ],
                                                                     "immutableChoices": [],
                                                                     "#t": "GroupedDropdownField",
-                                                                    "shouldLazyLoadChoices": true,
-                                                                    "choicesEndpointUrl": "https://an-appian-instance.host.net/suite/rest/a/components/record/latest/picker/getChoicesForGroupedDropdownWidget",
+                                                                    "choices": [
+                                                                        {"#t": "Dictionary", "#v": {"label": {"#t": "Text", "#v": "Choice 1"}, "value": {"#t": "Integer", "#v": 1}}},
+                                                                        {"#t": "Dictionary", "#v": {"label": {"#t": "Text", "#v": "Choice 2"}, "value": {"#t": "Integer", "#v": 2}}},
+                                                                        {"#t": "Dictionary", "#v": {"label": {"#t": "Text", "#v": "Choice 3"}, "value": {"#t": "Integer", "#v": 3}}},
+                                                                        {"#t": "Dictionary", "#v": {"label": {"#t": "Text", "#v": "Choice 4"}, "value": {"#t": "Integer", "#v": 4}}}
+                                                                    ],
                                                                     "choiceConfigs": {
                                                                         "recordTypeUuid": "57bf2cbc-3bea-42e7-acbf-ac73dae2e3d3",
                                                                         "relationshipTypes": [
@@ -3643,6 +3866,225 @@
                                                                                                     "instructions": "",
                                                                                                     "required": true,
                                                                                                     "disabled": false,
+                                                                                                    "choices": [
+                                                                                                        {
+                                                                                                            "choiceType": "DATA",
+                                                                                                            "groupId": 0,
+                                                                                                            "nodeIndex": 0,
+                                                                                                            "indexPath": [
+                                                                                                                0
+                                                                                                            ],
+                                                                                                            "label": "Id",
+                                                                                                            "selectionLabel": "Id",
+                                                                                                            "icon": {
+                                                                                                                "#v": "integer-bold",
+                                                                                                                "#t": "string"
+                                                                                                            },
+                                                                                                            "selectable": true,
+                                                                                                            "infoMap": {
+                                                                                                                "uuid": "5912dd99-6fc0-4f37-aec4-de98e917cbce",
+                                                                                                                "typeId": {
+                                                                                                                    "uuid": "{http://www.appian.com/ae/types/2009}Integer",
+                                                                                                                    "#t": "Type"
+                                                                                                                },
+                                                                                                                "baseRecordTypeUuid": "046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb",
+                                                                                                                "fieldReferenceString": "'recordType!{046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb}RE Item.fields.{5912dd99-6fc0-4f37-aec4-de98e917cbce}id'",
+                                                                                                                "queryInfo": "5912dd99-6fc0-4f37-aec4-de98e917cbce",
+                                                                                                                "isIndexable": false,
+                                                                                                                "relationshipDisplayPath": [
+                                                                                                                    "Items"
+                                                                                                                ],
+                                                                                                                "#t": "Map"
+                                                                                                            },
+                                                                                                            "hidden": false
+                                                                                                        },
+                                                                                                        {
+                                                                                                            "choiceType": "DATA",
+                                                                                                            "groupId": 0,
+                                                                                                            "nodeIndex": 1,
+                                                                                                            "indexPath": [
+                                                                                                                1
+                                                                                                            ],
+                                                                                                            "label": "Name",
+                                                                                                            "selectionLabel": "Name",
+                                                                                                            "icon": {
+                                                                                                                "#v": "text-bold",
+                                                                                                                "#t": "string"
+                                                                                                            },
+                                                                                                            "selectable": true,
+                                                                                                            "infoMap": {
+                                                                                                                "uuid": "fe2a54c2-39d9-484a-900a-ce6b7c9e5bf6",
+                                                                                                                "typeId": {
+                                                                                                                    "uuid": "{http://www.appian.com/ae/types/2009}Text",
+                                                                                                                    "#t": "Type"
+                                                                                                                },
+                                                                                                                "baseRecordTypeUuid": "046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb",
+                                                                                                                "fieldReferenceString": "'recordType!{046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb}RE Item.fields.{fe2a54c2-39d9-484a-900a-ce6b7c9e5bf6}name'",
+                                                                                                                "queryInfo": "fe2a54c2-39d9-484a-900a-ce6b7c9e5bf6",
+                                                                                                                "isIndexable": false,
+                                                                                                                "relationshipDisplayPath": [
+                                                                                                                    "Items"
+                                                                                                                ],
+                                                                                                                "#t": "Map"
+                                                                                                            },
+                                                                                                            "hidden": false
+                                                                                                        },
+                                                                                                        {
+                                                                                                            "choiceType": "DATA",
+                                                                                                            "groupId": 0,
+                                                                                                            "nodeIndex": 2,
+                                                                                                            "indexPath": [
+                                                                                                                2
+                                                                                                            ],
+                                                                                                            "label": "Price",
+                                                                                                            "selectionLabel": "Price",
+                                                                                                            "icon": {
+                                                                                                                "#v": "integer-bold",
+                                                                                                                "#t": "string"
+                                                                                                            },
+                                                                                                            "selectable": true,
+                                                                                                            "infoMap": {
+                                                                                                                "uuid": "1664b543-72f7-4993-b15f-b36a9b417d1d",
+                                                                                                                "typeId": {
+                                                                                                                    "uuid": "{http://www.appian.com/ae/types/2009}Decimal",
+                                                                                                                    "#t": "Type"
+                                                                                                                },
+                                                                                                                "baseRecordTypeUuid": "046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb",
+                                                                                                                "fieldReferenceString": "'recordType!{046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb}RE Item.fields.{1664b543-72f7-4993-b15f-b36a9b417d1d}price'",
+                                                                                                                "queryInfo": "1664b543-72f7-4993-b15f-b36a9b417d1d",
+                                                                                                                "isIndexable": false,
+                                                                                                                "relationshipDisplayPath": [
+                                                                                                                    "Items"
+                                                                                                                ],
+                                                                                                                "#t": "Map"
+                                                                                                            },
+                                                                                                            "hidden": false
+                                                                                                        },
+                                                                                                        {
+                                                                                                            "choiceType": "DATA",
+                                                                                                            "groupId": 0,
+                                                                                                            "nodeIndex": 3,
+                                                                                                            "indexPath": [
+                                                                                                                3
+                                                                                                            ],
+                                                                                                            "label": "Data",
+                                                                                                            "selectionLabel": "Data",
+                                                                                                            "icon": {
+                                                                                                                "#v": "text-bold",
+                                                                                                                "#t": "string"
+                                                                                                            },
+                                                                                                            "selectable": true,
+                                                                                                            "infoMap": {
+                                                                                                                "uuid": "32f15093-61d4-4ba3-ae6b-ed6e9da69d97",
+                                                                                                                "typeId": {
+                                                                                                                    "uuid": "{http://www.appian.com/ae/types/2009}Text",
+                                                                                                                    "#t": "Type"
+                                                                                                                },
+                                                                                                                "baseRecordTypeUuid": "046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb",
+                                                                                                                "fieldReferenceString": "'recordType!{046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb}RE Item.fields.{32f15093-61d4-4ba3-ae6b-ed6e9da69d97}data'",
+                                                                                                                "queryInfo": "32f15093-61d4-4ba3-ae6b-ed6e9da69d97",
+                                                                                                                "isIndexable": false,
+                                                                                                                "relationshipDisplayPath": [
+                                                                                                                    "Items"
+                                                                                                                ],
+                                                                                                                "#t": "Map"
+                                                                                                            },
+                                                                                                            "hidden": false
+                                                                                                        },
+                                                                                                        {
+                                                                                                            "choiceType": "DATA",
+                                                                                                            "groupId": 0,
+                                                                                                            "nodeIndex": 4,
+                                                                                                            "indexPath": [
+                                                                                                                4
+                                                                                                            ],
+                                                                                                            "label": "Invented Date",
+                                                                                                            "selectionLabel": "Invented Date",
+                                                                                                            "icon": {
+                                                                                                                "#v": "calendar-o",
+                                                                                                                "#t": "string"
+                                                                                                            },
+                                                                                                            "selectable": true,
+                                                                                                            "infoMap": {
+                                                                                                                "uuid": "831f606e-ac60-4347-b670-f8471bc9dd87",
+                                                                                                                "typeId": {
+                                                                                                                    "uuid": "{http://www.appian.com/ae/types/2009}Date",
+                                                                                                                    "#t": "Type"
+                                                                                                                },
+                                                                                                                "baseRecordTypeUuid": "046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb",
+                                                                                                                "fieldReferenceString": "'recordType!{046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb}RE Item.fields.{831f606e-ac60-4347-b670-f8471bc9dd87}inventedDate'",
+                                                                                                                "queryInfo": "831f606e-ac60-4347-b670-f8471bc9dd87",
+                                                                                                                "isIndexable": false,
+                                                                                                                "relationshipDisplayPath": [
+                                                                                                                    "Items"
+                                                                                                                ],
+                                                                                                                "#t": "Map"
+                                                                                                            },
+                                                                                                            "hidden": false
+                                                                                                        },
+                                                                                                        {
+                                                                                                            "choiceType": "DATA",
+                                                                                                            "groupId": 0,
+                                                                                                            "nodeIndex": 5,
+                                                                                                            "indexPath": [
+                                                                                                                5
+                                                                                                            ],
+                                                                                                            "label": "Image Id",
+                                                                                                            "selectionLabel": "Image Id",
+                                                                                                            "icon": {
+                                                                                                                "#v": "integer-bold",
+                                                                                                                "#t": "string"
+                                                                                                            },
+                                                                                                            "selectable": true,
+                                                                                                            "infoMap": {
+                                                                                                                "uuid": "17c8b721-1d92-478e-a5d0-591bfde599c8",
+                                                                                                                "typeId": {
+                                                                                                                    "uuid": "{http://www.appian.com/ae/types/2009}Integer",
+                                                                                                                    "#t": "Type"
+                                                                                                                },
+                                                                                                                "baseRecordTypeUuid": "046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb",
+                                                                                                                "fieldReferenceString": "'recordType!{046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb}RE Item.fields.{17c8b721-1d92-478e-a5d0-591bfde599c8}imageId'",
+                                                                                                                "queryInfo": "17c8b721-1d92-478e-a5d0-591bfde599c8",
+                                                                                                                "isIndexable": false,
+                                                                                                                "relationshipDisplayPath": [
+                                                                                                                    "Items"
+                                                                                                                ],
+                                                                                                                "#t": "Map"
+                                                                                                            },
+                                                                                                            "hidden": false
+                                                                                                        },
+                                                                                                        {
+                                                                                                            "choiceType": "DATA",
+                                                                                                            "groupId": 0,
+                                                                                                            "nodeIndex": 6,
+                                                                                                            "indexPath": [
+                                                                                                                6
+                                                                                                            ],
+                                                                                                            "label": "Created By",
+                                                                                                            "selectionLabel": "Created By",
+                                                                                                            "icon": {
+                                                                                                                "#v": "user-o",
+                                                                                                                "#t": "string"
+                                                                                                            },
+                                                                                                            "selectable": true,
+                                                                                                            "infoMap": {
+                                                                                                                "uuid": "0aa6d6ea-a9b0-46c4-91ad-9c5d5ae516fa",
+                                                                                                                "typeId": {
+                                                                                                                    "uuid": "{http://www.appian.com/ae/types/2009}User",
+                                                                                                                    "#t": "Type"
+                                                                                                                },
+                                                                                                                "baseRecordTypeUuid": "046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb",
+                                                                                                                "fieldReferenceString": "'recordType!{046b3f23-34fd-4a3c-a2f7-1fc8640eb9eb}RE Item.fields.{0aa6d6ea-a9b0-46c4-91ad-9c5d5ae516fa}createdBy'",
+                                                                                                                "queryInfo": "0aa6d6ea-a9b0-46c4-91ad-9c5d5ae516fa",
+                                                                                                                "isIndexable": false,
+                                                                                                                "relationshipDisplayPath": [
+                                                                                                                    "Items"
+                                                                                                                ],
+                                                                                                                "#t": "Map"
+                                                                                                            },
+                                                                                                            "hidden": false
+                                                                                                        }
+                                                                                                    ],
                                                                                                     "value": [],
                                                                                                     "saveInto": [
                                                                                                         "<<ww0EAwMCf2MkVhpZ2FEB0sBDAX6yP5RZsviryDwABZ+a2vcoGqig9MXkdZpmGVhCxfwL6uH0j0jb\r\n9OCZ6HsAGekqAO7K7ULDlRIX8lHT23qcwr8dj/X9c7x0aYxbfqOtf1x6vr1f8cs6iU+UGy4ETRpf\r\nsXaUKu7PjQ1GX40m1Ot2Gq0dtsdC90k8RWiD35mKaZA/x2rj4qsRGbpOH30ilZZ2Lc6Zov1eGzWb\r\nVa1bLeNm0VVPA9UMXr9BvWs9FHV81o91ysPJPFFf2SiCuFKkcSTugJMpgOTnMe13htrrfXI2LIg8\r\neoKzHL0atpqyArePCrgwBrnnLSvIBMX93C2Oeo2kQScC3ZSFrxCGO/bzXB9K+pPD5g==\r\n>>"
@@ -3732,8 +4174,12 @@
                                                                                                     ],
                                                                                                     "immutableChoices": [],
                                                                                                     "#t": "GroupedDropdownField",
-                                                                                                    "shouldLazyLoadChoices": true,
-                                                                                                    "choicesEndpointUrl": "https://an-appian-instance.host.net/suite/rest/a/components/record/latest/picker/getChoicesForGroupedDropdownWidget",
+                                                                                                    "choices": [
+                                                                                                        {"#t": "Dictionary", "#v": {"label": {"#t": "Text", "#v": "Choice 1"}, "value": {"#t": "Integer", "#v": 1}}},
+                                                                                                        {"#t": "Dictionary", "#v": {"label": {"#t": "Text", "#v": "Choice 2"}, "value": {"#t": "Integer", "#v": 2}}},
+                                                                                                        {"#t": "Dictionary", "#v": {"label": {"#t": "Text", "#v": "Choice 3"}, "value": {"#t": "Integer", "#v": 3}}},
+                                                                                                        {"#t": "Dictionary", "#v": {"label": {"#t": "Text", "#v": "Choice 4"}, "value": {"#t": "Integer", "#v": 4}}}
+                                                                                                    ],
                                                                                                     "choiceConfigs": {
                                                                                                         "recordTypeUuid": "57bf2cbc-3bea-42e7-acbf-ac73dae2e3d3",
                                                                                                         "relationshipTypes": [

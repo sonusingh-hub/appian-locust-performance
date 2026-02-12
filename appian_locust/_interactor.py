@@ -802,7 +802,7 @@ class _Interactor:
         )
         return resp.json()
 
-    def send_grouped_dropdown_update(self, post_url: str, grouped_dropdown: Dict[str, Any], choice_value: List[str],
+    def send_grouped_dropdown_update(self, post_url: str, grouped_dropdown: Dict[str, Any], choice_value: List,
                                      uuid: str, context: Dict[str, Any], label: Optional[str] = None, identifier: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         '''
             Calls the post operation to send an update to a grouped dropdown
@@ -889,11 +889,16 @@ class _Interactor:
                 Dict[str, Any]: The response of the post operation as JSON.
         '''
         choices: list = component.get('choices')
-        choice_value = [choices[i] for i in choice_index]
-
         if not choices:
-            raise InvalidComponentException(
-                f"No choices found for grouped dropdown with {exception_label}, is the component a grouped Dropdown?")
+            if component.get('shouldLazyLoadChoices'):
+                request_payload = component.get("choiceConfigs")
+                choices = self.fetch_new_grouped_dropdown_selection(component, request_payload)
+                if not choices:
+                    raise InvalidComponentException(f"Lazy load fetch returned no choices for {exception_label}")
+            else:
+                raise InvalidComponentException(f"No choices found for grouped dropdown with {exception_label}")
+
+        choice_value = [choices[i] for i in choice_index]
 
         new_state = self.send_grouped_dropdown_update(
             post_url=reeval_url, grouped_dropdown=component, choice_value=choice_value,
@@ -903,6 +908,18 @@ class _Interactor:
                 f"No response returned when trying to select grouped dropdown with '{exception_label}'")
 
         return new_state
+
+    def fetch_new_grouped_dropdown_selection(self, component: Any, payload: Dict[str, Any], locust_request_label: str = "SelectGroupedDropdownField") -> List[Dict[str, Any]]:
+        choices_url = component.get("choicesEndpointUrl")
+        headers = self.setup_sail_headers()
+        headers["Accept"] = "application/vnd.appian.tv+json"
+        response = self.post_page(
+            choices_url,
+            payload=payload,
+            headers=headers,
+            label=f"{locust_request_label}.FetchNewSelections"
+        ).json()
+        return response["#v"]
 
     def get_primary_button_payload(self, page_content_in_json: Dict[str, Any]) -> Dict[str, Any]:
         """

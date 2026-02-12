@@ -38,7 +38,9 @@ class TestSailUiForm(unittest.TestCase):
     sites_task_report_resp = read_mock_file("sites_task_report.json")
     date_response = read_mock_file("date_task.json")
     multi_dropdown_response = read_mock_file("dropdown_test_ui.json")
-    grouped_dropdown_initial = read_mock_file("grouped_dropdown_test_ui.json")
+    grouped_dropdown_response = read_mock_file("grouped_dropdown_test_ui.json")
+    grouped_dropdown_choices_response = read_mock_file("grouped_dropdown_choices_test.json")
+    grouped_dropdown_no_lazy_load = read_mock_file("grouped_dropdown_test_ui_no_lazy_load.json")
     checkbox_initial = read_mock_file("checkbox_link_duplicate_label.json")
     sail_ui_actions_response = read_mock_file("sail_ui_actions_cmf.json")
     file_upload_initial = read_mock_file("multiple_file_upload_widget.json")
@@ -1602,13 +1604,34 @@ class TestSailUiForm(unittest.TestCase):
         non_async_form.reeval_pending_async_variables()
         self.assertEqual(new_json, non_async_form.get_latest_state(), "Unexpected state change")
 
+    @patch('appian_locust._interactor._Interactor.fetch_new_grouped_dropdown_selection')
     @patch('appian_locust._interactor._Interactor.send_grouped_dropdown_update')
-    def test_select_grouped_dropdown_item_by_index(self, mock_send_grouped_dropdown_update: MagicMock) -> None:
+    def test_select_grouped_dropdown_item_by_index(self, mock_send_grouped_dropdown_update: MagicMock, mock_fetch_choices: MagicMock) -> None:
         """
         Test that select_grouped_dropdown_item_by_index selects items in a grouped dropdown
         and returns the updated form state.
         """
-        test_form = SailUiForm(self.task_set.appian._interactor, json.loads(self.grouped_dropdown_initial))
+        mock_fetch_choices.return_value = self.grouped_dropdown_choices_response
+
+        test_form = SailUiForm(self.task_set.appian._interactor, json.loads(self.grouped_dropdown_response))
+        test_form_state = test_form.get_latest_state()
+
+        grouped_dropdown_index = 1
+        choice_index = [1, 2, 3]
+
+        test_form.select_grouped_dropdown_item_by_index(grouped_dropdown_index, choice_index)
+
+        mock_fetch_choices.assert_called_once()
+        mock_send_grouped_dropdown_update.assert_called_once()
+        self.assertNotEqual(test_form.get_latest_state(), test_form_state)
+
+    @patch('appian_locust._interactor._Interactor.send_grouped_dropdown_update')
+    def test_select_grouped_dropdown_item_by_index_no_lazy_load(self, mock_send_grouped_dropdown_update: MagicMock) -> None:
+        """
+        Test that select_grouped_dropdown_item_by_index selects items in a grouped dropdown
+        without lazy loading and returns the updated form state.
+        """
+        test_form = SailUiForm(self.task_set.appian._interactor, json.loads(self.grouped_dropdown_no_lazy_load))
         test_form_state = test_form.get_latest_state()
 
         grouped_dropdown_index = 1
