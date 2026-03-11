@@ -9,7 +9,6 @@ ENVIRONMENTS = {
     }
 }
 
-
 def get_selected_environment():
     env_name = os.getenv("APP_ENV", "TEST").strip().upper()
 
