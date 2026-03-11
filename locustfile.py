@@ -27,20 +27,20 @@ class OrionUser(HttpUser):
 
     wait_time = between(2, 5)
 
-    # tasks = {
-    #     AlertsJourney: 3,
-    #     FilterJourney: 5,
-    #     ExportJourney: 2,
-    #     HomeVehicleSearchJourney: 2,
-    #     FleetScheduleJourney: 8,
-    #     VehicleOnOrderJourney: 4,
-    #     ImminentExpiryJourney: 3,
-    #     SustainabilityJourney: 2,
-    #     VehicleUtilisationJourney: 3,
-    #     ServiceOverdueJourney: 3,
-    #     UpdateProfileJourney: 1,
-    #     ManageUserJourney: 1,
-    #     AdminConfigurationJourney: 1
-    # }
+    tasks = {
+        AlertsJourney: 3,
+        FilterJourney: 5,
+        ExportJourney: 2,
+        HomeVehicleSearchJourney: 2,
+        FleetScheduleJourney: 8,
+        VehicleOnOrderJourney: 4,
+        ImminentExpiryJourney: 3,
+        SustainabilityJourney: 2,
+        VehicleUtilisationJourney: 3,
+        ServiceOverdueJourney: 3,
+        UpdateProfileJourney: 1,
+        ManageUserJourney: 1,
+        AdminConfigurationJourney: 1
+    }
 
-    tasks = [AdminConfigurationJourney]
+    # tasks = [AdminConfigurationJourney]
