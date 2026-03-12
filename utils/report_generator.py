@@ -287,7 +287,7 @@ def generate_html_report(results_folder, scenario, environment, auto_open=True):
     <body>
         <div class="container">
             <div class="header">
-                <h1>Performance Test Dashboard</h1>
+                <h1>ORION APAC Performance Test Dashboard</h1>
                 <div class="meta">
                     <div><strong>Scenario:</strong> {html_lib.escape(str(scenario))}</div>
                     <div><strong>Environment:</strong> {html_lib.escape(str(environment))}</div>

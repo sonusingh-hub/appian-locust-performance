@@ -19,7 +19,6 @@ from journeys.admin_configuration_journey import AdminConfigurationJourney
 
 ENV_CONFIG = get_environment_config()
 
-
 class OrionUser(HttpUser):
 
     host = ENV_CONFIG["host"]

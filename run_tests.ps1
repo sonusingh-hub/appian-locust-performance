@@ -53,7 +53,7 @@ switch ($scenario) {
     }
 
     "baseline_25" {
-        Run-LocustScenario -users 25 -spawnRate 10 -duration "20m" -stopTimeout "15s" -csvPrefix "baseline_25"
+        Run-LocustScenario -users 25 -spawnRate 10 -duration "2m" -stopTimeout "15s" -csvPrefix "baseline_25"
     }
 
     "baseline_50" {
@@ -69,19 +69,19 @@ switch ($scenario) {
     }
 
     "peak" {
-        Run-LocustScenario -users 300 -spawnRate 10 -duration "60m" -stopTimeout "30s" -csvPrefix "peak_300"
+        Run-LocustScenario -users 300 -spawnRate 10 -duration "6m" -stopTimeout "30s" -csvPrefix "peak_300"
     }
 
     "stress400" {
-        Run-LocustScenario -users 400 -spawnRate 5 -duration "45m" -stopTimeout "30s" -csvPrefix "stress_400"
+        Run-LocustScenario -users 400 -spawnRate 5 -duration "4m" -stopTimeout "30s" -csvPrefix "stress_400"
     }
 
     "stress500" {
-        Run-LocustScenario -users 500 -spawnRate 5 -duration "45m" -stopTimeout "30s" -csvPrefix "stress_500"
+        Run-LocustScenario -users 500 -spawnRate 5 -duration "4m" -stopTimeout "30s" -csvPrefix "stress_500"
     }
 
     "spike" {
-        Run-LocustScenario -users 300 -spawnRate 50 -duration "20m" -stopTimeout "20s" -csvPrefix "spike_300"
+        Run-LocustScenario -users 300 -spawnRate 50 -duration "2m" -stopTimeout "20s" -csvPrefix "spike_300"
     }
 }
 

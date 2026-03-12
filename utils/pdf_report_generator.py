@@ -155,7 +155,7 @@ def generate_pdf_summary(results_folder, scenario, environment):
 
     c.setFillColor(colors.white)
     c.setFont("Helvetica-Bold", 18)
-    c.drawString(left_margin + 15, y - 18, "Performance Test Summary Report")
+    c.drawString(left_margin + 15, y - 18, "ORION APAC Performance Test Summary Report")
 
     c.setFont("Helvetica", 10)
     c.drawString(left_margin + 15, y - 34, f"Scenario: {scenario}   |   Environment: {environment}")
