@@ -1,7 +1,8 @@
 from locust import HttpUser, between
 
+from utils.credential_pool import CredentialPool
 from config.environment import get_environment_config
-from data.data_engine import DataEngine
+
 from journeys.fleet_schedule_journey import FleetScheduleJourney
 from journeys.filter_journey import FilterJourney
 from journeys.export_journey import ExportJourney
@@ -23,15 +24,13 @@ class OrionUser(HttpUser):
 
     host = ENV_CONFIG["host"]
 
-    auth = DataEngine.get_environment_user()
-
     wait_time = between(2, 5)
 
     tasks = {
         AlertsJourney: 3,
         FilterJourney: 5,
         ExportJourney: 2,
-        HomeVehicleSearchJourney: 2,
+        HomeVehicleSearchJourney: 1,
         FleetScheduleJourney: 8,
         VehicleOnOrderJourney: 4,
         ImminentExpiryJourney: 3,
@@ -43,4 +42,10 @@ class OrionUser(HttpUser):
         AdminConfigurationJourney: 1
     }
 
-    # tasks = [AdminConfigurationJourney]
+    # tasks = [AlertsJourney]
+
+    def on_start(self):
+        self.auth = CredentialPool.acquire_user()
+
+    def on_stop(self):
+        CredentialPool.release_user(self.auth)

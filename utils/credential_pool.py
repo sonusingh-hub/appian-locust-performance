@@ -40,12 +40,12 @@ class CredentialPool:
 
             if not cls._available_users:
                 raise RuntimeError(
-                    "No free credentials available in users.csv for the selected environment. "
-                    "Add more users or reduce concurrent users."
+                    "No credentials available in users.csv for the selected environment."
                 )
 
             user = cls._available_users.popleft()
-            cls._in_use_users.add(user)
+            cls._available_users.append(user)
+
             return [user[0], user[1]]
 
     @classmethod
@@ -53,12 +53,8 @@ class CredentialPool:
         if not auth or len(auth) < 2:
             return
 
-        user = (auth[0], auth[1])
-
         with cls._lock:
             if cls._available_users is None:
                 return
-
-            if user in cls._in_use_users:
-                cls._in_use_users.remove(user)
-                cls._available_users.append(user)
+            # No action needed in round-robin reuse mode
+            return
