@@ -12,7 +12,7 @@ from journeys.vehicle_utilisation_journey import VehicleUtilisationJourney
 from journeys.service_overdue_journey import ServiceOverdueJourney
 from journeys.update_profile_journey import UpdateProfileJourney
 from journeys.alerts_journey import AlertsJourney
-from journeys.home_vehicle_search_journey import HomeVehicleSearchJourney
+from journeys.vehicle_search_journey import VehicleSearchJourney
 from journeys.manage_user_journey import ManageUserJourney
 from journeys.admin_configuration_journey import AdminConfigurationJourney
 
@@ -31,7 +31,7 @@ class OrionUser(HttpUser):
         AlertsJourney: 3,
         FilterJourney: 5,
         ExportJourney: 2,
-        HomeVehicleSearchJourney: 2,
+        VehicleSearchJourney: 2,
         FleetScheduleJourney: 8,
         VehicleOnOrderJourney: 4,
         ImminentExpiryJourney: 3,

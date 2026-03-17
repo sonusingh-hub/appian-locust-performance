@@ -6,9 +6,10 @@ from pages.admin_configuration_page import AdminConfigurationPage
 
 
 class AdminConfigurationJourney(BaseJourney):
+    journey_name = "admin_configuration"
 
     @task
-    def admin_configuration_flow(self):
+    def admin_configuration_recorded_flow(self):
         page = AdminConfigurationPage(self)
 
         uiform = page.open()
@@ -23,12 +24,32 @@ class AdminConfigurationJourney(BaseJourney):
 
         think_time()
 
-        uiform = page.cancel(uiform)
+        uiform = page.cancel_action_dialog(uiform)
         if not uiform:
             return
 
         think_time()
 
-        uiform = page.refresh_after_update(uiform)
+        uiform = page.refresh_after_action(uiform)
+        if not uiform:
+            return
+
+        think_time()
+
+        uiform = page.open_manage(uiform)
+        if not uiform:
+            return
+
+        think_time()
+
+        uiform = page.cancel_action_dialog(uiform)
+        if not uiform:
+            return
+
+        think_time()
+
+        uiform = page.refresh_after_action(uiform)
+        if not uiform:
+            return
 
         think_time()

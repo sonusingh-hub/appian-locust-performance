@@ -5,7 +5,11 @@ param(
 
     [Parameter(Mandatory=$false)]
     [ValidateSet("TEST","PRE-PROD")]
-    [string]$env="TEST"
+    [string]$env="TEST",
+
+    [Parameter(Mandatory=$false)]
+    [ValidateSet("normal","step")]
+    [string]$executionMode="normal"
 )
 
 $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
@@ -15,11 +19,15 @@ Write-Host ""
 Write-Host "-------------------------------------"
 Write-Host "Running Locust Scenario: $scenario"
 Write-Host "Environment: $env"
+Write-Host "Execution Mode: $executionMode"
 Write-Host "Results Folder: $resultsFolder"
 Write-Host "-------------------------------------"
 Write-Host ""
 
 $env:APP_ENV = $env
+$env:LOCUST_SCENARIO = $scenario
+$env:LOCUST_EXECUTION_MODE = $executionMode
+
 New-Item -ItemType Directory -Force -Path $resultsFolder | Out-Null
 
 function Run-LocustScenario {
@@ -31,15 +39,26 @@ function Run-LocustScenario {
         [string]$csvPrefix
     )
 
-    locust `
-        -f locustfile.py `
-        --headless `
-        -u $users `
-        -r $spawnRate `
-        -t $duration `
-        --stop-timeout $stopTimeout `
-        --csv "$resultsFolder\$csvPrefix" `
-        --csv-full-history
+    if ($executionMode -eq "step") {
+        locust `
+            -f locustfile.py,load_shapes/step_load_shape.py `
+            --headless `
+            -t $duration `
+            --stop-timeout $stopTimeout `
+            --csv "$resultsFolder\$csvPrefix" `
+            --csv-full-history
+    }
+    else {
+        locust `
+            -f locustfile.py `
+            --headless `
+            -u $users `
+            -r $spawnRate `
+            -t $duration `
+            --stop-timeout $stopTimeout `
+            --csv "$resultsFolder\$csvPrefix" `
+            --csv-full-history
+    }
 }
 
 switch ($scenario) {
@@ -73,11 +92,11 @@ switch ($scenario) {
     }
 
     "stress400" {
-        Run-LocustScenario -users 400 -spawnRate 5 -duration "4m" -stopTimeout "30s" -csvPrefix "stress_400"
+        Run-LocustScenario -users 400 -spawnRate 5 -duration "5m" -stopTimeout "30s" -csvPrefix "stress_400"
     }
 
     "stress500" {
-        Run-LocustScenario -users 500 -spawnRate 5 -duration "4m" -stopTimeout "30s" -csvPrefix "stress_500"
+        Run-LocustScenario -users 500 -spawnRate 5 -duration "6m" -stopTimeout "30s" -csvPrefix "stress_500"
     }
 
     "spike" {
@@ -89,7 +108,6 @@ Write-Host ""
 Write-Host "Generating HTML and PDF reports..."
 
 python -c "from utils.report_generator import generate_html_report; generate_html_report(r'$resultsFolder', '$scenario', '$env', auto_open=True)"
-
 python -c "from utils.pdf_report_generator import generate_pdf_summary; generate_pdf_summary(r'$resultsFolder', '$scenario', '$env')"
 
 Write-Host ""

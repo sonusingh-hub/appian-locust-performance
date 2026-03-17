@@ -1,75 +1,14 @@
-from core.base_page import BasePage
-from core.ui_helpers import select_dropdown
-from utils.waits import small_wait
-import time
+from pages.reports_navigation_page import ReportsNavigationPage
 
 
-class HomePage(BasePage):
+class HomePage(ReportsNavigationPage):
+    """Page object for the Reports landing (Home) page.
+
+    The Home page is what `visit_site("apac-reporting", "reports")` loads.
+    All four global filters (Country, Client Group, Client Name, Bill To) and
+    reset_global_filters() are inherited from ReportsNavigationPage so they
+    are available on every Reports page without duplication.
+    """
 
     def open(self):
-        return self.visit(
-            site_name="apac-reporting",
-            page_name="home"
-        )
-
-    def open_vehicle_search(self, uiform):
-        if not uiform:
-            return None
-
-        new_uiform = uiform.click(
-            label="Vehicle Search"
-        )
-        small_wait()
-        return new_uiform
-
-    def select_country(self, uiform, country):
-        if not uiform:
-            return None
-
-        new_uiform = select_dropdown(
-            uiform,
-            "Country",
-            country
-        )
-
-        # extra wait so dependent picker values can load
-        time.sleep(2)
-        return new_uiform
-
-    def fill_registration(self, uiform, value):
-        if not uiform:
-            return None
-
-        # wait before interacting with picker
-        time.sleep(1.5)
-
-        try:
-            new_uiform = uiform.fill_picker_field(
-                label="test-Registration",
-                value=value,
-                format_test_label=False,
-                identifier="#v"
-            )
-            small_wait()
-            return new_uiform
-
-        except Exception:
-            # fallback: use shorter searchable prefix
-            short_value = value.split(" - ")[0].strip()
-
-            time.sleep(1)
-
-            new_uiform = uiform.fill_picker_field(
-                label="test-Registration",
-                value=short_value,
-                format_test_label=False,
-                identifier="#v"
-            )
-            small_wait()
-            return new_uiform
-
-    def go_to_alerts(self):
-        return self.visit(
-            site_name="apac-reporting",
-            page_name="alerts"
-        )
+        return self.open_reports()

@@ -2,128 +2,450 @@ from locust import task
 import random
 
 from journeys.base_journey import BaseJourney
-from utils.waits import think_time
+from utils.waits import think_time, small_wait
 from data.data_engine import DataEngine
+
 from pages.alerts_page import AlertsPage
 from pages.fleet_schedule_page import FleetSchedulePage
 from pages.vehicle_on_order_page import VehicleOnOrderPage
+from pages.vehicle_utilisation_page import VehicleUtilisationPage
+from pages.service_overdue_page import ServiceOverduePage
+from pages.imminent_expiry_page import ImminentExpiryPage
 
 
 class ExportJourney(BaseJourney):
+    journey_name = "export"
 
-    @task
-    def export_flow(self):
-        flow = random.choice([
-            "alerts",
-            "fleet_schedule",
-            "vehicle_on_order"
-        ])
+    def _multi_select_count(self, max_count=4):
+        return random.randint(1, max_count)
 
-        if flow == "alerts":
-            alerts = AlertsPage(self)
+    # ---------- Page Open Helpers ----------
 
-            uiform = alerts.open()
-            if not uiform:
-                return
+    def _open_alerts(self):
+        page = AlertsPage(self)
+        uiform = page.open()
+        if not uiform:
+            return page, None
 
-            think_time()
+        think_time()
+        small_wait()
+        return page, uiform
 
-            uiform = alerts.search_record(
-                uiform,
-                DataEngine.company()
-            )
+    def _open_fleet_schedule(self):
+        page = FleetSchedulePage(self)
+        uiform = page.open()
+        if not uiform:
+            return page, None
 
-            think_time()
+        think_time()
+        small_wait()
+        return page, uiform
 
-            uiform = alerts.filter_country(
-                uiform,
-                DataEngine.country()
-            )
+    def _open_vehicle_on_order(self):
+        page = VehicleOnOrderPage(self)
+        uiform = page.open()
+        if not uiform:
+            return page, None
 
-            think_time()
+        think_time()
+        small_wait()
+        return page, uiform
 
-            uiform = alerts.export_report(uiform)
+    def _open_vehicle_utilisation(self):
+        page = VehicleUtilisationPage(self)
+        uiform = page.open()
+        if not uiform:
+            return page, None
 
-            think_time()
+        think_time()
+        small_wait()
+        return page, uiform
 
-        elif flow == "fleet_schedule":
-            fleet = FleetSchedulePage(self)
+    def _open_service_overdue(self):
+        page = ServiceOverduePage(self)
+        uiform = page.open()
+        if not uiform:
+            return page, None
 
-            uiform = fleet.open()
-            if not uiform:
-                return
+        think_time()
+        small_wait()
+        return page, uiform
 
-            think_time()
+    def _open_imminent_expiry(self):
+        page = ImminentExpiryPage(self)
+        uiform = page.open()
+        if not uiform:
+            return page, None
 
-            uiform = fleet.select_product(
-                uiform,
-                DataEngine.fleet_schedule_products()
-            )
+        think_time()
+        small_wait()
+        return page, uiform
 
-            think_time()
+    def _apply_global_filters_if_needed(self, page, uiform):
+        if not uiform:
+            return None
 
-            uiform = fleet.select_vehicle_type(
-                uiform,
-                DataEngine.vehicle_type_list()
-            )
+        if self.filter_state.is_applied:
+            return uiform
 
-            think_time()
+        uiform = page.apply_global_filters(
+            uiform,
+            self.filter_state,
+            countries=DataEngine.home_country_list(),
+            client_groups=DataEngine.home_client_groups(),
+            client_names=DataEngine.home_client_names(),
+            bill_to_values=DataEngine.home_bill_to(),
+        )
+        if not uiform:
+            return None
 
-            uiform = fleet.select_imminent_expiry(
-                uiform,
-                DataEngine.imminent_expiry()
-            )
+        think_time()
+        return uiform
 
-            think_time()
+    # ---------- Export Flows ----------
 
-            uiform = fleet.select_power_train(
-                uiform,
-                DataEngine.power_train_list()
-            )
+    @task(2)
+    def alerts_export_flow(self):
+        page, uiform = self._open_alerts()
+        if not uiform:
+            return
 
-            think_time()
+        uiform = self._apply_global_filters_if_needed(page, uiform)
+        if not uiform:
+            return
 
-            uiform = fleet.export_report(uiform)
+        think_time()
 
-            think_time()
+        uiform = page.search_record(uiform, DataEngine.company())
+        if not uiform:
+            return
 
-        else:
-            voo = VehicleOnOrderPage(self)
+        think_time()
 
-            uiform = voo.open()
-            if not uiform:
-                return
+        uiform = page.export_report(uiform)
+        if not uiform:
+            return
 
-            think_time()
+        think_time()
 
-            uiform = voo.select_product(
-                uiform,
-                DataEngine.vehicle_on_order_products()
-            )
+    @task(4)
+    def fleet_schedule_export_flow(self):
+        page, uiform = self._open_fleet_schedule()
+        if not uiform:
+            return
 
-            think_time()
+        uiform = self._apply_global_filters_if_needed(page, uiform)
+        if not uiform:
+            return
 
-            uiform = voo.select_vehicle_type(
-                uiform,
-                DataEngine.vehicle_on_order_vehicle_types()
-            )
+        # Click the Fleet Schedule card before export
+        uiform = page.open_fleet_schedule_card(uiform, "Active Vehicles")
+        if not uiform:
+            return
 
-            think_time()
+        think_time()
 
-            uiform = voo.select_power_train(
-                uiform,
-                DataEngine.power_train_list()
-            )
+        uiform = page.select_month(uiform, DataEngine.month())
+        if not uiform:
+            return
 
-            think_time()
+        think_time()
 
-            uiform = voo.select_expected_delivery(
-                uiform,
-                DataEngine.expected_delivery()
-            )
+        uiform = page.select_product(
+            uiform,
+            DataEngine.fleet_schedule_products(count=self._multi_select_count(4)),
+        )
+        if not uiform:
+            return
 
-            think_time()
+        think_time()
 
-            uiform = voo.export_report(uiform)
+        uiform = page.select_vehicle_type(
+            uiform,
+            DataEngine.vehicle_type_list(count=self._multi_select_count(4)),
+        )
+        if not uiform:
+            return
 
-            think_time()
+        think_time()
+
+        uiform = page.select_imminent_expiry(uiform, DataEngine.imminent_expiry())
+        if not uiform:
+            return
+
+        think_time()
+
+        uiform = page.select_power_train(
+            uiform,
+            DataEngine.power_train_list(count=self._multi_select_count(4)),
+        )
+        if not uiform:
+            return
+
+        think_time()
+
+        uiform = page.export_report(uiform)
+        if not uiform:
+            return
+
+        think_time()
+
+    @task(4)
+    def vehicle_on_order_export_flow(self):
+        page, uiform = self._open_vehicle_on_order()
+        if not uiform:
+            return
+
+        uiform = self._apply_global_filters_if_needed(page, uiform)
+        if not uiform:
+            return
+
+        # Click the Vehicles on Order card before export
+        uiform = page.open_vehicles_on_order(uiform)
+        if not uiform:
+            return
+
+        think_time()
+
+        uiform = page.select_product(
+            uiform,
+            DataEngine.vehicle_on_order_products(count=self._multi_select_count(4)),
+        )
+        if not uiform:
+            return
+
+        think_time()
+
+        uiform = page.select_vehicle_type(
+            uiform,
+            DataEngine.vehicle_on_order_vehicle_types(count=self._multi_select_count(4)),
+        )
+        if not uiform:
+            return
+
+        think_time()
+
+        uiform = page.select_power_train(
+            uiform,
+            DataEngine.power_train_list(count=self._multi_select_count(4)),
+        )
+        if not uiform:
+            return
+
+        think_time()
+
+        uiform = page.select_expected_delivery(uiform, DataEngine.expected_delivery())
+        if not uiform:
+            return
+
+        think_time()
+
+        uiform = page.export_report(uiform)
+        if not uiform:
+            return
+
+        think_time()
+
+    @task(4)
+    def vehicle_utilisation_export_flow(self):
+        page, uiform = self._open_vehicle_utilisation()
+        if not uiform:
+            return
+
+        uiform = self._apply_global_filters_if_needed(page, uiform)
+        if not uiform:
+            return
+
+        # Click the Vehicle Utilisation card before export
+        uiform = page.open_vehicle_utilisation(uiform)
+        if not uiform:
+            return
+
+        think_time()
+
+        uiform = page.select_month(uiform, DataEngine.vehicle_utilisation_month())
+        if not uiform:
+            return
+
+        think_time()
+
+        uiform = page.select_product(
+            uiform,
+            DataEngine.vehicle_utilisation_products(count=self._multi_select_count(4)),
+        )
+        if not uiform:
+            return
+
+        think_time()
+
+        uiform = page.select_vehicle_type(
+            uiform,
+            DataEngine.vehicle_type_list(count=self._multi_select_count(4)),
+        )
+        if not uiform:
+            return
+
+        think_time()
+
+        uiform = page.select_imminent_expiry(uiform, DataEngine.imminent_expiry())
+        if not uiform:
+            return
+
+        think_time()
+
+        uiform = page.select_power_train(
+            uiform,
+            DataEngine.power_train_list(count=self._multi_select_count(4)),
+        )
+        if not uiform:
+            return
+
+        think_time()
+
+        uiform = page.export_report(uiform)
+        if not uiform:
+            return
+
+        think_time()
+
+    @task(3)
+    def service_overdue_export_flow(self):
+        page, uiform = self._open_service_overdue()
+        if not uiform:
+            return
+
+        uiform = self._apply_global_filters_if_needed(page, uiform)
+        if not uiform:
+            return
+
+        # Click a valid Service Overdue card before export
+        uiform = page.open_total_overdue_now(uiform)
+        if not uiform:
+            return
+
+        think_time()
+
+        uiform = page.select_month(uiform, DataEngine.service_overdue_month())
+        if not uiform:
+            return
+
+        think_time()
+
+        uiform = page.select_product(
+            uiform,
+            DataEngine.service_overdue_products(count=self._multi_select_count(4)),
+        )
+        if not uiform:
+            return
+
+        think_time()
+
+        uiform = page.select_overdue_by(uiform, DataEngine.overdue_by())
+        if not uiform:
+            return
+
+        think_time()
+
+        uiform = page.select_vehicle_type(
+            uiform,
+            DataEngine.vehicle_type_list(count=self._multi_select_count(4)),
+        )
+        if not uiform:
+            return
+
+        think_time()
+
+        uiform = page.select_power_train(
+            uiform,
+            DataEngine.power_train_list(count=self._multi_select_count(4)),
+        )
+        if not uiform:
+            return
+
+        think_time()
+
+        uiform = page.select_maintenance_included(uiform, DataEngine.maintenance_included())
+        if not uiform:
+            return
+
+        think_time()
+
+        uiform = page.export_report(uiform)
+        if not uiform:
+            return
+
+        think_time()
+
+    @task(3)
+    def imminent_expiry_export_flow(self):
+        page, uiform = self._open_imminent_expiry()
+        if not uiform:
+            return
+
+        uiform = self._apply_global_filters_if_needed(page, uiform)
+        if not uiform:
+            return
+
+        # Click the Imminent Expiry card before export
+        uiform = page.open_imminent_expiry_card(uiform)
+        if not uiform:
+            return
+
+        think_time()
+
+        uiform = page.select_month(uiform, DataEngine.imminent_expiry_month())
+        if not uiform:
+            return
+
+        think_time()
+
+        uiform = page.select_product(
+            uiform,
+            DataEngine.imminent_expiry_products(count=self._multi_select_count(4)),
+        )
+        if not uiform:
+            return
+
+        think_time()
+
+        uiform = page.select_vehicle_type(
+            uiform,
+            DataEngine.vehicle_type_list(count=self._multi_select_count(4)),
+        )
+        if not uiform:
+            return
+
+        think_time()
+
+        uiform = page.select_imminent_expiry(uiform, DataEngine.imminent_expiry())
+        if not uiform:
+            return
+
+        think_time()
+
+        uiform = page.select_power_train(
+            uiform,
+            DataEngine.power_train_list(count=self._multi_select_count(4)),
+        )
+        if not uiform:
+            return
+
+        think_time()
+
+        uiform = page.export_report(uiform)
+        if not uiform:
+            return
+
+        think_time()
+
+    @task(1)
+    def export_reset_global_filters_flow(self):
+        page, uiform = self._open_alerts()
+        if not uiform:
+            return
+
+        uiform = page.reset_global_filters(uiform, self.filter_state)
+        if not uiform:
+            return
+
+        think_time()

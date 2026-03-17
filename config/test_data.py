@@ -10,22 +10,17 @@ MONTHS = [
     "Mar 2026"
 ]
 
-IMMINENT_EXPIRY_MONTHS = [
-    "Jan 2026",
-    "Feb 2026",
-    "Mar 2026"
-]
-
-VEHICLE_UTILISATION_MONTHS = [
-    "Jan 2026",
-    "Feb 2026",
-    "Mar 2026"
-]
-
 PRODUCTS = [
     "Finance",
     "Operating",
     "Novated Finance"
+]
+
+LEASE_PRODUCTS = [
+    "Finance Lease",
+    "Fleet Managed",
+    "Novated Lease",
+    "Operating Lease"
 ]
 
 VEHICLE_TYPES = [
@@ -44,7 +39,6 @@ POWER_TRAINS = [
     "Plug-In Hybrid Electric Vehicle"
 ]
 
-
 COMPANIES = [
     "Colgate Palmolive Pty Ltd",
     "Toyota Australia",
@@ -54,8 +48,8 @@ COMPANIES = [
     "Telstra Corporation",
     "Woolworths Group",
     "Ericsson Australia Pty Ltd",
-    "Colgate"
-    "Nestle"
+    "Colgate",
+    "Nestle",
     "AstraZeneca"
 ]
 
@@ -82,37 +76,31 @@ LANGUAGES = [
     "English(UK) [en_GB]"
 ]
 
-FLEET_SCHEDULE_PRODUCTS = [
-    "Finance Lease",
-    "Fleet Managed",
-    "Novated Lease",
-    "Operating Lease"
-]
-
-FLEET_SCHEDULE_CLIENT_GROUPS = [
+CLIENT_GROUPS = [
     "Colgate-Palmolive Pty Ltd",
     "Ericsson Australia PTY Ltd",
     "NESTLE GROUP",
     "AstraZeneca Limited"
 ]
 
-FLEET_SCHEDULE_CLIENT_NAMES = [
+CLIENT_NAMES = [
     "Colgate-Palmolive Pty Ltd",
-    "Johnson & Johnson Pty Ltd",
+    "Johnson & Johnson Pty Ltd"
 ]
 
-FLEET_SCHEDULE_BILL_TO = [
+BILL_TO = [
     "Colgate Palmolive Pty Ltd",
     "Johnson & Johnson Pty Ltd - (Kenvue) NOV PO # 822346418",
     "Ericsson Australia Pty Ltd - Deployment",
     "Ericsson Australia Pty Ltd - FSO NSW"
 ]
 
+FLEET_SCHEDULE_PRODUCTS = [
+    *LEASE_PRODUCTS
+]
+
 VEHICLE_ON_ORDER_PRODUCTS = [
-    "Finance Lease",
-    "Fleet Managed",
-    "Novated Lease",
-    "Operating Lease"
+    *LEASE_PRODUCTS
 ]
 
 VEHICLE_ON_ORDER_VEHICLE_TYPES = [
@@ -124,45 +112,31 @@ VEHICLE_ON_ORDER_VEHICLE_TYPES = [
 ]
 
 IMMINENT_EXPIRY_PRODUCTS = [
-    "Finance Lease",
-    "Fleet Managed",
-    "Novated Lease",
-    "Operating Lease"
+    *LEASE_PRODUCTS
 ]
 
 SUSTAINABILITY_PRODUCTS = [
-    "Finance Lease",
-    "Fleet Managed",
-    "Novated Lease",
-    "Operating Lease"
+    *LEASE_PRODUCTS
 ]
 
 SUSTAINABILITY_START_DATES = [
-    {"year": 2025, "month": 3, "day": 1}
+    {"year": 2025, "month": 3, "day": 10},
+    {"year": 2025, "month": 3, "day": 15}
 ]
 
 SUSTAINABILITY_END_DATES = [
-    {"year": 2026, "month": 3, "day": 10}
+    {"year": 2026, "month": 3, "day": 10},
+    {"year": 2026, "month": 3, "day": 15}
 ]
 
 VEHICLE_UTILISATION_PRODUCTS = [
-    "Finance Lease",
-    "Fleet Managed",
-    "Novated Lease",
-    "Operating Lease"
+    *LEASE_PRODUCTS
 ]
 
-SERVICE_OVERDUE_MONTHS = [
-    "Jan 2026"
-    "Feb 2026"
-    "Mar 2026"
-]
+SERVICE_OVERDUE_MONTHS = [*MONTHS]
 
 SERVICE_OVERDUE_PRODUCTS = [
-    "Finance Lease",
-    "Fleet Managed",
-    "Novated Lease",
-    "Operating Lease"
+    *LEASE_PRODUCTS
 ]
 
 OVERDUE_BY_OPTIONS = [
