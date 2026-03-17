@@ -143,6 +143,25 @@ def has_component_text(uiform, text):
     return False
 
 
+def has_component_placeholder(uiform, placeholder_text):
+    if not uiform or not isinstance(placeholder_text, str) or not placeholder_text:
+        return False
+
+    target = _normalize_text(placeholder_text)
+    if not target:
+        return False
+
+    for component in _iter_component_tree(uiform._state):
+        if not isinstance(component, dict):
+            continue
+
+        placeholder = _normalize_text(component.get("placeholder", ""))
+        if placeholder and target in placeholder:
+            return True
+
+    return False
+
+
 def has_component_icon(uiform, icon_name):
     if not uiform or not isinstance(icon_name, str) or not icon_name:
         return False
@@ -493,6 +512,21 @@ def fill_text_field(uiform, label, value, is_test_label=False, timeout=10):
     )
 
 
+def fill_text_field_by_placeholder(uiform, placeholder, value, timeout=10):
+    if not uiform:
+        return None
+
+    return _run_uiform_action(
+        f"fill_text_field_by_placeholder placeholder={placeholder} value={value}",
+        lambda: uiform.fill_field_by_any_attribute(
+            attribute="placeholder",
+            value_for_attribute=placeholder,
+            text_to_fill=value,
+        ),
+        timeout=timeout,
+    )
+
+
 def click_field(uiform, label, is_test_label=False, timeout=10):
     if not uiform:
         return None
@@ -504,6 +538,63 @@ def click_field(uiform, label, is_test_label=False, timeout=10):
             is_test_label=is_test_label
         ),
         timeout=timeout
+    )
+
+
+def click_field_by_placeholder(uiform, placeholder, timeout=10):
+    if not uiform:
+        return None
+
+    normalized_target = _normalize_text(placeholder)
+    if not normalized_target:
+        return None
+
+    def _resolve_clickable_component(node, ancestors):
+        if isinstance(node.get("saveInto"), list) and node.get("saveInto"):
+            return node
+
+        link_component = node.get("link")
+        if link_component:
+            return link_component
+
+        for ancestor in reversed(ancestors):
+            if not isinstance(ancestor, dict):
+                continue
+
+            if isinstance(ancestor.get("saveInto"), list) and ancestor.get("saveInto"):
+                return ancestor
+
+            link_component = ancestor.get("link")
+            if link_component:
+                return link_component
+
+        return None
+
+    def _action():
+        for component, ancestors in _iter_component_tree_with_ancestors(uiform._state):
+            if not isinstance(component, dict):
+                continue
+
+            placeholder_text = _normalize_text(component.get("placeholder", ""))
+            if not placeholder_text or normalized_target not in placeholder_text:
+                continue
+
+            clickable_component = _resolve_clickable_component(component, ancestors)
+            if not clickable_component:
+                continue
+
+            new_state = uiform._dispatch_click(
+                component=clickable_component,
+                locust_label=f"{uiform.breadcrumb}.ClickFieldByPlaceholder.{placeholder}",
+            )
+            return uiform._reconcile_state(new_state, skipValidations=True)
+
+        raise ValueError(f"Field with placeholder '{placeholder}' not found")
+
+    return _run_uiform_action(
+        f"click_field_by_placeholder placeholder={placeholder}",
+        _action,
+        timeout=timeout,
     )
 
 

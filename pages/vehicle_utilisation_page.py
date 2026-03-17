@@ -3,8 +3,6 @@ from core.ui_helpers import (
     select_dropdown,
     select_multi_dropdown,
     click_button,
-    fill_text_field,
-    click_field,
     click_card_by_text,
     click_clickable_by_text,
     has_component_label,
@@ -110,37 +108,10 @@ class VehicleUtilisationPage(ReportsNavigationPage):
         return uiform
 
     def search_detail_record(self, uiform, value):
-        if not uiform:
-            return None
-
-        for test_label in self.DETAIL_SEARCH_LABELS:
-            if not has_component_label(uiform, test_label, is_test_label=True):
-                continue
-
-            return fill_text_field(
-                uiform,
-                label=test_label,
-                value=value,
-                is_test_label=True,
-            )
-
-        return uiform
+        return self.fill_report_search(uiform, value, self.DETAIL_SEARCH_LABELS)
 
     def click_detail_search_box(self, uiform):
-        if not uiform:
-            return None
-
-        for test_label in self.DETAIL_SEARCH_LABELS:
-            if not has_component_label(uiform, test_label, is_test_label=True):
-                continue
-
-            return click_field(
-                uiform,
-                label=test_label,
-                is_test_label=True,
-            )
-
-        return uiform
+        return self.click_report_search_box(uiform, self.DETAIL_SEARCH_LABELS)
 
     def open_vehicle_utilisation_card(self, uiform, label):
         if not uiform:
