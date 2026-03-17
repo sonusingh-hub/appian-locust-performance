@@ -6,12 +6,24 @@ import webbrowser
 from datetime import datetime
 
 
+CSV_ENCODINGS = ("utf-8-sig", "utf-8", "cp1252", "latin-1")
+
+
 def _read_csv_rows(path):
     rows = []
     if not path or not os.path.exists(path):
         return rows
 
-    with open(path, newline="", encoding="utf-8") as file:
+    for encoding in CSV_ENCODINGS:
+        try:
+            with open(path, newline="", encoding=encoding) as file:
+                reader = csv.DictReader(file)
+                rows.extend(reader)
+            return rows
+        except UnicodeDecodeError:
+            rows = []
+
+    with open(path, newline="", encoding="utf-8", errors="replace") as file:
         reader = csv.DictReader(file)
         rows.extend(reader)
 
