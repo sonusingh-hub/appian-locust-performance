@@ -38,9 +38,9 @@ class OrionUser(HttpUser):
         VehicleUtilisationJourney: 3,
         ServiceOverdueJourney: 3,
         VehicleSearchJourney: 2,
-        UpdateProfileJourney: 1,
-        ManageUserJourney: 1,
-        AdminConfigurationJourney: 1
+        UpdateProfileJourney: 0,
+        ManageUserJourney: 0,
+        AdminConfigurationJourney: 0
     }
 
     # tasks = [HomeJourney]

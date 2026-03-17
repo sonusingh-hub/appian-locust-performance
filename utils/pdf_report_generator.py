@@ -6,6 +6,9 @@ from reportlab.pdfgen import canvas
 from reportlab.lib import colors
 
 
+CSV_ENCODINGS = ("utf-8-sig", "utf-8", "cp1252", "latin-1")
+
+
 def _read_stats_file(results_folder):
     stats_file = None
 
@@ -18,7 +21,16 @@ def _read_stats_file(results_folder):
         return []
 
     rows = []
-    with open(stats_file, newline="", encoding="utf-8") as file:
+    for encoding in CSV_ENCODINGS:
+        try:
+            with open(stats_file, newline="", encoding=encoding) as file:
+                reader = csv.DictReader(file)
+                rows.extend(reader)
+            return rows
+        except UnicodeDecodeError:
+            rows = []
+
+    with open(stats_file, newline="", encoding="utf-8", errors="replace") as file:
         reader = csv.DictReader(file)
         rows.extend(reader)
 

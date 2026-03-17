@@ -9,7 +9,11 @@ param(
 
     [Parameter(Mandatory=$false)]
     [ValidateSet("normal","step")]
-    [string]$executionMode="normal"
+    [string]$executionMode="normal",
+
+    [Parameter(Mandatory=$false)]
+    [ValidateSet("DEBUG","INFO","WARNING","ERROR","CRITICAL")]
+    [string]$logLevel="WARNING"
 )
 
 $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
@@ -20,6 +24,7 @@ Write-Host "-------------------------------------"
 Write-Host "Running Locust Scenario: $scenario"
 Write-Host "Environment: $env"
 Write-Host "Execution Mode: $executionMode"
+Write-Host "Log Level: $logLevel"
 Write-Host "Results Folder: $resultsFolder"
 Write-Host "-------------------------------------"
 Write-Host ""
@@ -43,6 +48,7 @@ function Run-LocustScenario {
         locust `
             -f locustfile.py,load_shapes/step_load_shape.py `
             --headless `
+            --loglevel $logLevel `
             -t $duration `
             --stop-timeout $stopTimeout `
             --csv "$resultsFolder\$csvPrefix" `
@@ -52,6 +58,7 @@ function Run-LocustScenario {
         locust `
             -f locustfile.py `
             --headless `
+            --loglevel $logLevel `
             -u $users `
             -r $spawnRate `
             -t $duration `
@@ -72,11 +79,11 @@ switch ($scenario) {
     }
 
     "baseline_25" {
-        Run-LocustScenario -users 25 -spawnRate 10 -duration "2m" -stopTimeout "15s" -csvPrefix "baseline_25"
+        Run-LocustScenario -users 25 -spawnRate 10 -duration "20m" -stopTimeout "15s" -csvPrefix "baseline_25"
     }
 
     "baseline_50" {
-        Run-LocustScenario -users 50 -spawnRate 10 -duration "2m" -stopTimeout "15s" -csvPrefix "baseline_50"
+        Run-LocustScenario -users 50 -spawnRate 10 -duration "20m" -stopTimeout "15s" -csvPrefix "baseline_50"
     }
 
     "baseline_100" {
