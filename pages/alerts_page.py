@@ -1,8 +1,6 @@
 from pages.reports_navigation_page import ReportsNavigationPage
 from core.ui_helpers import (
     click_button,
-    fill_text_field,
-    click_field,
     click_card_by_text,
     click_clickable_by_text,
     has_component_label,
@@ -30,37 +28,10 @@ class AlertsPage(ReportsNavigationPage):
         return self.open_alerts(uiform)
 
     def search_record(self, uiform, value):
-        if not uiform:
-            return None
-
-        for test_label in self.SEARCH_BOX_TEST_LABELS:
-            if not has_component_label(uiform, test_label, is_test_label=True):
-                continue
-
-            return fill_text_field(
-                uiform,
-                label=test_label,
-                value=value,
-                is_test_label=True
-            )
-
-        return uiform
+        return self.fill_report_search(uiform, value, self.SEARCH_BOX_TEST_LABELS)
 
     def click_search_box(self, uiform):
-        if not uiform:
-            return None
-
-        for test_label in self.SEARCH_BOX_TEST_LABELS:
-            if not has_component_label(uiform, test_label, is_test_label=True):
-                continue
-
-            return click_field(
-                uiform,
-                label=test_label,
-                is_test_label=True
-            )
-
-        return uiform
+        return self.click_report_search_box(uiform, self.SEARCH_BOX_TEST_LABELS)
 
     def refresh_grid(self, uiform):
         if not uiform:

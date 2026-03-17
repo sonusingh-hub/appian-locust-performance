@@ -29,36 +29,19 @@ class OrionUser(HttpUser):
     tasks = {
         HomeJourney: 2,
         AlertsJourney: 3,
-        FilterJourney: 4,
-        ExportJourney: 4,
-        FleetScheduleJourney: 7,
-        VehicleOnOrderJourney: 6,
-        ImminentExpiryJourney: 5,
-        SustainabilityJourney: 4,
-        VehicleUtilisationJourney: 4,
-        ServiceOverdueJourney: 4,
+        FilterJourney: 1,
+        ExportJourney: 0,
+        FleetScheduleJourney: 6,
+        VehicleOnOrderJourney: 5,
+        ImminentExpiryJourney: 4,
+        SustainabilityJourney: 3,
+        VehicleUtilisationJourney: 3,
+        ServiceOverdueJourney: 3,
         VehicleSearchJourney: 2,
         UpdateProfileJourney: 1,
         ManageUserJourney: 1,
         AdminConfigurationJourney: 1
     }
-
-    # tasks = {
-    #     FleetScheduleJourney: 7,
-    #     VehicleOnOrderJourney: 6,
-    #     AlertsJourney: 4,
-    #     ImminentExpiryJourney: 4,
-    #     VehicleUtilisationJourney: 4,
-    #     ServiceOverdueJourney: 4,
-    #     SustainabilityJourney: 3,
-    #     FilterJourney: 3,
-    #     HomeVehicleSearchJourney: 2,
-    #     ExportJourney: 1,
-    #     UpdateProfileJourney: 1,
-    #     ManageUserJourney: 1,
-    #     AdminConfigurationJourney: 1,
-    #     HomeJourney: 1
-    # }
 
     # tasks = [HomeJourney]
 

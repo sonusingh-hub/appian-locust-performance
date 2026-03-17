@@ -11,6 +11,11 @@ from core.ui_helpers import (
     click_clickable_by_icon,
     get_multi_dropdown_choices,
     fill_text_field,
+    click_field,
+    has_component_label,
+    has_component_placeholder,
+    fill_text_field_by_placeholder,
+    click_field_by_placeholder,
 )
 from utils.waits import small_wait
 
@@ -206,6 +211,77 @@ class ReportsNavigationPage(BasePage):
                 return updated
 
         return None
+
+    # ── Shared report-detail search helpers ────────────────────────────────
+
+    SEARCH_PLACEHOLDER_CANDIDATES = (
+        "--- Search ---",
+        "Search",
+    )
+
+    def fill_report_search(self, uiform, value, test_labels=()):
+        if not uiform:
+            return None
+
+        for test_label in test_labels:
+            if not has_component_label(uiform, test_label, is_test_label=True):
+                continue
+
+            updated = fill_text_field(
+                uiform,
+                label=test_label,
+                value=value,
+                is_test_label=True,
+                timeout=3,
+            )
+            if updated:
+                return updated
+
+        for placeholder in self.SEARCH_PLACEHOLDER_CANDIDATES:
+            if not has_component_placeholder(uiform, placeholder):
+                continue
+
+            updated = fill_text_field_by_placeholder(
+                uiform,
+                placeholder=placeholder,
+                value=value,
+                timeout=3,
+            )
+            if updated:
+                return updated
+
+        return uiform
+
+    def click_report_search_box(self, uiform, test_labels=()):
+        if not uiform:
+            return None
+
+        for test_label in test_labels:
+            if not has_component_label(uiform, test_label, is_test_label=True):
+                continue
+
+            updated = click_field(
+                uiform,
+                label=test_label,
+                is_test_label=True,
+                timeout=3,
+            )
+            if updated:
+                return updated
+
+        for placeholder in self.SEARCH_PLACEHOLDER_CANDIDATES:
+            if not has_component_placeholder(uiform, placeholder):
+                continue
+
+            updated = click_field_by_placeholder(
+                uiform,
+                placeholder=placeholder,
+                timeout=3,
+            )
+            if updated:
+                return updated
+
+        return uiform
 
     # ── Left-pane navigation ──────────────────────────────────────────────
 

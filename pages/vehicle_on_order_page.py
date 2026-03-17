@@ -3,8 +3,6 @@ from core.ui_helpers import (
     select_dropdown,
     select_multi_dropdown,
     click_button,
-    fill_text_field,
-    click_field,
     click_card_by_text,
     click_clickable_by_text,
     has_component_label,
@@ -23,6 +21,11 @@ class VehicleOnOrderPage(ReportsNavigationPage):
         "gridField_recordData_dataExportButton",
         "recordData_dataExportButton",
         "dataExportButton",
+    )
+    SEARCH_BOX_TEST_LABELS = (
+        "recordSearchBox",
+        "Vehicle On Order-recordSearchBox",
+        "Vehicles On Order-recordSearchBox",
     )
 
     def open(self):
@@ -57,25 +60,10 @@ class VehicleOnOrderPage(ReportsNavigationPage):
         return select_dropdown(uiform, "Expected Delivery", option)
 
     def search_record(self, uiform, value):
-        if not uiform:
-            return None
-
-        return fill_text_field(
-            uiform,
-            label="recordSearchBox",
-            value=value,
-            is_test_label=True,
-        )
+        return self.fill_report_search(uiform, value, self.SEARCH_BOX_TEST_LABELS)
 
     def click_search_box(self, uiform):
-        if not uiform:
-            return None
-
-        return click_field(
-            uiform,
-            label="recordSearchBox",
-            is_test_label=True,
-        )
+        return self.click_report_search_box(uiform, self.SEARCH_BOX_TEST_LABELS)
 
     def export_report(self, uiform):
         if not uiform:
