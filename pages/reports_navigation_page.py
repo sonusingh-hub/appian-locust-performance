@@ -155,8 +155,10 @@ class ReportsNavigationPage(BasePage):
         if not updated:
             updated = click_button(uiform, "Clear Filters Option", timeout=3)
 
-        if updated is not None and filter_state is not None:
-            filter_state.clear()
+        if updated is not None:
+            self.reset_page_filters()
+            if filter_state is not None:
+                filter_state.clear()
 
         return updated or uiform
 

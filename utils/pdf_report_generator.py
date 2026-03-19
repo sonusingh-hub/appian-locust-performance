@@ -7,6 +7,7 @@ from reportlab.lib import colors
 
 
 CSV_ENCODINGS = ("utf-8-sig", "utf-8", "cp1252", "latin-1")
+ANOMALY_MAX_RESPONSE_MS = 120000.0
 
 
 def _read_stats_file(results_folder):
@@ -74,9 +75,39 @@ def _fmt_ms(value):
     return f"{_fmt_number(value, 2)} ms"
 
 
-def generate_pdf_summary(results_folder, scenario, environment):
+def _get_outlier_threshold_ms(default=ANOMALY_MAX_RESPONSE_MS):
+    raw_value = os.environ.get("LOCUST_OUTLIER_THRESHOLD_MS", "")
+    return _to_float(raw_value, default=default)
+
+
+def _get_behavior_profile(default="realistic"):
+    raw_value = os.environ.get("LOCUST_USER_BEHAVIOR_PROFILE", default)
+    profile = str(raw_value or default).strip().lower()
+    return profile if profile in ("benchmark", "realistic") else default
+
+
+def _detect_outlier_run(summary_row, request_rows, threshold_ms=None):
+    if threshold_ms is None:
+        threshold_ms = _get_outlier_threshold_ms()
+
+    summary_max = _to_float(_pick(summary_row or {}, "Max Response Time", "Max (ms)", default=0))
+    details_max = 0.0
+
+    for row in request_rows:
+        details_max = max(
+            details_max,
+            _to_float(_pick(row, "Max Response Time", "Max (ms)", default=0)),
+        )
+
+    max_response_ms = max(summary_max, details_max)
+    is_outlier = max_response_ms >= threshold_ms
+    return is_outlier, max_response_ms
+
+
+def generate_pdf_summary(results_folder, scenario, environment, credential_mode=None, behavior_profile=None):
     rows = _read_stats_file(results_folder)
     pdf_path = os.path.join(results_folder, "performance_summary.pdf")
+    behavior_profile = str(behavior_profile or _get_behavior_profile()).strip().lower()
 
     summary = None
     details = []
@@ -101,6 +132,12 @@ def generate_pdf_summary(results_folder, scenario, environment):
     avg_response = _to_float(_pick(summary or {}, "Average Response Time", "Average (ms)", default=0))
     throughput = _to_float(_pick(summary or {}, "Requests/s", "Current RPS", default=0))
     p99_response = _to_float(_pick(summary or {}, "99%", "99%ile (ms)", default=0))
+    outlier_threshold_ms = _get_outlier_threshold_ms()
+    is_outlier_run, max_response_time = _detect_outlier_run(
+        summary or {},
+        details,
+        threshold_ms=outlier_threshold_ms,
+    )
 
     success_rate = 0.0
     if total_requests > 0:
@@ -170,9 +207,35 @@ def generate_pdf_summary(results_folder, scenario, environment):
     c.drawString(left_margin + 15, y - 18, "ORION APAC Performance Test Summary Report")
 
     c.setFont("Helvetica", 10)
-    c.drawString(left_margin + 15, y - 34, f"Scenario: {scenario}   |   Environment: {environment}")
+    c.drawString(
+        left_margin + 15,
+        y - 34,
+        f"Scenario: {scenario}   |   Environment: {environment}   |   Profile: {behavior_profile.title()}"
+    )
 
     y -= 70
+
+    if str(credential_mode or "").strip().lower() == "reuse":
+        write_line(
+            "Credential mode: reuse (credentials shared across concurrent virtual users in this run).",
+            size=9,
+            gap=14,
+            font="Helvetica-Bold",
+            color=colors.HexColor("#b45309"),
+        )
+
+    if is_outlier_run:
+        write_line(
+            (
+                "Outlier alert: run flagged as anomalous because max response time reached "
+                f"{_fmt_number(max_response_time, 2)} ms "
+                f"(threshold: {_fmt_number(outlier_threshold_ms, 0)} ms)."
+            ),
+            size=9,
+            gap=14,
+            font="Helvetica-Bold",
+            color=colors.HexColor("#dc2626"),
+        )
 
     write_line(f"Generated On: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", size=10, gap=14)
     write_line(f"Results Folder: {results_folder}", size=10, gap=18, color=colors.HexColor("#4b5563"))
@@ -224,7 +287,7 @@ def generate_pdf_summary(results_folder, scenario, environment):
     ensure_space(120)
 
     table_x = left_margin
-    col_positions = [table_x, table_x + 210, table_x + 295, table_x + 375, table_x + 450]
+    col_positions = [table_x, table_x + 180, table_x + 240, table_x + 320, table_x + 390, table_x + 455]
     row_height = 18
 
     c.setFillColor(colors.HexColor("#eef3fb"))
@@ -233,10 +296,11 @@ def generate_pdf_summary(results_folder, scenario, environment):
     c.setFillColor(colors.black)
     c.setFont("Helvetica-Bold", 9)
     c.drawString(col_positions[0] + 2, y - 8, "Request Name")
-    c.drawString(col_positions[1] + 2, y - 8, "Avg (ms)")
-    c.drawString(col_positions[2] + 2, y - 8, "P95 (ms)")
-    c.drawString(col_positions[3] + 2, y - 8, "Fails")
-    c.drawString(col_positions[4] + 2, y - 8, "Status")
+    c.drawString(col_positions[1] + 2, y - 8, "Requests")
+    c.drawString(col_positions[2] + 2, y - 8, "Avg (ms)")
+    c.drawString(col_positions[3] + 2, y - 8, "P95 (ms)")
+    c.drawString(col_positions[4] + 2, y - 8, "Fails")
+    c.drawString(col_positions[5] + 2, y - 8, "Status")
 
     y -= row_height
 
@@ -248,6 +312,7 @@ def generate_pdf_summary(results_folder, scenario, environment):
         ensure_space(70)
 
         name = trim_text(row.get("Name", ""))
+        req_count = _to_int(_pick(row, "# Requests", "Request Count", default=0))
         avg = _to_float(_pick(row, "Average Response Time", "Average (ms)", default=0))
         p95 = _to_float(_pick(row, "95%", "95%ile (ms)", default=0))
         fails = _to_int(_pick(row, "# Fails", "Failure Count", default=0))
@@ -268,12 +333,13 @@ def generate_pdf_summary(results_folder, scenario, environment):
         c.setFont("Helvetica", 8.5)
         c.setFillColor(colors.black)
         c.drawString(col_positions[0] + 2, y - 12, name)
-        c.drawRightString(col_positions[2] - 8, y - 12, _fmt_number(avg, 2))
-        c.drawRightString(col_positions[3] - 8, y - 12, _fmt_number(p95, 2))
-        c.drawRightString(col_positions[4] - 20, y - 12, str(fails))
+        c.drawRightString(col_positions[2] - 8, y - 12, str(req_count))
+        c.drawRightString(col_positions[3] - 8, y - 12, _fmt_number(avg, 2))
+        c.drawRightString(col_positions[4] - 8, y - 12, _fmt_number(p95, 2))
+        c.drawRightString(col_positions[5] - 20, y - 12, str(fails))
 
         c.setFillColor(status_color)
-        c.drawString(col_positions[4] + 2, y - 12, status)
+        c.drawString(col_positions[5] + 2, y - 12, status)
 
         y -= row_height
         count += 1

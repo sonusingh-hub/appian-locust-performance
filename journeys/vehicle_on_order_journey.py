@@ -54,9 +54,19 @@ class VehicleOnOrderJourney(BaseJourney):
 
             think_time()
 
+        filter_values = self._get_page_filter_values(
+            "vehicle_on_order",
+            lambda: {
+                "product": DataEngine.vehicle_on_order_products(count=self._multi_select_count(4)),
+                "vehicle_type": DataEngine.vehicle_on_order_vehicle_types(count=self._multi_select_count(4)),
+                "power_train": DataEngine.power_train_list(count=self._multi_select_count(4)),
+                "expected_delivery": DataEngine.expected_delivery(),
+            },
+        )
+
         uiform = page.select_product(
             uiform,
-            DataEngine.vehicle_on_order_products(count=self._multi_select_count(4)),
+            filter_values["product"],
         )
         if not uiform:
             return None
@@ -65,7 +75,7 @@ class VehicleOnOrderJourney(BaseJourney):
 
         uiform = page.select_vehicle_type(
             uiform,
-            DataEngine.vehicle_on_order_vehicle_types(count=self._multi_select_count(4)),
+            filter_values["vehicle_type"],
         )
         if not uiform:
             return None
@@ -74,14 +84,14 @@ class VehicleOnOrderJourney(BaseJourney):
 
         uiform = page.select_power_train(
             uiform,
-            DataEngine.power_train_list(count=self._multi_select_count(4)),
+            filter_values["power_train"],
         )
         if not uiform:
             return None
 
         think_time()
 
-        uiform = page.select_expected_delivery(uiform, DataEngine.expected_delivery())
+        uiform = page.select_expected_delivery(uiform, filter_values["expected_delivery"])
         if not uiform:
             return None
 
@@ -122,12 +132,6 @@ class VehicleOnOrderJourney(BaseJourney):
                 return
 
             think_time()
-
-        uiform = self._return_to_vehicle_on_order(page)
-        if not uiform:
-            return
-
-        think_time()
 
     @task(4)
     def vehicle_on_order_filter_flow(self):
@@ -171,4 +175,5 @@ class VehicleOnOrderJourney(BaseJourney):
         if not uiform:
             return
 
+        self._clear_page_filter_values("vehicle_on_order")
         think_time()

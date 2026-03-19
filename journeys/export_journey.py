@@ -145,7 +145,18 @@ class ExportJourney(BaseJourney):
 
         think_time()
 
-        uiform = page.select_month(uiform, DataEngine.month())
+        filter_values = self._get_page_filter_values(
+            "export_fleet_schedule",
+            lambda: {
+                "month": DataEngine.month(),
+                "product": DataEngine.fleet_schedule_products(count=self._multi_select_count(4)),
+                "vehicle_type": DataEngine.vehicle_type_list(count=self._multi_select_count(4)),
+                "imminent_expiry": DataEngine.imminent_expiry(),
+                "power_train": DataEngine.power_train_list(count=self._multi_select_count(4)),
+            },
+        )
+
+        uiform = page.select_month(uiform, filter_values["month"])
         if not uiform:
             return
 
@@ -153,7 +164,7 @@ class ExportJourney(BaseJourney):
 
         uiform = page.select_product(
             uiform,
-            DataEngine.fleet_schedule_products(count=self._multi_select_count(4)),
+            filter_values["product"],
         )
         if not uiform:
             return
@@ -162,14 +173,14 @@ class ExportJourney(BaseJourney):
 
         uiform = page.select_vehicle_type(
             uiform,
-            DataEngine.vehicle_type_list(count=self._multi_select_count(4)),
+            filter_values["vehicle_type"],
         )
         if not uiform:
             return
 
         think_time()
 
-        uiform = page.select_imminent_expiry(uiform, DataEngine.imminent_expiry())
+        uiform = page.select_imminent_expiry(uiform, filter_values["imminent_expiry"])
         if not uiform:
             return
 
@@ -177,7 +188,7 @@ class ExportJourney(BaseJourney):
 
         uiform = page.select_power_train(
             uiform,
-            DataEngine.power_train_list(count=self._multi_select_count(4)),
+            filter_values["power_train"],
         )
         if not uiform:
             return
@@ -207,9 +218,19 @@ class ExportJourney(BaseJourney):
 
         think_time()
 
+        filter_values = self._get_page_filter_values(
+            "export_vehicle_on_order",
+            lambda: {
+                "product": DataEngine.vehicle_on_order_products(count=self._multi_select_count(4)),
+                "vehicle_type": DataEngine.vehicle_on_order_vehicle_types(count=self._multi_select_count(4)),
+                "power_train": DataEngine.power_train_list(count=self._multi_select_count(4)),
+                "expected_delivery": DataEngine.expected_delivery(),
+            },
+        )
+
         uiform = page.select_product(
             uiform,
-            DataEngine.vehicle_on_order_products(count=self._multi_select_count(4)),
+            filter_values["product"],
         )
         if not uiform:
             return
@@ -218,7 +239,7 @@ class ExportJourney(BaseJourney):
 
         uiform = page.select_vehicle_type(
             uiform,
-            DataEngine.vehicle_on_order_vehicle_types(count=self._multi_select_count(4)),
+            filter_values["vehicle_type"],
         )
         if not uiform:
             return
@@ -227,14 +248,14 @@ class ExportJourney(BaseJourney):
 
         uiform = page.select_power_train(
             uiform,
-            DataEngine.power_train_list(count=self._multi_select_count(4)),
+            filter_values["power_train"],
         )
         if not uiform:
             return
 
         think_time()
 
-        uiform = page.select_expected_delivery(uiform, DataEngine.expected_delivery())
+        uiform = page.select_expected_delivery(uiform, filter_values["expected_delivery"])
         if not uiform:
             return
 
@@ -263,7 +284,18 @@ class ExportJourney(BaseJourney):
 
         think_time()
 
-        uiform = page.select_month(uiform, DataEngine.vehicle_utilisation_month())
+        filter_values = self._get_page_filter_values(
+            "export_vehicle_utilisation",
+            lambda: {
+                "month": DataEngine.vehicle_utilisation_month(),
+                "product": DataEngine.vehicle_utilisation_products(count=self._multi_select_count(4)),
+                "vehicle_type": DataEngine.vehicle_type_list(count=self._multi_select_count(4)),
+                "imminent_expiry": DataEngine.imminent_expiry(),
+                "power_train": DataEngine.power_train_list(count=self._multi_select_count(4)),
+            },
+        )
+
+        uiform = page.select_month(uiform, filter_values["month"])
         if not uiform:
             return
 
@@ -271,7 +303,7 @@ class ExportJourney(BaseJourney):
 
         uiform = page.select_product(
             uiform,
-            DataEngine.vehicle_utilisation_products(count=self._multi_select_count(4)),
+            filter_values["product"],
         )
         if not uiform:
             return
@@ -280,14 +312,14 @@ class ExportJourney(BaseJourney):
 
         uiform = page.select_vehicle_type(
             uiform,
-            DataEngine.vehicle_type_list(count=self._multi_select_count(4)),
+            filter_values["vehicle_type"],
         )
         if not uiform:
             return
 
         think_time()
 
-        uiform = page.select_imminent_expiry(uiform, DataEngine.imminent_expiry())
+        uiform = page.select_imminent_expiry(uiform, filter_values["imminent_expiry"])
         if not uiform:
             return
 
@@ -295,7 +327,7 @@ class ExportJourney(BaseJourney):
 
         uiform = page.select_power_train(
             uiform,
-            DataEngine.power_train_list(count=self._multi_select_count(4)),
+            filter_values["power_train"],
         )
         if not uiform:
             return
@@ -325,7 +357,19 @@ class ExportJourney(BaseJourney):
 
         think_time()
 
-        uiform = page.select_month(uiform, DataEngine.service_overdue_month())
+        filter_values = self._get_page_filter_values(
+            "export_service_overdue",
+            lambda: {
+                "month": DataEngine.service_overdue_month(),
+                "product": DataEngine.service_overdue_products(count=self._multi_select_count(4)),
+                "overdue_by": DataEngine.overdue_by(),
+                "vehicle_type": DataEngine.vehicle_type_list(count=self._multi_select_count(4)),
+                "power_train": DataEngine.power_train_list(count=self._multi_select_count(4)),
+                "maintenance_included": DataEngine.maintenance_included(),
+            },
+        )
+
+        uiform = page.select_month(uiform, filter_values["month"])
         if not uiform:
             return
 
@@ -333,14 +377,14 @@ class ExportJourney(BaseJourney):
 
         uiform = page.select_product(
             uiform,
-            DataEngine.service_overdue_products(count=self._multi_select_count(4)),
+            filter_values["product"],
         )
         if not uiform:
             return
 
         think_time()
 
-        uiform = page.select_overdue_by(uiform, DataEngine.overdue_by())
+        uiform = page.select_overdue_by(uiform, filter_values["overdue_by"])
         if not uiform:
             return
 
@@ -348,7 +392,7 @@ class ExportJourney(BaseJourney):
 
         uiform = page.select_vehicle_type(
             uiform,
-            DataEngine.vehicle_type_list(count=self._multi_select_count(4)),
+            filter_values["vehicle_type"],
         )
         if not uiform:
             return
@@ -357,14 +401,14 @@ class ExportJourney(BaseJourney):
 
         uiform = page.select_power_train(
             uiform,
-            DataEngine.power_train_list(count=self._multi_select_count(4)),
+            filter_values["power_train"],
         )
         if not uiform:
             return
 
         think_time()
 
-        uiform = page.select_maintenance_included(uiform, DataEngine.maintenance_included())
+        uiform = page.select_maintenance_included(uiform, filter_values["maintenance_included"])
         if not uiform:
             return
 
@@ -393,7 +437,18 @@ class ExportJourney(BaseJourney):
 
         think_time()
 
-        uiform = page.select_month(uiform, DataEngine.imminent_expiry_month())
+        filter_values = self._get_page_filter_values(
+            "export_imminent_expiry",
+            lambda: {
+                "month": DataEngine.imminent_expiry_month(),
+                "product": DataEngine.imminent_expiry_products(count=self._multi_select_count(4)),
+                "vehicle_type": DataEngine.vehicle_type_list(count=self._multi_select_count(4)),
+                "imminent_expiry": DataEngine.imminent_expiry(),
+                "power_train": DataEngine.power_train_list(count=self._multi_select_count(4)),
+            },
+        )
+
+        uiform = page.select_month(uiform, filter_values["month"])
         if not uiform:
             return
 
@@ -401,7 +456,7 @@ class ExportJourney(BaseJourney):
 
         uiform = page.select_product(
             uiform,
-            DataEngine.imminent_expiry_products(count=self._multi_select_count(4)),
+            filter_values["product"],
         )
         if not uiform:
             return
@@ -410,14 +465,14 @@ class ExportJourney(BaseJourney):
 
         uiform = page.select_vehicle_type(
             uiform,
-            DataEngine.vehicle_type_list(count=self._multi_select_count(4)),
+            filter_values["vehicle_type"],
         )
         if not uiform:
             return
 
         think_time()
 
-        uiform = page.select_imminent_expiry(uiform, DataEngine.imminent_expiry())
+        uiform = page.select_imminent_expiry(uiform, filter_values["imminent_expiry"])
         if not uiform:
             return
 
@@ -425,7 +480,7 @@ class ExportJourney(BaseJourney):
 
         uiform = page.select_power_train(
             uiform,
-            DataEngine.power_train_list(count=self._multi_select_count(4)),
+            filter_values["power_train"],
         )
         if not uiform:
             return
@@ -448,4 +503,5 @@ class ExportJourney(BaseJourney):
         if not uiform:
             return
 
+        self._clear_page_filter_values()
         think_time()

@@ -2,6 +2,7 @@ import logging
 import time
 
 from utils.waits import small_wait
+from core.page_filter_state import PageFilterState
 
 
 log = logging.getLogger(__name__)
@@ -13,6 +14,20 @@ class BasePage:
         self.taskset = taskset
         self.appian = taskset.appian
         self.client = taskset.client
+
+        if not hasattr(taskset, "user_context"):
+            taskset.user_context = {}
+
+        page_filter_states = taskset.user_context.setdefault("page_filter_states", {})
+        page_state_key = self.__class__.__name__
+        self.page_filter_state = page_filter_states.setdefault(
+            page_state_key,
+            PageFilterState(),
+        )
+
+    def reset_page_filters(self):
+        """Clear page-level filter state on page navigation or reset."""
+        self.page_filter_state.reset()
 
     def visit(self, site_name, page_name):
         log.info("Visit page start: site=%s page=%s", site_name, page_name)

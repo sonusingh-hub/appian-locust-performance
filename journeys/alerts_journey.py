@@ -45,12 +45,6 @@ class AlertsJourney(BaseJourney):
 
         think_time()
 
-        uiform = self._return_to_alerts(alerts)
-        if not uiform:
-            return
-
-        think_time()
-
     @task(5)
     def alerts_search_flow(self):
         alerts, uiform = self._open_alerts()

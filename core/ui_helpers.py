@@ -136,7 +136,11 @@ def has_component_text(uiform, text):
         if component_text and target in component_text:
             return True
 
-        aggregate_text = _normalize_text(_extract_component_text(component))
+        if component.get("#t") in ("CardLayout", "LinkedItem") or component.get("contents") is not None:
+            aggregate_text = _normalize_text(_extract_component_text(component))
+        else:
+            aggregate_text = ""
+
         if aggregate_text and target in aggregate_text:
             return True
 
@@ -330,18 +334,24 @@ def click_clickable_by_text(uiform, text, timeout=10):
                 continue
 
             component_text = _normalize_text(_extract_node_text(component))
-            aggregate_text = _normalize_text(_extract_component_text(component))
             accessibility_text = _normalize_text(component.get("accessibilityText", ""))
             aria_label_text = _normalize_text(component.get("aria-label", ""))
             camel_aria_label_text = _normalize_text(component.get("ariaLabel", ""))
 
             matches_text = (
                 (component_text and normalized_target in component_text)
-                or (aggregate_text and normalized_target in aggregate_text)
                 or (accessibility_text and normalized_target in accessibility_text)
                 or (aria_label_text and normalized_target in aria_label_text)
                 or (camel_aria_label_text and normalized_target in camel_aria_label_text)
             )
+
+            if not matches_text and (
+                component.get("#t") in ("CardLayout", "LinkedItem")
+                or component.get("contents") is not None
+            ):
+                aggregate_text = _normalize_text(_extract_component_text(component))
+                matches_text = aggregate_text and normalized_target in aggregate_text
+
             if not matches_text:
                 continue
 
@@ -402,6 +412,18 @@ def select_dropdown(uiform, label, value, timeout=10):
     if not uiform:
         return None
 
+    available_choices = get_dropdown_choices(uiform, label)
+    if available_choices:
+        resolved_value = _resolve_single_dropdown_value(
+            label=label,
+            requested_value=value,
+            available_choices=available_choices,
+            selector_kind="label",
+        )
+        if resolved_value is None:
+            return uiform
+        value = resolved_value
+
     return _run_uiform_action(
         f"select_dropdown label={label} value={value}",
         lambda: uiform.select_dropdown_item(
@@ -415,6 +437,18 @@ def select_dropdown(uiform, label, value, timeout=10):
 def select_dropdown_test_label(uiform, test_label, value, timeout=10):
     if not uiform:
         return None
+
+    available_choices = get_dropdown_choices(uiform, test_label, is_test_label=True)
+    if available_choices:
+        resolved_value = _resolve_single_dropdown_value(
+            label=test_label,
+            requested_value=value,
+            available_choices=available_choices,
+            selector_kind="test_label",
+        )
+        if resolved_value is None:
+            return uiform
+        value = resolved_value
 
     return _run_uiform_action(
         f"select_dropdown_test_label test_label={test_label} value={value}",
@@ -430,6 +464,18 @@ def select_dropdown_test_label(uiform, test_label, value, timeout=10):
 def select_dropdown_by_index(uiform, index, value, timeout=10):
     if not uiform:
         return None
+
+    available_choices = get_dropdown_choices_by_index(uiform, index)
+    if available_choices:
+        resolved_value = _resolve_single_dropdown_value(
+            label=f"index={index}",
+            requested_value=value,
+            available_choices=available_choices,
+            selector_kind="index",
+        )
+        if resolved_value is None:
+            return uiform
+        value = resolved_value
 
     return _run_uiform_action(
         f"select_dropdown_by_index index={index} value={value}",
@@ -448,6 +494,40 @@ def select_multi_dropdown(uiform, label, values, timeout=10):
     if isinstance(values, str):
         values = [values]
 
+    available_choices = get_multi_dropdown_choices(uiform, label)
+    if available_choices:
+        available_by_key = {choice.casefold(): choice for choice in available_choices}
+        resolved_values = []
+
+        for value in values:
+            resolved = available_by_key.get(str(value).casefold())
+            if resolved and resolved not in resolved_values:
+                resolved_values.append(resolved)
+
+        if not resolved_values:
+            fallback_count = max(1, min(len(values), len(available_choices)))
+            resolved_values = available_choices[:fallback_count]
+            log.info(
+                "Adjusted multi dropdown '%s' values to available fallback choices: requested=%s resolved=%s available=%s",
+                label,
+                values,
+                resolved_values,
+                available_choices,
+            )
+
+        if resolved_values != values:
+            log.info(
+                "Adjusted multi dropdown '%s' values to currently available choices: requested=%s resolved=%s",
+                label,
+                values,
+                resolved_values,
+            )
+
+        values = resolved_values
+
+    if not values:
+        return uiform
+
     return _run_uiform_action(
         f"select_multi_dropdown label={label} values={values}",
         lambda: uiform.select_multi_dropdown_item(
@@ -455,6 +535,58 @@ def select_multi_dropdown(uiform, label, values, timeout=10):
             choice_label=values
         ),
         timeout=timeout
+    )
+
+
+def select_multi_dropdown_test_label(uiform, test_label, values, timeout=10):
+    if not uiform:
+        return None
+
+    if isinstance(values, str):
+        values = [values]
+
+    available_choices = get_multi_dropdown_choices(uiform, test_label, is_test_label=True)
+    if available_choices:
+        available_by_key = {choice.casefold(): choice for choice in available_choices}
+        resolved_values = []
+
+        for value in values:
+            resolved = available_by_key.get(str(value).casefold())
+            if resolved and resolved not in resolved_values:
+                resolved_values.append(resolved)
+
+        if not resolved_values:
+            fallback_count = max(1, min(len(values), len(available_choices)))
+            resolved_values = available_choices[:fallback_count]
+            log.info(
+                "Adjusted multi dropdown test_label '%s' values to available fallback choices: requested=%s resolved=%s available=%s",
+                test_label,
+                values,
+                resolved_values,
+                available_choices,
+            )
+
+        if resolved_values != values:
+            log.info(
+                "Adjusted multi dropdown test_label '%s' values to currently available choices: requested=%s resolved=%s",
+                test_label,
+                values,
+                resolved_values,
+            )
+
+        values = resolved_values
+
+    if not values:
+        return uiform
+
+    return _run_uiform_action(
+        f"select_multi_dropdown_test_label test_label={test_label} values={values}",
+        lambda: uiform.select_multi_dropdown_item(
+            label=test_label,
+            choice_label=values,
+            is_test_label=True,
+        ),
+        timeout=timeout,
     )
 
 
@@ -481,6 +613,90 @@ def get_multi_dropdown_choices(uiform, label, is_test_label=False):
         return [choice for choice in choices if isinstance(choice, str) and choice.strip()]
 
     return []
+
+
+def get_dropdown_choices(uiform, label, is_test_label=False):
+    if not uiform:
+        return []
+
+    attribute_to_find = "testLabel" if is_test_label else "label"
+
+    for component in _iter_component_tree(uiform._state):
+        if not isinstance(component, dict):
+            continue
+
+        if component.get("#t") not in ("DropdownField", "DropdownWidget"):
+            continue
+
+        if component.get(attribute_to_find) != label:
+            continue
+
+        choices = component.get("choices")
+        if not isinstance(choices, list):
+            return []
+
+        return [choice for choice in choices if isinstance(choice, str) and choice.strip()]
+
+    return []
+
+
+def get_dropdown_choices_by_index(uiform, index):
+    if not uiform:
+        return []
+
+    dropdown_components = []
+    for component in _iter_component_tree(uiform._state):
+        if not isinstance(component, dict):
+            continue
+
+        if component.get("#t") in ("DropdownField", "DropdownWidget"):
+            dropdown_components.append(component)
+
+    if index < 1 or index > len(dropdown_components):
+        return []
+
+    target_component = dropdown_components[index - 1]
+    choices = target_component.get("choices")
+    if not isinstance(choices, list):
+        return []
+
+    return [choice for choice in choices if isinstance(choice, str) and choice.strip()]
+
+
+def _resolve_single_dropdown_value(label, requested_value, available_choices, selector_kind):
+    if requested_value is None:
+        log.warning(
+            "No value provided for dropdown '%s' (%s); skipping selection.",
+            label,
+            selector_kind,
+        )
+        return None
+
+    choice_by_key = {choice.casefold(): choice for choice in available_choices}
+    requested_key = str(requested_value).casefold()
+    resolved_value = choice_by_key.get(requested_key)
+
+    if resolved_value:
+        return resolved_value
+
+    fallback_value = available_choices[0] if available_choices else None
+    if fallback_value is None:
+        log.warning(
+            "No available choices found for dropdown '%s' (%s); skipping selection.",
+            label,
+            selector_kind,
+        )
+        return None
+
+    log.info(
+        "Adjusted dropdown '%s' (%s) value to currently available choice: requested=%s resolved=%s available=%s",
+        label,
+        selector_kind,
+        requested_value,
+        fallback_value,
+        available_choices,
+    )
+    return fallback_value
 
 
 def click_button(uiform, label, is_test_label=False, timeout=10):

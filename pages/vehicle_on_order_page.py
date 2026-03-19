@@ -39,25 +39,49 @@ class VehicleOnOrderPage(ReportsNavigationPage):
         if not uiform:
             return None
 
-        return select_multi_dropdown(uiform, "Product", products)
+        if self.page_filter_state.is_filter_set("product", products):
+            return uiform
+
+        result = select_multi_dropdown(uiform, "Product", products)
+        if result:
+            self.page_filter_state.set_filter("product", products)
+        return result
 
     def select_vehicle_type(self, uiform, vehicle_types):
         if not uiform:
             return None
 
-        return select_multi_dropdown(uiform, "Vehicle Type", vehicle_types)
+        if self.page_filter_state.is_filter_set("vehicle_type", vehicle_types):
+            return uiform
+
+        result = select_multi_dropdown(uiform, "Vehicle Type", vehicle_types)
+        if result:
+            self.page_filter_state.set_filter("vehicle_type", vehicle_types)
+        return result
 
     def select_power_train(self, uiform, power_trains):
         if not uiform:
             return None
 
-        return select_multi_dropdown(uiform, "Power Train", power_trains)
+        if self.page_filter_state.is_filter_set("power_train", power_trains):
+            return uiform
+
+        result = select_multi_dropdown(uiform, "Power Train", power_trains)
+        if result:
+            self.page_filter_state.set_filter("power_train", power_trains)
+        return result
 
     def select_expected_delivery(self, uiform, option):
         if not uiform:
             return None
 
-        return select_dropdown(uiform, "Expected Delivery", option)
+        if self.page_filter_state.is_filter_set("expected_delivery", option):
+            return uiform
+
+        result = select_dropdown(uiform, "Expected Delivery", option)
+        if result:
+            self.page_filter_state.set_filter("expected_delivery", option)
+        return result
 
     def search_record(self, uiform, value):
         return self.fill_report_search(uiform, value, self.SEARCH_BOX_TEST_LABELS)
