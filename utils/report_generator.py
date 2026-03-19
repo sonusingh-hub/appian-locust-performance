@@ -7,6 +7,7 @@ from datetime import datetime
 
 
 CSV_ENCODINGS = ("utf-8-sig", "utf-8", "cp1252", "latin-1")
+ANOMALY_MAX_RESPONSE_MS = 120000.0
 
 
 def _read_csv_rows(path):
@@ -56,7 +57,36 @@ def _pick(row, *keys, default=""):
     return default
 
 
-def generate_html_report(results_folder, scenario, environment, auto_open=True):
+def _get_outlier_threshold_ms(default=ANOMALY_MAX_RESPONSE_MS):
+    raw_value = os.environ.get("LOCUST_OUTLIER_THRESHOLD_MS", "")
+    return _to_float(raw_value, default=default)
+
+
+def _get_behavior_profile(default="realistic"):
+    raw_value = os.environ.get("LOCUST_USER_BEHAVIOR_PROFILE", default)
+    profile = str(raw_value or default).strip().lower()
+    return profile if profile in ("benchmark", "realistic") else default
+
+
+def _detect_outlier_run(summary_row, request_rows, threshold_ms=None):
+    if threshold_ms is None:
+        threshold_ms = _get_outlier_threshold_ms()
+
+    summary_max = _to_float(_pick(summary_row or {}, "Max Response Time", "Max (ms)", default=0))
+    details_max = 0.0
+
+    for row in request_rows:
+        details_max = max(
+            details_max,
+            _to_float(_pick(row, "Max Response Time", "Max (ms)", default=0)),
+        )
+
+    max_response_ms = max(summary_max, details_max)
+    is_outlier = max_response_ms >= threshold_ms
+    return is_outlier, max_response_ms
+
+
+def generate_html_report(results_folder, scenario, environment, auto_open=True, credential_mode=None, behavior_profile=None):
     stats_file = None
     failures_file = None
     history_file = None
@@ -86,6 +116,7 @@ def generate_html_report(results_folder, scenario, environment, auto_open=True):
             request_rows.append(row)
 
     generated_on = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    behavior_profile = str(behavior_profile or _get_behavior_profile()).strip().lower()
 
     summary_row = summary_rows[0] if summary_rows else {}
 
@@ -96,6 +127,12 @@ def generate_html_report(results_folder, scenario, environment, auto_open=True):
     p95_response = _to_float(_pick(summary_row, "95%", "95%ile (ms)", default=0))
     p99_response = _to_float(_pick(summary_row, "99%", "99%ile (ms)", default=0))
     current_rps = _to_float(_pick(summary_row, "Requests/s", "Current RPS", default=0))
+    outlier_threshold_ms = _get_outlier_threshold_ms()
+    is_outlier_run, max_response_time = _detect_outlier_run(
+        summary_row,
+        request_rows,
+        threshold_ms=outlier_threshold_ms,
+    )
 
     success_rate = 0.0
     if total_requests > 0:
@@ -143,6 +180,25 @@ def generate_html_report(results_folder, scenario, environment, auto_open=True):
     history_note = ""
     if not history_rows:
         history_note = "Trend charts are limited because no *_stats_history.csv file was found. Run Locust with --csv-full-history."
+
+    credential_mode_normalized = str(credential_mode or "").strip().lower()
+    reuse_warning = ""
+    if credential_mode_normalized == "reuse":
+        reuse_warning = (
+            "<div class='reuse-warning'>"
+            "Credential mode is <strong>reuse</strong>: credentials were reused across concurrent virtual users for this run."
+            "</div>"
+        )
+
+    outlier_warning = ""
+    if is_outlier_run:
+        outlier_warning = (
+            "<div class='outlier-warning'>"
+            "Run flagged as <strong>anomalous</strong>: max response time "
+            f"reached <strong>{max_response_time:,.2f} ms</strong> "
+            f"(threshold: {outlier_threshold_ms:,.0f} ms)."
+            "</div>"
+        )
 
     html = f"""
     <!DOCTYPE html>
@@ -289,6 +345,24 @@ def generate_html_report(results_folder, scenario, environment, auto_open=True):
                 font-size: 12px;
                 margin-top: 8px;
             }}
+            .reuse-warning {{
+                margin-top: 14px;
+                padding: 10px 12px;
+                border-radius: 10px;
+                background-color: #fff4e5;
+                border: 1px solid #f59e0b;
+                color: #92400e;
+                font-size: 13px;
+            }}
+            .outlier-warning {{
+                margin-top: 14px;
+                padding: 10px 12px;
+                border-radius: 10px;
+                background-color: #fef2f2;
+                border: 1px solid #ef4444;
+                color: #991b1b;
+                font-size: 13px;
+            }}
             @media (max-width: 1000px) {{
                 .grid-2 {{
                     grid-template-columns: 1fr;
@@ -303,9 +377,12 @@ def generate_html_report(results_folder, scenario, environment, auto_open=True):
                 <div class="meta">
                     <div><strong>Scenario:</strong> {html_lib.escape(str(scenario))}</div>
                     <div><strong>Environment:</strong> {html_lib.escape(str(environment))}</div>
+                    <div><strong>Behavior Profile:</strong> {html_lib.escape(behavior_profile.title())}</div>
                     <div><strong>Generated On:</strong> {generated_on}</div>
                     <div><strong>Results Folder:</strong> {html_lib.escape(str(results_folder))}</div>
                 </div>
+                {reuse_warning}
+                {outlier_warning}
             </div>
 
             <div class="cards">
@@ -389,8 +466,8 @@ def generate_html_report(results_folder, scenario, environment, auto_open=True):
                         <tr>
                             <td>{html_lib.escape(str(row.get("Type", "")))}</td>
                             <td>{html_lib.escape(str(row.get("Name", "")))}</td>
-                            <td>{html_lib.escape(str(row.get("# Requests", "")))}</td>
-                            <td>{html_lib.escape(str(row.get("# Fails", "")))}</td>
+                            <td>{html_lib.escape(str(_pick(row, "# Requests", "Request Count", default="")))}</td>
+                            <td>{html_lib.escape(str(_pick(row, "# Fails", "Failure Count", default="")))}</td>
                             <td>{html_lib.escape(str(row.get("Median Response Time", row.get("Median (ms)", ""))))}</td>
                             <td>{html_lib.escape(str(row.get("95%", row.get("95%ile (ms)", ""))))}</td>
                             <td>{html_lib.escape(str(row.get("Average Response Time", row.get("Average (ms)", ""))))}</td>
@@ -427,7 +504,7 @@ def generate_html_report(results_folder, scenario, environment, auto_open=True):
 
     if request_rows:
         for row in request_rows:
-            req_fails = _to_int(row.get("# Fails", 0))
+            req_fails = _to_int(_pick(row, "# Fails", "Failure Count", default=0))
             req_p95 = _to_float(row.get("95%", row.get("95%ile (ms)", 0)))
 
             if req_fails == 0 and req_p95 < 2000:
@@ -441,8 +518,8 @@ def generate_html_report(results_folder, scenario, environment, auto_open=True):
                         <tr>
                             <td>{html_lib.escape(str(row.get("Type", "")))}</td>
                             <td>{html_lib.escape(str(row.get("Name", "")))}</td>
-                            <td>{html_lib.escape(str(row.get("# Requests", "")))}</td>
-                            <td>{html_lib.escape(str(row.get("# Fails", "")))}</td>
+                            <td>{html_lib.escape(str(_pick(row, "# Requests", "Request Count", default="")))}</td>
+                            <td>{html_lib.escape(str(_pick(row, "# Fails", "Failure Count", default="")))}</td>
                             <td>{html_lib.escape(str(row.get("Median Response Time", row.get("Median (ms)", ""))))}</td>
                             <td>{html_lib.escape(str(row.get("95%", row.get("95%ile (ms)", ""))))}</td>
                             <td>{html_lib.escape(str(row.get("Average Response Time", row.get("Average (ms)", ""))))}</td>

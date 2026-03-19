@@ -20,22 +20,11 @@ param(
     [string]$runMode="realistic",
 
     [Parameter(Mandatory=$false)]
-    [ValidateSet("benchmark","realistic")]
-    [string]$userBehaviorProfile="realistic",
-
-    [Parameter(Mandatory=$false)]
     [ValidateSet("auto","reserved","reserve","reuse")]
     [string]$credentialMode="auto",
 
     [Parameter(Mandatory=$false)]
-    [double]$outlierThresholdMs=120000,
-
-    [Parameter(Mandatory=$false)]
-    [ValidateSet("off","minimal","full")]
-    [string]$reportMode="minimal",
-
-    [Parameter(Mandatory=$false)]
-    [switch]$collectFullHistory
+    [double]$outlierThresholdMs=120000
 )
 
 $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
@@ -48,11 +37,8 @@ Write-Host "Environment: $env"
 Write-Host "Execution Mode: $executionMode"
 Write-Host "Log Level: $logLevel"
 Write-Host "Run Mode: $runMode"
-Write-Host "User Behavior Profile: $userBehaviorProfile"
 Write-Host "Credential Mode: $credentialMode"
 Write-Host "Outlier Threshold (ms): $outlierThresholdMs"
-Write-Host "Report Mode: $reportMode"
-Write-Host "CSV Full History: $collectFullHistory"
 Write-Host "Results Folder: $resultsFolder"
 Write-Host "-------------------------------------"
 Write-Host ""
@@ -61,27 +47,7 @@ $env:APP_ENV = $env
 $env:LOCUST_SCENARIO = $scenario
 $env:LOCUST_EXECUTION_MODE = $executionMode
 $env:LOCUST_RUN_MODE = $runMode
-$env:LOCUST_USER_BEHAVIOR_PROFILE = $userBehaviorProfile
 $env:LOCUST_OUTLIER_THRESHOLD_MS = "$outlierThresholdMs"
-
-function Get-RecommendedCredentialMode {
-    param(
-        [int]$users,
-        [int]$availableUsers
-    )
-
-    if ($availableUsers -le 0) {
-        return "reuse"
-    }
-
-    # Keep headroom for session churn/refresh and avoid reservation contention.
-    $reservedCapacity = [int][math]::Floor($availableUsers * 0.70)
-    if ($users -le [math]::Max($reservedCapacity, 1)) {
-        return "reserved"
-    }
-
-    return "reuse"
-}
 
 New-Item -ItemType Directory -Force -Path $resultsFolder | Out-Null
 
@@ -121,40 +87,46 @@ function Run-LocustScenario {
     $effectiveCredentialMode = $normalizedCredentialMode
 
     if ($normalizedCredentialMode -eq "auto") {
-        $effectiveCredentialMode = Get-RecommendedCredentialMode -users $users -availableUsers $availableUsers
+        if ($users -le $availableUsers -and $availableUsers -gt 0) {
+            $effectiveCredentialMode = "reserved"
+        }
+        else {
+            $effectiveCredentialMode = "reuse"
+        }
     }
 
     $env:LOCUST_CREDENTIAL_MODE = $effectiveCredentialMode
 
     Write-Host "Scenario users: $users | Available creds: $availableUsers | Effective credential mode: $effectiveCredentialMode"
 
-    $commonArgs = @(
-        "--headless",
-        "--loglevel", $logLevel,
-        "-t", $duration,
-        "--stop-timeout", $stopTimeout,
-        "--csv", "$resultsFolder\$csvPrefix"
-    )
-    if ($collectFullHistory) {
-        $commonArgs += "--csv-full-history"
-    }
-
     if ($executionMode -eq "step") {
-        locust -f locustfile.py,load_shapes/step_load_shape.py @commonArgs
+        locust `
+            -f locustfile.py,load_shapes/step_load_shape.py `
+            --headless `
+            --loglevel $logLevel `
+            -t $duration `
+            --stop-timeout $stopTimeout `
+            --csv "$resultsFolder\$csvPrefix" `
+            --csv-full-history
     }
     else {
-        locust -f locustfile.py -u $users -r $spawnRate @commonArgs
-    }
-
-    if ($LASTEXITCODE -ne 0) {
-        throw "Locust execution failed with exit code $LASTEXITCODE"
+        locust `
+            -f locustfile.py `
+            --headless `
+            --loglevel $logLevel `
+            -u $users `
+            -r $spawnRate `
+            -t $duration `
+            --stop-timeout $stopTimeout `
+            --csv "$resultsFolder\$csvPrefix" `
+            --csv-full-history
     }
 }
 
 switch ($scenario) {
 
     "smoke" {
-        Run-LocustScenario -users 1 -spawnRate 1 -duration "2m" -stopTimeout "15s" -csvPrefix "smoke"
+        Run-LocustScenario -users 5 -spawnRate 5 -duration "2m" -stopTimeout "15s" -csvPrefix "smoke"
     }
 
     "smoke_10" {
@@ -195,27 +167,10 @@ switch ($scenario) {
 }
 
 Write-Host ""
-if ($reportMode -eq "off") {
-    Write-Host "Skipping report generation (reportMode=off)."
-}
-elseif ($reportMode -eq "minimal") {
-    Write-Host "Generating minimal report (PDF only)..."
-    python -c "from utils.pdf_report_generator import generate_pdf_summary; generate_pdf_summary(r'$resultsFolder', '$scenario', '$env', credential_mode='$env:LOCUST_CREDENTIAL_MODE', behavior_profile='$env:LOCUST_USER_BEHAVIOR_PROFILE')"
-    if ($LASTEXITCODE -ne 0) {
-        throw "PDF report generation failed with exit code $LASTEXITCODE"
-    }
-}
-else {
-    Write-Host "Generating full reports (HTML + PDF)..."
-    python -c "from utils.report_generator import generate_html_report; generate_html_report(r'$resultsFolder', '$scenario', '$env', auto_open=False, credential_mode='$env:LOCUST_CREDENTIAL_MODE', behavior_profile='$env:LOCUST_USER_BEHAVIOR_PROFILE')"
-    if ($LASTEXITCODE -ne 0) {
-        throw "HTML report generation failed with exit code $LASTEXITCODE"
-    }
-    python -c "from utils.pdf_report_generator import generate_pdf_summary; generate_pdf_summary(r'$resultsFolder', '$scenario', '$env', credential_mode='$env:LOCUST_CREDENTIAL_MODE', behavior_profile='$env:LOCUST_USER_BEHAVIOR_PROFILE')"
-    if ($LASTEXITCODE -ne 0) {
-        throw "PDF report generation failed with exit code $LASTEXITCODE"
-    }
-}
+Write-Host "Generating HTML and PDF reports..."
+
+python -c "from utils.report_generator import generate_html_report; generate_html_report(r'$resultsFolder', '$scenario', '$env', auto_open=True, credential_mode='$env:LOCUST_CREDENTIAL_MODE')"
+python -c "from utils.pdf_report_generator import generate_pdf_summary; generate_pdf_summary(r'$resultsFolder', '$scenario', '$env', credential_mode='$env:LOCUST_CREDENTIAL_MODE')"
 
 Write-Host ""
 Write-Host "Test Completed."

@@ -3,6 +3,7 @@ from core.ui_helpers import (
     click_button,
     click_field,
     fill_text_field,
+    select_multi_dropdown_test_label,
     has_component_label,
     has_component_text,
     has_component_icon,
@@ -76,10 +77,11 @@ class ManageUserPage(BasePage):
         if not uiform:
             return None
 
-        return uiform.select_multi_dropdown_item(
-            label=self.USER_FILTER_TEST_LABEL,
-            choice_label=groups,
-            is_test_label=True,
+        return select_multi_dropdown_test_label(
+            uiform,
+            test_label=self.USER_FILTER_TEST_LABEL,
+            values=groups,
+            timeout=3,
         )
 
     def export_grid(self, uiform):

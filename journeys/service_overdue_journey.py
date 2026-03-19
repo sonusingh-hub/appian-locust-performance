@@ -53,7 +53,19 @@ class ServiceOverdueJourney(BaseJourney):
 
             think_time()
 
-        uiform = page.select_month(uiform, DataEngine.service_overdue_month())
+        filter_values = self._get_page_filter_values(
+            "service_overdue",
+            lambda: {
+                "month": DataEngine.service_overdue_month(),
+                "product": DataEngine.service_overdue_products(count=self._multi_select_count(4)),
+                "overdue_by": DataEngine.overdue_by(),
+                "vehicle_type": DataEngine.vehicle_type_list(count=self._multi_select_count(4)),
+                "power_train": DataEngine.power_train_list(count=self._multi_select_count(4)),
+                "maintenance_included": DataEngine.maintenance_included(),
+            },
+        )
+
+        uiform = page.select_month(uiform, filter_values["month"])
         if not uiform:
             return None
 
@@ -61,14 +73,14 @@ class ServiceOverdueJourney(BaseJourney):
 
         uiform = page.select_product(
             uiform,
-            DataEngine.service_overdue_products(count=self._multi_select_count(4)),
+            filter_values["product"],
         )
         if not uiform:
             return None
 
         think_time()
 
-        uiform = page.select_overdue_by(uiform, DataEngine.overdue_by())
+        uiform = page.select_overdue_by(uiform, filter_values["overdue_by"])
         if not uiform:
             return None
 
@@ -76,7 +88,7 @@ class ServiceOverdueJourney(BaseJourney):
 
         uiform = page.select_vehicle_type(
             uiform,
-            DataEngine.vehicle_type_list(count=self._multi_select_count(4)),
+            filter_values["vehicle_type"],
         )
         if not uiform:
             return None
@@ -85,14 +97,14 @@ class ServiceOverdueJourney(BaseJourney):
 
         uiform = page.select_power_train(
             uiform,
-            DataEngine.power_train_list(count=self._multi_select_count(4)),
+            filter_values["power_train"],
         )
         if not uiform:
             return None
 
         think_time()
 
-        uiform = page.select_maintenance_included(uiform, DataEngine.maintenance_included())
+        uiform = page.select_maintenance_included(uiform, filter_values["maintenance_included"])
         if not uiform:
             return None
 
@@ -141,12 +153,6 @@ class ServiceOverdueJourney(BaseJourney):
 
             think_time()
 
-        uiform = self._return_to_service_overdue(page)
-        if not uiform:
-            return
-
-        think_time()
-
     @task(4)
     def service_overdue_filter_flow(self):
         page, uiform = self._open_service_overdue()
@@ -188,4 +194,5 @@ class ServiceOverdueJourney(BaseJourney):
         if not uiform:
             return
 
+        self._clear_page_filter_values("service_overdue")
         think_time()

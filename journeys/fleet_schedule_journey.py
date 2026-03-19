@@ -54,7 +54,18 @@ class FleetScheduleJourney(BaseJourney):
 
             think_time()
 
-        uiform = page.select_month(uiform, DataEngine.month())
+        filter_values = self._get_page_filter_values(
+            "fleet_schedule",
+            lambda: {
+                "month": DataEngine.month(),
+                "product": DataEngine.fleet_schedule_products(count=self._multi_select_count(4)),
+                "vehicle_type": DataEngine.vehicle_type_list(count=self._multi_select_count(4)),
+                "imminent_expiry": DataEngine.imminent_expiry(),
+                "power_train": DataEngine.power_train_list(count=self._multi_select_count(4)),
+            },
+        )
+
+        uiform = page.select_month(uiform, filter_values["month"])
         if not uiform:
             return None
 
@@ -62,7 +73,7 @@ class FleetScheduleJourney(BaseJourney):
 
         uiform = page.select_product(
             uiform,
-            DataEngine.fleet_schedule_products(count=self._multi_select_count(4)),
+            filter_values["product"],
         )
         if not uiform:
             return None
@@ -71,14 +82,14 @@ class FleetScheduleJourney(BaseJourney):
 
         uiform = page.select_vehicle_type(
             uiform,
-            DataEngine.vehicle_type_list(count=self._multi_select_count(4)),
+            filter_values["vehicle_type"],
         )
         if not uiform:
             return None
 
         think_time()
 
-        uiform = page.select_imminent_expiry(uiform, DataEngine.imminent_expiry())
+        uiform = page.select_imminent_expiry(uiform, filter_values["imminent_expiry"])
         if not uiform:
             return None
 
@@ -86,7 +97,7 @@ class FleetScheduleJourney(BaseJourney):
 
         uiform = page.select_power_train(
             uiform,
-            DataEngine.power_train_list(count=self._multi_select_count(4)),
+            filter_values["power_train"],
         )
         if not uiform:
             return None
@@ -128,12 +139,6 @@ class FleetScheduleJourney(BaseJourney):
                 return
 
             think_time()
-
-        uiform = self._return_to_fleet_schedule(page)
-        if not uiform:
-            return
-
-        think_time()
 
     @task(4)
     def fleet_schedule_filter_flow(self):
@@ -208,12 +213,6 @@ class FleetScheduleJourney(BaseJourney):
 
         think_time()
 
-        uiform = self._return_to_fleet_schedule(page)
-        if not uiform:
-            return
-
-        think_time()
-
     @task(1)
     def fleet_schedule_reset_global_filters_flow(self):
         page, uiform = self._open_fleet_schedule()
@@ -224,4 +223,5 @@ class FleetScheduleJourney(BaseJourney):
         if not uiform:
             return
 
+        self._clear_page_filter_values("fleet_schedule")
         think_time()

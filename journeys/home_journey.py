@@ -71,6 +71,26 @@ class HomeJourney(BaseJourney):
             return
 
         think_time()
+        if self.filter_state.is_applied:
+            return
+
+        vals = self._get_page_filter_values("home_global", lambda: {
+            "countries": DataEngine.home_country_list(),
+            "client_groups": DataEngine.home_client_groups(),
+            "client_names": DataEngine.home_client_names(),
+            "bill_to_values": DataEngine.home_bill_to(),
+        })
+
+        # Country must be set before Client Group choices are populated.
+        uiform = page.apply_global_filters(
+            uiform,
+            self.filter_state,
+            **vals,
+        )
+        if not uiform:
+            return
+
+        think_time()
 
     @task(1)
     def home_reset_filters_flow(self):
@@ -84,4 +104,5 @@ class HomeJourney(BaseJourney):
         if not uiform:
             return
 
+        self._clear_page_filter_values("home_global")
         think_time()

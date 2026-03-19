@@ -1,4 +1,5 @@
 import csv
+import os
 from collections import deque
 from gevent.lock import Semaphore
 
@@ -9,6 +10,11 @@ class CredentialPool:
     _available_users = None
     _in_use_users = set()
     _lock = Semaphore()
+
+    @classmethod
+    def _get_credential_mode(cls):
+        mode = os.getenv("LOCUST_CREDENTIAL_MODE", "reuse").strip().lower()
+        return mode if mode in ("reserved", "reuse") else "reuse"
 
     @classmethod
     def _load_users(cls, csv_path="data/users.csv"):
@@ -38,13 +44,24 @@ class CredentialPool:
             if cls._available_users is None:
                 cls._load_users(csv_path)
 
+            mode = cls._get_credential_mode()
+
             if not cls._available_users:
+                selected_env = get_selected_environment()
                 raise RuntimeError(
-                    "No credentials available in users.csv for the selected environment."
+                    f"No credentials available for environment '{selected_env}'. "
+                    f"In-use users: {len(cls._in_use_users)}. "
+                    "Add more users to data/users.csv or reduce Locust user count."
                 )
 
-            user = cls._available_users.popleft()
-            cls._available_users.append(user)
+            if mode == "reuse":
+                # Round-robin credential reuse supports high-user scenarios
+                # when unique accounts are limited.
+                user = cls._available_users.popleft()
+                cls._available_users.append(user)
+            else:
+                user = cls._available_users.popleft()
+                cls._in_use_users.add(user)
 
             return [user[0], user[1]]
 
@@ -56,5 +73,14 @@ class CredentialPool:
         with cls._lock:
             if cls._available_users is None:
                 return
-            # No action needed in round-robin reuse mode
+
+            if cls._get_credential_mode() == "reuse":
+                # No release bookkeeping needed for round-robin reuse mode.
+                return
+
+            user = (auth[0], auth[1])
+            if user in cls._in_use_users:
+                cls._in_use_users.remove(user)
+                cls._available_users.append(user)
+
             return

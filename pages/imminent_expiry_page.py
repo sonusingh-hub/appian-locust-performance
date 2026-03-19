@@ -36,43 +36,72 @@ class ImminentExpiryPage(ReportsNavigationPage):
         return self.open_imminent_expiry(uiform)
 
     def select_month(self, uiform, month):
-        """Select the Month filter.
-
-        Falls back to multi-select when the Month field is a
-        MultipleDropdownWidget rather than a DropdownField.
+        """
+        Select the Month filter. Handles both DropdownField and MultipleDropdownWidget renderings.
         """
         if not uiform:
             return None
 
+        if self.page_filter_state.is_filter_set("month", month):
+            return uiform
+
         updated = select_dropdown(uiform, "Month", month, timeout=3)
         if updated:
+            self.page_filter_state.set_filter("month", month)
             return updated
 
-        return select_multi_dropdown(uiform, "Month", [month])
+        result = select_multi_dropdown(uiform, "Month", [month])
+        if result:
+            self.page_filter_state.set_filter("month", month)
+        return result
 
     def select_product(self, uiform, products):
         if not uiform:
             return None
 
-        return select_multi_dropdown(uiform, "Product", products)
+        if self.page_filter_state.is_filter_set("product", products):
+            return uiform
+
+        result = select_multi_dropdown(uiform, "Product", products)
+        if result:
+            self.page_filter_state.set_filter("product", products)
+        return result
 
     def select_vehicle_type(self, uiform, vehicle_types):
         if not uiform:
             return None
 
-        return select_multi_dropdown(uiform, "Vehicle Type", vehicle_types)
+        if self.page_filter_state.is_filter_set("vehicle_type", vehicle_types):
+            return uiform
+
+        result = select_multi_dropdown(uiform, "Vehicle Type", vehicle_types)
+        if result:
+            self.page_filter_state.set_filter("vehicle_type", vehicle_types)
+        return result
 
     def select_imminent_expiry(self, uiform, option):
         if not uiform:
             return None
 
-        return select_dropdown(uiform, "Imminent Expiry", option)
+        if self.page_filter_state.is_filter_set("imminent_expiry", option):
+            return uiform
+
+        result = select_dropdown(uiform, "Imminent Expiry", option)
+        if result:
+            self.page_filter_state.set_filter("imminent_expiry", option)
+        return result
 
     def select_power_train(self, uiform, power_trains):
         if not uiform:
             return None
 
-        return select_multi_dropdown(uiform, "Power Train", power_trains)
+        if self.page_filter_state.is_filter_set("power_train", power_trains):
+            return uiform
+
+        result = select_multi_dropdown(uiform, "Power Train", power_trains)
+        if result:
+            self.page_filter_state.set_filter("power_train", power_trains)
+        return result
 
     def export_report(self, uiform):
         if not uiform:

@@ -39,9 +39,20 @@ class SustainabilityJourney(BaseJourney):
 
             think_time()
 
+        filter_values = self._get_page_filter_values(
+            "sustainability",
+            lambda: {
+                "product": DataEngine.sustainability_products(count=self._multi_select_count(4)),
+                "vehicle_type": DataEngine.vehicle_type_list(count=self._multi_select_count(4)),
+                "power_train": DataEngine.power_train_list(count=self._multi_select_count(4)),
+                "start_date": DataEngine.sustainability_start_date(),
+                "end_date": DataEngine.sustainability_end_date(),
+            },
+        )
+
         uiform = page.select_product(
             uiform,
-            DataEngine.sustainability_products(count=self._multi_select_count(4)),
+            filter_values["product"],
         )
         if not uiform:
             return None
@@ -50,7 +61,7 @@ class SustainabilityJourney(BaseJourney):
 
         uiform = page.select_vehicle_type(
             uiform,
-            DataEngine.vehicle_type_list(count=self._multi_select_count(4)),
+            filter_values["vehicle_type"],
         )
         if not uiform:
             return None
@@ -59,14 +70,14 @@ class SustainabilityJourney(BaseJourney):
 
         uiform = page.select_power_train(
             uiform,
-            DataEngine.power_train_list(count=self._multi_select_count(4)),
+            filter_values["power_train"],
         )
         if not uiform:
             return None
 
         think_time()
 
-        start_date = DataEngine.sustainability_start_date()
+        start_date = filter_values["start_date"]
         uiform = page.set_start_date(
             uiform,
             start_date["year"],
@@ -78,7 +89,7 @@ class SustainabilityJourney(BaseJourney):
 
         think_time()
 
-        end_date = DataEngine.sustainability_end_date()
+        end_date = filter_values["end_date"]
         uiform = page.set_end_date(
             uiform,
             end_date["year"],
@@ -111,4 +122,5 @@ class SustainabilityJourney(BaseJourney):
         if not uiform:
             return
 
+        self._clear_page_filter_values("sustainability")
         think_time()

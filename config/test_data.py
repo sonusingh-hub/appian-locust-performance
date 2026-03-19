@@ -26,6 +26,7 @@ LEASE_PRODUCTS = [
 VEHICLE_TYPES = [
     "Light Commercial",
     "Passenger",
+    "Thailand vehicle type"
     "Trailer",
     "Truck"
 ]
@@ -125,7 +126,6 @@ SUSTAINABILITY_START_DATES = [
 ]
 
 SUSTAINABILITY_END_DATES = [
-    {"year": 2026, "month": 3, "day": 10},
     {"year": 2026, "month": 3, "day": 15}
 ]
 
@@ -140,9 +140,9 @@ SERVICE_OVERDUE_PRODUCTS = [
 ]
 
 OVERDUE_BY_OPTIONS = [
-    "Days",
-    "KMs",
-    "Both"
+    "Days Only",
+    "KMs Only",
+    "KMs and Days"
 ]
 
 REGISTRATIONS = [

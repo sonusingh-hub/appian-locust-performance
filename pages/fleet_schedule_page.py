@@ -40,51 +40,81 @@ class FleetSchedulePage(ReportsNavigationPage):
         if not uiform:
             return None
 
-        return select_dropdown(
+        if self.page_filter_state.is_filter_set("month", month):
+            return uiform
+
+        result = select_dropdown(
             uiform,
             "Month",
             month,
         )
+        if result:
+            self.page_filter_state.set_filter("month", month)
+        return result
 
     def select_product(self, uiform, products):
         if not uiform:
             return None
 
-        return select_multi_dropdown(
+        if self.page_filter_state.is_filter_set("product", products):
+            return uiform
+
+        result = select_multi_dropdown(
             uiform,
             "Product",
             products,
         )
+        if result:
+            self.page_filter_state.set_filter("product", products)
+        return result
 
     def select_vehicle_type(self, uiform, vehicle_types):
         if not uiform:
             return None
 
-        return select_multi_dropdown(
+        if self.page_filter_state.is_filter_set("vehicle_type", vehicle_types):
+            return uiform
+
+        result = select_multi_dropdown(
             uiform,
             "Vehicle Type",
             vehicle_types,
         )
+        if result:
+            self.page_filter_state.set_filter("vehicle_type", vehicle_types)
+        return result
 
     def select_imminent_expiry(self, uiform, option):
         if not uiform:
             return None
 
-        return select_dropdown(
+        if self.page_filter_state.is_filter_set("imminent_expiry", option):
+            return uiform
+
+        result = select_dropdown(
             uiform,
             "Imminent Expiry",
             option,
         )
+        if result:
+            self.page_filter_state.set_filter("imminent_expiry", option)
+        return result
 
     def select_power_train(self, uiform, power_trains):
         if not uiform:
             return None
 
-        return select_multi_dropdown(
+        if self.page_filter_state.is_filter_set("power_train", power_trains):
+            return uiform
+
+        result = select_multi_dropdown(
             uiform,
             "Power Train",
             power_trains,
         )
+        if result:
+            self.page_filter_state.set_filter("power_train", power_trains)
+        return result
 
     def search_record(self, uiform, value):
         return self.fill_report_search(uiform, value, self.SEARCH_BOX_TEST_LABELS)

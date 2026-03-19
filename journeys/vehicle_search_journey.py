@@ -2,7 +2,7 @@ from locust import task
 import random
 
 from journeys.base_journey import BaseJourney
-from utils.waits import think_time, small_wait
+from utils.waits import think_time, small_wait, reading_pause
 from data.data_engine import DataEngine
 from pages.vehicle_search_page import VehicleSearchPage
 
@@ -39,7 +39,12 @@ class VehicleSearchJourney(BaseJourney):
         if not uiform:
             return
 
-        think_time()
+        # 8% chance the user browses the report page and navigates away
+        # without continuing to the vehicle search — normal user behaviour.
+        if self._should_abandon(0.08):
+            return
+
+        reading_pause(rows=20)
 
         uiform = page.open_vehicle_search(uiform)
         if not uiform:
@@ -53,9 +58,10 @@ class VehicleSearchJourney(BaseJourney):
 
         think_time()
 
-        uiform = page.fill_registration(
-            uiform,
-            DataEngine.registration()
+        reg_vals = self._get_page_filter_values(
+            "vehicle_search_reg",
+            lambda: {"registration": DataEngine.registration()},
         )
+        uiform = page.fill_registration(uiform, reg_vals["registration"])
 
         think_time()
