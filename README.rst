@@ -140,6 +140,126 @@ If everything is set up correctly, you should see a link to the `Locust web inte
 
 ``appian-locust`` should now be ready to run your Locust performance tests!
 
+Consolidated Client Report (PowerShell Runner)
+----------------------------------------------
+
+If you are using ``run_tests.ps1`` and want a single client-facing PDF that consolidates recent scenario runs, use the ``-generateClientReport`` switch.
+
+Example:
+
+.. code-block:: powershell
+
+  .\run_tests.ps1 -scenario baseline_50 -env TEST -reportMode full -generateClientReport
+
+Outputs:
+
+- Per-run artifacts are generated in the scenario result folder (for example ``results\baseline_50_<timestamp>``).
+- Consolidated report is generated at ``results\apac_performance_report.pdf``.
+
+Notes:
+
+- The consolidated report is built from discovered scenario result folders containing ``*_stats.csv``.
+- By default, the latest 5 runs are included globally.
+
+PowerShell Runner Command Reference
+-----------------------------------
+
+The framework runner is ``run_tests.ps1``.
+
+Base syntax:
+
+.. code-block:: powershell
+
+  .\run_tests.ps1 -scenario <scenario> [options]
+
+Supported scenarios:
+
+- ``smoke``
+- ``smoke_10``
+- ``baseline_25``
+- ``baseline_50``
+- ``baseline_100``
+- ``standard``
+- ``peak``
+- ``stress400``
+- ``stress500``
+- ``spike``
+
+Supported option values:
+
+- ``-env``: ``TEST`` | ``PRE-PROD``
+- ``-executionMode``: ``normal`` | ``step``
+- ``-logLevel``: ``DEBUG`` | ``INFO`` | ``WARNING`` | ``ERROR`` | ``CRITICAL``
+- ``-runMode``: ``realistic`` | ``balanced`` | ``stress``
+- ``-userBehaviorProfile``: ``benchmark`` | ``realistic``
+- ``-credentialMode``: ``auto`` | ``reserved`` | ``reserve`` | ``reuse``
+- ``-reportMode``: ``off`` | ``minimal`` | ``full``
+- ``-outlierThresholdMs``: numeric value (default ``120000``)
+- ``-collectFullHistory``: switch
+- ``-generateClientReport``: switch
+
+Scenario command examples:
+
+.. code-block:: powershell
+
+  .\run_tests.ps1 -scenario smoke
+  .\run_tests.ps1 -scenario smoke_10
+  .\run_tests.ps1 -scenario baseline_25
+  .\run_tests.ps1 -scenario baseline_50
+  .\run_tests.ps1 -scenario baseline_100
+  .\run_tests.ps1 -scenario standard
+  .\run_tests.ps1 -scenario peak
+  .\run_tests.ps1 -scenario stress400
+  .\run_tests.ps1 -scenario stress500
+  .\run_tests.ps1 -scenario spike
+
+Common combinations:
+
+.. code-block:: powershell
+
+  # Full reports (HTML + PDF)
+  .\run_tests.ps1 -scenario baseline_50 -env TEST -reportMode full
+
+  # PDF-only report
+  .\run_tests.ps1 -scenario baseline_25 -reportMode minimal
+
+  # Disable report generation
+  .\run_tests.ps1 -scenario smoke_10 -reportMode off
+
+  # Step load-shape execution
+  .\run_tests.ps1 -scenario baseline_50 -executionMode step
+
+  # Benchmark behavior profile
+  .\run_tests.ps1 -scenario baseline_50 -userBehaviorProfile benchmark
+
+  # Explicit credential reuse
+  .\run_tests.ps1 -scenario baseline_50 -credentialMode reuse
+
+  # Include full Locust history CSV
+  .\run_tests.ps1 -scenario baseline_50 -collectFullHistory
+
+  # Full run + consolidated client report
+  .\run_tests.ps1 -scenario baseline_50 -env TEST -reportMode full -generateClientReport
+
+Consolidated report only (from existing results folders):
+
+.. code-block:: powershell
+
+  .\.venv\Scripts\python.exe scripts\generate_client_report.py --results-root results --output results\apac_performance_report.pdf --max-runs 5
+
+Consolidated report examples (scenario filters and latest-N):
+
+.. code-block:: powershell
+
+  # Latest 3 runs only from baseline/smoke/baseline_25
+  .\.venv\Scripts\python.exe scripts\generate_client_report.py --results-root results --scenarios baseline smoke baseline_25 --max-runs 3
+
+  # Same as above using comma-separated scenario filters
+  .\.venv\Scripts\python.exe scripts\generate_client_report.py --results-root results --scenarios baseline,smoke,baseline_25 --max-runs 3
+
+  # Latest 2 runs globally from any scenario category
+  .\.venv\Scripts\python.exe scripts\generate_client_report.py --results-root results --max-runs 2
+
 Troubleshooting
 ----------------
 
