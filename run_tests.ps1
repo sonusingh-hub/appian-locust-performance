@@ -35,6 +35,9 @@ param(
     [string]$reportMode="minimal",
 
     [Parameter(Mandatory=$false)]
+    [switch]$generateClientReport,
+
+    [Parameter(Mandatory=$false)]
     [switch]$collectFullHistory
 )
 
@@ -52,6 +55,7 @@ Write-Host "User Behavior Profile: $userBehaviorProfile"
 Write-Host "Credential Mode: $credentialMode"
 Write-Host "Outlier Threshold (ms): $outlierThresholdMs"
 Write-Host "Report Mode: $reportMode"
+Write-Host "Generate Client Report: $generateClientReport"
 Write-Host "CSV Full History: $collectFullHistory"
 Write-Host "Results Folder: $resultsFolder"
 Write-Host "-------------------------------------"
@@ -63,6 +67,7 @@ $env:LOCUST_EXECUTION_MODE = $executionMode
 $env:LOCUST_RUN_MODE = $runMode
 $env:LOCUST_USER_BEHAVIOR_PROFILE = $userBehaviorProfile
 $env:LOCUST_OUTLIER_THRESHOLD_MS = "$outlierThresholdMs"
+$reportPython = if (Test-Path ".venv\Scripts\python.exe") { ".venv\Scripts\python.exe" } else { "python" }
 
 function Get-RecommendedCredentialMode {
     param(
@@ -154,19 +159,19 @@ function Run-LocustScenario {
 switch ($scenario) {
 
     "smoke" {
-        Run-LocustScenario -users 1 -spawnRate 1 -duration "2m" -stopTimeout "15s" -csvPrefix "smoke"
+        Run-LocustScenario -users 5 -spawnRate 10 -duration "5m" -stopTimeout "15s" -csvPrefix "smoke"
     }
 
     "smoke_10" {
-        Run-LocustScenario -users 10 -spawnRate 5 -duration "2m" -stopTimeout "15s" -csvPrefix "smoke_10"
+        Run-LocustScenario -users 10 -spawnRate 60 -duration "10m" -stopTimeout "15s" -csvPrefix "smoke_10"
     }
 
     "baseline_25" {
-        Run-LocustScenario -users 25 -spawnRate 10 -duration "20m" -stopTimeout "15s" -csvPrefix "baseline_25"
+        Run-LocustScenario -users 25 -spawnRate 300 -duration "20m" -stopTimeout "15s" -csvPrefix "baseline_25"
     }
 
     "baseline_50" {
-        Run-LocustScenario -users 50 -spawnRate 10 -duration "20m" -stopTimeout "15s" -csvPrefix "baseline_50"
+        Run-LocustScenario -users 50 -spawnRate 600 -duration "20m" -stopTimeout "15s" -csvPrefix "baseline_50"
     }
 
     "baseline_100" {
@@ -200,21 +205,30 @@ if ($reportMode -eq "off") {
 }
 elseif ($reportMode -eq "minimal") {
     Write-Host "Generating minimal report (PDF only)..."
-    python -c "from utils.pdf_report_generator import generate_pdf_summary; generate_pdf_summary(r'$resultsFolder', '$scenario', '$env', credential_mode='$env:LOCUST_CREDENTIAL_MODE', behavior_profile='$env:LOCUST_USER_BEHAVIOR_PROFILE')"
+    & $reportPython -c "from utils.pdf_report_generator import generate_pdf_summary; generate_pdf_summary(r'$resultsFolder', '$scenario', '$env', credential_mode='$env:LOCUST_CREDENTIAL_MODE', behavior_profile='$env:LOCUST_USER_BEHAVIOR_PROFILE')"
     if ($LASTEXITCODE -ne 0) {
         throw "PDF report generation failed with exit code $LASTEXITCODE"
     }
 }
 else {
     Write-Host "Generating full reports (HTML + PDF)..."
-    python -c "from utils.report_generator import generate_html_report; generate_html_report(r'$resultsFolder', '$scenario', '$env', auto_open=False, credential_mode='$env:LOCUST_CREDENTIAL_MODE', behavior_profile='$env:LOCUST_USER_BEHAVIOR_PROFILE')"
+    & $reportPython -c "from utils.report_generator import generate_html_report; generate_html_report(r'$resultsFolder', '$scenario', '$env', auto_open=False, credential_mode='$env:LOCUST_CREDENTIAL_MODE', behavior_profile='$env:LOCUST_USER_BEHAVIOR_PROFILE')"
     if ($LASTEXITCODE -ne 0) {
         throw "HTML report generation failed with exit code $LASTEXITCODE"
     }
-    python -c "from utils.pdf_report_generator import generate_pdf_summary; generate_pdf_summary(r'$resultsFolder', '$scenario', '$env', credential_mode='$env:LOCUST_CREDENTIAL_MODE', behavior_profile='$env:LOCUST_USER_BEHAVIOR_PROFILE')"
+    & $reportPython -c "from utils.pdf_report_generator import generate_pdf_summary; generate_pdf_summary(r'$resultsFolder', '$scenario', '$env', credential_mode='$env:LOCUST_CREDENTIAL_MODE', behavior_profile='$env:LOCUST_USER_BEHAVIOR_PROFILE')"
     if ($LASTEXITCODE -ne 0) {
         throw "PDF report generation failed with exit code $LASTEXITCODE"
     }
+}
+
+if ($generateClientReport) {
+    Write-Host "Generating consolidated client report from discovered baseline runs..."
+    & $reportPython scripts\generate_client_report.py --results-root results --output results\apac_performance_report.pdf --max-runs 5
+    if ($LASTEXITCODE -ne 0) {
+        throw "Client report generation failed with exit code $LASTEXITCODE"
+    }
+    Write-Host "Client report saved to: results\apac_performance_report.pdf"
 }
 
 Write-Host ""

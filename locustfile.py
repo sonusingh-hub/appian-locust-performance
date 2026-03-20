@@ -31,18 +31,18 @@ class OrionUser(HttpUser):
     # Weighted task mix — reflects realistic Orion APAC usage patterns.
     # Higher weight = more VUsers assigned to that journey proportionally.
     tasks = {
-        FleetScheduleJourney: 7,
-        VehicleOnOrderJourney: 6,
-        AlertsJourney: 4,
+        FleetScheduleJourney: 4,
+        VehicleOnOrderJourney: 4,
+        AlertsJourney: 3,
         ImminentExpiryJourney: 4,
         VehicleUtilisationJourney: 4,
         ServiceOverdueJourney: 4,
         SustainabilityJourney: 3,
-        FilterJourney: 3,
+        FilterJourney: 1,
         VehicleSearchJourney: 2,
-        ExportJourney: 1,
-        UpdateProfileJourney: 1,
-        ManageUserJourney: 1,
+        ExportJourney: 0,
+        UpdateProfileJourney: 0,
+        ManageUserJourney: 0,
         HomeJourney: 1,
     }
 

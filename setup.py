@@ -31,7 +31,9 @@ setup(
     install_requires=[
         "locust>=2.40.2",
         "uritemplate>=4.1.1",
-        "sseclient-py>=1.8.0"
+        "sseclient-py>=1.8.0",
+        "reportlab>=4.4.4",
+        "matplotlib>=3.10.8"
     ],
     license='Apache 2.0'
 )
